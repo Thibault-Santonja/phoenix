@@ -1,0 +1,148 @@
+name: CI
+on:
+  push:
+    branches: [main]
+    tags:
+      - "*"
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+env:
+  SHELL: /bin/bash
+jobs:
+  tools:
+    name: TOOLS
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: jdx/mise-action@v2
+  lint:
+    name: LINT
+    needs: [tools]
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: jdx/mise-action@v2
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
+            ${{ env.MIX_ENV }}-mise-
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile without warnings
+        run: mix compile --warnings-as-errors
+      - name: Check code format
+        run: mix format --dry-run --check-formatted
+      - name: Check unused deps
+        run: mix deps.unlock --check-unused
+      - name: Hex audit
+        run: mix hex.audit
+      - name: Deps audit
+        run: mix deps.audit
+      - name: Run credo
+        run: mix credo
+      - name: Run sobelow
+        run: mix sobelow --config
+  test:
+    name: TEST
+    needs: [tools]
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: test
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: jdx/mise-action@v2
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
+            ${{ env.MIX_ENV }}-mise-
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Run tests
+        run: mix test --max-failures=1 --color
+  build:
+    name: BUILD
+    needs: [lint, test]
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: jdx/mise-action@v2
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
+            ${{ env.MIX_ENV }}-mise-
+      - name: Install dependencies
+        run: mix deps.get --only prod
+      - name: Build
+        run: mix do compile --warnings-as-errors, release --overwrite
+      - name: Docker buildx
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        uses: docker/setup-buildx-action@v3
+      - name: Service account
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        uses: 1password/load-secrets-action/configure@v2
+        with:
+          service-account-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      - name: Load secrets
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true
+        env:
+          SSH_KEY: op://6raaklsipbodj4a6yiolc6fdeu/5ucpy4lvrl6dthsqa4vsjbomde/private key?ssh-format=openssh
+      - name: SSH key
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        uses: shimataro/ssh-key-action@v2
+        with:
+          name: id_ed25519
+          key: ${{ env.SSH_KEY }}
+          known_hosts: unnecessary
+      - name: Kamal install
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        run: gem install kamal
+      - name: Deploy
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        run: kamal setup

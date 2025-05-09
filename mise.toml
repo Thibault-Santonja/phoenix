@@ -1,0 +1,16 @@
+[tools]
+elixir = "1.18.3"
+erlang = "27.3.4"
+ruby = "3.4.2"
+
+[tasks.reset]
+description = "Reset and recompile project"
+run = "rm -rf deps _build .elixir_ls && mix deps.get && mix && mix test"
+
+[tasks."clean:images"]
+description = "Delete images folders"
+run = "rm -rf priv/waffle"
+
+[tasks."setup:kamal"]
+description = "Install kamal to manage deployment"
+run = "gem install kamal"
