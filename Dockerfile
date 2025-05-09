@@ -32,5 +32,5 @@ USER nobody
 
 # Start the Phoenix server when the container starts
 SHELL ["bash", "-c"]
-# CMD ["/app/bin/server", "start"]
-CMD ["/app/bin/server"]
+# CMD ["/app/bin/portfolio", "start"]
+CMD ["/app/bin/portfolio"]
