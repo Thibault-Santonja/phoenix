@@ -20,6 +20,22 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import MishkaComponents from "../vendor/mishka_components.js";
+import {
+  AnimateThis,
+  AnimateGallery,
+  AnimatePath,
+  AnimateTimelineScroll,
+} from "./animations";
+
+// Hook animate this
+const Hooks = {};
+
+Hooks.MishkaComponents = MishkaComponents;
+Hooks.AnimateThis = AnimateThis;
+Hooks.AnimateGallery = AnimateGallery;
+Hooks.AnimatePath = AnimatePath;
+Hooks.AnimateTimelineScroll = AnimateTimelineScroll;
+
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
@@ -28,9 +44,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: {
     _csrf_token: csrfToken,
   },
-  hooks: {
-    ...MishkaComponents,
-  },
+  hooks: Hooks,
 });
 // Show progress bar on live navigation and form submits
 topbar.config({
