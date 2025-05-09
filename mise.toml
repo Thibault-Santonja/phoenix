@@ -1,4 +1,5 @@
 [tools]
+bun = "1.2.11"
 elixir = "1.18.3"
 erlang = "27.3.4"
 ruby = "3.4.2"
@@ -14,3 +15,7 @@ run = "rm -rf priv/waffle"
 [tasks."setup:kamal"]
 description = "Install kamal to manage deployment"
 run = "gem install kamal"
+
+[tasks."assets:install"]
+description = "Install JS assets"
+run = "bun install --cwd assets"
