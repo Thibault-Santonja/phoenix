@@ -3,3 +3,26 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+blockquote {
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background-color: white;
+    box-shadow:
+        0 1rem 1.5rem -1px rgb(0 0 0 / 0.1),
+        0 0.5rem 1rem -0.5rem rgb(0 0 0 / 0.1);
+    border-radius: 1rem;
+}
+
+blockquote > p {
+    text-justify: inter-word;
+    font-style: italic;
+    font-weight: 300;
+    line-height: calc(var(--spacing) * 1.625);
+    color: oklch(0.21 0.034 264.665); /* --color-gray-900 */
+    /* --color-gray-50 */
+}
+
+p {
+    text-justify: inter-word;
+}
