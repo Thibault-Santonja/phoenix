@@ -1,4 +1,10 @@
 defmodule PortfolioWeb.Components.MishkaComponents do
+  @moduledoc """
+    Offers Mishka default components for quick UI design
+  """
+
+  # credo:disable-for-this-file Credo.Check.Refactor.LongQuoteBlocks
+
   defmacro __using__(_) do
     quote do
       import PortfolioWeb.Components.Accordion,
