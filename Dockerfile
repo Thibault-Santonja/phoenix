@@ -27,10 +27,12 @@ RUN chown nobody /app && \
 # Copy the Phoenix release into the image and set ownership to "nobody"
 COPY --chown=nobody:root ./_build/prod/rel/portfolio/ ./
 
+# Open Phoenix port (4000 by default)
+EXPOSE 4000
+
 # Run the container as an unprivileged user for better security
 USER nobody
 
 # Start the Phoenix server when the container starts
 SHELL ["bash", "-c"]
-# CMD ["/app/bin/portfolio"]
-CMD ["/app/bin/portfolio", "start"]
+CMD ["/app/bin/portfolio"]
