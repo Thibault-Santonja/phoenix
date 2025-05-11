@@ -7,7 +7,7 @@
 /test/
 /tmp/
 .elixir_ls
-!/_build/prod
+#!/_build/prod
 /deps/
 *.ez
 erl_crash.dump
