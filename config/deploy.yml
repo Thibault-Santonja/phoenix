@@ -45,7 +45,7 @@ env:
   clear:
     PHX_SERVER: true
     POOL_SIZE: "10"
-    PHX_HOST: "thibaultsan.com"
+    PHX_HOST: "localhost" #"thibaultsan.com"
   secret:
     - SECRET_KEY_BASE
 
