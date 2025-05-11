@@ -100,6 +100,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       MIX_ENV: prod
+      PHX_SERVER: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -122,7 +123,7 @@ jobs:
       - name: Install backend dependencies
         run: mix deps.get --only prod
       - name: Build
-        run: mix do assets.setup, assets.deploy, compile --warnings-as-errors, release --overwrite
+        run: MIX_ENV=${{ env.MIX_ENV }} mix do assets.setup, assets.deploy, compile --warnings-as-errors, release --overwrite
       - name: Docker meta
         if: ${{ contains(github.ref, 'refs/tags/') }}
         uses: docker/metadata-action@v5
