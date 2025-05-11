@@ -2,6 +2,9 @@ FROM ubuntu:noble
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# For Kamal deployment using --skip-push argument
+LABEL service=portfolio
+
 # Set environment variables for locale settings
 ENV SHELL=/bin/bash
 ENV LANG=en_US.UTF-8
