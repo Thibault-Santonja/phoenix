@@ -154,3 +154,42 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    if: ${{ contains(github.ref, 'refs/tags/') }}
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    env:
+      MIX_ENV: prod
+      PHX_SERVER: true
+      DOCKER_BUILDKIT: 1
+      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+      KAMAL_REGISTRY_PASSWORD: ${{ secrets.DOCKER_USER }}
+      KAMAL_REGISTRY_USERNAME: ${{ secrets.DOCKER_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.2
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: |
+          gem install specific_install
+          gem specific_install https://github.com/basecamp/kamal.git
+
+      - uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Run deploy command
+        run: kamal deploy --skip-push --version=latest
