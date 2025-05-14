@@ -10,6 +10,15 @@ defmodule PortfolioWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :photo do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {PhotoWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -29,6 +38,12 @@ defmodule PortfolioWeb.Router do
     get "/", PageController, :home
     get "/vetements", PageController, :clothes
     get "/vetements/chaussures", PageController, :shoes
+  end
+
+  scope "/", PhotoWeb, host: "photo." do
+    pipe_through :photo
+
+    get "/", PageController, :home
   end
 
   scope "/", PortfolioWeb do

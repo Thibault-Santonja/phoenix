@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]">
+  <head>
+    {Application.get_env(:live_debugger, :live_debugger_tags)}
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title default="Amvcc" suffix=" · Phoenix Framework">
+      {assigns[:page_title]}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+  </head>
+  <body class="w-screen h-screen bg-white">
+    <div class="follower absolute inset-x-0 bottom-0 h-0 w-sceen ">
+      <%!-- For the scroll animation --%>
+    </div>
+    <main class="flex flex-col h-screen w-screen bg-white">
+      <header class="bg-white flex-none fixed flex items-stretch justify-between h-[3rem] w-full p-4 md:px-16 mb-4 shadow z-10">
+        <div class="flex items-center">
+          <a href="/" class="hover:text-blue-600">o/</a>
+        </div>
+        <nav class="flex items-center">
+          <ul class="flex flex-row items-stretch space-x-8 space-around"></ul>
+        </nav>
+      </header>
+
+      <main class="pt-[3rem] flex-auto h-auto font-serif text-justify">
+        {@inner_content}
+      </main>
+
+      <footer class="bottom-0 flex-none w-full text-white bg-gray-900 text-xs flex items-stretch justify-center min-h-[3rem] shadow z-10 p-4 md:px-16">
+        <p>Thibault Santonja - {NaiveDateTime.utc_now().year}</p>
+      </footer>
+    </main>
+  </body>
+</html>
