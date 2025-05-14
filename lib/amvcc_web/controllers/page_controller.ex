@@ -1,4 +1,4 @@
-defmodule PortfolioWeb.AmvccController do
+defmodule AmvccWeb.PageController do
   use PortfolioWeb, :controller
 
   def home(conn, _params) do

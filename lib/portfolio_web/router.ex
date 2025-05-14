@@ -1,6 +1,15 @@
 defmodule PortfolioWeb.Router do
   use PortfolioWeb, :router
 
+  pipeline :amvcc do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {AmvccWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -10,31 +19,23 @@ defmodule PortfolioWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :amvcc do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {PortfolioWeb.Layouts, :amvcc}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-  end
-
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  scope "/", AmvccWeb, host: "amvcc." do
+    pipe_through :amvcc
+
+    get "/", PageController, :home
+    get "/vetements", PageController, :clothes
+    get "/vetements/chaussures", PageController, :shoes
   end
 
   scope "/", PortfolioWeb do
     pipe_through :browser
 
     get "/", PageController, :home
-  end
-
-  scope "/seigneurie_de_coucy", PortfolioWeb do
-    pipe_through :amvcc
-
-    get "/", AmvccController, :home
-    get "/vetements", AmvccController, :clothes
-    get "/vetements/chaussures", AmvccController, :shoes
+    get "/amvcc", PageController, :amvcc
   end
 
   # Other scopes may use custom stacks.

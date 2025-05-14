@@ -6,4 +6,8 @@ defmodule PortfolioWeb.PageController do
     # so skip the default app layout.
     render(conn, :home, layout: false)
   end
+
+  def amvcc(conn, _params) do
+    redirect(conn, external: "#{conn.scheme}://amvcc.#{conn.host}:#{conn.port}")
+  end
 end
