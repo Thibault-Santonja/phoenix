@@ -44,13 +44,16 @@ defmodule PortfolioWeb.Router do
     pipe_through :photo
 
     get "/", PageController, :home
+    get "/life", PageController, :home
+    get "/reconstitution", PageController, :home
   end
 
   scope "/", PortfolioWeb do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/amvcc", PageController, :amvcc
+    get "/amvcc", PageController, :subdomain_redirect
+    get "/photo", PageController, :subdomain_redirect
   end
 
   # Other scopes may use custom stacks.

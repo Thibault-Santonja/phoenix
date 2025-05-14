@@ -7,7 +7,7 @@ defmodule PortfolioWeb.PageController do
     render(conn, :home, layout: false)
   end
 
-  def amvcc(conn, _params) do
-    redirect(conn, external: "#{conn.scheme}://amvcc.#{conn.host}:#{conn.port}")
+  def subdomain_redirect(conn, _params) do
+    redirect(conn, external: "#{conn.scheme}://#{hd(conn.path_info)}.#{conn.host}:#{conn.port}")
   end
 end
