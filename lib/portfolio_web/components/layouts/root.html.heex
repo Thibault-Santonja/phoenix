@@ -13,6 +13,13 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
+
+  <ul class="hidden">
+    <!-- Prevent tailwind color errors -->
+    <li class="bg-red-600 font-thin w-screen items-center" />
+    <li class="bg-zinc-600 font-black font-sans hover:uppercase" />
+  </ul>
+
   <body class="bg-white">
     {@inner_content}
   </body>
