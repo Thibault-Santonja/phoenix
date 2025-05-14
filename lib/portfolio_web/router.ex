@@ -5,16 +5,16 @@ defmodule PortfolioWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {AmvccWeb.Layouts, :root}
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :amvcc}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
 
-  pipeline :photo do
+  pipeline :photography do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {PhotoWeb.Layouts, :root}
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :photography}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -32,20 +32,20 @@ defmodule PortfolioWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", AmvccWeb, host: "amvcc." do
+  scope "/", PortfolioWeb, host: "amvcc." do
     pipe_through :amvcc
 
-    get "/", PageController, :home
-    get "/vetements", PageController, :clothes
-    get "/vetements/chaussures", PageController, :shoes
+    get "/", AmvccController, :home
+    get "/vetements", AmvccController, :clothes
+    get "/vetements/chaussures", AmvccController, :shoes
   end
 
-  scope "/", PhotoWeb, host: "photo." do
-    pipe_through :photo
+  scope "/", PortfolioWeb, host: "photo." do
+    pipe_through :photography
 
-    get "/", PageController, :home
-    get "/life", PageController, :home
-    get "/reconstitution", PageController, :home
+    get "/", PhotographyController, :home
+    get "/life", PhotographyController, :home
+    get "/reconstitution", PhotographyController, :home
   end
 
   scope "/", PortfolioWeb do
