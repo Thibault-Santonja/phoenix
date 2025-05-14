@@ -1,15 +1,6 @@
 defmodule PortfolioWeb.Router do
   use PortfolioWeb, :router
 
-  pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-  end
-
   pipeline :amvcc do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -19,22 +10,50 @@ defmodule PortfolioWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :photography do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :photography}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  scope "/", PortfolioWeb, host: "amvcc." do
+    pipe_through :amvcc
+
+    get "/", AmvccController, :home
+    get "/vetements", AmvccController, :clothes
+    get "/vetements/chaussures", AmvccController, :shoes
+  end
+
+  scope "/", PortfolioWeb, host: "photo." do
+    pipe_through :photography
+
+    get "/", PhotographyController, :home
+    get "/life", PhotographyController, :home
+    get "/reconstitution", PhotographyController, :home
   end
 
   scope "/", PortfolioWeb do
     pipe_through :browser
 
     get "/", PageController, :home
-  end
-
-  scope "/seigneurie_de_coucy", PortfolioWeb do
-    pipe_through :amvcc
-
-    get "/", AmvccController, :home
-    get "/vetements", AmvccController, :clothes
-    get "/vetements/chaussures", AmvccController, :shoes
+    get "/amvcc", PageController, :subdomain_redirect
+    get "/photo", PageController, :subdomain_redirect
   end
 
   # Other scopes may use custom stacks.

@@ -6,4 +6,8 @@ defmodule PortfolioWeb.PageController do
     # so skip the default app layout.
     render(conn, :home, layout: false)
   end
+
+  def subdomain_redirect(conn, _params) do
+    redirect(conn, external: "#{conn.scheme}://#{hd(conn.path_info)}.#{conn.host}:#{conn.port}")
+  end
 end
