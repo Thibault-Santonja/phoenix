@@ -19,18 +19,17 @@ defmodule Portfolio.MixProject do
 
   defp git_version() do
     # pulls version information from "nearest" git tag or sha hash-ish
-    case System.cmd("git", ~w[describe --dirty --tags --always --first-parent]) do
-      {tag, _} ->
-        {
-          tag
-          |> String.trim()
-          |> String.split("-")
-          |> List.first()
-          |> String.replace_prefix("v", "")
-          |> String.trim(),
-          tag
-        }
-
+    with {tag, _} <- System.cmd("git", ~w[describe --dirty --tags --always --first-parent]),
+         version <-
+           tag
+           |> String.trim()
+           |> String.split("-")
+           |> List.first()
+           |> String.replace_prefix("v", "")
+           |> String.trim(),
+         true <- String.match?(version, ~r/^\d*\.\d*\.\d*$/) do
+      {version, tag}
+    else
       _ ->
         {"0.1.0", "0.1.0-dev"}
     end

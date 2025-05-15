@@ -8,6 +8,7 @@ defmodule PortfolioWeb.Router do
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :amvcc}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
   end
 
   pipeline :photography do
@@ -17,6 +18,7 @@ defmodule PortfolioWeb.Router do
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :photography}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
   end
 
   pipeline :browser do
@@ -26,6 +28,7 @@ defmodule PortfolioWeb.Router do
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
   end
 
   pipeline :api do
@@ -35,23 +38,21 @@ defmodule PortfolioWeb.Router do
   scope "/", PortfolioWeb, host: "amvcc." do
     pipe_through :amvcc
 
-    get "/", AmvccController, :home
-    get "/vetements", AmvccController, :clothes
-    get "/chaussures", AmvccController, :shoes
+    live "/", AmvccLive.Index, :index
+    live "/vetements", AmvccLive.Clothes, :index
+    live "/chaussures", AmvccLive.Shoes, :index
   end
 
   scope "/", PortfolioWeb, host: "photo." do
     pipe_through :photography
 
-    get "/", PhotographyController, :home
-    get "/life", PhotographyController, :home
-    get "/reconstitution", PhotographyController, :home
+    live "/", PhotographyLive.Index, :index
   end
 
   scope "/", PortfolioWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", IndexLive.Index, :index
     get "/amvcc", PageController, :subdomain_redirect
     get "/photo", PageController, :subdomain_redirect
   end
