@@ -35,7 +35,7 @@ defmodule PortfolioWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", PortfolioWeb, host: "amvcc." do
+  scope "/amvcc", PortfolioWeb do
     pipe_through :amvcc
 
     live "/", AmvccLive.Index, :index
@@ -43,7 +43,7 @@ defmodule PortfolioWeb.Router do
     live "/chaussures", AmvccLive.Shoes, :index
   end
 
-  scope "/", PortfolioWeb, host: "photo." do
+  scope "/photo", PortfolioWeb do
     pipe_through :photography
 
     live "/", PhotographyLive.Index, :index
@@ -53,8 +53,6 @@ defmodule PortfolioWeb.Router do
     pipe_through :browser
 
     live "/", IndexLive.Index, :index
-    get "/amvcc", PageController, :subdomain_redirect
-    get "/photo", PageController, :subdomain_redirect
   end
 
   # Other scopes may use custom stacks.

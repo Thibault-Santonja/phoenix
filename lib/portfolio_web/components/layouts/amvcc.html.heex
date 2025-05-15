@@ -21,16 +21,18 @@
     <main class="flex flex-col h-screen w-screen text-amvcc-neutral">
       <header class="bg-white flex-none fixed flex items-stretch justify-between h-[3rem] w-full p-4 md:px-16 mb-4 shadow z-10">
         <div class="flex items-center">
-          <a href="/" class="hover:text-amvcc-primary">o/</a>
+          <a href={~p"/amvcc"} class="hover:text-amvcc-primary">{gettext("Home")}</a>
         </div>
         <nav class="flex items-center">
           <ul class="flex flex-row items-stretch space-x-8 space-around">
             <li>
-              <a href={~p"/vetements"} class="hover:text-amvcc-primary">Vetements</a>
+              <a href={~p"/amvcc/vetements"} class="hover:text-amvcc-primary">
+                {gettext("Clothes")}
+              </a>
             </li>
             <li>
-              <a href={~p"/chaussures"} class="hover:text-amvcc-primary">
-                Chaussures
+              <a href={~p"/amvcc/chaussures"} class="hover:text-amvcc-primary">
+                {gettext("Shoes")}
               </a>
             </li>
           </ul>
