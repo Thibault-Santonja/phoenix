@@ -2,7 +2,9 @@ defmodule PortfolioWeb.IndexLive.Index do
   use PortfolioWeb, :live_view
 
   @impl true
-  def mount(_, _session, socket) do
+  def mount(_, session, socket) do
+    Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])
+
     {:ok, socket}
   end
 

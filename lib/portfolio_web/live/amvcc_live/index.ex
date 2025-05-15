@@ -2,7 +2,9 @@ defmodule PortfolioWeb.AmvccLive.Index do
   use PortfolioWeb, :live_view
 
   @impl true
-  def mount(_, _session, socket) do
+  def mount(_, session, socket) do
+    Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])
+
     {:ok, socket}
   end
 
@@ -13,6 +15,6 @@ defmodule PortfolioWeb.AmvccLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, gettext("La Seigneurie de Coucy"))
+    |> assign(:page_title, "La Seigneurie de Coucy")
   end
 end

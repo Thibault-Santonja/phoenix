@@ -2,7 +2,9 @@ defmodule PortfolioWeb.AmvccLive.Clothes do
   use PortfolioWeb, :live_view
 
   @impl true
-  def mount(_, _session, socket) do
+  def mount(_, session, socket) do
+    Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])
+
     {:ok, socket}
   end
 
@@ -13,6 +15,6 @@ defmodule PortfolioWeb.AmvccLive.Clothes do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, gettext("Vetements XIVe"))
+    |> assign(:page_title, gettext("Clothes XIVc in western Europe"))
   end
 end

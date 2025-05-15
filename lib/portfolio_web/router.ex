@@ -8,6 +8,7 @@ defmodule PortfolioWeb.Router do
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :amvcc}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
   end
 
   pipeline :photography do
@@ -17,6 +18,7 @@ defmodule PortfolioWeb.Router do
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :photography}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
   end
 
   pipeline :browser do
@@ -26,6 +28,7 @@ defmodule PortfolioWeb.Router do
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
   end
 
   pipeline :api do
