@@ -41,13 +41,6 @@ p {
 
 /* Display animation on link hover (only medium or bigger screens)) */
 @media only screen and (min-width: 48rem) {
-    #photography #gallery {
-        transition:
-            font-size,
-            line-height,
-            cubic-bezier(0.25, 1, 0.5, 1) 800ms;
-    }
-
     #photography #gallery li {
         font-size: 1.5rem (24px);
         line-height: calc(2 / 1.5);
@@ -82,5 +75,12 @@ p {
     #photography #gallery li:has(+ li + li:hover) {
         font-size: 1.625rem;
         line-height: calc(2.25 / 1.625);
+    }
+
+    #photography #gallery li {
+        transition:
+            font-size,
+            line-height,
+            cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
     }
 }

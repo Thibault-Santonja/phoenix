@@ -73,6 +73,12 @@ export const theme = {
         error: "oklch(57% 0.245 27.325)",
         econtent: "oklch(97% 0.013 17.38)",
       },
+      photo: {
+        primary: "oklch(0% 0 0)",
+        content: {
+          primary: "oklch(100% 0 0)",
+        },
+      },
       brand: "#FD4F00",
     },
     borderRadius: {
