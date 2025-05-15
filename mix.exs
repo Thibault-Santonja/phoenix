@@ -2,9 +2,12 @@ defmodule Portfolio.MixProject do
   use Mix.Project
 
   def project do
+    {tag, description} = git_version()
+
     [
       app: :portfolio,
-      version: "0.1.12",
+      version: tag,
+      description: "Thibault San · " <> description,
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -12,6 +15,25 @@ defmodule Portfolio.MixProject do
       aliases: aliases(),
       deps: deps()
     ]
+  end
+
+  defp git_version() do
+    # pulls version information from "nearest" git tag or sha hash-ish
+    case System.cmd("git", ~w[describe --dirty --tags --always --first-parent]) do
+      {tag, _} ->
+        {
+          tag
+          |> String.trim()
+          |> String.split("-")
+          |> List.first()
+          |> String.replace_prefix("v", "")
+          |> String.trim(),
+          tag
+        }
+
+      _ ->
+        {"0.1.0", "0.1.0-dev"}
+    end
   end
 
   # Configuration for the OTP application.
