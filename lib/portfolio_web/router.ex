@@ -37,7 +37,7 @@ defmodule PortfolioWeb.Router do
 
     get "/", AmvccController, :home
     get "/vetements", AmvccController, :clothes
-    get "/vetements/chaussures", AmvccController, :shoes
+    get "/chaussures", AmvccController, :shoes
   end
 
   scope "/", PortfolioWeb, host: "photo." do
