@@ -35,23 +35,21 @@ defmodule PortfolioWeb.Router do
   scope "/", PortfolioWeb, host: "amvcc." do
     pipe_through :amvcc
 
-    get "/", AmvccController, :home
-    get "/vetements", AmvccController, :clothes
-    get "/chaussures", AmvccController, :shoes
+    live "/", AmvccLive.Index, :index
+    live "/vetements", AmvccLive.Clothes, :index
+    live "/chaussures", AmvccLive.Shoes, :index
   end
 
   scope "/", PortfolioWeb, host: "photo." do
     pipe_through :photography
 
-    get "/", PhotographyController, :home
-    get "/life", PhotographyController, :home
-    get "/reconstitution", PhotographyController, :home
+    live "/", PhotographyLive.Index, :index
   end
 
   scope "/", PortfolioWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", IndexLive.Index, :index
     get "/amvcc", PageController, :subdomain_redirect
     get "/photo", PageController, :subdomain_redirect
   end
