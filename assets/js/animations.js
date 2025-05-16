@@ -4,6 +4,7 @@ import {
   createDraggable,
   createSpring,
   onScroll,
+  stagger,
 } from "animejs";
 
 export const AnimateThis = {
@@ -145,7 +146,7 @@ export const AnimateTimelineScroll = {
       animate($event, {
         opacity: [0, 1],
         translateY: [20, 0],
-        delay: animate.stagger(150),
+        delay: stagger(150),
         duration: 800,
         easing: "easeOutQuad",
       });
