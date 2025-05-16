@@ -40,7 +40,9 @@ if config_env() == :prod do
 
   config :portfolio, PortfolioWeb.Endpoint,
     check_origin: [
-      "https://" <> System.get_env("PHX_HOST")
+      "https://#{host}",
+      "https://amvcc.#{host}",
+      "https://photo.#{host}"
     ],
     url: [host: host, port: 443, scheme: "https"],
     http: [
