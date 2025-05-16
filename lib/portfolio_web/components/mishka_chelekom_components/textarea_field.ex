@@ -132,45 +132,24 @@ defmodule PortfolioWeb.Components.TextareaField do
 
   def textarea_field(%{floating: floating} = assigns) when floating in ["inner", "outer"] do
     ~H"""
-    <div class={[
-      color_variant(@variant, @color, @floating),
-      rounded_size(@rounded),
-      border_class(@border, @variant),
-      height_size(@size),
-      space_class(@space),
-      @ring && "[&_.textarea-field-wrapper]:focus-within:ring-[0.03rem]",
-      @class
-    ]}>
+    <div class={[color_variant(@variant, @color, @floating), rounded_size(@rounded), border_class(@border, @variant), height_size(@size), space_class(@space), @ring && "focus-within:[&_.textarea-field-wrapper]:ring-[0.03rem]", @class]}>
       <div :if={@description} class={@description_class}>
         {@description}
       </div>
-      <div class={[
-        "textarea-field-wrapper transition-all ease-in-out duration-200 relative w-full z-[2]",
-        @errors != [] && "textarea-field-error",
-        @field_wrapper_class
-      ]}>
+      <div class={["textarea-field-wrapper z-[2] relative w-full transition-all duration-200 ease-in-out", @errors != [] && "textarea-field-error", @field_wrapper_class]}>
         <textarea
           type="text"
           name={@name}
           id={@id}
           rows={@rows}
           value={@value}
-          class={[
-            "disabled:opacity-80 block w-full z-[2] focus:ring-0 placeholder:text-transparent pb-1 pt-3 px-2",
-            "text-[16px] sm:font-inherit appearance-none bg-transparent border-0 focus:outline-none peer",
-            @disable_resize && "resize-none",
-            @textarea_class
-          ]}
+          class={["z-[2] block w-full px-2 pt-3 pb-1 placeholder:text-transparent focus:ring-0 disabled:opacity-80", "text-[16px] peer appearance-none border-0 bg-transparent focus:outline-none sm:font-inherit", @disable_resize && "resize-none", @textarea_class]}
           placeholder=" "
           {@rest}
         >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
 
         <label
-          class={[
-            "floating-label px-1 start-1 -z-[1] absolute text-xs duration-300 transform scale-75 origin-[0]",
-            variant_label_position(@floating),
-            @flaoting_label_class
-          ]}
+          class={["floating-label start-1 -z-[1] origin-[0] absolute scale-75 transform px-1 text-xs duration-300", variant_label_position(@floating), @flaoting_label_class]}
           for={@id}
         >
           {@label}
@@ -184,15 +163,7 @@ defmodule PortfolioWeb.Components.TextareaField do
 
   def textarea_field(assigns) do
     ~H"""
-    <div class={[
-      color_variant(@variant, @color, @floating),
-      rounded_size(@rounded),
-      border_class(@border, @variant),
-      height_size(@size),
-      space_class(@space),
-      @ring && "[&_.textarea-field-wrapper]:focus-within:ring-[0.03rem]",
-      @class
-    ]}>
+    <div class={[color_variant(@variant, @color, @floating), rounded_size(@rounded), border_class(@border, @variant), height_size(@size), space_class(@space), @ring && "focus-within:[&_.textarea-field-wrapper]:ring-[0.03rem]", @class]}>
       <div :if={@label || @description} class={["textarea-label-wrapper", @description_wrapper_class]}>
         <.label :if={@label} for={@id} class={@label_class}>{@label}</.label>
         <div :if={@description} class={@description_class}>
@@ -200,11 +171,7 @@ defmodule PortfolioWeb.Components.TextareaField do
         </div>
       </div>
 
-      <div class={[
-        "textarea-field-wrapper overflow-hidden transition-all ease-in-out duration-200 flex flex-nowrap",
-        @errors != [] && "textarea-field-error",
-        @field_wrapper_class
-      ]}>
+      <div class={["textarea-field-wrapper flex flex-nowrap overflow-hidden transition-all duration-200 ease-in-out", @errors != [] && "textarea-field-error", @field_wrapper_class]}>
         <textarea
           type="text"
           name={@name}
@@ -212,12 +179,7 @@ defmodule PortfolioWeb.Components.TextareaField do
           rows={@rows}
           value={@value}
           placeholder={@placeholder}
-          class={[
-            "flex-1 py-1 px-2 text-sm disabled:opacity-80 block w-full appearance-none",
-            "bg-transparent border-0 focus:outline-none focus:ring-0",
-            @disable_resize && "resize-none",
-            @textarea_class
-          ]}
+          class={["block w-full flex-1 appearance-none px-2 py-1 text-sm disabled:opacity-80", "border-0 bg-transparent focus:outline-none focus:ring-0", @disable_resize && "resize-none", @textarea_class]}
           {@rest}
         >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
       </div>
@@ -233,7 +195,7 @@ defmodule PortfolioWeb.Components.TextareaField do
 
   defp label(assigns) do
     ~H"""
-    <label for={@for} class={["leading-5 font-semibold", @class]}>
+    <label for={@for} class={["font-semibold leading-5", @class]}>
       {render_slot(@inner_block)}
     </label>
     """

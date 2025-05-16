@@ -60,14 +60,7 @@ defmodule PortfolioWeb.Components.Overlay do
       aria-hidden="true"
       role="presentation"
       tabindex="-1"
-      class={[
-        "overlay absolute inset-0",
-        color_class(@color),
-        opacity_class(@opacity),
-        backdrop_class(@backdrop),
-        @z_index,
-        @class
-      ]}
+      class={["overlay absolute inset-0", color_class(@color), opacity_class(@opacity), backdrop_class(@backdrop), @z_index, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

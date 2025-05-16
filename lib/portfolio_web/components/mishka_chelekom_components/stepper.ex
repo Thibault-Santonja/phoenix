@@ -74,17 +74,7 @@ defmodule PortfolioWeb.Components.Stepper do
     ~H"""
     <div
       role="list"
-      class={[
-        "vertical-stepper relative flex flex-col",
-        "[&_.vertical-step:last-child_.stepper-separator]:hidden",
-        step_visibility(),
-        border_class(@border),
-        space_class(@space),
-        size_class(@size),
-        color_variant(@variant, @color),
-        @font_weight,
-        @class
-      ]}
+      class={["vertical-stepper relative flex flex-col", "[&_.vertical-step:last-child_.stepper-separator]:hidden", step_visibility(), border_class(@border), space_class(@space), size_class(@size), color_variant(@variant, @color), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -97,22 +87,7 @@ defmodule PortfolioWeb.Components.Stepper do
     <div
       role="list"
       id={@id}
-      class={[
-        "group flex flex-row flex-start items-center flex-wrap gap-y-5",
-        "[&_.stepper-separator:last-child]:hidden",
-        step_visibility(),
-        size_class(@size),
-        color_variant(@variant, @color),
-        border_class(@border),
-        wrapper_width(@max_width),
-        separator_margin(@margin),
-        separator_size(@separator_size),
-        col_step_position(@col_step_position),
-        @col_step && "col-step",
-        @col_step_position && "col-step-position",
-        @font_weight,
-        @class
-      ]}
+      class={["group flex-start flex flex-row flex-wrap items-center gap-y-5", "[&_.stepper-separator:last-child]:hidden", step_visibility(), size_class(@size), color_variant(@variant, @color), border_class(@border), wrapper_width(@max_width), separator_margin(@margin), separator_size(@separator_size), col_step_position(@col_step_position), @col_step && "col-step", @col_step_position && "col-step-position", @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -205,64 +180,46 @@ defmodule PortfolioWeb.Components.Stepper do
       aria-label={gettext("Step %{number}: %{title}", number: @step_number, title: @title)}
       aria-disabled={!@clickable}
       aria-current={@step == "current" && "step"}
-      class={[
-        "stepper-#{@step}-step",
-        "vertical-step overflow-hidden flex flex-row text-start gap-4",
-        @class
-      ]}
+      class={["stepper-#{@step}-step", "vertical-step flex flex-row gap-4 overflow-hidden text-start", @class]}
       disabled={!@clickable}
       {@rest}
     >
-      <span class="block relative">
-        <span class={["stepper-separator block h-screen absolute start-1/2", @separator_class]}>
+      <span class="relative block">
+        <span class={["stepper-separator start-1/2 absolute block h-screen", @separator_class]}>
         </span>
         <span
           :if={@icon}
-          class={[
-            "stepper-step relative border-2 rounded-full flex justify-center items-center shrink-0",
-            "transition-all ease-in-out duration-400 delay-100",
-            @icon_wrapper_class
-          ]}
+          class={["stepper-step relative flex shrink-0 items-center justify-center rounded-full border-2", "duration-400 transition-all delay-100 ease-in-out", @icon_wrapper_class]}
         >
           <.icon name={@icon} class="step-symbol stepper-icon" />
           <.loader :if={@step == "loading"} />
           <.icon
             :if={@step == "completed"}
             name="hero-check-solid"
-            class={[
-              "stepper-icon stepper-completed-icon",
-              "transition-all ease-in-out duration-400 delay-100"
-            ]}
+            class={["stepper-icon stepper-completed-icon", "duration-400 transition-all delay-100 ease-in-out"]}
           />
         </span>
 
         <span
           :if={!@icon}
-          class={[
-            "stepper-step relative border-2 rounded-full flex justify-center items-center shrink-0",
-            "transition-all ease-in-out duration-400 delay-100",
-            @number_wrapper_class
-          ]}
+          class={["stepper-step relative flex shrink-0 items-center justify-center rounded-full border-2", "duration-400 transition-all delay-100 ease-in-out", @number_wrapper_class]}
         >
           <span class="step-symbol">{@step_number}</span>
           <.loader :if={@step == "loading"} />
           <.icon
             :if={@step == "completed"}
             name="hero-check-solid"
-            class={[
-              "stepper-icon stepper-completed-icon",
-              "transition-all ease-in-out duration-400 delay-100"
-            ]}
+            class={["stepper-icon stepper-completed-icon", "duration-400 transition-all delay-100 ease-in-out"]}
           />
         </span>
       </span>
 
       <span class={["stepper-content block", @content_class]}>
-        <span :if={@title} class={["block font-bold text-wrap", @title_class]}>
+        <span :if={@title} class={["text-wrap block font-bold", @title_class]}>
           {@title}
         </span>
 
-        <span :if={@description} class={["block text-xs text-wrap", @description_class]}>
+        <span :if={@description} class={["text-wrap block text-xs", @description_class]}>
           {@description}
         </span>
 
@@ -280,67 +237,42 @@ defmodule PortfolioWeb.Components.Stepper do
       aria-label={gettext("Step %{number}: %{title}", number: @step_number, title: @title)}
       aria-disabled={!@clickable}
       aria-current={@step == "current" && "step"}
-      class={[
-        "stepper-#{@step}-step",
-        "text-start flex flex-nowrap shrink-0",
-        "group-[:not(.col-step)]:justify-center group-[:not(.col-step)]:items-center",
-        @reverse && "flex-row-reverse text-end",
-        "group-[.col-step]:flex-col group-[.col-step]:gap-3",
-        content_space(@space, @reverse),
-        @class
-      ]}
+      class={["stepper-#{@step}-step", "flex shrink-0 flex-nowrap text-start", "group-[:not(.col-step)]:items-center group-[:not(.col-step)]:justify-center", @reverse && "flex-row-reverse text-end", "group-[.col-step]:flex-col group-[.col-step]:gap-3", content_space(@space, @reverse), @class]}
       disabled={!@clickable}
       {@rest}
     >
       <span
         :if={@icon}
-        class={[
-          "stepper-step border-2 rounded-full flex justify-center items-center shrink-0",
-          "transition-all ease-in-out duration-400 delay-100",
-          @icon_wrapper_class
-        ]}
+        class={["stepper-step flex shrink-0 items-center justify-center rounded-full border-2", "duration-400 transition-all delay-100 ease-in-out", @icon_wrapper_class]}
       >
         <.icon name={@icon} class="step-symbol stepper-icon" />
         <.loader :if={@step == "loading"} />
         <.icon
           :if={@step == "completed"}
           name="hero-check-solid"
-          class={[
-            "stepper-icon stepper-completed-icon",
-            "transition-all ease-in-out duration-400 delay-100"
-          ]}
+          class={["stepper-icon stepper-completed-icon", "duration-400 transition-all delay-100 ease-in-out"]}
         />
       </span>
 
       <span
         :if={!@icon}
-        class={[
-          "stepper-step border-2 rounded-full flex justify-center items-center shrink-0",
-          "transition-all ease-in-out duration-400 delay-100",
-          @number_wrapper_class
-        ]}
+        class={["stepper-step flex shrink-0 items-center justify-center rounded-full border-2", "duration-400 transition-all delay-100 ease-in-out", @number_wrapper_class]}
       >
         <span class="step-symbol">{@step_number}</span>
         <.loader :if={@step == "loading"} />
         <.icon
           :if={@step == "completed"}
           name="hero-check-solid"
-          class={[
-            "stepper-icon stepper-completed-icon",
-            "transition-all ease-in-out duration-400 delay-100"
-          ]}
+          class={["stepper-icon stepper-completed-icon", "duration-400 transition-all delay-100 ease-in-out"]}
         />
       </span>
 
-      <span class={[
-        "stepper-content block",
-        @content_class
-      ]}>
-        <span :if={@title} class={["block font-bold text-wrap", @title_class]}>
+      <span class={["stepper-content block", @content_class]}>
+        <span :if={@title} class={["text-wrap block font-bold", @title_class]}>
           {@title}
         </span>
 
-        <span :if={@description} class={["block text-xs text-wrap", @description_class]}>
+        <span :if={@description} class={["text-wrap block text-xs", @description_class]}>
           {@description}
         </span>
 
@@ -356,7 +288,7 @@ defmodule PortfolioWeb.Components.Stepper do
     ~H"""
     <svg
       aria-hidden="true"
-      class="stepper-icon stepper-loading-icon text-gray-200 dark:text-gray-400 animate-spin"
+      class="stepper-icon stepper-loading-icon animate-spin text-gray-200 dark:text-gray-400"
       stroke="currentColor"
       viewBox="0 0 100 101"
       fill="none"

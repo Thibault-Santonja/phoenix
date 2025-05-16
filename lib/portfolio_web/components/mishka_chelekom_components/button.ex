@@ -96,13 +96,7 @@ defmodule PortfolioWeb.Components.Button do
     <div
       id={@id}
       role="group"
-      class={[
-        default_classes(:grouped, false),
-        variation(@variation),
-        rounded_size(@rounded),
-        border_class(@color),
-        @class
-      ]}
+      class={[default_classes(:grouped, false), variation(@variation), rounded_size(@rounded), border_class(@color), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -197,19 +191,7 @@ defmodule PortfolioWeb.Components.Button do
     <button
       type={@type}
       id={@id}
-      class={[
-        default_classes(@rest[:pinging], @indicator),
-        size_class(@size, @rest[:circle]),
-        color_variant(@variant, @color, @indicator),
-        content_position(@content_position),
-        rounded_size(@rounded),
-        border_size(@border, @variant),
-        @full_width && "w-full",
-        @line_height,
-        @font_weight,
-        @display,
-        @class
-      ]}
+      class={[default_classes(@rest[:pinging], @indicator), size_class(@size, @rest[:circle]), color_variant(@variant, @color, @indicator), content_position(@content_position), rounded_size(@rounded), border_size(@border, @variant), @full_width && "w-full", @line_height, @font_weight, @display, @class]}
       {drop_rest(@rest)}
     >
       <span
@@ -295,19 +277,7 @@ defmodule PortfolioWeb.Components.Button do
       type={@type}
       id={@id}
       value={@value}
-      class={[
-        default_classes(@rest[:pinging], false),
-        size_class(@size, @rest[:circle]),
-        color_variant(@variant, @color, false),
-        content_position(@content_position),
-        rounded_size(@rounded),
-        border_size(@border, @variant),
-        @full_width && "w-full",
-        @font_weight,
-        @line_height,
-        @display,
-        @class
-      ]}
+      class={[default_classes(@rest[:pinging], false), size_class(@size, @rest[:circle]), color_variant(@variant, @color, false), content_position(@content_position), rounded_size(@rounded), border_size(@border, @variant), @full_width && "w-full", @font_weight, @line_height, @display, @class]}
       {@rest}
     />
     """
@@ -401,18 +371,7 @@ defmodule PortfolioWeb.Components.Button do
     <.link
       navigate={@navigate}
       id={@id}
-      class={[
-        default_classes(@rest[:pinging], @indicator),
-        size_class(@size, @rest[:circle]),
-        color_variant(@variant, @color, @indicator),
-        rounded_size(@rounded),
-        border_size(@border, @variant),
-        @full_width && "w-full",
-        @font_weight,
-        @line_height,
-        @display,
-        @class
-      ]}
+      class={[default_classes(@rest[:pinging], @indicator), size_class(@size, @rest[:circle]), color_variant(@variant, @color, @indicator), rounded_size(@rounded), border_size(@border, @variant), @full_width && "w-full", @font_weight, @line_height, @display, @class]}
       {drop_rest(@rest)}
     >
       <span
@@ -445,17 +404,7 @@ defmodule PortfolioWeb.Components.Button do
     <.link
       patch={@patch}
       id={@id}
-      class={[
-        default_classes(@rest[:pinging], @indicator),
-        size_class(@size, @rest[:circle]),
-        color_variant(@variant, @color, @indicator),
-        rounded_size(@rounded),
-        border_size(@border, @variant),
-        @full_width && "w-full",
-        @font_weight,
-        @line_height,
-        @class
-      ]}
+      class={[default_classes(@rest[:pinging], @indicator), size_class(@size, @rest[:circle]), color_variant(@variant, @color, @indicator), rounded_size(@rounded), border_size(@border, @variant), @full_width && "w-full", @font_weight, @line_height, @class]}
       {drop_rest(@rest)}
     >
       <span
@@ -488,17 +437,7 @@ defmodule PortfolioWeb.Components.Button do
     <.link
       href={@href}
       id={@id}
-      class={[
-        default_classes(@rest[:pinging], @indicator),
-        size_class(@size, @rest[:circle]),
-        color_variant(@variant, @color, @indicator),
-        rounded_size(@rounded),
-        border_size(@border, @variant),
-        @full_width && "w-full",
-        @font_weight,
-        @line_height,
-        @class
-      ]}
+      class={[default_classes(@rest[:pinging], @indicator), size_class(@size, @rest[:circle]), color_variant(@variant, @color, @indicator), rounded_size(@rounded), border_size(@border, @variant), @full_width && "w-full", @font_weight, @line_height, @class]}
       {drop_rest(@rest)}
     >
       <span
@@ -583,11 +522,7 @@ defmodule PortfolioWeb.Components.Button do
     ~H"""
     <span
       aria-hidden="true"
-      class={[
-        "indicator",
-        indicator_size(@size),
-        @class || "absolute -translate-y-1/2 -translate-x-1/2 right-auto top-0 left-0"
-      ]}
+      class={["indicator", indicator_size(@size), @class || "absolute top-0 right-auto left-0 -translate-x-1/2 -translate-y-1/2"]}
     />
     """
   end
@@ -596,11 +531,7 @@ defmodule PortfolioWeb.Components.Button do
     ~H"""
     <span
       aria-hidden="true"
-      class={[
-        "indicator",
-        indicator_size(@size),
-        @class || "absolute top-0 -translate-y-1/2 translate-x-1/2 right-1/2"
-      ]}
+      class={["indicator", indicator_size(@size), @class || "absolute top-0 right-1/2 translate-x-1/2 -translate-y-1/2"]}
     />
     """
   end
@@ -609,11 +540,7 @@ defmodule PortfolioWeb.Components.Button do
     ~H"""
     <span
       aria-hidden="true"
-      class={[
-        "indicator",
-        indicator_size(@size),
-        @class || "absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0"
-      ]}
+      class={["indicator", indicator_size(@size), @class || "absolute top-0 right-0 left-auto translate-x-1/2 -translate-y-1/2"]}
     />
     """
   end
@@ -622,11 +549,7 @@ defmodule PortfolioWeb.Components.Button do
     ~H"""
     <span
       aria-hidden="true"
-      class={[
-        "indicator",
-        indicator_size(@size),
-        @class || "absolute -translate-y-1/2 -translate-x-1/2 right-auto left-0 top-2/4"
-      ]}
+      class={["indicator", indicator_size(@size), @class || "absolute top-2/4 right-auto left-0 -translate-x-1/2 -translate-y-1/2"]}
     />
     """
   end
@@ -635,11 +558,7 @@ defmodule PortfolioWeb.Components.Button do
     ~H"""
     <span
       aria-hidden="true"
-      class={[
-        "indicator",
-        indicator_size(@size),
-        @class || "absolute -translate-y-1/2 translate-x-1/2 left-auto right-0 top-2/4"
-      ]}
+      class={["indicator", indicator_size(@size), @class || "absolute top-2/4 right-0 left-auto translate-x-1/2 -translate-y-1/2"]}
     />
     """
   end
@@ -648,11 +567,7 @@ defmodule PortfolioWeb.Components.Button do
     ~H"""
     <span
       aria-hidden="true"
-      class={[
-        "indicator",
-        indicator_size(@size),
-        @class || "absolute translate-y-1/2 -translate-x-1/2 right-auto bottom-0 left-0"
-      ]}
+      class={["indicator", indicator_size(@size), @class || "absolute right-auto bottom-0 left-0 -translate-x-1/2 translate-y-1/2"]}
     />
     """
   end
@@ -661,11 +576,7 @@ defmodule PortfolioWeb.Components.Button do
     ~H"""
     <span
       aria-hidden="true"
-      class={[
-        "indicator",
-        indicator_size(@size),
-        @class || "absolute translate-y-1/2 translate-x-1/2 bottom-0 right-1/2"
-      ]}
+      class={["indicator", indicator_size(@size), @class || "absolute right-1/2 bottom-0 translate-x-1/2 translate-y-1/2"]}
     />
     """
   end
@@ -674,11 +585,7 @@ defmodule PortfolioWeb.Components.Button do
     ~H"""
     <span
       aria-hidden="true"
-      class={[
-        "indicator",
-        indicator_size(@size),
-        @class || "absolute translate-y-1/2 translate-x-1/2 left-auto bottom-0 right-0"
-      ]}
+      class={["indicator", indicator_size(@size), @class || "absolute right-0 bottom-0 left-auto translate-x-1/2 translate-y-1/2"]}
     />
     """
   end

@@ -86,19 +86,11 @@ defmodule PortfolioWeb.Components.Fieldset do
 
   def fieldset(assigns) do
     ~H"""
-    <div class={[
-      color_variant(@variant, @color),
-      rounded_size(@rounded),
-      border_class(@border, @variant),
-      padding_class(@padding),
-      size_class(@size),
-      space_class(@space),
-      @class
-    ]}>
+    <div class={[color_variant(@variant, @color), rounded_size(@rounded), border_class(@border, @variant), padding_class(@padding), size_class(@size), space_class(@space), @class]}>
       <fieldset class={["fieldset-field", @fieldset_class]}>
         <legend
           :if={@legend}
-          class={["fieldset-legend py-0.5 px-1 leading-7", @legend_class]}
+          class={["fieldset-legend px-1 py-0.5 leading-7", @legend_class]}
           for={@id}
         >
           {@legend}

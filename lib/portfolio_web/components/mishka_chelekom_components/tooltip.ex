@@ -87,31 +87,17 @@ defmodule PortfolioWeb.Components.Tooltip do
 
   def tooltip(assigns) do
     ~H"""
-    <span class={["relative group", @wrapper_width, @wrapper_class]}>
+    <span class={["group relative", @wrapper_width, @wrapper_class]}>
       {render_slot(@inner_block)}
       <span
         role="tooltip"
         id={@id}
-        class={[
-          "absolute z-10 transition-all ease-in-out delay-100 duratio-500 w-full",
-          "invisible opacity-0 group-hover:visible group-hover:opacity-100",
-          space_class(@space),
-          color_variant(@variant, @color),
-          rounded_size(@rounded),
-          size_class(@size),
-          padding_size(@padding),
-          @variant == "bordered" || (@variant == "base" && border_class(@border)),
-          position_class(@position),
-          text_position(@text_position),
-          width_class(@width),
-          @font_weight,
-          @class
-        ]}
+        class={["duratio-500 absolute z-10 w-full transition-all delay-100 ease-in-out", "invisible opacity-0 group-hover:visible group-hover:opacity-100", space_class(@space), color_variant(@variant, @color), rounded_size(@rounded), size_class(@size), padding_size(@padding), @variant == "bordered" || (@variant == "base" && border_class(@border)), position_class(@position), text_position(@text_position), width_class(@width), @font_weight, @class]}
         {@rest}
       >
         <span
           :if={@show_arrow && @variant != "bordered" && @variant != "base"}
-          class={["block absolute size-[8px] bg-inherit rotate-45 -z-[1] tooltip-arrow", @arrow_class]}
+          class={["size-[8px] -z-[1] tooltip-arrow absolute block rotate-45 bg-inherit", @arrow_class]}
         >
         </span>
         {@text}

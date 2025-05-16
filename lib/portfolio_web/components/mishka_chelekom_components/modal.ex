@@ -113,7 +113,7 @@ defmodule PortfolioWeb.Components.Modal do
     >
       <div
         id={"#{@id}-bg"}
-        class={["bg-zinc-50/90 dark:bg-zinc-600/90 fixed inset-0 transition-opacity", @overlay_class]}
+        class={["bg-zinc-50/90 fixed inset-0 transition-opacity dark:bg-zinc-600/90", @overlay_class]}
         aria-hidden="true"
       />
       <div
@@ -131,17 +131,9 @@ defmodule PortfolioWeb.Components.Modal do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class={[
-                "relative hidden transition",
-                color_variant(@variant, @color),
-                border_size(@border, @variant),
-                rounded_size(@rounded),
-                padding_size(@padding),
-                size_class(@size),
-                @focus_wrap_class
-              ]}
+              class={["relative hidden transition", color_variant(@variant, @color), border_size(@border, @variant), rounded_size(@rounded), padding_size(@padding), size_class(@size), @focus_wrap_class]}
             >
-              <div class="flex items-center justify-between mb-4">
+              <div class="mb-4 flex items-center justify-between">
                 <div :if={@title} id={"#{@id}-title"} class={["font-semibold", @title_class]}>
                   {@title}
                 </div>

@@ -90,21 +90,13 @@ defmodule PortfolioWeb.Components.Progress do
     <div
       role="progressbar"
       aria-valuenow={@value}
-      class={[
-        "bg-[#F4F4F4] dark:bg-[#B6B6B6] overflow-hidden",
-        @variation == "vertical" && "flex items-end vertical-progress overflow-y-hidden",
-        size_class(@size, @variation),
-        rounded_size(@rounded)
-      ]}
+      class={["bg-[#F4F4F4] overflow-hidden dark:bg-[#B6B6B6]", @variation == "vertical" && "vertical-progress flex items-end overflow-y-hidden", size_class(@size, @variation), rounded_size(@rounded)]}
       {@rest}
     >
       <.progress_section :if={@value} {assigns} />
       <div
         :if={msg = render_slot(@inner_block)}
-        class={[
-          "flex",
-          (@variation == "horizontal" && "flex-row") || "flex-col flex-col-reverse w-full h-full"
-        ]}
+        class={["flex", (@variation == "horizontal" && "flex-row") || "h-full w-full flex-col flex-col-reverse"]}
       >
         {msg}
       </div>
@@ -156,11 +148,7 @@ defmodule PortfolioWeb.Components.Progress do
       id={@id}
       role="progressbar"
       aria-valuenow={@value}
-      class={[
-        "relative overflow-hidden w-fit",
-        color_variant(nil, @color),
-        @class
-      ]}
+      class={["relative w-fit overflow-hidden", color_variant(nil, @color), @class]}
       {@rest}
     >
       <svg
@@ -189,21 +177,13 @@ defmodule PortfolioWeb.Components.Progress do
           stroke-width={@thickness}
           stroke-dasharray={@circumference}
           stroke-dashoffset={@progress}
-          class={[
-            "semi-circle-progress-bar transition-all ease-in-out",
-            "duration-[#{@transition_duration}ms]",
-            @color
-          ]}
+          class={["semi-circle-progress-bar transition-all ease-in-out", "duration-[#{@transition_duration} ms]", @color]}
         />
       </svg>
 
       <div
         :if={@label || @value}
-        class={[
-          "z-10 absolute left-1/2 transform -translate-x-1/2 font-medium",
-          @orientation == "up" && "top-1/2",
-          @orientation == "down" && "top-0  translate-y-1/2"
-        ]}
+        class={["absolute left-1/2 z-10 -translate-x-1/2 transform font-medium", @orientation == "up" && "top-1/2", @orientation == "down" && "top-0 translate-y-1/2"]}
       >
         {@label || "#{@value}%"}
       </div>
@@ -310,7 +290,7 @@ defmodule PortfolioWeb.Components.Progress do
           y="50%"
           dominant-baseline="central"
           text-anchor="middle"
-          class="ring-progress-text font-semibold fill-current"
+          class="ring-progress-text fill-current font-semibold"
         >
           {@label || "#{@value}%"}
         </text>
@@ -400,13 +380,7 @@ defmodule PortfolioWeb.Components.Progress do
       id={@id}
       role="presentation"
       aria-hidden="true"
-      class={[
-        "progress-section cursor-pointer",
-        @variation == "vertical" && "progress-vertical",
-        @variation == "horizontal" && "flex justify-center items-center",
-        color_variant(@variant, @color),
-        @class
-      ]}
+      class={["progress-section cursor-pointer", @variation == "vertical" && "progress-vertical", @variation == "horizontal" && "flex items-center justify-center", color_variant(@variant, @color), @class]}
       {@rest}
     >
       <div
@@ -418,18 +392,12 @@ defmodule PortfolioWeb.Components.Progress do
         data-smart-position="false"
         data-clickable={to_string(tooltip[:clickable])}
         aria-describedby={"#{@id}-tooltip"}
-        class={[
-          "w-full h-full",
-          tooltip[:class]
-        ]}
+        class={["h-full w-full", tooltip[:class]]}
       >
         <div
           data-floating-trigger="true"
           aria-describedby={"#{@id}-tooltip"}
-          class={[
-            "w-full h-full flex items-center justify-center",
-            @variation == "vertical" && "w-full"
-          ]}
+          class={["flex h-full w-full items-center justify-center", @variation == "vertical" && "w-full"]}
         >
           {tooltip[:label]}
         </div>
@@ -444,16 +412,9 @@ defmodule PortfolioWeb.Components.Progress do
           aria-live="polite"
           hidden
           id={"#{@id}-tooltip"}
-          class={[
-            "absolute z-50 transition-all ease-in-out delay-100 duration-200 w-fit max-w-52",
-            "progress-tooltip p-1 text-center bg-[#4B4B4B] text-white dark:bg-[#DDDDDD] dark:text-black rounded",
-            tooltip[:class]
-          ]}
+          class={["max-w-52 absolute z-50 w-fit transition-all delay-100 duration-200 ease-in-out", "progress-tooltip bg-[#4B4B4B] rounded p-1 text-center text-white dark:bg-[#DDDDDD] dark:text-black", tooltip[:class]]}
         >
-          <span class={[
-            "block absolute size-[8px] bg-inherit rotate-45 -z-[1] tooltip-arrow",
-            position_class(tooltip[:position])
-          ]}>
+          <span class={["size-[8px] -z-[1] tooltip-arrow absolute block rotate-45 bg-inherit", position_class(tooltip[:position])]}>
           </span>
           {render_slot(tooltip)}
         </div>
@@ -482,15 +443,8 @@ defmodule PortfolioWeb.Components.Progress do
       id={@id}
       role="presentation"
       aria-hidden="true"
-      class={[
-        "w-full progress-section",
-        if(@variation == "vertical", do: "progress-vertical"),
-        if(@variation == "horizontal" && !is_nil(@label),
-          do: "flex justify-center items-center [&_span]:text-[11px]"
-        ),
-        color_variant(@variant, @color),
-        @class
-      ]}
+      class={["progress-section w-full", if(@variation == "vertical", do: "progress-vertical"), if(@variation == "horizontal" && !is_nil(@label),
+    do: "[&_span]:text-[11px] flex items-center justify-center"), color_variant(@variant, @color), @class]}
       {@rest}
     >
       <span :for={label <- @label} class={label[:class]} aria-hidden="false">

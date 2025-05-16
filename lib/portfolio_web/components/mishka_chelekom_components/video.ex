@@ -111,16 +111,7 @@ defmodule PortfolioWeb.Components.Video do
     ~H"""
     <video
       id={@id}
-      class={[
-        width_class(@width),
-        height_class(@height),
-        rounded_size(@rounded),
-        aspect_ratio(@ratio),
-        caption_size(@caption_size),
-        caption_background(@caption_background),
-        caption_opacity(@caption_opacity),
-        @class
-      ]}
+      class={[width_class(@width), height_class(@height), rounded_size(@rounded), aspect_ratio(@ratio), caption_size(@caption_size), caption_background(@caption_background), caption_opacity(@caption_opacity), @class]}
       poster={@thumbnail}
       {@rest}
     >

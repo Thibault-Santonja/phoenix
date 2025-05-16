@@ -114,16 +114,7 @@ defmodule PortfolioWeb.Components.Card do
     <div
       id={@id}
       role={@rest[:role] || "region"}
-      class={[
-        "overflow-hidden [&:has(.overlay)]:relative",
-        space_class(@space),
-        border_class(@border, @variant),
-        color_variant(@variant, @color),
-        rounded_size(@rounded),
-        wrapper_padding(@padding),
-        @font_weight,
-        @class
-      ]}
+      class={["[&:has(.overlay)]:relative overflow-hidden", space_class(@space), border_class(@border, @variant), color_variant(@variant, @color), rounded_size(@rounded), wrapper_padding(@padding), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -181,19 +172,12 @@ defmodule PortfolioWeb.Components.Card do
     ~H"""
     <div
       id={@id}
-      class={[
-        "card-section flex items-center gap-2",
-        padding_size(@padding),
-        content_position(@position),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={["card-section flex items-center gap-2", padding_size(@padding), content_position(@position), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       <div
         :if={@title || @icon}
-        class="flex gap-2 items-center"
+        class="flex items-center gap-2"
         aria-labelledby={if @title && @id, do: "#{@id}-title"}
       >
         <.icon :if={@icon} name={@icon} class="card-title-icon" />
@@ -240,9 +224,7 @@ defmodule PortfolioWeb.Components.Card do
         src={@src}
         alt={@alt}
         role={if !is_nil(@alt) && @alt == "", do: "presentation"}
-        class={[
-          "max-w-full"
-        ]}
+        class={["max-w-full"]}
       />
     </div>
     """
@@ -282,15 +264,7 @@ defmodule PortfolioWeb.Components.Card do
 
   def card_content(assigns) do
     ~H"""
-    <div
-      id={@id}
-      class={[
-        "card-section",
-        space_class(@space),
-        padding_size(@padding),
-        @class
-      ]}
-    >
+    <div id={@id} class={["card-section", space_class(@space), padding_size(@padding), @class]}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -327,15 +301,7 @@ defmodule PortfolioWeb.Components.Card do
 
   def card_footer(assigns) do
     ~H"""
-    <div
-      id={@id}
-      class={[
-        "card-section",
-        padding_size(@padding),
-        @class
-      ]}
-      {@rest}
-    >
+    <div id={@id} class={["card-section", padding_size(@padding), @class]} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """

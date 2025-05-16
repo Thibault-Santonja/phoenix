@@ -131,19 +131,7 @@ defmodule PortfolioWeb.Components.RadioCard do
         <label
           :for={{radio, index} <- Enum.with_index(@radio, 1)}
           for={"#{@id}-#{index}"}
-          class={[
-            "radio-card-wrapper flex items-start cursor-pointer",
-            "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50",
-            "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-blue-400",
-            "has-[:focus-visible]:outline-offset-[-2px] transition-all",
-            @reverse && "flex-row-reverse",
-            border_class(@border, @variant),
-            color_variant(@variant, @color),
-            rounded_size(@rounded),
-            padding_size(@padding),
-            size_class(@size),
-            radio[:radio_wrapper_class]
-          ]}
+          class={["radio-card-wrapper flex cursor-pointer items-start", "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50", "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-blue-400", "transition-all has-[:focus-visible]:outline-offset-[-2px]", @reverse && "flex-row-reverse", border_class(@border, @variant), color_variant(@variant, @color), rounded_size(@rounded), padding_size(@padding), size_class(@size), radio[:radio_wrapper_class]]}
           {@rest}
         >
           <input
@@ -155,12 +143,7 @@ defmodule PortfolioWeb.Components.RadioCard do
             id={"#{@id}-#{index}"}
             value={radio[:value]}
             checked={radio[:checked]}
-            class={[
-              "radio-card-input shrink-0 focus:ring-0 focus:ring-offset-0 appearance-none",
-              "disabled:opacity-50",
-              !@show_radio && "opacity-0 absolute",
-              radio[:radio_input_class]
-            ]}
+            class={["radio-card-input shrink-0 appearance-none focus:ring-0 focus:ring-offset-0", "disabled:opacity-50", !@show_radio && "absolute opacity-0", radio[:radio_input_class]]}
           />
           <div
             data-part="label"
@@ -173,11 +156,11 @@ defmodule PortfolioWeb.Components.RadioCard do
               <.icon
                 :if={!is_nil(radio[:icon])}
                 name={radio[:icon]}
-                class={["block mx-auto", radio[:icon_class]]}
+                class={["mx-auto block", radio[:icon_class]]}
               />
               <div
                 :if={radio[:title]}
-                class={["block radio-card-title leading-[16px] font-semibold", radio[:title_class]]}
+                class={["radio-card-title leading-[16px] block font-semibold", radio[:title_class]]}
               >
                 {radio[:title]}
               </div>
@@ -225,7 +208,7 @@ defmodule PortfolioWeb.Components.RadioCard do
 
   defp label(assigns) do
     ~H"""
-    <label for={@for} class={["leading-4 font-semibold", @class]} id={@id}>
+    <label for={@for} class={["font-semibold leading-4", @class]} id={@id}>
       {render_slot(@inner_block)}
     </label>
     """
@@ -236,7 +219,7 @@ defmodule PortfolioWeb.Components.RadioCard do
 
   defp error(assigns) do
     ~H"""
-    <p class="mt-3 flex items-center gap-3 text-[14px] text-rose-700">
+    <p class="text-[14px] mt-3 flex items-center gap-3 text-rose-700">
       <.icon :if={!is_nil(@icon)} name={@icon} class="shrink-0" /> {render_slot(@inner_block)}
     </p>
     """

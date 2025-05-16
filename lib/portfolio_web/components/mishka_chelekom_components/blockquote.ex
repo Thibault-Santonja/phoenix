@@ -130,16 +130,7 @@ defmodule PortfolioWeb.Components.Blockquote do
 
   def blockquote(assigns) do
     ~H"""
-    <div class={[
-      space_class(@space),
-      border_class(@border, border_position(@rest), @variant),
-      color_variant(@variant, @color),
-      rounded_size(@rounded),
-      padding_size(@padding),
-      size_class(@size),
-      @font_weight,
-      @class
-    ]}>
+    <div class={[space_class(@space), border_class(@border, border_position(@rest), @variant), color_variant(@variant, @color), rounded_size(@rounded), padding_size(@padding), size_class(@size), @font_weight, @class]}>
       <.blockquote_icon
         :if={is_nil(@rest[:hide_icon])}
         name={@icon}
@@ -152,15 +143,11 @@ defmodule PortfolioWeb.Components.Blockquote do
       </blockquote>
       <div
         :for={caption <- @caption}
-        class={[
-          "flex items-center space-x-3 rtl:space-x-reverse",
-          !is_nil(caption[:position]) && caption_position(caption[:position]),
-          caption[:class]
-        ]}
+        class={["flex items-center space-x-3 rtl:space-x-reverse", !is_nil(caption[:position]) && caption_position(caption[:position]), caption[:class]]}
       >
         <img
           :if={!is_nil(caption[:image])}
-          class={["w-6 h-6 rounded-full", caption[:image_class]]}
+          class={["h-6 w-6 rounded-full", caption[:image_class]]}
           src={caption[:image]}
           alt={caption[:alt] || gettext("Author image")}
         />
@@ -179,7 +166,7 @@ defmodule PortfolioWeb.Components.Blockquote do
   defp blockquote_icon(%{name: "hero-quote"} = assigns) do
     ~H"""
     <svg
-      class={["w-8 h-8", @class]}
+      class={["h-8 w-8", @class]}
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
       viewBox="0 0 18 14"
@@ -194,7 +181,7 @@ defmodule PortfolioWeb.Components.Blockquote do
     <.icon
       :if={!is_nil(@name)}
       name={@name}
-      class={Enum.reject(@class, &is_nil(&1)) |> Enum.join(" ")}
+      class={Enum.reject(@class, &is_nil(&1)) |> Enum.join("  ")}
     />
     """
   end

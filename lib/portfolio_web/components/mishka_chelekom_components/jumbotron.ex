@@ -105,14 +105,7 @@ defmodule PortfolioWeb.Components.Jumbotron do
     ~H"""
     <div
       id={@id}
-      class={[
-        space_class(@space),
-        border_class(@border_size, @border_position, @variant),
-        color_variant(@variant, @color),
-        padding_size(@padding),
-        @font_weight,
-        @class
-      ]}
+      class={[space_class(@space), border_class(@border_size, @border_position, @variant), color_variant(@variant, @color), padding_size(@padding), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

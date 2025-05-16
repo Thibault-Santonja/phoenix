@@ -158,30 +158,17 @@ defmodule PortfolioWeb.Components.Navbar do
     <nav
       id={@id}
       role="navigation"
-      class={[
-        "relative",
-        "[&.show-nav-menu_.nav-menu]:block [&.show-nav-menu_.nav-menu]:opacity-100",
-        border_class(@border, @variant),
-        content_position(@content_position),
-        color_variant(@variant, @color),
-        rounded_size(@rounded),
-        padding_size(@padding),
-        text_position(@text_position),
-        maximum_width(@max_width),
-        space_class(@space),
-        @font_weight,
-        @class
-      ]}
+      class={["relative", "[&.show-nav-menu_.nav-menu]:block [&.show-nav-menu_.nav-menu]:opacity-100", border_class(@border, @variant), content_position(@content_position), color_variant(@variant, @color), rounded_size(@rounded), padding_size(@padding), text_position(@text_position), maximum_width(@max_width), space_class(@space), @font_weight, @class]}
       {@rest}
     >
-      <div class={["nav-wrapper md:flex items-center gap-2 md:gap-5", @nav_wrapper_class]}>
+      <div class={["nav-wrapper items-center gap-2 md:flex md:gap-5", @nav_wrapper_class]}>
         <div :if={@start_content != [] and !is_nil(@start_content)} class={@start_content[:class]}>
           {render_slot(@start_content)}
         </div>
         <.link
           :if={!is_nil(@link)}
           navigate={@link}
-          class={["flex items-center space-x-3 rtl:space-x-reverse mb-5 md:mb-0", @link_class]}
+          class={["mb-5 flex items-center space-x-3 rtl:space-x-reverse md:mb-0", @link_class]}
         >
           <img :if={!is_nil(@image)} src={@image} class={@image_class} alt={gettext("Logo")} />
           <h1 :if={!is_nil(@name)} class="text-xl font-semibold">
@@ -192,16 +179,12 @@ defmodule PortfolioWeb.Components.Navbar do
         <div :if={!is_nil(@list) && length(@list) > 0} class={["w-auto", @list_wrapper_class]}>
           <ul
             role="menubar"
-            class={["flex flex-wrap md:flex-nowrap gap-4", @relative && "relative", @list_class]}
+            class={["flex flex-wrap gap-4 md:flex-nowrap", @relative && "relative", @list_class]}
           >
             <li
               :for={list <- @list}
               role="none"
-              class={[
-                "inline-flex items-center",
-                list[:icon_position] == "end" && "flex-row-reverse",
-                list[:class]
-              ]}
+              class={["inline-flex items-center", list[:icon_position] == "end" && "flex-row-reverse", list[:class]]}
             >
               <.icon :if={list[:icon]} name={list[:icon]} class={["list-icon", list[:icon_class]]} />
               {render_slot(list)}

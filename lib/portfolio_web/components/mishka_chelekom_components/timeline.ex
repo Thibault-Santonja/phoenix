@@ -110,11 +110,7 @@ defmodule PortfolioWeb.Components.Timeline do
     ~H"""
     <div
       role="list"
-      class={[
-        "timeline-horizontal items-center sm:flex px-5 lg:px-0",
-        color_class(@color),
-        @class
-      ]}
+      class={["timeline-horizontal items-center px-5 sm:flex lg:px-0", color_class(@color), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -126,12 +122,7 @@ defmodule PortfolioWeb.Components.Timeline do
     ~H"""
     <div
       role="list"
-      class={[
-        color_class(@color),
-        @gapped_sections && "[&_.timeline-bullet-wrapper]:items-center",
-        @hide_last_line && "[&_.timeline-section:last-child_.timeline-vertical-line]:after:hidden",
-        @class
-      ]}
+      class={[color_class(@color), @gapped_sections && "[&_.timeline-bullet-wrapper]:items-center", @hide_last_line && "after:[&_.timeline-section:last-child_.timeline-vertical-line]:hidden", @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -233,21 +224,9 @@ defmodule PortfolioWeb.Components.Timeline do
 
   def timeline_section(%{horizontal: true} = assigns) do
     ~H"""
-    <div
-      id={@id}
-      role="listitem"
-      class={[
-        "timeline-section relative mb-6 sm:mb-0",
-        @class
-      ]}
-      {@rest}
-    >
+    <div id={@id} role="listitem" class={["timeline-section relative mb-6 sm:mb-0", @class]} {@rest}>
       <div :if={!@image} class={["flex items-center", @bullet_wrapper_Class]}>
-        <div class={[
-          "timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0",
-          bullet_size(@size),
-          @bullet_class
-        ]}>
+        <div class={["timeline-bullet z-10 flex shrink-0 items-center justify-center rounded-full", bullet_size(@size), @bullet_class]}>
           <.icon
             :if={@bullet_icon}
             name={@bullet_icon}
@@ -255,35 +234,21 @@ defmodule PortfolioWeb.Components.Timeline do
             aria-hidden="true"
           />
         </div>
-        <div class={[
-          "timeline-horizontal-line hidden sm:flex w-full",
-          line_size(@line_size, @horizontal),
-          line_style(@line_style, @horizontal),
-          @line_class
-        ]}>
+        <div class={["timeline-horizontal-line hidden w-full sm:flex", line_size(@line_size, @horizontal), line_style(@line_style, @horizontal), @line_class]}>
         </div>
       </div>
 
       <div :if={@image} class={["flex items-center", @bullet_wrapper_Class]}>
-        <div class={[
-          "timeline-image-wrapper z-10 shrink-0",
-          bullet_size(@size),
-          @bullet_class
-        ]}>
+        <div class={["timeline-image-wrapper z-10 shrink-0", bullet_size(@size), @bullet_class]}>
           <img class={["rounded-full shadow-md", @image_class]} src={@image} alt={@image} />
         </div>
-        <div class={[
-          "timeline-horizontal-line hidden sm:flex w-full",
-          line_size(@line_size, @horizontal),
-          line_style(@line_style, @horizontal),
-          @line_class
-        ]}>
+        <div class={["timeline-horizontal-line hidden w-full sm:flex", line_size(@line_size, @horizontal), line_style(@line_style, @horizontal), @line_class]}>
         </div>
       </div>
 
       <div class={["mt-3 sm:pe-5", @content_class]}>
-        <h3 :if={@title} class={["text-lg font-semibold mb-2", @title_class]}>{@title}</h3>
-        <time :if={@time} class={["block mb-3 text-xs font-normal leading-none", @time_class]}>
+        <h3 :if={@title} class={["mb-2 text-lg font-semibold", @title_class]}>{@title}</h3>
+        <time :if={@time} class={["mb-3 block text-xs font-normal leading-none", @time_class]}>
           {@time}
         </time>
         <p :if={@description} class={@description_class}>{@description}</p>
@@ -299,31 +264,15 @@ defmodule PortfolioWeb.Components.Timeline do
     <div
       id={@id}
       role="listitem"
-      class={[
-        "timeline-section flex gap-x-3 [&_.timeline-vertical-line]:after:top-3",
-        @class
-      ]}
+      class={["timeline-section flex gap-x-3 after:[&_.timeline-vertical-line]:top-3", @class]}
       {@rest}
     >
       <div
         :if={!@image}
-        class={[
-          "timeline-vertical-line relative after:absolute",
-          "after:bottom-0 after:start-3.5 after:-translate-x-[0.5px]",
-          line_size(@line_size, @horizontal),
-          line_style(@line_style, @horizontal),
-          @line_class
-        ]}
+        class={["timeline-vertical-line relative after:absolute", "after:start-3.5 after:-translate-x-[0.5px] after:bottom-0", line_size(@line_size, @horizontal), line_style(@line_style, @horizontal), @line_class]}
       >
-        <div class={[
-          "timeline-bullet-wrapper relative z-10 size-7 flex justify-center",
-          @bullte_wrapper_class
-        ]}>
-          <div class={[
-            "timeline-bullet rounded-full flex justify-center items-center",
-            bullet_size(@size),
-            @bullet_class
-          ]}>
+        <div class={["timeline-bullet-wrapper size-7 relative z-10 flex justify-center", @bullte_wrapper_class]}>
+          <div class={["timeline-bullet flex items-center justify-center rounded-full", bullet_size(@size), @bullet_class]}>
             <.icon
               :if={@bullet_icon}
               name={@bullet_icon}
@@ -336,28 +285,18 @@ defmodule PortfolioWeb.Components.Timeline do
 
       <div
         :if={@image}
-        class={[
-          "timeline-vertical-line relative after:absolute",
-          "after:bottom-0 after:start-1/2 after:-translate-x-[0.5px] shrink-0",
-          line_size(@line_size, @horizontal),
-          line_style(@line_style, @horizontal),
-          @line_class
-        ]}
+        class={["timeline-vertical-line relative after:absolute", "shrink-0 after:start-1/2 after:-translate-x-[0.5px] after:bottom-0", line_size(@line_size, @horizontal), line_style(@line_style, @horizontal), @line_class]}
       >
         <div class={["relative z-10", @bullte_wrapper_class]}>
-          <div class={[
-            "timeline-image-wrapper",
-            bullet_size(@size),
-            @bullet_class
-          ]}>
+          <div class={["timeline-image-wrapper", bullet_size(@size), @bullet_class]}>
             <img class={["rounded-full shadow-md", @image_class]} src={@image} alt={@image} />
           </div>
         </div>
       </div>
 
       <div class={["grow pt-0.5 pb-5", @content_class]}>
-        <h3 :if={@title} class={["text-lg font-semibold mb-2", @title_class]}>{@title}</h3>
-        <time :if={@time} class={["block mb-3 text-[12px] font-normal leading-none", @time_class]}>
+        <h3 :if={@title} class={["mb-2 text-lg font-semibold", @title_class]}>{@title}</h3>
+        <time :if={@time} class={["text-[12px] mb-3 block font-normal leading-none", @time_class]}>
           {@time}
         </time>
         <p :if={@description} class={@description_class}>{@description}</p>

@@ -52,16 +52,7 @@ defmodule PortfolioWeb.Components.Typography do
   @spec h1(map()) :: Phoenix.LiveView.Rendered.t()
   def h1(assigns) do
     ~H"""
-    <h1
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <h1 id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </h1>
     """
@@ -106,16 +97,7 @@ defmodule PortfolioWeb.Components.Typography do
   @spec h2(map()) :: Phoenix.LiveView.Rendered.t()
   def h2(assigns) do
     ~H"""
-    <h2
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <h2 id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </h2>
     """
@@ -160,16 +142,7 @@ defmodule PortfolioWeb.Components.Typography do
   @doc type: :component
   def h3(assigns) do
     ~H"""
-    <h3
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <h3 id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </h3>
     """
@@ -213,16 +186,7 @@ defmodule PortfolioWeb.Components.Typography do
   @doc type: :component
   def h4(assigns) do
     ~H"""
-    <h4
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <h4 id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </h4>
     """
@@ -266,16 +230,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def h5(assigns) do
     ~H"""
-    <h5
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <h5 id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </h5>
     """
@@ -319,16 +274,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def h6(assigns) do
     ~H"""
-    <h6
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <h6 id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </h6>
     """
@@ -374,16 +320,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def p(assigns) do
     ~H"""
-    <p
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <p id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </p>
     """
@@ -430,16 +367,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def strong(assigns) do
     ~H"""
-    <strong
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <strong id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </strong>
     """
@@ -490,16 +418,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def em(assigns) do
     ~H"""
-    <em
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <em id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </em>
     """
@@ -546,16 +465,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def dl(assigns) do
     ~H"""
-    <dl
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <dl id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </dl>
     """
@@ -600,16 +510,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def dt(assigns) do
     ~H"""
-    <dt
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <dt id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </dt>
     """
@@ -658,16 +559,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def dd(assigns) do
     ~H"""
-    <dd
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <dd id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </dd>
     """
@@ -725,16 +617,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def figure(assigns) do
     ~H"""
-    <figure
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <figure id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </figure>
     """
@@ -787,16 +670,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def figcaption(assigns) do
     ~H"""
-    <figcaption
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <figcaption id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </figcaption>
     """
@@ -843,16 +717,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def abbr(assigns) do
     ~H"""
-    <abbr
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <abbr id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </abbr>
     """
@@ -898,16 +763,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def mark(assigns) do
     ~H"""
-    <mark
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <mark id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </mark>
     """
@@ -951,16 +807,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def small(assigns) do
     ~H"""
-    <small
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <small id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </small>
     """
@@ -1002,16 +849,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def s(assigns) do
     ~H"""
-    <s
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <s id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </s>
     """
@@ -1054,16 +892,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def u(assigns) do
     ~H"""
-    <u
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <u id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </u>
     """
@@ -1109,16 +938,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def cite(assigns) do
     ~H"""
-    <cite
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <cite id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </cite>
     """
@@ -1161,16 +981,7 @@ defmodule PortfolioWeb.Components.Typography do
 
   def del(assigns) do
     ~H"""
-    <del
-      id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <del id={@id} class={[color(@color), size_class(@size), @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </del>
     """

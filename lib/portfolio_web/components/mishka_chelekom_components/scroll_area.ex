@@ -52,15 +52,11 @@ defmodule PortfolioWeb.Components.ScrollArea do
       phx-hook="ScrollArea"
       phx-update="replace"
       role="region"
-      class={["scroll-area-wrapper relative overflow-hidden group h-fit", @width, @class]}
+      class={["scroll-area-wrapper group relative h-fit overflow-hidden", @width, @class]}
       {@rest}
     >
       <div
-        class={[
-          "w-full overflow-auto relative scroll-viewport focus:outline-none",
-          "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-          @height
-        ]}
+        class={["scroll-viewport relative w-full overflow-auto focus:outline-none", "[scrollbar-width:none] :[&:-webkit-scrollbar]:hidden", @height]}
         tabindex="0"
       >
         <div class={["scroll-content", padding_size(@padding), @content_class]}>
@@ -69,25 +65,17 @@ defmodule PortfolioWeb.Components.ScrollArea do
       </div>
 
       <div
-        class={[
-          "absolute right-0 top-0 h-full bg-black/5 rounded-lg scrollbar-y transition-all duration-400",
-          custom_scrollbars_visibility(@type, @vertical),
-          @scrollbar_width
-        ]}
+        class={["bg-black/5 scrollbar-y duration-400 absolute top-0 right-0 h-full rounded-lg transition-all", custom_scrollbars_visibility(@type, @vertical), @scrollbar_width]}
         aria-hidden="true"
       >
-        <div class="absolute w-full bg-black/40 h-[20%] rounded-lg thumb-y"></div>
+        <div class="bg-black/40 h-[20%] thumb-y absolute w-full rounded-lg"></div>
       </div>
 
       <div
-        class={[
-          "absolute left-0 bottom-0 w-full bg-black/5 rounded-lg transition-all duration-400 scrollbar-x",
-          custom_scrollbars_visibility(@type, @horizontal),
-          @scrollbar_height
-        ]}
+        class={["bg-black/5 duration-400 scrollbar-x absolute bottom-0 left-0 w-full rounded-lg transition-all", custom_scrollbars_visibility(@type, @horizontal), @scrollbar_height]}
         aria-hidden="true"
       >
-        <div class="absolute h-full bg-black/40 w-[20%] rounded-lg thumb-x"></div>
+        <div class="bg-black/40 w-[20%] thumb-x absolute h-full rounded-lg"></div>
       </div>
     </div>
     """

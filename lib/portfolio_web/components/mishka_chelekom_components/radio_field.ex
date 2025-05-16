@@ -103,26 +103,15 @@ defmodule PortfolioWeb.Components.RadioField do
 
   def radio_field(assigns) do
     ~H"""
-    <div class={[
-      color_class(@color),
-      border_class(@border),
-      size_class(@size),
-      space_class(@space),
-      @ring && "[&_.radio-field-wrapper_input]:focus-within:ring-1",
-      @reverse && "[&_.radio-field-wrapper]:flex-row-reverse",
-      @class
-    ]}>
-      <.label class={["radio-field-wrapper flex items-center w-fit", @wrapper_class]} for={@id}>
+    <div class={[color_class(@color), border_class(@border), size_class(@size), space_class(@space), @ring && "focus-within:[&_.radio-field-wrapper_input]:ring-1", @reverse && "[&_.radio-field-wrapper]:flex-row-reverse", @class]}>
+      <.label class={["radio-field-wrapper flex w-fit items-center", @wrapper_class]} for={@id}>
         <input
           type="radio"
           name={@name}
           id={@id}
           value={@value}
           checked={@checked}
-          class={[
-            "bg-white dark:bg-[#18181B] radio-input rounded-full",
-            @radio_class
-          ]}
+          class={["radio-input rounded-full bg-white dark:bg-[#18181B]", @radio_class]}
           {@rest}
         />
         <span :if={@label} class={@label_class}>{@label}</span>
@@ -213,28 +202,15 @@ defmodule PortfolioWeb.Components.RadioField do
 
   def group_radio(assigns) do
     ~H"""
-    <div class={[
-      @variation == "horizontal" && "flex flex-wrap items-center",
-      @variation == "vertical" && "flex flex-col",
-      variation_gap(@space),
-      @class
-    ]}>
+    <div class={[@variation == "horizontal" && "flex flex-wrap items-center", @variation == "vertical" && "flex flex-col", variation_gap(@space), @class]}>
       {render_slot(@inner_block)}
       <input type="hidden" name={@name} value="" disabled={@rest[:disabled]} />
       <div
         :for={{radio, index} <- Enum.with_index(@radio, 1)}
-        class={[
-          color_class(@color),
-          border_class(@border),
-          size_class(@size),
-          space_class(radio[:space] || "small"),
-          @ring && "[&_.radio-field-wrapper_input]:focus-within:ring-1",
-          @reverse && "[&_.radio-field-wrapper]:flex-row-reverse",
-          @wrapper_class
-        ]}
+        class={[color_class(@color), border_class(@border), size_class(@size), space_class(radio[:space] || "small"), @ring && "focus-within:[&_.radio-field-wrapper_input]:ring-1", @reverse && "[&_.radio-field-wrapper]:flex-row-reverse", @wrapper_class]}
       >
         <.label
-          class={["radio-field-wrapper flex items-center w-fit", @radio_wrapper_class]}
+          class={["radio-field-wrapper flex w-fit items-center", @radio_wrapper_class]}
           for={"#{@id}-#{index}"}
         >
           <input
@@ -243,7 +219,7 @@ defmodule PortfolioWeb.Components.RadioField do
             id={"#{@id}-#{index}"}
             value={radio[:value]}
             checked={radio[:checked]}
-            class={["bg-white dark:bg-[#18181B] radio-input rounded-full", @radio_class]}
+            class={["radio-input rounded-full bg-white dark:bg-[#18181B]", @radio_class]}
             {@rest}
           />
           <span class={@label_class}>{render_slot(radio)}</span>

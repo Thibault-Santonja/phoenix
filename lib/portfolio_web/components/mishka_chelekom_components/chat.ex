@@ -95,17 +95,7 @@ defmodule PortfolioWeb.Components.Chat do
       role="log"
       aria-live="polite"
       aria-atomic="false"
-      class={[
-        "flex items-start gap-3",
-        position_class(@position),
-        rounded_size(@rounded, @position),
-        border_class(@border, @variant),
-        color_variant(@variant, @color),
-        space_class(@space),
-        padding_size(@padding),
-        size_class(@size),
-        @class
-      ]}
+      class={["flex items-start gap-3", position_class(@position), rounded_size(@rounded, @position), border_class(@border, @variant), color_variant(@variant, @color), space_class(@space), padding_size(@padding), size_class(@size), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -169,11 +159,7 @@ defmodule PortfolioWeb.Components.Chat do
       id={@id}
       role="group"
       tabindex="0"
-      class={[
-        "chat-section-bubble leading-1.5 overflow-hidden",
-        @font_weight,
-        @class
-      ]}
+      class={["chat-section-bubble leading-1.5 overflow-hidden", @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

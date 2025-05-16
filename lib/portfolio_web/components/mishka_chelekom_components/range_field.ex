@@ -110,10 +110,7 @@ defmodule PortfolioWeb.Components.RangeField do
 
   def range_field(%{appearance: "default"} = assigns) do
     ~H"""
-    <div class={[
-      width_class(@width),
-      @class
-    ]}>
+    <div class={[width_class(@width), @class]}>
       <.label for={@id}>{@label}</.label>
       <div class="relative mb-8">
         <input
@@ -127,11 +124,7 @@ defmodule PortfolioWeb.Components.RangeField do
         <span
           :for={{range_value, index} <- Enum.with_index(@range_value, 1)}
           id={"#{@id}-value-#{index}"}
-          class={[
-            "absolute block -bottom-6 text-sm",
-            value_position(range_value[:position]),
-            range_value[:class]
-          ]}
+          class={["absolute -bottom-6 block text-sm", value_position(range_value[:position]), range_value[:class]]}
         >
           {render_slot(range_value)}
         </span>
@@ -143,12 +136,7 @@ defmodule PortfolioWeb.Components.RangeField do
 
   def range_field(assigns) do
     ~H"""
-    <div class={[
-      color_class(@appearance, @color),
-      size_class(@size),
-      width_class(@width),
-      @class
-    ]}>
+    <div class={[color_class(@appearance, @color), size_class(@size), width_class(@width), @class]}>
       <.label for={@id}>{@label}</.label>
       <div class="relative mb-8">
         <input
@@ -156,30 +144,13 @@ defmodule PortfolioWeb.Components.RangeField do
           value={@value}
           name={@name}
           id={@id}
-          class={[
-            "range-field bg-transparent cursor-pointer appearance-none disabled:opacity-50",
-            "disabled:pointer-events-none focus:outline-none",
-            "[&::-webkit-slider-runnable-track]:w-full [&::-webkit-slider-thumb]:rounded-full",
-            "[&::-webkit-slider-runnable-track]:bg-[#DDDDDD] dark:[&::-webkit-slider-runnable-track]:bg-[#4B4B4B]",
-            "[&::-webkit-slider-thumb]:bg-[#DDDDDD] dark:[&::-webkit-slider-thumb]:bg-[#4B4B4B]",
-            "[&::-webkit-slider-thumb]:-mt-0.5 [&::-webkit-slider-thumb]:appearance-none",
-            "[&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-200 [&::-webkit-slider-thumb]:ease-in-out",
-            "[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:bg-white",
-            "[&::-moz-range-thumb]:border-4 [&::-moz-range-thumb]:rounded-full",
-            "[&::-moz-range-thumb]:transition-all [&::-moz-range-thumb]:duration-200 [&::-moz-range-thumb]:ease-in-out",
-            "[&::-webkit-slider-runnable-track]:rounded-full [&::-moz-range-track]:w-full",
-            "[&::-moz-range-track]:bg-[#e6e6e6] [&::-moz-range-track]:rounded-full"
-          ]}
+          class={["range-field cursor-pointer appearance-none bg-transparent disabled:opacity-50", "focus:outline-none disabled:pointer-events-none", ":[&:-webkit-slider-runnable-track]:w-full :[&:-webkit-slider-thumb]:rounded-full", ":[&:-webkit-slider-runnable-track]:bg-[#DDDDDD] :dark:[&:-webkit-slider-runnable-track]:bg-[#4B4B4B]", ":[&:-webkit-slider-thumb]:bg-[#DDDDDD] :dark:[&:-webkit-slider-thumb]:bg-[#4B4B4B]", ":[&:-webkit-slider-thumb]:-mt-0.5 :[&:-webkit-slider-thumb]:appearance-none", ":[&:-webkit-slider-thumb]:transition-all :[&:-webkit-slider-thumb]:duration-200 :[&:-webkit-slider-thumb]:ease-in-out", ":[&:-moz-range-thumb]:appearance-none :[&:-moz-range-thumb]:bg-white", ":[&:-moz-range-thumb]:border-4 :[&:-moz-range-thumb]:rounded-full", ":[&:-moz-range-thumb]:transition-all :[&:-moz-range-thumb]:duration-200 :[&:-moz-range-thumb]:ease-in-out", ":[&:-webkit-slider-runnable-track]:rounded-full :[&:-moz-range-track]:w-full", ":[&:-moz-range-track]:bg-[#e6e6e6] :[&:-moz-range-track]:rounded-full"]}
           {@rest}
         />
         <span
           :for={{range_value, index} <- Enum.with_index(@range_value, 1)}
           id={"#{@id}-value-#{index}"}
-          class={[
-            "absolute block -bottom-6 text-sm",
-            value_position(range_value[:position]),
-            range_value[:class]
-          ]}
+          class={["absolute -bottom-6 block text-sm", value_position(range_value[:position]), range_value[:class]]}
         >
           {render_slot(range_value)}
         </span>

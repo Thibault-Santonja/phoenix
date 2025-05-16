@@ -167,21 +167,7 @@ defmodule PortfolioWeb.Components.MegaMenu do
           transition: "duration-100"
         )
       }
-      class={[
-        "[&>.mega-menu-content]:invisible [&>.mega-menu-content]:opacity-0",
-        "[&>.mega-menu-content.show-mega-menu]:visible [&>.mega-menu-content.show-mega-menu]:opacity-100",
-        !@clickable && tirgger_mega_menu(),
-        color_variant(@variant, @color),
-        padding_size(@padding),
-        rounded_size(@rounded),
-        width_size(@width),
-        border_class(@border, @variant),
-        top_gap(@top_gap),
-        space_class(@space),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={["[&>.mega-menu-content]:invisible [&>.mega-menu-content]:opacity-0", "[&>.mega-menu-content.show-mega-menu]:visible [&>.mega-menu-content.show-mega-menu]:opacity-100", !@clickable && tirgger_mega_menu(), color_variant(@variant, @color), padding_size(@padding), rounded_size(@rounded), width_size(@width), border_class(@border, @variant), top_gap(@top_gap), space_class(@space), size_class(@size), @font_weight, @class]}
       role="navigation"
       {@rest}
     >
@@ -199,7 +185,7 @@ defmodule PortfolioWeb.Components.MegaMenu do
       <div
         :if={@trigger}
         phx-click={@id && JS.exec("phx-open-mega", to: "##{@id}")}
-        class={["cursor-pointer mega-menu-trigger", @trigger[:class]]}
+        class={["mega-menu-trigger cursor-pointer", @trigger[:class]]}
       >
         {render_slot(@trigger)}
       </div>
@@ -213,11 +199,7 @@ defmodule PortfolioWeb.Components.MegaMenu do
               transition: "duration-300"
             )
         }
-        class={[
-          "mega-menu-content inset-x-0 top-full absolute z-20 transition-all ease-in-out delay-100 duratio-500 w-full",
-          "invisible opacity-0",
-          @content_class
-        ]}
+        class={["mega-menu-content duratio-500 absolute inset-x-0 top-full z-20 w-full transition-all delay-100 ease-in-out", "invisible opacity-0", @content_class]}
         role="menu"
       >
         {render_slot(@inner_block)}

@@ -98,12 +98,10 @@ defmodule PortfolioWeb.Components.List do
     <.ul {assigns}>
       <.li
         :for={item <- @item}
-        class={
-          Enum.join(["[&_.list-content]:flex [&_.list-content]:items-center", item[:class]], " ")
-        }
+        class={Enum.join(["[&_.list-content]:flex [&_.list-content]:items-center", item[:class]], "  ")}
         {item}
       >
-        <div :if={!is_nil(Map.get(item, :title))} class="font-semibold me-2">
+        <div :if={!is_nil(Map.get(item, :title))} class="me-2 font-semibold">
           {item.title}
         </div>
         {render_slot(item)}
@@ -157,21 +155,11 @@ defmodule PortfolioWeb.Components.List do
   @spec li(map()) :: Phoenix.LiveView.Rendered.t()
   def li(assigns) do
     ~H"""
-    <li
-      id={@id}
-      class={[
-        padding_size(@padding),
-        @class
-      ]}
-      {@rest}
-    >
-      <div class={[
-        "flex items-center gap-2 w-full",
-        content_position(@position)
-      ]}>
+    <li id={@id} class={[padding_size(@padding), @class]} {@rest}>
+      <div class={["flex w-full items-center gap-2", content_position(@position)]}>
         <.icon :if={!is_nil(@icon)} name={@icon} class={@icon_class} />
         <span :if={is_integer(@count)}>{@count}{@count_separator}</span>
-        <div class={["w-full list-content", @content_class]}>
+        <div class={["list-content w-full", @content_class]}>
           {render_slot(@inner_block)}
         </div>
       </div>
@@ -231,18 +219,7 @@ defmodule PortfolioWeb.Components.List do
     ~H"""
     <ul
       id={@id}
-      class={[
-        "[&.list-decimal]:ps-5 [&.list-disc]:ps-5",
-        color_variant(@variant, @color, @hoverable),
-        border_class(@border, @variant),
-        rounded_size(@rounded),
-        size_class(@size),
-        width_class(@width),
-        variant_space(@space, @variant),
-        @style,
-        @font_weight,
-        @class
-      ]}
+      class={["[&.list-decimal]:ps-5 [&.list-disc]:ps-5", color_variant(@variant, @color, @hoverable), border_class(@border, @variant), rounded_size(@rounded), size_class(@size), width_class(@width), variant_space(@space, @variant), @style, @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -299,17 +276,7 @@ defmodule PortfolioWeb.Components.List do
     ~H"""
     <ol
       id={@id}
-      class={[
-        "list-decimal [&.list-decimal]:ps-5 [&.list-disc]:ps-5",
-        color_variant(@variant, @color, @hoverable),
-        border_class(@border, @variant),
-        size_class(@size),
-        rounded_size(@rounded),
-        width_class(@width),
-        variant_space(@space, @variant),
-        @font_weight,
-        @class
-      ]}
+      class={["[&.list-decimal]:ps-5 [&.list-disc]:ps-5 list-decimal", color_variant(@variant, @color, @hoverable), border_class(@border, @variant), size_class(@size), rounded_size(@rounded), width_class(@width), variant_space(@space, @variant), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -367,18 +334,7 @@ defmodule PortfolioWeb.Components.List do
     ~H"""
     <ul
       id={@id}
-      class={[
-        "overflow-hidden",
-        rounded_size(@rounded),
-        variant_space(@space, @variant),
-        padding_size(@padding),
-        width_class(@width),
-        border_class(@border, @variant),
-        size_class(@size),
-        color_variant(@variant, @color, @hoverable),
-        @font_weight,
-        @class
-      ]}
+      class={["overflow-hidden", rounded_size(@rounded), variant_space(@space, @variant), padding_size(@padding), width_class(@width), border_class(@border, @variant), size_class(@size), color_variant(@variant, @color, @hoverable), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

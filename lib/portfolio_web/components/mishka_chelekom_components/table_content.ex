@@ -109,18 +109,11 @@ defmodule PortfolioWeb.Components.TableContent do
       phx-mounted={@animated && JS.add_class("scroll-smooth", to: "html")}
       role="navigation"
       aria-labelledby={@title && @id && "#{@id}-title"}
-      class={[
-        color_variant(@variant, @color),
-        padding_size(@padding),
-        rounded_size(@rounded),
-        border_class(@border, @variant),
-        space_size(@space),
-        size_class(@size)
-      ]}
+      class={[color_variant(@variant, @color), padding_size(@padding), rounded_size(@rounded), border_class(@border, @variant), space_size(@space), size_class(@size)]}
       {@rest}
     >
       <h5
-        class={["font-semibold text-sm leading-6", @title_class]}
+        class={["text-sm font-semibold leading-6", @title_class]}
         id={@title && @id && "#{@id}-title"}
       >
         {@title}
@@ -128,18 +121,10 @@ defmodule PortfolioWeb.Components.TableContent do
 
       <div
         :for={item <- @item}
-        class={[
-          "content-item",
-          item[:active] && "font-bold",
-          item[:font_weight],
-          item[:class]
-        ]}
+        class={["content-item", item[:active] && "font-bold", item[:font_weight], item[:class]]}
       >
         <div :if={!is_nil(item[:title])} class={item[:title_class]}>{item[:title]}</div>
-        <div class={[
-          "flex items-center transition-all hover:font-bold hover:opacity-90",
-          item[:wrapper_class]
-        ]}>
+        <div class={["flex items-center transition-all hover:font-bold hover:opacity-90", item[:wrapper_class]]}>
           <.icon
             :if={!is_nil(item[:icon])}
             name={item[:icon]}
@@ -203,15 +188,7 @@ defmodule PortfolioWeb.Components.TableContent do
 
   def content_wrapper(assigns) do
     ~H"""
-    <div
-      id={@id}
-      class={[
-        "content-wrapper",
-        @font_weight,
-        @class
-      ]}
-      {@rest}
-    >
+    <div id={@id} class={["content-wrapper", @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -278,19 +255,11 @@ defmodule PortfolioWeb.Components.TableContent do
       id={@id}
       role="listitem"
       aria-current={@active && "true"}
-      class={[
-        "content-item",
-        @active && "font-bold",
-        @font_weight,
-        @class
-      ]}
+      class={["content-item", @active && "font-bold", @font_weight, @class]}
       {@rest}
     >
       <div :if={!is_nil(@title)} class={@title_class}>{@title}</div>
-      <div class={[
-        "flex items-center transition-all hover:font-bold hover:opacity-90",
-        @wrapper_content_class
-      ]}>
+      <div class={["flex items-center transition-all hover:font-bold hover:opacity-90", @wrapper_content_class]}>
         <.icon
           :if={!is_nil(@icon)}
           name={@icon}

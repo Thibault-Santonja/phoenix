@@ -96,13 +96,7 @@ defmodule PortfolioWeb.Components.Drawer do
       id={@id}
       phx-mounted={@show && show_drawer(@on_show, @id, @position)}
       phx-remove={hide_drawer(@id, @position)}
-      class={[
-        "fixed z-50 transition-transform",
-        "[&:not(.drawer-showed)_.drawer-overlay]:opacity-0 [&.drawer-showed_.drawer-overlay]:opacity-100",
-        translate_position(@position),
-        position_class(@position),
-        @class
-      ]}
+      class={["fixed z-50 transition-transform", "[&:not(.drawer-showed)_.drawer-overlay]:opacity-0 [&.drawer-showed_.drawer-overlay]:opacity-100", translate_position(@position), position_class(@position), @class]}
       tabindex="-1"
       role="dialog"
       aria-modal="true"
@@ -111,10 +105,7 @@ defmodule PortfolioWeb.Components.Drawer do
       {@rest}
     >
       <div
-        class={[
-          "fixed bg-black/60 inset-0 -z-10 transition-all duration-[0.4s] delay-[0.1s] ease-in-out drawer-overlay",
-          @overlay_class
-        ]}
+        class={["bg-black/60 duration-[0.4s] delay-[0.1s] drawer-overlay fixed inset-0 -z-10 transition-all ease-in-out", @overlay_class]}
         role="presentation"
         aria-hidden="true"
       >
@@ -124,18 +115,11 @@ defmodule PortfolioWeb.Components.Drawer do
         phx-click-away={hide_drawer(@on_hide_away, @id, @position)}
         phx-window-keydown={hide_drawer(@on_hide, @id, @position)}
         phx-key="escape"
-        class={[
-          "p-2 overflow-y-auto",
-          @position in ["left", "right"] && "h-full",
-          size_class(@size, @position),
-          border_class(@border, @position, @variant),
-          color_variant(@variant, @color),
-          @wrapper_class
-        ]}
+        class={["overflow-y-auto p-2", @position in ["left", "right"] && "h-full", size_class(@size, @position), border_class(@border, @position, @variant), color_variant(@variant, @color), @wrapper_class]}
         tabindex="0"
         role="document"
       >
-        <div class="flex flex-row-reverse justify-between items-center gap-5 mb-2">
+        <div class="mb-2 flex flex-row-reverse items-center justify-between gap-5">
           <button
             type="button"
             phx-click={JS.exec(@on_hide, "phx-remove", to: "##{@id}")}

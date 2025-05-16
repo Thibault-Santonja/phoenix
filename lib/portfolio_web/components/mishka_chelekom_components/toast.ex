@@ -129,34 +129,11 @@ defmodule PortfolioWeb.Components.Toast do
       id={@id}
       aria-atomic="true"
       tabindex="0"
-      class={[
-        "overflow-hidden leading-5",
-        @fixed && "fixed",
-        width_class(@width),
-        rounded_size(@rounded),
-        border_class(@border, @variant),
-        color_variant(@variant, @color),
-        position_class(@horizontal_space, @horizontal),
-        vertical_position(@vertical_space, @vertical),
-        @font_weight,
-        @z_index,
-        @class
-      ]}
+      class={["overflow-hidden leading-5", @fixed && "fixed", width_class(@width), rounded_size(@rounded), border_class(@border, @variant), color_variant(@variant, @color), position_class(@horizontal_space, @horizontal), vertical_position(@vertical_space, @vertical), @font_weight, @z_index, @class]}
       {@rest}
     >
-      <div class={[
-        "toast-content-wrapper relative",
-        "before:block before:absolute before:inset-y-0 before:rounded-full before:my-1",
-        content_border(@content_border),
-        @content_border != "none" && boder_position(@border_position),
-        @wrapper_class
-      ]}>
-        <div class={[
-          "flex gap-2 items-center justify-between",
-          row_direction(@row_direction),
-          padding_size(@padding),
-          @content_wrapper_class
-        ]}>
+      <div class={["toast-content-wrapper relative", "before:absolute before:inset-y-0 before:my-1 before:block before:rounded-full", content_border(@content_border), @content_border != "none" && boder_position(@border_position), @wrapper_class]}>
+        <div class={["flex items-center justify-between gap-2", row_direction(@row_direction), padding_size(@padding), @content_wrapper_class]}>
           <div class={[space_class(@space), @content_class]}>
             {render_slot(@inner_block)}
           </div>
@@ -249,14 +226,7 @@ defmodule PortfolioWeb.Components.Toast do
     <div
       id={@id}
       role="region"
-      class={[
-        "fixed",
-        space_class(@space),
-        position_class(@horizontal_space, @horizontal),
-        vertical_position(@vertical_space, @vertical),
-        @z_index,
-        @class
-      ]}
+      class={["fixed", space_class(@space), position_class(@horizontal_space, @horizontal), vertical_position(@vertical_space, @vertical), @z_index, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -295,11 +265,7 @@ defmodule PortfolioWeb.Components.Toast do
     >
       <.icon
         name="hero-x-mark-solid"
-        class={[
-          "toast-icon opacity-80 group-hover:opacity-70",
-          dismiss_size(@size),
-          @icon_class
-        ]}
+        class={["toast-icon opacity-80 group-hover:opacity-70", dismiss_size(@size), @icon_class]}
       />
     </button>
     """

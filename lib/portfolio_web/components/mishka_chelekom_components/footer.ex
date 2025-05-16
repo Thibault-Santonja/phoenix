@@ -85,17 +85,7 @@ defmodule PortfolioWeb.Components.Footer do
     ~H"""
     <footer
       id={@id}
-      class={[
-        border_class(@border, @variant),
-        color_variant(@variant, @color),
-        rounded_size(@rounded),
-        padding_size(@padding),
-        text_position(@text_position),
-        maximum_width(@max_width),
-        space_class(@space),
-        @font_weight,
-        @class
-      ]}
+      class={[border_class(@border, @variant), color_variant(@variant, @color), rounded_size(@rounded), padding_size(@padding), text_position(@text_position), maximum_width(@max_width), space_class(@space), @font_weight, @class]}
       {@rest}
     >
       <div class={@wrapper_class}>
@@ -128,13 +118,7 @@ defmodule PortfolioWeb.Components.Footer do
 
   def footer_section(assigns) do
     ~H"""
-    <div class={[
-      padding_size(@padding),
-      text_position(@text_position),
-      space_class(@space),
-      @font_weight,
-      @class
-    ]}>
+    <div class={[padding_size(@padding), text_position(@text_position), space_class(@space), @font_weight, @class]}>
       {render_slot(@inner_block)}
     </div>
     """

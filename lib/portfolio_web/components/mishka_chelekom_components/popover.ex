@@ -123,20 +123,14 @@ defmodule PortfolioWeb.Components.Popover do
     <span
       :if={@inline}
       id={@id}
-      class={[
-        "inline-block relative w-fit",
-        "[&_.popover-content]:invisible [&_.popover-content]:opacity-0",
-        "[&_.popover-content.show-popover]:visible [&_.popover-content.show-popover]:opacity-100",
-        !@clickable && tirgger_popover(),
-        @class
-      ]}
+      class={["relative inline-block w-fit", "[&_.popover-content]:invisible [&_.popover-content]:opacity-0", "[&_.popover-content.show-popover]:visible [&_.popover-content.show-popover]:opacity-100", !@clickable && tirgger_popover(), @class]}
       {@rest}
     >
       <span
         :for={trigger <- @trigger}
         phx-click={show_popover(@id)}
         phx-click-away={hide_popover(@id)}
-        class={["inline-block cursor-pointer popover-trigger", trigger[:class]]}
+        class={["popover-trigger inline-block cursor-pointer", trigger[:class]]}
         role="button"
         aria-haspopup="tooltip"
         id={"#{@id}-popover-trigger"}
@@ -154,27 +148,13 @@ defmodule PortfolioWeb.Components.Popover do
         role="tooltip"
         aria-labelledby={"#{@id}-popover-trigger"}
         tabindex="-1"
-        class={[
-          "popover-content absolute z-10 w-full",
-          "transition-all ease-in-out delay-100 duratio-500",
-          space_class(@space),
-          color_variant(@variant, @color),
-          rounded_size(@rounded),
-          size_class(@size),
-          position_class(@position),
-          text_position(@text_position),
-          @variant == "bordered" || (@variant == "base" && border_class(@border)),
-          width_class(@width),
-          wrapper_padding(@padding),
-          @font_weight,
-          content[:class]
-        ]}
+        class={["popover-content absolute z-10 w-full", "duratio-500 transition-all delay-100 ease-in-out", space_class(@space), color_variant(@variant, @color), rounded_size(@rounded), size_class(@size), position_class(@position), text_position(@text_position), @variant == "bordered" || (@variant == "base" && border_class(@border)), width_class(@width), wrapper_padding(@padding), @font_weight, content[:class]]}
         {@rest}
       >
         {render_slot(content)}
         <span
           :if={@show_arrow && @variant != "bordered" && @variant != "base"}
-          class={["block absolute size-[8px] bg-inherit rotate-45 -z-[1] popover-arrow"]}
+          class={["size-[8px] -z-[1] popover-arrow absolute block rotate-45 bg-inherit"]}
         >
         </span>
       </span>
@@ -184,13 +164,7 @@ defmodule PortfolioWeb.Components.Popover do
     <div
       :if={!@inline}
       id={@id}
-      class={[
-        "relative w-fit",
-        "[&_.popover-content]:invisible [&_.popover-content]:opacity-0",
-        "[&_.popover-content.show-popover]:visible [&_.popover-content.show-popover]:opacity-100",
-        !@clickable && tirgger_popover(),
-        @class
-      ]}
+      class={["relative w-fit", "[&_.popover-content]:invisible [&_.popover-content]:opacity-0", "[&_.popover-content.show-popover]:visible [&_.popover-content.show-popover]:opacity-100", !@clickable && tirgger_popover(), @class]}
       {@rest}
     >
       <div
@@ -198,7 +172,7 @@ defmodule PortfolioWeb.Components.Popover do
         phx-click={show_popover(@id)}
         phx-click-away={hide_popover(@id)}
         id={"#{@id}-popover-trigger"}
-        class={["cursor-pointer popover-trigger", trigger[:class]]}
+        class={["popover-trigger cursor-pointer", trigger[:class]]}
         role="button"
         aria-haspopup="tooltip"
         aria-expanded="false"
@@ -214,27 +188,13 @@ defmodule PortfolioWeb.Components.Popover do
         aria-labelledby={"#{@id}-popover-trigger"}
         tabindex="-1"
         id={"#{@id}-popover-content"}
-        class={[
-          "popover-content absolute z-10 w-full",
-          "transition-all ease-in-out delay-100 duratio-500",
-          space_class(@space),
-          color_variant(@variant, @color),
-          rounded_size(@rounded),
-          size_class(@size),
-          position_class(@position),
-          text_position(@text_position),
-          @variant == "bordered" || (@variant == "base" && border_class(@border)),
-          width_class(@width),
-          wrapper_padding(@padding),
-          @font_weight,
-          content[:class]
-        ]}
+        class={["popover-content absolute z-10 w-full", "duratio-500 transition-all delay-100 ease-in-out", space_class(@space), color_variant(@variant, @color), rounded_size(@rounded), size_class(@size), position_class(@position), text_position(@text_position), @variant == "bordered" || (@variant == "base" && border_class(@border)), width_class(@width), wrapper_padding(@padding), @font_weight, content[:class]]}
         {@rest}
       >
         {render_slot(content)}
         <span
           :if={@show_arrow && @variant != "bordered" && @variant != "base"}
-          class={["block absolute size-[8px] bg-inherit rotate-45 -z-[1] popover-arrow"]}
+          class={["size-[8px] -z-[1] popover-arrow absolute block rotate-45 bg-inherit"]}
         >
         </span>
       </div>
@@ -310,7 +270,7 @@ defmodule PortfolioWeb.Components.Popover do
       id={"#{@trigger_id}-popover-trigger"}
       phx-click-away={@trigger_id && hide_popover(@trigger_id)}
       phx-click={@trigger_id && show_popover(@trigger_id)}
-      class={["inline-block cursor-pointer popover-trigger", @class]}
+      class={["popover-trigger inline-block cursor-pointer", @class]}
       role="button"
       aria-haspopup="tooltip"
       aria-expanded="false"
@@ -329,7 +289,7 @@ defmodule PortfolioWeb.Components.Popover do
       id={"#{@trigger_id}-popover-trigger"}
       phx-click-away={@trigger_id && hide_popover(@trigger_id)}
       phx-click={@trigger_id && show_popover(@trigger_id)}
-      class={["cursor-pointer popover-trigger", @class]}
+      class={["popover-trigger cursor-pointer", @class]}
       role="button"
       aria-haspopup="tooltip"
       aria-expanded="false"
@@ -396,26 +356,12 @@ defmodule PortfolioWeb.Components.Popover do
       aria-labelledby={"#{@trigger_id}-popover-trigger"}
       tabindex="-1"
       id={"#{@trigger_id}-popover-content"}
-      class={[
-        "popover-content absolute z-10 w-full",
-        "transition-all ease-in-out delay-100 duratio-500",
-        space_class(@space),
-        color_variant(@variant, @color),
-        rounded_size(@rounded),
-        size_class(@size),
-        position_class(@position),
-        text_position(@text_position),
-        @variant == "bordered" && border_class(@border),
-        width_class(@width),
-        wrapper_padding(@padding),
-        @font_weight,
-        @class
-      ]}
+      class={["popover-content absolute z-10 w-full", "duratio-500 transition-all delay-100 ease-in-out", space_class(@space), color_variant(@variant, @color), rounded_size(@rounded), size_class(@size), position_class(@position), text_position(@text_position), @variant == "bordered" && border_class(@border), width_class(@width), wrapper_padding(@padding), @font_weight, @class]}
       {@rest}
     >
       <span
         :if={@show_arrow && @variant != "bordered" && @variant != "base"}
-        class={["block absolute size-[8px] bg-inherit rotate-45 -z-[1] popover-arrow"]}
+        class={["size-[8px] -z-[1] popover-arrow absolute block rotate-45 bg-inherit"]}
       >
       </span>
       {render_slot(@inner_block)}
@@ -430,26 +376,12 @@ defmodule PortfolioWeb.Components.Popover do
       aria-labelledby={"#{@trigger_id}-popover-trigger"}
       tabindex="-1"
       id={"#{@trigger_id}-popover-content"}
-      class={[
-        "popover-content absolute z-10 w-full",
-        "transition-all ease-in-out delay-100 duratio-500",
-        space_class(@space),
-        color_variant(@variant, @color),
-        rounded_size(@rounded),
-        size_class(@size),
-        position_class(@position),
-        text_position(@text_position),
-        @variant == "bordered" && border_class(@border),
-        width_class(@width),
-        wrapper_padding(@padding),
-        @font_weight,
-        @class
-      ]}
+      class={["popover-content absolute z-10 w-full", "duratio-500 transition-all delay-100 ease-in-out", space_class(@space), color_variant(@variant, @color), rounded_size(@rounded), size_class(@size), position_class(@position), text_position(@text_position), @variant == "bordered" && border_class(@border), width_class(@width), wrapper_padding(@padding), @font_weight, @class]}
       {@rest}
     >
       <span
         :if={@show_arrow && @variant != "bordered" && @variant != "base"}
-        class={["block absolute size-[8px] bg-inherit rotate-45 -z-[1] popover-arrow"]}
+        class={["size-[8px] -z-[1] popover-arrow absolute block rotate-45 bg-inherit"]}
       >
       </span>
       {render_slot(@inner_block)}
