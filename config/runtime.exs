@@ -42,7 +42,8 @@ if config_env() == :prod do
     check_origin: [
       "https://#{host}",
       "https://amvcc.#{host}",
-      "https://photo.#{host}"
+      "https://photo.#{host}",
+      "https://tech.#{host}"
     ],
     url: [host: host, port: 443, scheme: "https"],
     http: [

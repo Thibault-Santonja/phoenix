@@ -19,6 +19,7 @@ proxy:
     - thibaultsan.com
     - amvcc.thibaultsan.com
     - photo.thibaultsan.com
+    - tech.thibaultsan.com
   # Proxy connects to your container on port 80 by default.
   app_port: 4000
   healthcheck:
