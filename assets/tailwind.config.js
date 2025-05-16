@@ -15,10 +15,6 @@ export const theme = {
   extend: {
     colors: {
       amvcc: {
-        // base_100: "oklch(100% 0 0)",
-        // base_200: "oklch(98% 0 0)",
-        // base_300: "oklch(95% 0 0)",
-        // base_400: "oklch(90% 0 0)",
         base: {
           100: "oklch(100% 0 0)",
           200: "oklch(98% 0 0)",
@@ -57,27 +53,53 @@ export const theme = {
           content: "oklch(97% 0 0)",
         },
         primary: "oklch(85% 0.1226 119.87)",
-        pcontent: "oklch(35% 0.1226 119.87)",
         secondary: "oklch(85% 0.1156 102)",
-        scontent: "oklch(35% 0.1156 102)",
         accent: "oklch(85% 0.1453 74.18)",
-        acontent: "oklch(35% 0.1453 74.18)",
         neutral: "oklch(43% 0 0)",
-        ncontent: "oklch(98% 0 0)",
         info: "oklch(60% 0.126 221.723)",
-        icontent: "oklch(98% 0.019 200.873)",
         success: "oklch(64% 0.2 131.684)",
-        sucontent: "oklch(98% 0.031 120.757)",
         warning: "oklch(66% 0.179 58.318)",
-        wcontent: "oklch(98% 0.022 95.277)",
         error: "oklch(57% 0.245 27.325)",
-        econtent: "oklch(97% 0.013 17.38)",
+        content: {
+          primary: "oklch(35% 0.1226 119.87)",
+          secondary: "oklch(35% 0.1156 102)",
+          accent: "oklch(35% 0.1453 74.18)",
+          neutral: "oklch(98% 0 0)",
+          info: "oklch(98% 0.019 200.873)",
+          success: "oklch(98% 0.031 120.757)",
+          warning: "oklch(98% 0.022 95.277)",
+          error: "oklch(97% 0.013 17.38)",
+        },
       },
       photo: {
         primary: "oklch(0% 0 0)",
         content: {
           primary: "oklch(100% 0 0)",
         },
+      },
+      tech: {
+        base: {
+          100: "oklch(100% 0 261)",
+          200: "oklch(97% 0 262)",
+          300: "oklch(94% 0 263)",
+          content: "oklch(20% 0 264)",
+        },
+        primary: "oklch(59.435% 0.077 254.027)",
+        "primary-content": "oklch(11.887% 0.015 254.027)",
+        secondary: "oklch(69.651% 0.059 248.687)",
+        "secondary-content": "oklch(13.93% 0.011 248.687)",
+        accent: "oklch(77.464% 0.062 217.469)",
+        "accent-content": "oklch(15.492% 0.012 217.469)",
+        neutral: "oklch(45.229% 0.035 264.131)",
+        "neutral-content": "oklch(89.925% 0.016 262.749)",
+        info: "oklch(69.207% 0.062 332.664)",
+        "info-content": "oklch(13.841% 0.012 332.664)",
+        success: "oklch(76.827% 0.074 131.063)",
+        "success-content": "oklch(15.365% 0.014 131.063)",
+        warning: "oklch(85.486% 0.089 84.093)",
+        "warning-content": "oklch(17.097% 0.017 84.093)",
+        error: "oklch(60.61% 0.12 15.341)",
+        "error-content": "oklch(12.122% 0.024 15.341)",
       },
       brand: "#FD4F00",
     },
@@ -166,3 +188,6 @@ export const plugins = [
     );
   }),
 ];
+
+let { extract } = require("../deps/tailwind_formatter/assets/js");
+extract(module.exports, "../_build");

@@ -95,26 +95,13 @@ defmodule PortfolioWeb.Components.Divider do
       id={@id}
       role="separator"
       aria-orientation="vertical"
-      class={[
-        color_class(@color, @position),
-        height_class(@height),
-        border_type_class(@type, :vertical, ""),
-        size_class(@size, :vertical, @position),
-        margin_class(@margin, :vertical),
-        @class
-      ]}
+      class={[color_class(@color, @position), height_class(@height), border_type_class(@type, :vertical, ""), size_class(@size, :vertical, @position), margin_class(@margin, :vertical), @class]}
       {@rest}
     >
       <div
         :for={text <- @text}
         aria-hidden="true"
-        class={[
-          "divider-content whitespace-nowrap",
-          text[:color],
-          text[:class] || "bg-transparent",
-          text_position(:divider, @position),
-          text[:size]
-        ]}
+        class={["divider-content whitespace-nowrap", text[:color], text[:class] || "bg-transparent", text_position(:divider, @position), text[:size]]}
       >
         {render_slot(text)}
       </div>
@@ -128,27 +115,13 @@ defmodule PortfolioWeb.Components.Divider do
       id={@id}
       role="separator"
       aria-orientation="horizontal"
-      class={[
-        default_classes(@position),
-        color_class(@color, @position),
-        width_class(@width),
-        border_type_class(@type, :horizontal, @position),
-        size_class(@size, :horizontal, @position),
-        margin_class(@margin, :horizontal),
-        @class
-      ]}
+      class={[default_classes(@position), color_class(@color, @position), width_class(@width), border_type_class(@type, :horizontal, @position), size_class(@size, :horizontal, @position), margin_class(@margin, :horizontal), @class]}
       {@rest}
     >
       <div
         :for={icon <- @icon}
         aria-hidden="true"
-        class={[
-          "divider-content whitespace-nowrap",
-          icon[:size],
-          icon[:color],
-          icon[:class] || "bg-transparent",
-          text_position(:divider, @position)
-        ]}
+        class={["divider-content whitespace-nowrap", icon[:size], icon[:color], icon[:class] || "bg-transparent", text_position(:divider, @position)]}
       >
         <.icon name={icon[:name]} class={icon[:icon_class] || size_class(@size, :icon, "")} />
       </div>
@@ -156,13 +129,7 @@ defmodule PortfolioWeb.Components.Divider do
       <div
         :for={text <- @text}
         aria-hidden="true"
-        class={[
-          "divider-content whitespace-nowrap",
-          text[:color],
-          text[:class] || "bg-transparent",
-          text_position(:divider, @position),
-          text[:size]
-        ]}
+        class={["divider-content whitespace-nowrap", text[:color], text[:class] || "bg-transparent", text_position(:divider, @position), text[:size]]}
       >
         {render_slot(text)}
       </div>
@@ -240,41 +207,19 @@ defmodule PortfolioWeb.Components.Divider do
         id={@id}
         role="separator"
         aria-orientation="horizontal"
-        class={[
-          "mx-auto",
-          color_class(@color, @position),
-          width_class(@width),
-          border_type_class(@type, :horizontal, @position),
-          size_class(@size, :horizontal, @position),
-          margin_class(@margin, :horizontal),
-          @class
-        ]}
+        class={["mx-auto", color_class(@color, @position), width_class(@width), border_type_class(@type, :horizontal, @position), size_class(@size, :horizontal, @position), margin_class(@margin, :horizontal), @class]}
         {@rest}
       />
       <div
         :for={icon <- @icon}
-        class={[
-          "flex item-center justify-center absolute p-2",
-          "-translate-x-1/2 whitespace-nowrap",
-          icon[:size] || size_class(@size, :icon, ""),
-          icon[:color] || color_class(@color, @position),
-          text_position(:hr, @position),
-          icon[:class] || "bg-white"
-        ]}
+        class={["item-center absolute flex justify-center p-2", "-translate-x-1/2 whitespace-nowrap", icon[:size] || size_class(@size, :icon, ""), icon[:color] || color_class(@color, @position), text_position(:hr, @position), icon[:class] || "bg-white"]}
       >
         <.icon name={icon[:name]} class={icon[:icon_class] || ""} />
       </div>
 
       <div
         :for={text <- @text}
-        class={[
-          "flex item-center justify-center absolute p-2",
-          "-translate-x-1/2 whitespace-nowrap",
-          text[:color] || color_class(@color, @position),
-          text[:class] || "bg-white",
-          text_position(:hr, @position),
-          text[:size]
-        ]}
+        class={["item-center absolute flex justify-center p-2", "-translate-x-1/2 whitespace-nowrap", text[:color] || color_class(@color, @position), text[:class] || "bg-white", text_position(:hr, @position), text[:size]]}
       >
         {render_slot(text)}
       </div>

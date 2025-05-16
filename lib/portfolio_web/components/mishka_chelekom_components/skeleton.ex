@@ -70,14 +70,7 @@ defmodule PortfolioWeb.Components.Skeleton do
       aria-live="polite"
       aria-busy="true"
       id={@id}
-      class={[
-        rounded_size(@rounded),
-        width_class(@width),
-        height_class(@height),
-        color_class(@color),
-        @rest[:animated] && "animate-pulse",
-        @class
-      ]}
+      class={[rounded_size(@rounded), width_class(@width), height_class(@height), color_class(@color), @rest[:animated] && "animate-pulse", @class]}
       {@rest}
     >
       <span class="sr-only">{gettext("Loading...")}</span>

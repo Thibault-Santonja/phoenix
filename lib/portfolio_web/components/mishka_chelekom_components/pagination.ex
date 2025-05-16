@@ -150,16 +150,7 @@ defmodule PortfolioWeb.Components.Pagination do
     <nav
       :if={show_pagination?(@rest[:hide_one_page], @total)}
       id={@id}
-      class={[
-        default_classes(),
-        color_variant(@variant, @color),
-        border_size(@border, @variant),
-        rounded_size(@rounded),
-        size_class(@size),
-        border_class(@color),
-        (!is_nil(@rest[:grouped]) && "gap-0 grouped-pagination") || space_class(@space),
-        @class
-      ]}
+      class={[default_classes(), color_variant(@variant, @color), border_size(@border, @variant), rounded_size(@rounded), size_class(@size), border_class(@color), (!is_nil(@rest[:grouped]) && "grouped-pagination gap-0") || space_class(@space), @class]}
       {@rest}
     >
       {render_slot(@start_items)}
@@ -196,7 +187,7 @@ defmodule PortfolioWeb.Components.Pagination do
           />
         <% else %>
           <div
-            class={["pagination-seperator flex justify-center items-center", @seperator_class]}
+            class={["pagination-seperator flex items-center justify-center", @seperator_class]}
             aria-hidden="true"
           >
             <.icon
@@ -265,11 +256,7 @@ defmodule PortfolioWeb.Components.Pagination do
         end
       }
       aria-disabled={elem(@page, 0) == elem(@page, 1)}
-      class={[
-        "pagination-button",
-        elem(@page, 1) == elem(@page, 0) && "active-pagination-button",
-        @class
-      ]}
+      class={["pagination-button", elem(@page, 1) == elem(@page, 0) && "active-pagination-button", @class]}
       phx-click={
         elem(@on_action, 1)
         |> JS.push("pagination", value: Map.merge(%{action: "select", page: elem(@page, 0)}, @params))

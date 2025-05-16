@@ -71,15 +71,7 @@ defmodule PortfolioWeb.Components.FormWrapper do
       for={@for}
       as={@as}
       id={@id}
-      class={[
-        color_variant(@variant, @color),
-        padding_class(@padding),
-        rounded_size(@rounded),
-        border_class(@border, @variant),
-        space_class(@space),
-        size_class(@size),
-        @class
-      ]}
+      class={[color_variant(@variant, @color), padding_class(@padding), rounded_size(@rounded), border_class(@border, @variant), space_class(@space), size_class(@size), @class]}
       {@rest}
     >
       <div class={["wrapper-form", @form_wrapper_class]}>

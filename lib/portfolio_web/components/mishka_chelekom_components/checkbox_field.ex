@@ -101,17 +101,8 @@ defmodule PortfolioWeb.Components.CheckboxField do
 
   def checkbox_field(assigns) do
     ~H"""
-    <div class={[
-      color_class(@color),
-      rounded_size(@rounded),
-      border_class(@border),
-      size_class(@size),
-      space_class(@space),
-      @ring && "[&_.checkbox-field-wrapper_input]:focus-within:ring-1",
-      @reverse && "[&_.checkbox-field-wrapper]:flex-row-reverse",
-      @class
-    ]}>
-      <.label class={["checkbox-field-wrapper flex items-center w-fit", @wrapper_class]} for={@id}>
+    <div class={[color_class(@color), rounded_size(@rounded), border_class(@border), size_class(@size), space_class(@space), @ring && "focus-within:[&_.checkbox-field-wrapper_input]:ring-1", @reverse && "[&_.checkbox-field-wrapper]:flex-row-reverse", @class]}>
+      <.label class={["checkbox-field-wrapper flex w-fit items-center", @wrapper_class]} for={@id}>
         <%= if @value in ["true", "false"] do %>
           <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
         <% else %>
@@ -124,7 +115,7 @@ defmodule PortfolioWeb.Components.CheckboxField do
           value={@value}
           id={@id}
           checked={@checked}
-          class={["bg-white dark:bg-[#18181B] checkbox-input", @checkbox_class]}
+          class={["checkbox-input bg-white dark:bg-[#18181B]", @checkbox_class]}
           {@rest}
         />
         <span :if={@label} class={@label_class}>{@label}</span>
@@ -218,29 +209,15 @@ defmodule PortfolioWeb.Components.CheckboxField do
 
   def group_checkbox(assigns) do
     ~H"""
-    <div class={[
-      @variation == "horizontal" && "flex flex-wrap items-center",
-      @variation == "vertical" && "flex flex-col",
-      variation_gap(@space),
-      @class
-    ]}>
+    <div class={[@variation == "horizontal" && "flex flex-wrap items-center", @variation == "vertical" && "flex flex-col", variation_gap(@space), @class]}>
       {render_slot(@inner_block)}
       <input type="hidden" name={@name} value="" disabled={@rest[:disabled]} />
       <div
         :for={{checkbox, index} <- Enum.with_index(@checkbox, 1)}
-        class={[
-          color_class(@color),
-          rounded_size(@rounded),
-          border_class(@border),
-          size_class(@size),
-          space_class(checkbox[:space] || "small"),
-          @ring && "[&_.checkbox-field-wrapper_input]:focus-within:ring-1",
-          @reverse && "[&_.checkbox-field-wrapper]:flex-row-reverse",
-          @wrapper_class
-        ]}
+        class={[color_class(@color), rounded_size(@rounded), border_class(@border), size_class(@size), space_class(checkbox[:space] || "small"), @ring && "focus-within:[&_.checkbox-field-wrapper_input]:ring-1", @reverse && "[&_.checkbox-field-wrapper]:flex-row-reverse", @wrapper_class]}
       >
         <.label
-          class={["checkbox-field-wrapper flex items-center w-fit", @checkbox_wrapper_class]}
+          class={["checkbox-field-wrapper flex w-fit items-center", @checkbox_wrapper_class]}
           for={"#{@id}-#{index}"}
         >
           <input
@@ -249,7 +226,7 @@ defmodule PortfolioWeb.Components.CheckboxField do
             id={"#{@id}-#{index}"}
             value={checkbox[:value]}
             checked={checkbox[:checked]}
-            class={["bg-white dark:bg-[#18181B] checkbox-input", @checkbox_class]}
+            class={["checkbox-input bg-white dark:bg-[#18181B]", @checkbox_class]}
             {@rest}
           />
           <span class={@label_class}>{render_slot(checkbox)}</span>

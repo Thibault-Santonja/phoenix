@@ -132,53 +132,30 @@ defmodule PortfolioWeb.Components.PasswordField do
     assigns = assign(assigns, field: nil, id: assigns.id || random_id() <> "-password-field")
 
     ~H"""
-    <div class={[
-      color_variant(@variant, @color, @floating),
-      rounded_size(@rounded),
-      border_class(@border, @variant),
-      size_class(@size),
-      space_class(@space),
-      @ring && "[&_.password-field-wrapper]:focus-within:ring-[0.03rem]",
-      @class
-    ]}>
+    <div class={[color_variant(@variant, @color, @floating), rounded_size(@rounded), border_class(@border, @variant), size_class(@size), space_class(@space), @ring && "focus-within:[&_.password-field-wrapper]:ring-[0.03rem]", @class]}>
       <div :if={@description} class={@description_class}>
         {@description}
       </div>
-      <div class={[
-        "password-field-wrapper transition-all ease-in-out duration-200 w-full flex flex-nowrap",
-        @errors != [] && "password-field-error",
-        @field_wrapper_class
-      ]}>
+      <div class={["password-field-wrapper flex w-full flex-nowrap transition-all duration-200 ease-in-out", @errors != [] && "password-field-error", @field_wrapper_class]}>
         <div
           :if={@start_section}
-          class={[
-            "flex items-center justify-center shrink-0 ps-2",
-            @start_section[:class]
-          ]}
+          class={["ps-2 flex shrink-0 items-center justify-center", @start_section[:class]]}
         >
           {render_slot(@start_section)}
         </div>
-        <div class="relative w-full z-[2]">
+        <div class="z-[2] relative w-full">
           <input
             type="password"
             name={@name}
             id={@id}
             value={@value}
             placeholder=" "
-            class={[
-              "disabled:opacity-80 block w-full z-[2] focus:ring-0 placeholder:text-transparent pb-1 pt-2.5 px-2",
-              "text-[16px] sm:font-inherit appearance-none bg-transparent border-0 focus:outline-none peer",
-              @input_class
-            ]}
+            class={["z-[2] block w-full px-2 pt-2.5 pb-1 placeholder:text-transparent focus:ring-0 disabled:opacity-80", "text-[16px] peer appearance-none border-0 bg-transparent focus:outline-none sm:font-inherit", @input_class]}
             {@rest}
           />
 
           <label
-            class={[
-              "floating-label px-1 start-1 -z-[1] absolute text-xs duration-300 transform scale-75 origin-[0]",
-              variant_label_position(@floating),
-              @flaoting_label_class
-            ]}
+            class={["floating-label start-1 -z-[1] origin-[0] absolute scale-75 transform px-1 text-xs duration-300", variant_label_position(@floating), @flaoting_label_class]}
             for={@id}
           >
             {@label}
@@ -187,13 +164,13 @@ defmodule PortfolioWeb.Components.PasswordField do
 
         <div
           :if={@end_section}
-          class={["flex items-center justify-center shrink-0 pe-2", @end_section[:class]]}
+          class={["pe-2 flex shrink-0 items-center justify-center", @end_section[:class]]}
         >
           {render_slot(@end_section)}
         </div>
         <div
           :if={@show_password}
-          class={["flex items-center justify-center shrink-0 pe-2", @show_pass_class]}
+          class={["pe-2 flex shrink-0 items-center justify-center", @show_pass_class]}
         >
           <button
             class="leading-6 focus:outline-none"
@@ -216,15 +193,7 @@ defmodule PortfolioWeb.Components.PasswordField do
     assigns = assign(assigns, field: nil, id: assigns.id || random_id() <> "-password-field")
 
     ~H"""
-    <div class={[
-      color_variant(@variant, @color, @floating),
-      rounded_size(@rounded),
-      border_class(@border, @variant),
-      size_class(@size),
-      space_class(@space),
-      @ring && "[&_.password-field-wrapper]:focus-within:ring-[0.03rem]",
-      @class
-    ]}>
+    <div class={[color_variant(@variant, @color, @floating), rounded_size(@rounded), border_class(@border, @variant), size_class(@size), space_class(@space), @ring && "focus-within:[&_.password-field-wrapper]:ring-[0.03rem]", @class]}>
       <div :if={@label || @description} class={["password-label-wrapper", @description_wrapper_class]}>
         <.label :if={@label} for={@id} class={@label_class}>{@label}</.label>
         <div :if={@description} class={@description_class}>
@@ -232,17 +201,10 @@ defmodule PortfolioWeb.Components.PasswordField do
         </div>
       </div>
 
-      <div class={[
-        "password-field-wrapper overflow-hidden transition-all ease-in-out duration-200 flex items-center flex-nowrap",
-        @errors != [] && "password-field-error",
-        @field_wrapper_class
-      ]}>
+      <div class={["password-field-wrapper flex flex-nowrap items-center overflow-hidden transition-all duration-200 ease-in-out", @errors != [] && "password-field-error", @field_wrapper_class]}>
         <div
           :if={@start_section}
-          class={[
-            "flex items-center justify-center shrink-0 ps-2",
-            @start_section[:class]
-          ]}
+          class={["ps-2 flex shrink-0 items-center justify-center", @start_section[:class]]}
         >
           {render_slot(@start_section)}
         </div>
@@ -253,23 +215,19 @@ defmodule PortfolioWeb.Components.PasswordField do
           id={@id}
           value={@value}
           placeholder={@placeholder}
-          class={[
-            "flex-1 py-1 px-2 text-sm disabled:opacity-80 block w-full appearance-none",
-            "bg-transparent border-0 focus:outline-none focus:ring-0",
-            @input_class
-          ]}
+          class={["block w-full flex-1 appearance-none px-2 py-1 text-sm disabled:opacity-80", "border-0 bg-transparent focus:outline-none focus:ring-0", @input_class]}
           {@rest}
         />
 
         <div
           :if={@end_section}
-          class={["flex items-center justify-center shrink-0 pe-2", @end_section[:class]]}
+          class={["pe-2 flex shrink-0 items-center justify-center", @end_section[:class]]}
         >
           {render_slot(@end_section)}
         </div>
         <div
           :if={@show_password}
-          class={["flex items-center justify-center shrink-0 pe-2", @show_pass_class]}
+          class={["pe-2 flex shrink-0 items-center justify-center", @show_pass_class]}
         >
           <button
             class="leading-6 focus:outline-none"
@@ -294,7 +252,7 @@ defmodule PortfolioWeb.Components.PasswordField do
 
   defp label(assigns) do
     ~H"""
-    <label for={@for} class={["leading-5 font-semibold", @class]}>
+    <label for={@for} class={["font-semibold leading-5", @class]}>
       {render_slot(@inner_block)}
     </label>
     """

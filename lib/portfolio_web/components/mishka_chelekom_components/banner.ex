@@ -146,21 +146,10 @@ defmodule PortfolioWeb.Components.Banner do
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      class={[
-        "overflow-hidden fixed z-50",
-        vertical_position(@vertical_size, @vertical_position),
-        rounded_size(@rounded, @rounded_position),
-        border_class(@border, @border_position, @variant),
-        color_variant(@variant, @color),
-        position_class(@position_size, @position),
-        space_class(@space),
-        padding_size(@padding),
-        @font_weight,
-        @class
-      ]}
+      class={["fixed z-50 overflow-hidden", vertical_position(@vertical_size, @vertical_position), rounded_size(@rounded, @rounded_position), border_class(@border, @border_position, @variant), color_variant(@variant, @color), position_class(@position_size, @position), space_class(@space), padding_size(@padding), @font_weight, @class]}
       {@rest}
     >
-      <div class={["flex gap-2 items-center justify-between", @content_wrapper_class]}>
+      <div class={["flex items-center justify-between gap-2", @content_wrapper_class]}>
         {render_slot(@inner_block)}
         <.banner_dismiss
           :if={!@hide_dismiss}
@@ -199,11 +188,7 @@ defmodule PortfolioWeb.Components.Banner do
     >
       <.icon
         name="hero-x-mark-solid"
-        class={[
-          "banner-icon opacity-80 group-hover:opacity-70",
-          dismiss_size(@dismiss_size),
-          @class
-        ]}
+        class={["banner-icon opacity-80 group-hover:opacity-70", dismiss_size(@dismiss_size), @class]}
       />
     </button>
     """

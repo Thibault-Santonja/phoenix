@@ -126,15 +126,7 @@ defmodule PortfolioWeb.Components.NativeSelect do
 
   def native_select(assigns) do
     ~H"""
-    <div class={[
-      @variant != "native" && color_variant(@variant, @color),
-      rounded_size(@rounded),
-      border_class(@border, @variant),
-      size_class(@size),
-      space_class(@space),
-      @ring && "[&_.select-field]:focus-within:ring-[0.03rem]",
-      @class
-    ]}>
+    <div class={[@variant != "native" && color_variant(@variant, @color), rounded_size(@rounded), border_class(@border, @variant), size_class(@size), space_class(@space), @ring && "focus-within:[&_.select-field]:ring-[0.03rem]", @class]}>
       <div :if={@label || @description} class={["select-label-wrapper", @description_wrapper_class]}>
         <.label :if={@label} for={@id} class={@label_class}>{@label}</.label>
         <div :if={@description} class={@description_class}>
@@ -146,13 +138,7 @@ defmodule PortfolioWeb.Components.NativeSelect do
         name={@name}
         id={@id}
         multiple={@multiple}
-        class={[
-          "select-field appearance-none block w-full text-[16px] sm:font-inherit",
-          @multiple && "select-multiple-option",
-          @errors != [] && "select-field-error",
-          @min_height,
-          @select_class
-        ]}
+        class={["select-field text-[16px] block w-full appearance-none sm:font-inherit", @multiple && "select-multiple-option", @errors != [] && "select-field-error", @min_height, @select_class]}
         {@rest}
       >
         <option
@@ -222,7 +208,7 @@ defmodule PortfolioWeb.Components.NativeSelect do
 
   defp label(assigns) do
     ~H"""
-    <label for={@for} class={["leading-5 font-semibold", @class]}>
+    <label for={@for} class={["font-semibold leading-5", @class]}>
       {render_slot(@inner_block)}
     </label>
     """

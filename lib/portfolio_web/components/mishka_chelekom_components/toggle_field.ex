@@ -98,11 +98,7 @@ defmodule PortfolioWeb.Components.ToggleField do
       end)
 
     ~H"""
-    <div class={[
-      size_class(@size),
-      rounded_size(@rounded),
-      @class
-    ]}>
+    <div class={[size_class(@size), rounded_size(@rounded), @class]}>
       <div class={@label_wrapper_class}>
         <.label for={@id} class={@label_class}>{@label}</.label>
         <div :if={!is_nil(@description)} class={@description_class}>
@@ -111,9 +107,9 @@ defmodule PortfolioWeb.Components.ToggleField do
       </div>
       <label
         for={@id}
-        class={["flex items-center cursor-pointer select-none w-fit", @toggle_wrapper_class]}
+        class={["flex w-fit cursor-pointer select-none items-center", @toggle_wrapper_class]}
       >
-        <div class={["relative toggle-field-wrapper", @toggle_field_wrapper_class]}>
+        <div class={["toggle-field-wrapper relative", @toggle_field_wrapper_class]}>
           <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
           <input
             type="checkbox"
@@ -126,17 +122,9 @@ defmodule PortfolioWeb.Components.ToggleField do
             aria-checked={to_string(@checked)}
             {@rest}
           />
-          <div class={[
-            "toggle-field-circle absolute transition-all ease-in-out duration-500 bg-white",
-            "top-1 peer-checked:translate-x-full left-1",
-            @toggle_circle_class
-          ]}>
+          <div class={["toggle-field-circle absolute bg-white transition-all duration-500 ease-in-out", "top-1 left-1 peer-checked:translate-x-full", @toggle_circle_class]}>
           </div>
-          <div class={[
-            "bg-[#F4F4F4] dark:bg-[#4B4B4B] transition-all ease-in-out duration-500 toggle-field-base",
-            color_class(@color),
-            @toggle_base_class
-          ]}>
+          <div class={["bg-[#F4F4F4] toggle-field-base transition-all duration-500 ease-in-out dark:bg-[#4B4B4B]", color_class(@color), @toggle_base_class]}>
           </div>
         </div>
       </label>

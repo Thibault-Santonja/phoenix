@@ -67,13 +67,7 @@ defmodule PortfolioWeb.Components.Rating do
     <div
       id={@id}
       role="radiogroup"
-      class={[
-        "flex flex-nowrap text-[#F4F4F4] dark:text-[#4B4B4B]",
-        gap_class(@gap),
-        size_class(@size),
-        color_class(@color),
-        @class
-      ]}
+      class={["text-[#F4F4F4] flex flex-nowrap dark:text-[#4B4B4B]", gap_class(@gap), size_class(@size), color_class(@color), @class]}
       {@rest}
     >
       <%= for item <- 1..@count do %>
@@ -84,12 +78,7 @@ defmodule PortfolioWeb.Components.Rating do
             aria-checked={if item <= @select, do: "true", else: "false"}
             tabindex={if item == @select, do: "0", else: "-1"}
             aria-label={"#{item} star#{if item > 1, do: "s", else: ""}"}
-            class={[
-              "rating-button",
-              "leading-5",
-              "group",
-              "[&:has(~.rating-button:hover)_.fraction-path]:opacity-0 [&:has(~.rating-button:hover)_.full-path]:opacity-100"
-            ]}
+            class={["rating-button", "leading-5", "group", "[&:has(~.rating-button:hover)_.fraction-path]:opacity-0 [&:has(~.rating-button:hover)_.full-path]:opacity-100"]}
             phx-click={
               @on_action
               |> JS.push("rating", value: Map.merge(%{action: "select", number: item}, @params))
@@ -111,22 +100,19 @@ defmodule PortfolioWeb.Components.Rating do
                   </linearGradient>
                 </defs>
                 <path
-                  class="opacity-100 transition-all delay-100 group-hover:opacity-0 fraction-path"
+                  class="fraction-path opacity-100 transition-all delay-100 group-hover:opacity-0"
                   fill={"url(#star-fill-#{@id}-#{item})"}
                   d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
                 />
                 <path
-                  class="opacity-0 transition-all delay-100 group-hover:opacity-100 full-path"
+                  class="full-path opacity-0 transition-all delay-100 group-hover:opacity-100"
                   fill="currentColor"
                   d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
                 />
               <% else %>
                 <path
                   fill="currentColor"
-                  class={[
-                    fill_percentage >= 100 && "fill-opacity-100",
-                    fill_percentage < 100 && "fill-opacity-20"
-                  ]}
+                  class={[fill_percentage >= 100 && "fill-opacity-100", fill_percentage < 100 && "fill-opacity-20"]}
                   d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
                 />
               <% end %>
@@ -156,10 +142,7 @@ defmodule PortfolioWeb.Components.Rating do
             <% else %>
               <path
                 fill="currentColor"
-                class={[
-                  fill_percentage >= 100 && "fill-opacity-100",
-                  fill_percentage < 100 && "fill-opacity-20"
-                ]}
+                class={[fill_percentage >= 100 && "fill-opacity-100", fill_percentage < 100 && "fill-opacity-20"]}
                 d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
               />
             <% end %>

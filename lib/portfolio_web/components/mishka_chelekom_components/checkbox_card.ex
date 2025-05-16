@@ -133,19 +133,7 @@ defmodule PortfolioWeb.Components.CheckboxCard do
           for={"#{@id}-#{index}"}
           aria-checked={(checkbox[:checked] && "true") || "false"}
           aria-labelledby={"#{@id}-#{index}-label"}
-          class={[
-            "checkbox-card-wrapper flex items-start cursor-pointer",
-            "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50",
-            "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-blue-400",
-            "has-[:focus-visible]:outline-offset-[-2px] transition-all",
-            @reverse && "flex-row-reverse",
-            border_class(@border, @variant),
-            color_variant(@variant, @color),
-            rounded_size(@rounded),
-            padding_size(@padding),
-            size_class(@size),
-            @checkbox_wrapper_class
-          ]}
+          class={["checkbox-card-wrapper flex cursor-pointer items-start", "has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50", "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-blue-400", "transition-all has-[:focus-visible]:outline-offset-[-2px]", @reverse && "flex-row-reverse", border_class(@border, @variant), color_variant(@variant, @color), rounded_size(@rounded), padding_size(@padding), size_class(@size), @checkbox_wrapper_class]}
           {@rest}
         >
           <input
@@ -155,11 +143,7 @@ defmodule PortfolioWeb.Components.CheckboxCard do
             value={checkbox[:value]}
             checked={checkbox[:checked]}
             aria-describedby={"#{@id}-#{index}-description"}
-            class={[
-              "checkbox-card-input shrink-0 focus:ring-0 focus:ring-offset-0 appearance-none rounded-sm",
-              "cursor-pointer disabled:opacity-50",
-              !@show_checkbox && "opacity-0 absolute"
-            ]}
+            class={["checkbox-card-input shrink-0 appearance-none rounded-sm focus:ring-0 focus:ring-offset-0", "cursor-pointer disabled:opacity-50", !@show_checkbox && "absolute opacity-0"]}
           />
           <div
             data-part="label"
@@ -172,14 +156,11 @@ defmodule PortfolioWeb.Components.CheckboxCard do
               <.icon
                 :if={!is_nil(checkbox[:icon])}
                 name={checkbox[:icon]}
-                class={["block mx-auto", checkbox[:icon_class]]}
+                class={["mx-auto block", checkbox[:icon_class]]}
               />
               <div
                 :if={checkbox[:title]}
-                class={[
-                  "block checkbox-card-title leading-[16px] font-semibold",
-                  checkbox[:title_class]
-                ]}
+                class={["checkbox-card-title leading-[16px] block font-semibold", checkbox[:title_class]]}
               >
                 {checkbox[:title]}
               </div>
@@ -227,7 +208,7 @@ defmodule PortfolioWeb.Components.CheckboxCard do
 
   defp label(assigns) do
     ~H"""
-    <label for={@for} class={["leading-4 font-semibold", @class]}>
+    <label for={@for} class={["font-semibold leading-4", @class]}>
       {render_slot(@inner_block)}
     </label>
     """
@@ -240,7 +221,7 @@ defmodule PortfolioWeb.Components.CheckboxCard do
 
   defp error(assigns) do
     ~H"""
-    <p class="mt-3 flex items-center gap-3 text-[14px] text-rose-700">
+    <p class="text-[14px] mt-3 flex items-center gap-3 text-rose-700">
       <.icon :if={!is_nil(@icon)} name={@icon} class={["shrink-0", @error_icon_class]} /> {render_slot(
         @inner_block
       )}

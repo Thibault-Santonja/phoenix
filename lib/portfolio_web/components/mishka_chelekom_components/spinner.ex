@@ -60,12 +60,7 @@ defmodule PortfolioWeb.Components.Spinner do
     ~H"""
     <span
       id={@id}
-      class={[
-        default_class(@type),
-        size_class(@type, @size),
-        color_class(@color),
-        @class
-      ]}
+      class={[default_class(@type), size_class(@type, @size), color_class(@color), @class]}
       role="status"
       {@rest}
     >
@@ -159,18 +154,18 @@ defmodule PortfolioWeb.Components.Spinner do
   defp spinner_content(%{type: "dots"} = assigns) do
     ~H"""
     <span class="sr-only">{gettext("Loading...")}</span>
-    <span class="block rounded-full animate-bounce"></span>
-    <span class="block rounded-full animate-bounce [animation-delay:-0.2s]"></span>
-    <span class="block rounded-full animate-bounce [animation-delay:-0.4s]"></span>
+    <span class="block animate-bounce rounded-full"></span>
+    <span class="[animation-delay:-0.2s] block animate-bounce rounded-full"></span>
+    <span class="[animation-delay:-0.4s] block animate-bounce rounded-full"></span>
     """
   end
 
   defp spinner_content(%{type: "bars"} = assigns) do
     ~H"""
     <span class="sr-only">{gettext("Loading...")}</span>
-    <span class="block rounded-sm animate-bounce [animation-delay:-0.4s]"></span>
-    <span class="block rounded-sm animate-bounce [animation-delay:-0.2s]"></span>
-    <span class="block rounded-sm animate-bounce"></span>
+    <span class="[animation-delay:-0.4s] block animate-bounce rounded-sm"></span>
+    <span class="[animation-delay:-0.2s] block animate-bounce rounded-sm"></span>
+    <span class="block animate-bounce rounded-sm"></span>
     """
   end
 

@@ -128,33 +128,13 @@ defmodule PortfolioWeb.Components.Tabs do
     <div
       id={@id}
       phx-mounted={hide_tab(@id, length(@tab)) |> show_tab(@id, @active_index)}
-      class={[
-        "vertical-tab flex dark:text-gray-200",
-        @placement == "end" && "flex-row-reverse",
-        content_position(@triggers_position),
-        @variant == "default" || (@variant == "base" && tab_border(@tab_border_size, @vertical)),
-        color_variant(@variant, @color),
-        rounded_size(@rounded, @variant),
-        padding_size(@padding),
-        content_padding(@content_padding),
-        border_class(@border),
-        size_class(@size),
-        gap_size(@gap),
-        @font_weight,
-        @class
-      ]}
+      class={["vertical-tab flex dark:text-gray-200", @placement == "end" && "flex-row-reverse", content_position(@triggers_position), @variant == "default" || (@variant == "base" && tab_border(@tab_border_size, @vertical)), color_variant(@variant, @color), rounded_size(@rounded, @variant), padding_size(@padding), content_padding(@content_padding), border_class(@border), size_class(@size), gap_size(@gap), @font_weight, @class]}
       {@rest}
     >
       <div
         role="tablist"
         tabindex="0"
-        class={[
-          "tab-trigger-list flex flex-col shrink-0 text-[#4B4B4B] dark:text-[#DDDDDD]",
-          @variant == "default" &&
-            "border-[#e8e8e8] dark:border-[#5e5e5e] [&:not(.active-tab)_.tab-trigger]:border-[#e8e8e8] dark:[&:not(.active-tab)_.tab-trigger]:border-[#5e5e5e]",
-          @variant == "base" &&
-            "border-[#e4e4e7] dark:border-[#27272A] [&:not(.active-tab)_.tab-trigger]:border-[#e4e4e7] dark:[&:not(.active-tab)_.tab-trigger]:border-[#27272a]"
-        ]}
+        class={["tab-trigger-list text-[#4B4B4B] flex shrink-0 flex-col dark:text-[#DDDDDD]", @variant == "default" && "border-[#e8e8e8] [&:not(.active-tab)_.tab-trigger]:border-[#e8e8e8] dark:border-[#5e5e5e] dark:[&:not(.active-tab)_.tab-trigger]:border-[#5e5e5e]", @variant == "base" && "border-[#e4e4e7] [&:not(.active-tab)_.tab-trigger]:border-[#e4e4e7] dark:border-[#27272A] dark:[&:not(.active-tab)_.tab-trigger]:border-[#27272a]"]}
       >
         <button
           :for={{tab, index} <- Enum.with_index(@tab, 1)}
@@ -172,12 +152,7 @@ defmodule PortfolioWeb.Components.Tabs do
           aria-selected={@active_index == index}
           aria-controls={"#{@id}-tab-panel-#{index}"}
           tabindex={(@active_index == index && "0") || "-1"}
-          class={[
-            "tab-trigger flex flex-row flex-nowrap items-center gap-1.5 leading-5",
-            "transition-all duration-400 delay-100 disabled:opacity-80",
-            tab[:icon_position] == "end" && tab[:badge_position] == "end" && "flex-row-reverse",
-            tab[:class]
-          ]}
+          class={["tab-trigger flex flex-row flex-nowrap items-center gap-1.5 leading-5", "duration-400 transition-all delay-100 disabled:opacity-80", tab[:icon_position] == "end" && tab[:badge_position] == "end" && "flex-row-reverse", tab[:class]]}
         >
           <.icon :if={tab[:icon]} name={tab[:icon]} class="tab-icon" />
           <.badge
@@ -190,7 +165,7 @@ defmodule PortfolioWeb.Components.Tabs do
           >
             {tab[:badge]}
           </.badge>
-          <span class="block tab-button_contnet">
+          <span class="tab-button_contnet block">
             {render_slot(tab)}
           </span>
         </button>
@@ -202,12 +177,7 @@ defmodule PortfolioWeb.Components.Tabs do
           id={"#{@id}-tab-panel-#{index}"}
           role="tabpanel"
           aria-labelledby={"#{@id}-tab-header-#{index}"}
-          class={[
-            "tab-content",
-            "[&:not(.active-tab-panel)]:hidden [&:not(.active-tab-panel)]:opacity-0 [&:not(.active-tab-panel)]:invisible",
-            "[&.active-tab-panel]:block [&.active-tab-panel]:opacity-100 [&.active-tab-panel]:visible",
-            panel[:class]
-          ]}
+          class={["tab-content", "[&:not(.active-tab-panel)]:hidden [&:not(.active-tab-panel)]:opacity-0 [&:not(.active-tab-panel)]:invisible", "[&.active-tab-panel]:block [&.active-tab-panel]:opacity-100 [&.active-tab-panel]:visible", panel[:class]]}
         >
           {render_slot(panel)}
         </div>
@@ -226,32 +196,13 @@ defmodule PortfolioWeb.Components.Tabs do
     <div
       id={@id}
       phx-mounted={hide_tab(@id, length(@tab)) |> show_tab(@id, @active_index)}
-      class={[
-        "horizontal-tab dark:text-gray-200",
-        content_position(@triggers_position),
-        @variant == "default" || (@variant == "base" && tab_border(@tab_border_size, @vertical)),
-        @hide_list_border && "no-border-tabs-list [&_.tab-trigger]:flex-1",
-        @full_width_tab && "[&_.tab-trigger]:flex-1",
-        color_variant(@variant, @color),
-        rounded_size(@rounded, @variant),
-        padding_size(@padding),
-        content_padding(@content_padding),
-        border_class(@border),
-        size_class(@size),
-        gap_size(@gap),
-        @font_weight,
-        @class
-      ]}
+      class={["horizontal-tab dark:text-gray-200", content_position(@triggers_position), @variant == "default" || (@variant == "base" && tab_border(@tab_border_size, @vertical)), @hide_list_border && "no-border-tabs-list [&_.tab-trigger]:flex-1", @full_width_tab && "[&_.tab-trigger]:flex-1", color_variant(@variant, @color), rounded_size(@rounded, @variant), padding_size(@padding), content_padding(@content_padding), border_class(@border), size_class(@size), gap_size(@gap), @font_weight, @class]}
       {@rest}
     >
       <div
         role="tablist"
         tabindex="0"
-        class={[
-          "tab-trigger-list flex flex-wrap flex-wrap",
-          @variant == "nav_pills" && "tab-nav-pills bg-[#F4F4F5] dark:bg-[#27272A]",
-          @variant == "nav_pills" && !@full_width_tab && "w-fit"
-        ]}
+        class={["tab-trigger-list flex flex-wrap flex-wrap", @variant == "nav_pills" && "tab-nav-pills bg-[#F4F4F5] dark:bg-[#27272A]", @variant == "nav_pills" && !@full_width_tab && "w-fit"]}
       >
         <button
           :for={{tab, index} <- Enum.with_index(@tab, 1)}
@@ -267,12 +218,7 @@ defmodule PortfolioWeb.Components.Tabs do
           aria-selected={@active_index == index}
           aria-controls={"#{@id}-tab-panel-#{index}"}
           tabindex={(@active_index == index && "0") || "-1"}
-          class={[
-            "tab-trigger flex flex-row flex-nowrap justify-center items-center gap-1.5 leading-5",
-            "transition-all duration-400 delay-100 disabled:opacity-80",
-            tab[:icon_position] == "end" && tab[:badge_position] == "end" && "flex-row-reverse",
-            tab[:class]
-          ]}
+          class={["tab-trigger flex flex-row flex-nowrap items-center justify-center gap-1.5 leading-5", "duration-400 transition-all delay-100 disabled:opacity-80", tab[:icon_position] == "end" && tab[:badge_position] == "end" && "flex-row-reverse", tab[:class]]}
         >
           <.icon :if={tab[:icon]} name={tab[:icon]} class="tab-icon" />
           <.badge
@@ -285,7 +231,7 @@ defmodule PortfolioWeb.Components.Tabs do
           >
             {tab[:badge]}
           </.badge>
-          <span class="block tab-button_contnet">
+          <span class="tab-button_contnet block">
             {render_slot(tab)}
           </span>
         </button>
@@ -297,12 +243,7 @@ defmodule PortfolioWeb.Components.Tabs do
           id={"#{@id}-tab-panel-#{index}"}
           aria-labelledby={"#{@id}-tab-header-#{index}"}
           role="tabpanel"
-          class={[
-            "tab-content w-full",
-            "[&:not(.active-tab-panel)]:hidden [&:not(.active-tab-panel)]:opacity-0 [&:not(.active-tab-panel)]:invisible",
-            "[&.active-tab-panel]:block [&.active-tab-panel]:opacity-100 [&.active-tab-panel]:visible",
-            panel[:class]
-          ]}
+          class={["tab-content w-full", "[&:not(.active-tab-panel)]:hidden [&:not(.active-tab-panel)]:opacity-0 [&:not(.active-tab-panel)]:invisible", "[&.active-tab-panel]:block [&.active-tab-panel]:opacity-100 [&.active-tab-panel]:visible", panel[:class]]}
         >
           {render_slot(panel)}
         </div>

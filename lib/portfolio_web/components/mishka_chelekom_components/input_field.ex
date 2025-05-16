@@ -143,11 +143,7 @@ defmodule PortfolioWeb.Components.InputField do
       <textarea
         id={@id}
         name={@name}
-        class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-200 focus:ring-0 sm:text-sm sm:leading-6 min-h-[6rem]",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
-        ]}
+        class={["min-h-[6rem] mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 dark:text-zinc-200 sm:text-sm sm:leading-6", @errors == [] && "border-zinc-300 focus:border-zinc-400", @errors != [] && "border-rose-400 focus:border-rose-400"]}
         {@rest}
       >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
       <.error :for={msg <- @errors}>{msg}</.error>
@@ -166,11 +162,7 @@ defmodule PortfolioWeb.Components.InputField do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-200 focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
-        ]}
+        class={["mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 dark:text-zinc-200 sm:text-sm sm:leading-6", @errors == [] && "border-zinc-300 focus:border-zinc-400", @errors != [] && "border-rose-400 focus:border-rose-400"]}
         {@rest}
       />
       <.error :for={msg <- @errors}>{msg}</.error>

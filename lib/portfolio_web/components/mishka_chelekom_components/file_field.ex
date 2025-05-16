@@ -103,23 +103,14 @@ defmodule PortfolioWeb.Components.FileField do
       |> assign_new(:upload, fn -> targeted_upload end)
 
     ~H"""
-    <div class={[
-      color_variant(@variant, @color),
-      border_class(@border, @variant),
-      rounded_size(@rounded),
-      size_class(@size),
-      @dashed && "[&_.dropzone-wrapper]:border-dashed",
-      @class
-    ]}>
+    <div class={[color_variant(@variant, @color), border_class(@border, @variant), rounded_size(@rounded), size_class(@size), @dashed && "[&_.dropzone-wrapper]:border-dashed", @class]}>
       <label
-        class={[
-          "dropzone-wrapper group flex flex-col items-center justify-center w-full cursor-pointer"
-        ]}
+        class={["dropzone-wrapper group flex w-full cursor-pointer flex-col items-center justify-center"]}
         phx-drop-target={@upload.ref}
         for={@id}
         {@rest}
       >
-        <div class="flex flex-col gap-3 items-center justify-center pt-5 pb-6">
+        <div class="flex flex-col items-center justify-center gap-3 pt-5 pb-6">
           <.icon name={@dropzone_icon} class="size-14" />
           <div class="mb-2 font-semibold">
             {@dropzone_title}
@@ -137,14 +128,14 @@ defmodule PortfolioWeb.Components.FileField do
       <div aria-live="polite" class="mt-5 space-y-4">
         <%= for entry <- @entries do %>
           <div
-            class="upload-item border rounded relative p-3"
+            class="upload-item relative rounded border p-3"
             role="group"
             aria-label={gettext("Uploading %{file}", file: entry.client_name)}
           >
             <div class="flex justify-around gap-3">
               <.icon name="hero-document-arrow-up" class="size-8" />
               <div class="w-full space-y-3">
-                <div class="text-ellipsis	overflow-hidden w-44 whitespace-nowrap">
+                <div class="w-44 overflow-hidden text-ellipsis whitespace-nowrap">
                   {entry.client_name}
                 </div>
 
@@ -167,20 +158,20 @@ defmodule PortfolioWeb.Components.FileField do
               phx-click="cancel-upload"
               phx-value-ref={entry.ref}
               aria-label={gettext("Cancel upload for %{file}", file: entry.client_name)}
-              class="absolute top-2 right-2 text-custome-black-100/60 hover:text-custome-black-100"
+              class="text-custome-black-100/60 absolute top-2 right-2 hover:text-custome-black-100"
             >
               <.icon name="hero-x-mark" class="size-4" />
             </button>
 
             <%= for err <- upload_errors(@upload_error, entry) do %>
-              <p class="text-rose-600 font-medium text-xs mt-3">Error: {error_to_string(err)}</p>
+              <p class="mt-3 text-xs font-medium text-rose-600">Error: {error_to_string(err)}</p>
             <% end %>
           </div>
         <% end %>
       </div>
 
       <%= for err <- upload_errors(@upload_error) do %>
-        <p class="text-rose-600 font-medium text-xs">{error_to_string(err)}</p>
+        <p class="text-xs font-medium text-rose-600">{error_to_string(err)}</p>
       <% end %>
     </div>
     """
@@ -196,23 +187,14 @@ defmodule PortfolioWeb.Components.FileField do
       |> assign_new(:upload, fn -> targeted_upload end)
 
     ~H"""
-    <div class={[
-      color_variant(@variant, @color),
-      border_class(@border, @variant),
-      rounded_size(@rounded),
-      size_class(@size),
-      @dashed && "[&_.dropzone-wrapper]:border-dashed",
-      @class
-    ]}>
+    <div class={[color_variant(@variant, @color), border_class(@border, @variant), rounded_size(@rounded), size_class(@size), @dashed && "[&_.dropzone-wrapper]:border-dashed", @class]}>
       <label
-        class={[
-          "dropzone-wrapper group flex flex-col items-center justify-center w-full cursor-pointer"
-        ]}
+        class={["dropzone-wrapper group flex w-full cursor-pointer flex-col items-center justify-center"]}
         phx-drop-target={@upload.ref}
         for={@id}
         {@rest}
       >
-        <div class="flex flex-col gap-3 items-center justify-center pt-5 pb-6">
+        <div class="flex flex-col items-center justify-center gap-3 pt-5 pb-6">
           <.icon name={@dropzone_icon} class="size-14" />
           <div class="mb-2 font-semibold">
             {@dropzone_title}
@@ -228,10 +210,10 @@ defmodule PortfolioWeb.Components.FileField do
       <.error :for={msg <- @errors} icon={@error_icon}>{msg}</.error>
 
       <%= for err <- upload_errors(@upload_error) do %>
-        <p class="text-rose-600 font-semibold text-sm my-5">{error_to_string(err)}</p>
+        <p class="my-5 text-sm font-semibold text-rose-600">{error_to_string(err)}</p>
       <% end %>
 
-      <div class="flex flex-wrap gap-3 my-3">
+      <div class="my-3 flex flex-wrap gap-3">
         <%= for entry <- @entries do %>
           <div>
             <div
@@ -239,9 +221,9 @@ defmodule PortfolioWeb.Components.FileField do
               aria-label={gettext("Uploading %{file}", file: entry.client_name)}
               class="relative"
             >
-              <div class="rounded w-24 h-24 overflow-hidden">
-                <figure class="w-full h-full object-cover">
-                  <.live_img_preview entry={entry} class="w-full h-full object-cover rounded" />
+              <div class="h-24 w-24 overflow-hidden rounded">
+                <figure class="h-full w-full object-cover">
+                  <.live_img_preview entry={entry} class="h-full w-full rounded object-cover" />
                 </figure>
               </div>
 
@@ -250,7 +232,7 @@ defmodule PortfolioWeb.Components.FileField do
                 phx-click="cancel-upload"
                 phx-value-ref={entry.ref}
                 aria-label={gettext("Cancel upload for %{file}", file: entry.client_name)}
-                class="bg-black/30 rounded p-px text-white flex justify-center items-center absolute top-2 right-2 z-10"
+                class="bg-black/30 absolute top-2 right-2 z-10 flex items-center justify-center rounded p-px text-white"
               >
                 <.icon name="hero-x-mark" class="size-4" />
               </button>
@@ -258,14 +240,14 @@ defmodule PortfolioWeb.Components.FileField do
               <div
                 :if={!entry.done?}
                 role="status"
-                class="absolute inset-0 bg-black/25 flex justify-center items-center"
+                class="bg-black/25 absolute inset-0 flex items-center justify-center"
               >
                 <.spinner color="base" />
                 <span class="sr-only">{gettext("Uploading %{file}", file: entry.client_name)}</span>
               </div>
             </div>
             <%= for err <- upload_errors(@upload_error, entry) do %>
-              <p class="text-rose-600 font-medium text-xs mt-3">Error: {error_to_string(err)}</p>
+              <p class="mt-3 text-xs font-medium text-rose-600">Error: {error_to_string(err)}</p>
             <% end %>
           </div>
         <% end %>
@@ -276,32 +258,21 @@ defmodule PortfolioWeb.Components.FileField do
 
   def file_field(assigns) do
     ~H"""
-    <div class={[
-      rounded_size(@rounded),
-      color_class(@color),
-      space_class(@space),
-      @class
-    ]}>
+    <div class={[rounded_size(@rounded), color_class(@color), space_class(@space), @class]}>
       <.label for={@id}>{@label}</.label>
 
       <%= if @live do %>
         <.live_file_input
           upload={@upload}
           id={@id}
-          class={[
-            "file-field block w-full cursor-pointer focus:outline-none file:border-0 file:cursor-pointer",
-            "file:py-3 file:px-8 file:font-bold file:-ms-4 file:me-4"
-          ]}
+          class={["file-field block w-full cursor-pointer file:cursor-pointer file:border-0 focus:outline-none", "file:-ms-4 file:me-4 file:px-8 file:py-3 file:font-bold"]}
           {@rest}
         />
       <% else %>
         <input
           name={@name}
           id={@id}
-          class={[
-            "file-field block w-full cursor-pointer focus:outline-none file:border-0 file:cursor-pointer",
-            "file:py-3 file:px-8 file:font-bold file:-ms-4 file:me-4"
-          ]}
+          class={["file-field block w-full cursor-pointer file:cursor-pointer file:border-0 focus:outline-none", "file:-ms-4 file:me-4 file:px-8 file:py-3 file:font-bold"]}
           type="file"
           {@rest}
         />

@@ -115,15 +115,7 @@ defmodule PortfolioWeb.Components.ColorField do
 
   def color_field(assigns) do
     ~H"""
-    <div class={[
-      "w-fit",
-      color_class(@color),
-      rounded_size(@rounded),
-      border_class(@border),
-      size_class(@size),
-      space_class(@space),
-      @class
-    ]}>
+    <div class={["w-fit", color_class(@color), rounded_size(@rounded), border_class(@border), size_class(@size), space_class(@space), @class]}>
       <div
         :if={@label || @description}
         class={["checkbox-card-label-wrapper", @description_wrapper_class]}
@@ -155,7 +147,7 @@ defmodule PortfolioWeb.Components.ColorField do
 
   defp label(assigns) do
     ~H"""
-    <label for={@for} class={["leading-5 font-semibold", @class]}>
+    <label for={@for} class={["font-semibold leading-5", @class]}>
       {render_slot(@inner_block)}
     </label>
     """

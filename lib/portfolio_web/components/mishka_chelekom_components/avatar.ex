@@ -89,20 +89,11 @@ defmodule PortfolioWeb.Components.Avatar do
 
   def avatar(%{src: src, rounded: "full"} = assigns) when not is_nil(src) do
     ~H"""
-    <div class={[
-      "relative w-fit select-none",
-      size_class(@size, :image)
-    ]}>
+    <div class={["relative w-fit select-none", size_class(@size, :image)]}>
       <img
         id={@id}
         src={@src}
-        class={[
-          image_color(@color),
-          rounded_size(@rounded),
-          border_class(@border),
-          shadow_class(@shadow),
-          @class
-        ]}
+        class={[image_color(@color), rounded_size(@rounded), border_class(@border), shadow_class(@shadow), @class]}
         {@rest}
       />
       {render_slot(@inner_block)}
@@ -113,15 +104,7 @@ defmodule PortfolioWeb.Components.Avatar do
   def avatar(%{src: src, rounded: "full"} = assigns) when is_nil(src) do
     ~H"""
     <div
-      class={[
-        "relative overflow-hidden select-none",
-        color_class(@color),
-        rounded_size(@rounded),
-        border_class(@border),
-        shadow_class(@shadow),
-        @font_weight,
-        @class
-      ]}
+      class={["relative select-none overflow-hidden", color_class(@color), rounded_size(@rounded), border_class(@border), shadow_class(@shadow), @font_weight, @class]}
       {@rest}
     >
       <div class={["flex items-center justify-center", size_class(@size, :text)]}>
@@ -140,14 +123,7 @@ defmodule PortfolioWeb.Components.Avatar do
       <img
         id={@id}
         src={@src}
-        class={[
-          image_color(@color),
-          rounded_size(@rounded),
-          size_class(@size),
-          border_class(@border),
-          shadow_class(@shadow),
-          @class
-        ]}
+        class={[image_color(@color), rounded_size(@rounded), size_class(@size), border_class(@border), shadow_class(@shadow), @class]}
         {@rest}
       />
       {render_slot(@inner_block)}
@@ -158,15 +134,7 @@ defmodule PortfolioWeb.Components.Avatar do
   def avatar(assigns) do
     ~H"""
     <div
-      class={[
-        "relative overflow-hidden select-none",
-        color_class(@color),
-        rounded_size(@rounded),
-        border_class(@border),
-        shadow_class(@shadow),
-        @font_weight,
-        @class
-      ]}
+      class={["relative select-none overflow-hidden", color_class(@color), rounded_size(@rounded), border_class(@border), shadow_class(@shadow), @font_weight, @class]}
       {@rest}
     >
       <div class={["flex items-center justify-center", size_class(@size, :text)]}>
@@ -214,11 +182,7 @@ defmodule PortfolioWeb.Components.Avatar do
     ~H"""
     <div
       id={@id}
-      class={[
-        "flex items-center rtl:space-x-reverse",
-        space_class(@space),
-        @class
-      ]}
+      class={["flex items-center rtl:space-x-reverse", space_class(@space), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

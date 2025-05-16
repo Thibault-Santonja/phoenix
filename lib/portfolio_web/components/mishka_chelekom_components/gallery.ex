@@ -67,14 +67,7 @@ defmodule PortfolioWeb.Components.Gallery do
     <div
       id={@id}
       role="region"
-      class={[
-        (@type == "masonry" && "gallery-masonry") || "grid",
-        grid_gap(@gap),
-        @type == "masonry" && column_class(@cols),
-        grid_cols(@cols) != "masonry" && grid_cols(@cols),
-        animation(@animation, @animation_size),
-        @class
-      ]}
+      class={[(@type == "masonry" && "gallery-masonry") || "grid", grid_gap(@gap), @type == "masonry" && column_class(@cols), grid_cols(@cols) != "masonry" && grid_cols(@cols), animation(@animation, @animation_size), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -115,17 +108,12 @@ defmodule PortfolioWeb.Components.Gallery do
     ~H"""
     <div
       id={@id}
-      class={["relative gallery-media overflow-hidden transition-all duration-300", @wrapper_class]}
+      class={["gallery-media relative overflow-hidden transition-all duration-300", @wrapper_class]}
       {@rest}
     >
       <img
         :if={@src}
-        class={[
-          "gallery-media-img h-auto max-w-full transition-all duration-300",
-          rounded_size(@rounded),
-          shadow_class(@shadow),
-          @class
-        ]}
+        class={["gallery-media-img h-auto max-w-full transition-all duration-300", rounded_size(@rounded), shadow_class(@shadow), @class]}
         src={@src}
         alt={@alt}
         {@rest}
@@ -197,7 +185,7 @@ defmodule PortfolioWeb.Components.Gallery do
             :if={@filter == []}
             data-gallery-filter
             data-category={@default_filter}
-            class="filter-btn bg-white border rounded py-1.5 px-3 leading-5 text-[#09090b] border-[#e4e4e7] hover:bg-[#F8F9FA] dark:bg-[#18181B] dark:text-[#FAFAFA] dark:border-[#27272a] dark:hover:bg-[#242424] disabled:bg-[#f1f3f5] disabled:text-[#adb5bd] dark:disabled:bg-[#2e2e2e] dark:disabled:text-[#696969] disabled:border-[#dee2e6] dark:disabled:border-[#424242] shadow-sm"
+            class="filter-btn text-[#09090b] border-[#e4e4e7] rounded border bg-white px-3 py-1.5 leading-5 shadow-sm hover:bg-[#F8F9FA] disabled:bg-[#f1f3f5] disabled:text-[#adb5bd] disabled:border-[#dee2e6] dark:bg-[#18181B] dark:text-[#FAFAFA] dark:border-[#27272a] dark:hover:bg-[#242424] dark:disabled:bg-[#2e2e2e] dark:disabled:text-[#696969] dark:disabled:border-[#424242]"
           >
             {@default_filter}
           </button>
@@ -212,7 +200,7 @@ defmodule PortfolioWeb.Components.Gallery do
             :if={@filter == []}
             data-gallery-filter
             data-category={filter}
-            class="filter-btn bg-white border rounded py-1.5 px-3 leading-5 text-[#09090b] border-[#e4e4e7] hover:bg-[#F8F9FA] dark:bg-[#18181B] dark:text-[#FAFAFA] dark:border-[#27272a] dark:hover:bg-[#242424] disabled:bg-[#f1f3f5] disabled:text-[#adb5bd] dark:disabled:bg-[#2e2e2e] dark:disabled:text-[#696969] disabled:border-[#dee2e6] dark:disabled:border-[#424242] shadow-sm"
+            class="filter-btn text-[#09090b] border-[#e4e4e7] rounded border bg-white px-3 py-1.5 leading-5 shadow-sm hover:bg-[#F8F9FA] disabled:bg-[#f1f3f5] disabled:text-[#adb5bd] disabled:border-[#dee2e6] dark:bg-[#18181B] dark:text-[#FAFAFA] dark:border-[#27272a] dark:hover:bg-[#242424] dark:disabled:bg-[#2e2e2e] dark:disabled:text-[#696969] dark:disabled:border-[#424242]"
           >
             {filter}
           </button>
@@ -225,7 +213,7 @@ defmodule PortfolioWeb.Components.Gallery do
           data-category={
             if is_list(media.category), do: Enum.join(media.category, ","), else: media.category
           }
-          class="transition-all duration-300 ease-in-out transform opacity-100 scale-100"
+          class="scale-100 transform opacity-100 transition-all duration-300 ease-in-out"
         >
           <div :if={@media_block != []}>
             {render_slot(@media_block, media)}

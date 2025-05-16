@@ -357,11 +357,7 @@ defmodule PortfolioWeb.Components.Menu do
     ~H"""
     <ul
       id={@id}
-      class={[
-        padding_size(@padding),
-        space_class(@space),
-        @class
-      ]}
+      class={[padding_size(@padding), space_class(@space), @class]}
       {@rest}
     >
       <li :for={menu_item <- @menu_items} class={@item_class}>

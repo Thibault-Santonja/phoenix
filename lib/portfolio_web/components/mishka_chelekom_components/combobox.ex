@@ -161,15 +161,7 @@ defmodule PortfolioWeb.Components.Combobox do
       |> assign_new(:value, fn -> Map.get(assigns, :value, []) end)
 
     ~H"""
-    <div class={[
-      "leading-5",
-      border_class(@border, @variant),
-      color_variant(@variant, @color),
-      rounded_size(@rounded),
-      padding_size(@padding),
-      size_class(@size),
-      space_class(@space)
-    ]}>
+    <div class={["leading-5", border_class(@border, @variant), color_variant(@variant, @color), rounded_size(@rounded), padding_size(@padding), size_class(@size), space_class(@space)]}>
       <div :if={@label || @description} class={["combobox-label-wrapper", @description_wrapper_class]}>
         <.label :if={@label} for={@id} class={@label_class}>{@label}</.label>
         <div :if={@description} class={@description_class}>
@@ -206,7 +198,7 @@ defmodule PortfolioWeb.Components.Combobox do
 
         <div phx-update="ignore" id={"#{@id}-combo-wrapper"} class="relative">
           <button
-            class="combobox-trigger w-full text-start py-1 flex items-center justify-between focus:outline-none border"
+            class="combobox-trigger flex w-full items-center justify-between border py-1 text-start focus:outline-none"
             role="combobox"
             aria-haspopup="listbox"
             aria-expanded="false"
@@ -214,13 +206,10 @@ defmodule PortfolioWeb.Components.Combobox do
             aria-labelledby={"#{@id}-label #{@id}-button"}
             type="button"
           >
-            <div class="flex-1 flex items-center gap-2">
+            <div class="flex flex-1 items-center gap-2">
               <div
                 :if={@start_section != []}
-                class={[
-                  "shrink-0",
-                  @start_section[:class]
-                ]}
+                class={["shrink-0", @start_section[:class]]}
               >
                 {render_slot(@start_section)}
               </div>
@@ -231,10 +220,7 @@ defmodule PortfolioWeb.Components.Combobox do
 
               <div
                 data-part="select-toggle-label"
-                class={[
-                  "selected-value flex flex-wrap items-center gap-2 [&_.combobox-pill]:py-0.5",
-                  "[&_.combobox-pill]:px-1 [&_.combobox-pill]:leading-4"
-                ]}
+                class={["selected-value [&_.combobox-pill]:py-0.5 flex flex-wrap items-center gap-2", "[&_.combobox-pill]:px-1 [&_.combobox-pill]:leading-4"]}
               >
               </div>
             </div>
@@ -267,7 +253,7 @@ defmodule PortfolioWeb.Components.Combobox do
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="shrink-0 combobox-icon"
+                class="combobox-icon shrink-0"
               >
                 <path d="m7 15 5 5 5-5" /><path d="m7 9 5-5 5 5" />
               </svg>
@@ -279,10 +265,10 @@ defmodule PortfolioWeb.Components.Combobox do
             role="listbox"
             data-part="listbox"
             aria-multiselectable={@multiple}
-            class="combobox-dropdown z-50 absolute w-full px-[3px] py-2 transition-all ease-out duration-[250ms] top-full mt-2"
+            class="combobox-dropdown px-[3px] duration-[250ms] absolute top-full z-50 mt-2 w-full py-2 transition-all ease-out"
             hidden
           >
-            <div :if={@searchable} class="mt-1 mb-2 mx-1.5">
+            <div :if={@searchable} class="mx-1.5 mt-1 mb-2">
               <input
                 type="text"
                 role="searchbox"
@@ -290,7 +276,7 @@ defmodule PortfolioWeb.Components.Combobox do
                 aria-autocomplete="list"
                 aria-activedescendant=""
                 aria-label={@search_placeholder}
-                class="combobox-search-input appearance-none bg-transparent px-2 py-1 w-full focus:outline-none"
+                class="combobox-search-input w-full appearance-none bg-transparent px-2 py-1 focus:outline-none"
                 placeholder={@search_placeholder}
               />
             </div>
@@ -311,7 +297,7 @@ defmodule PortfolioWeb.Components.Combobox do
                   :if={!is_nil(group_label)}
                   class={["option-group", @option_group_class]}
                 >
-                  <div class="group-label font-semibold my-2">{group_label}</div>
+                  <div class="group-label my-2 font-semibold">{group_label}</div>
 
                   <div>
                     <.option
@@ -334,7 +320,7 @@ defmodule PortfolioWeb.Components.Combobox do
                   {render_slot(option)}
                 </.option>
 
-                <div :if={@searchable} class="no-results text-center hidden">
+                <div :if={@searchable} class="no-results hidden text-center">
                   {gettext("Nothing found!")}
                 </div>
               </div>
@@ -357,15 +343,7 @@ defmodule PortfolioWeb.Components.Combobox do
       |> assign_new(:value, fn -> Map.get(assigns, :value) end)
 
     ~H"""
-    <div class={[
-      "leading-5",
-      border_class(@border, @variant),
-      color_variant(@variant, @color),
-      rounded_size(@rounded),
-      padding_size(@padding),
-      size_class(@size),
-      space_class(@space)
-    ]}>
+    <div class={["leading-5", border_class(@border, @variant), color_variant(@variant, @color), rounded_size(@rounded), padding_size(@padding), size_class(@size), space_class(@space)]}>
       <div :if={@label || @description} class={["combobox-label-wrapper", @description_wrapper_class]}>
         <.label :if={@label} for={@id} class={@label_class}>{@label}</.label>
         <div :if={@description} class={@description_class}>
@@ -401,7 +379,7 @@ defmodule PortfolioWeb.Components.Combobox do
 
         <div id={"#{@id}-combo-wrapper"} class="relative" phx-update="ignore">
           <button
-            class="combobox-trigger w-full text-start py-1 flex items-center justify-between focus:outline-none border"
+            class="combobox-trigger flex w-full items-center justify-between border py-1 text-start focus:outline-none"
             role="combobox"
             aria-haspopup="listbox"
             aria-expanded="false"
@@ -409,13 +387,10 @@ defmodule PortfolioWeb.Components.Combobox do
             aria-labelledby={"#{@id}-label #{@id}-button"}
             type="button"
           >
-            <div id={"#{@id}-select-toggle-label"} class="flex-1 flex items-center gap-2">
+            <div id={"#{@id}-select-toggle-label"} class="flex flex-1 items-center gap-2">
               <div
                 :if={@start_section != []}
-                class={[
-                  "shrink-0",
-                  @start_section[:class]
-                ]}
+                class={["shrink-0", @start_section[:class]]}
               >
                 {render_slot(@start_section)}
               </div>
@@ -455,7 +430,7 @@ defmodule PortfolioWeb.Components.Combobox do
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="shrink-0 combobox-icon"
+                class="combobox-icon shrink-0"
               >
                 <path d="m7 15 5 5 5-5" /><path d="m7 9 5-5 5 5" />
               </svg>
@@ -466,10 +441,10 @@ defmodule PortfolioWeb.Components.Combobox do
             id={"#{@id}-listbox"}
             role="listbox"
             data-part="listbox"
-            class="combobox-dropdown z-50 absolute w-full px-[3px] py-2 transition-all ease-out duration-[250ms] top-full mt-2"
+            class="combobox-dropdown px-[3px] duration-[250ms] absolute top-full z-50 mt-2 w-full py-2 transition-all ease-out"
             hidden
           >
-            <div :if={@searchable} class="mt-1 mb-2 mx-1.5">
+            <div :if={@searchable} class="mx-1.5 mt-1 mb-2">
               <input
                 type="text"
                 role="searchbox"
@@ -477,7 +452,7 @@ defmodule PortfolioWeb.Components.Combobox do
                 aria-autocomplete="list"
                 aria-activedescendant=""
                 aria-label={@search_placeholder}
-                class="combobox-search-input appearance-none bg-transparent px-2 py-1 w-full focus:outline-none"
+                class="combobox-search-input w-full appearance-none bg-transparent px-2 py-1 focus:outline-none"
                 data-part="search"
                 placeholder={@search_placeholder}
               />
@@ -499,7 +474,7 @@ defmodule PortfolioWeb.Components.Combobox do
                   :if={!is_nil(group_label)}
                   class={["option-group", @option_group_class]}
                 >
-                  <div class="group-label font-semibold my-2">{group_label}</div>
+                  <div class="group-label my-2 font-semibold">{group_label}</div>
 
                   <div>
                     <.option
@@ -522,7 +497,7 @@ defmodule PortfolioWeb.Components.Combobox do
                   {render_slot(option)}
                 </.option>
 
-                <div :if={@searchable} class="no-results text-center hidden">
+                <div :if={@searchable} class="no-results hidden text-center">
                   {gettext("Nothing found!")}
                 </div>
               </div>
@@ -546,16 +521,12 @@ defmodule PortfolioWeb.Components.Combobox do
     ~H"""
     <div
       role="option"
-      class={[
-        "combobox-option cursor-pointer rounded flex justify-between items-center",
-        "[&[data-combobox-navigate]]:bg-blue-500 [&[data-combobox-navigate]]:text-white",
-        @class
-      ]}
+      class={["combobox-option flex cursor-pointer items-center justify-between rounded", "[&[data-combobox-navigate]]:bg-blue-500 [&[data-combobox-navigate]]:text-white", @class]}
       data-combobox-value={@value}
     >
       {render_slot(@inner_block)}
       <svg
-        class="hidden [[data-combobox-selected]_&]:block shrink-0 w-3.5 h-3.5 combobox-icon"
+        class="[[data-combobox-selected]_&]:block combobox-icon hidden h-3.5 w-3.5 shrink-0"
         fill="none"
         viewBox="0 0 24 24"
       >
@@ -579,7 +550,7 @@ defmodule PortfolioWeb.Components.Combobox do
 
   defp label(assigns) do
     ~H"""
-    <label for={@for} class={["leading-5 font-semibold", @class]} id={@id}>
+    <label for={@for} class={["font-semibold leading-5", @class]} id={@id}>
       {render_slot(@inner_block)}
     </label>
     """
@@ -590,7 +561,7 @@ defmodule PortfolioWeb.Components.Combobox do
 
   defp error(assigns) do
     ~H"""
-    <p class="mt-3 flex items-center gap-3 text-[14px] text-rose-700">
+    <p class="text-[14px] mt-3 flex items-center gap-3 text-rose-700">
       <.icon :if={!is_nil(@icon)} name={@icon} class="shrink-0" /> {render_slot(@inner_block)}
     </p>
     """

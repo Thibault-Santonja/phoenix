@@ -138,29 +138,10 @@ defmodule PortfolioWeb.Components.Table do
 
     ~H"""
     <div class={["-m-1.5 overflow-x-auto", @main_wrapper_class]}>
-      <div class={["p-1.5 min-w-full inline-block align-middle", @inner_wrapper_class]}>
-        <div class={[
-          "overflow-hidden",
-          color_variant(@variant, @color),
-          text_position(@text_position),
-          rounded_size(@rounded, @variant),
-          text_size(@text_size),
-          border_class(@border, @variant),
-          padding_size(@padding),
-          rows_space(@space, @variant),
-          @header_border && header_border(@header_border, @variant),
-          @rows_border != "" && rows_border(@rows_border, @variant),
-          @cols_border && cols_border(@cols_border, @variant),
-          @table_wrapper_class
-        ]}>
+      <div class={["inline-block min-w-full p-1.5 align-middle", @inner_wrapper_class]}>
+        <div class={["overflow-hidden", color_variant(@variant, @color), text_position(@text_position), rounded_size(@rounded, @variant), text_size(@text_size), border_class(@border, @variant), padding_size(@padding), rows_space(@space, @variant), @header_border && header_border(@header_border, @variant), @rows_border != "" && rows_border(@rows_border, @variant), @cols_border && cols_border(@cols_border, @variant), @table_wrapper_class]}>
           <table
-            class={[
-              "min-w-full",
-              @rows != [] && "divide-y",
-              @table_fixed && "table-fixed",
-              @variant == "separated" || (@variant == "base_separated" && "border-separate"),
-              @class
-            ]}
+            class={["min-w-full", @rows != [] && "divide-y", @table_fixed && "table-fixed", @variant == "separated" || (@variant == "base_separated" && "border-separate"), @class]}
             {@rest}
           >
             <thead class={@thead_class}>
@@ -174,7 +155,7 @@ defmodule PortfolioWeb.Components.Table do
                   <.icon
                     :if={header[:icon]}
                     name={header[:icon]}
-                    class={["table-header-icon block me-2", header[:icon_class]]}
+                    class={["table-header-icon me-2 block", header[:icon_class]]}
                   />
                   {render_slot(header)}
                 </.th>
@@ -232,7 +213,7 @@ defmodule PortfolioWeb.Components.Table do
                     <.icon
                       :if={footer[:icon]}
                       name={footer[:icon]}
-                      class={["table-footer-icon block me-2", footer[:icon_class]]}
+                      class={["table-footer-icon me-2 block", footer[:icon_class]]}
                     />
                     {render_slot(footer)}
                   </div>

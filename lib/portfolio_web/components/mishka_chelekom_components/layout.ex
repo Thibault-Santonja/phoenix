@@ -102,20 +102,7 @@ defmodule PortfolioWeb.Components.Layout do
     ~H"""
     <div
       id={@id}
-      class={[
-        "flex",
-        direction_class(@direction),
-        justify_class(@justify),
-        align_class(@align),
-        align_self_class(@align_self),
-        wrap_class(@wrap),
-        shrink_class(@shrink),
-        grow_class(@grow),
-        basis_class(@basis),
-        gap_class(@gap),
-        order_class(@order),
-        @class
-      ]}
+      class={["flex", direction_class(@direction), justify_class(@justify), align_class(@align), align_self_class(@align_self), wrap_class(@wrap), shrink_class(@shrink), grow_class(@grow), basis_class(@basis), gap_class(@gap), order_class(@order), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -219,22 +206,7 @@ defmodule PortfolioWeb.Components.Layout do
     ~H"""
     <div
       id={@id}
-      class={[
-        "grid",
-        cols_class(@cols),
-        rows_class(@rows),
-        auto_cols_class(@auto_cols),
-        auto_rows_class(@auto_rows),
-        auto_flow_class(@auto_flow),
-        justify_self_class(@justify_self),
-        align_content_class(@align_content),
-        place_content_class(@place_content),
-        place_items_class(@place_items),
-        place_self_class(@place_self),
-        gap_class(@gap),
-        order_class(@order),
-        @class
-      ]}
+      class={["grid", cols_class(@cols), rows_class(@rows), auto_cols_class(@auto_cols), auto_rows_class(@auto_rows), auto_flow_class(@auto_flow), justify_self_class(@justify_self), align_content_class(@align_content), place_content_class(@place_content), place_items_class(@place_items), place_self_class(@place_self), gap_class(@gap), order_class(@order), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

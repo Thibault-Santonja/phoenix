@@ -67,15 +67,7 @@ defmodule PortfolioWeb.Components.Keyboard do
     ~H"""
     <kbd
       id={@id}
-      class={[
-        "px-2 py-1.5",
-        color_variant(@variant, @color),
-        size_class(@size),
-        border_class(@border, @variant),
-        rounded_size(@rounded),
-        @font_weight,
-        @class
-      ]}
+      class={["px-2 py-1.5", color_variant(@variant, @color), size_class(@size), border_class(@border, @variant), rounded_size(@rounded), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

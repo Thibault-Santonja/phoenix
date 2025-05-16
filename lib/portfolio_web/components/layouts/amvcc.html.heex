@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="[scrollbar-gutter:stable]">
+<html lang="fr" class="[scrollbar-gutter:stable] scroll-smooth">
   <head>
     {Application.get_env(:live_debugger, :live_debugger_tags)}
 
@@ -14,17 +14,17 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
-  <body class="w-screen h-screen bg-white">
-    <div class="follower absolute inset-x-0 bottom-0 h-0 w-sceen ">
+  <body class="h-full min-h-screen w-screen bg-white">
+    <div class="follower w-sceen absolute inset-x-0 bottom-0 h-0 ">
       <%!-- For the scroll animation --%>
     </div>
-    <main class="flex flex-col h-screen w-screen text-amvcc-neutral">
-      <header class="bg-white flex-none fixed flex items-stretch justify-between h-[3rem] w-full p-4 md:px-16 mb-4 shadow z-10">
+    <main class="text-amvcc-neutral flex h-full min-h-screen w-screen flex-col">
+      <header class="h-[3rem] fixed z-10 mb-4 flex w-full flex-none items-stretch justify-between bg-white p-4 shadow md:px-16">
         <div class="flex items-center">
           <a href={~p"/"} class="hover:text-amvcc-primary">{gettext("Home")}</a>
         </div>
         <nav class="flex items-center">
-          <ul class="flex flex-row items-stretch space-x-8 space-around">
+          <ul class="space-around flex flex-row items-stretch space-x-8">
             <li>
               <a href={~p"/vetements"} class="hover:text-amvcc-primary">
                 {gettext("Clothes")}
@@ -39,11 +39,11 @@
         </nav>
       </header>
 
-      <main class="pt-[3rem] flex-auto h-auto font-serif text-justify">
+      <main class="pt-[3rem] font-serif h-auto flex-auto text-justify">
         {@inner_content}
       </main>
 
-      <footer class="bottom-0 flex-none w-full text-amvcc-content-neutral bg-amvcc-neutral text-xs flex items-stretch justify-center min-h-[3rem] shadow z-10 p-4 md:px-16">
+      <footer class="text-amvcc-content-neutral bg-amvcc-neutral min-h-[3rem] bottom-0 z-10 flex w-full flex-none items-stretch justify-center p-4 text-xs shadow md:px-16">
         <p>Thibault Santonja - {NaiveDateTime.utc_now().year}</p>
       </footer>
     </main>

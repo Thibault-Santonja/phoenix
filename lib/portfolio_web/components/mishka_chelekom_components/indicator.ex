@@ -64,13 +64,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "indicator block rounded-full absolute -translate-y-1/2 -translate-x-1/2 right-auto top-0 left-0 indicator-top-left",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator indicator-top-left absolute top-0 right-auto left-0 block -translate-x-1/2 -translate-y-1/2 rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """
@@ -80,13 +74,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "indicator block rounded-full absolute top-0 -translate-y-1/2 translate-x-1/2 right-1/2",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator absolute top-0 right-1/2 block translate-x-1/2 -translate-y-1/2 rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """
@@ -96,13 +84,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "indicator block rounded-full absolute -translate-y-1/2 translate-x-1/2 left-auto top-0 right-0  indicator-top-right",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator indicator-top-right absolute top-0 right-0 left-auto block translate-x-1/2 -translate-y-1/2 rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """
@@ -112,13 +94,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "indicator block rounded-full absolute -translate-y-1/2 -translate-x-1/2 right-auto left-0 top-2/4",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator absolute top-2/4 right-auto left-0 block -translate-x-1/2 -translate-y-1/2 rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """
@@ -128,13 +104,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "indicator block rounded-full absolute -translate-y-1/2 translate-x-1/2 left-auto right-0 top-2/4",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator absolute top-2/4 right-0 left-auto block translate-x-1/2 -translate-y-1/2 rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """
@@ -144,13 +114,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "indicator block rounded-full absolute translate-y-1/2 -translate-x-1/2 right-auto bottom-0 left-0  indicator-bottom-left",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator indicator-bottom-left absolute right-auto bottom-0 left-0 block -translate-x-1/2 translate-y-1/2 rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """
@@ -160,13 +124,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "indicator block rounded-full absolute translate-y-1/2 translate-x-1/2 bottom-0 right-1/2",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator absolute right-1/2 bottom-0 block translate-x-1/2 translate-y-1/2 rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """
@@ -176,13 +134,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "indicator block rounded-full absolute translate-y-1/2 translate-x-1/2 left-auto bottom-0 right-0  indicator-bottom-right",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator indicator-bottom-right absolute right-0 bottom-0 left-auto block translate-x-1/2 translate-y-1/2 rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """
@@ -192,13 +144,7 @@ defmodule PortfolioWeb.Components.Indicator do
     ~H"""
     <span
       id={@id}
-      class={[
-        indicator_size(@size),
-        color_class(@color),
-        "block indicator rounded-full",
-        !is_nil(@rest[:pinging]) && "animate-ping",
-        @class
-      ]}
+      class={[indicator_size(@size), color_class(@color), "indicator block rounded-full", !is_nil(@rest[:pinging]) && "animate-ping", @class]}
       {drop_rest(@rest)}
     />
     """

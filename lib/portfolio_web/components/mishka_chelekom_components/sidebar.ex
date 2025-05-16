@@ -113,19 +113,11 @@ defmodule PortfolioWeb.Components.Sidebar do
       phx-click-away={hide_sidebar(@on_hide_away, @id, @hide_position)}
       phx-remove={hide_sidebar(@id, @hide_position)}
       role="complementary"
-      class={[
-        "fixed h-screen transition-transform z-10 overflow-x-hidden",
-        border_class(@border, @position, @variant),
-        hide_position(@hide_position),
-        color_variant(@variant, @color),
-        position_class(@position),
-        size_class(@size),
-        @class
-      ]}
+      class={["fixed z-10 h-screen overflow-x-hidden transition-transform", border_class(@border, @position, @variant), hide_position(@hide_position), color_variant(@variant, @color), position_class(@position), size_class(@size), @class]}
       {@rest}
     >
       <div class={["h-full overflow-y-auto overflow-x-hidden", @content_class]}>
-        <div :if={@minimize} class={["flex mb-0.5 justify-end", @minimize_wrapper_class]}>
+        <div :if={@minimize} class={["mb-0.5 flex justify-end", @minimize_wrapper_class]}>
           <button
             type="button"
             phx-hook="Sidebar"
@@ -133,21 +125,13 @@ defmodule PortfolioWeb.Components.Sidebar do
             id={"toggle-button-#{@id}"}
             data-sidebar-selector={"##{@id}"}
             aria-label={gettext("Minimize sidebar")}
-            class={[
-              "size-8 flex items-center justify-center leading-5",
-              "rounded focus:outline-none bg-gray-500/10 border",
-              "dark:border-gray-700 m-2 text-gray-500",
-              @hide_button_class
-            ]}
+            class={["size-8 flex items-center justify-center leading-5", "bg-gray-500/10 rounded border focus:outline-none", "m-2 text-gray-500 dark:border-gray-700", @hide_button_class]}
           >
             <.icon name="hero-chevron-right" class={["minimize-icon size-5", @minimize_icon_class]} />
             <span class="sr-only">{gettext("Minimize sidebar")}</span>
           </button>
         </div>
-        <div class={[
-          "flex justify-end pt-2 px-2 mb-1 md:hidden dismiss-sidebar-wrapper",
-          @close_wrapper_class
-        ]}>
+        <div class={["dismiss-sidebar-wrapper mb-1 flex justify-end px-2 pt-2 md:hidden", @close_wrapper_class]}>
           <button
             type="button"
             class={["dismiss-sidebar-button focus:outline-none", @close_button_class]}
@@ -166,7 +150,7 @@ defmodule PortfolioWeb.Components.Sidebar do
               class={["sidebar-item-link flex items-center leading-5", item[:link_class]]}
             >
               <.icon :if={item[:icon]} name={item[:icon]} class={["shrink-0", item[:icon_class]]} />
-              <span class={["sidebar-text block ms-1", item[:label_class]]} data-item-label>
+              <span class={["sidebar-text ms-1 block", item[:label_class]]} data-item-label>
                 {item[:label] || render_slot(item)}
               </span>
             </.link>

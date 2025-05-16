@@ -113,18 +113,7 @@ defmodule PortfolioWeb.Components.Accordion do
     ~H"""
     <div
       id={@id}
-      class={[
-        "overflow-hidden w-full h-fit",
-        @variant == "menu" && menu_rounded(@rounded),
-        @variant != "menu" && rounded_size(@rounded, @variant),
-        color_variant(@variant, @color),
-        space_class(@space, @variant),
-        border_class(@border, @variant),
-        media_size(@media_size),
-        padding_size(@padding),
-        size_class(@size),
-        @class
-      ]}
+      class={["h-fit w-full overflow-hidden", @variant == "menu" && menu_rounded(@rounded), @variant != "menu" && rounded_size(@rounded, @variant), color_variant(@variant, @color), space_class(@space, @variant), border_class(@border, @variant), media_size(@media_size), padding_size(@padding), size_class(@size), @class]}
       {drop_rest(@rest)}
     >
       <div
@@ -137,11 +126,7 @@ defmodule PortfolioWeb.Components.Accordion do
           tabindex="0"
           aria-expanded="false"
           aria-controls={"#{@id}-#{index}"}
-          class={[
-            "accordion-summary block w-full",
-            "transition-all duration-100 ease-in-out [&.active-accordion-button_.accordion-chevron]:rotate-90",
-            item[:summary_class]
-          ]}
+          class={["accordion-summary block w-full", "[&.active-accordion-button_.accordion-chevron]:rotate-90 transition-all duration-100 ease-in-out", item[:summary_class]]}
         >
           <.native_chevron_position
             id={"#{@id}-#{index}-open-chevron"}
@@ -176,14 +161,11 @@ defmodule PortfolioWeb.Components.Accordion do
           id={"#{@id}-#{index}"}
           role="region"
           aria-labelledby={"#{@id}-#{index}-role-button"}
-          class="accordion-content-wrapper relative hidden transition [&:not(.active)_.accordion-content]:grid-rows-[0fr] [&.active_.accordion-content]:grid-rows-[1fr]"
+          class="accordion-content-wrapper [&:not(.active)_.accordion-content]:grid-rows-[0fr] [&.active_.accordion-content]:grid-rows-[1fr] relative hidden transition"
         >
           <div
             id={"#{@id}-#{index}-content"}
-            class={[
-              "accordion-content transition-all duration-500 grid",
-              item[:content_class]
-            ]}
+            class={["accordion-content grid transition-all duration-500", item[:content_class]]}
           >
             <div class="overflow-hidden">
               {render_slot(item)}
@@ -273,17 +255,7 @@ defmodule PortfolioWeb.Components.Accordion do
     ~H"""
     <div
       id={@id}
-      class={[
-        "overflow-hidden",
-        @variant == "menu" && menu_rounded(@rounded),
-        @variant != "menu" && rounded_size(@rounded, @variant),
-        space_class(@space, @variant),
-        padding_size(@padding),
-        border_class(@border, @variant),
-        media_size(@media_size),
-        color_variant(@variant, @color),
-        @class
-      ]}
+      class={["overflow-hidden", @variant == "menu" && menu_rounded(@rounded), @variant != "menu" && rounded_size(@rounded, @variant), space_class(@space, @variant), padding_size(@padding), border_class(@border, @variant), media_size(@media_size), color_variant(@variant, @color), @class]}
       {drop_rest(@rest)}
     >
       <details
@@ -292,12 +264,7 @@ defmodule PortfolioWeb.Components.Accordion do
         class={["group accordion-item-wrapper", item[:class]]}
         open={item[:open] || false}
       >
-        <summary class={[
-          "accordion-summary w-full group-open:mb-1",
-          "cursor-pointer transition-[margin,background,text] duration-[250ms] ease-in-out list-none",
-          item_color(@variant, @color),
-          item[:summary_class]
-        ]}>
+        <summary class={["accordion-summary w-full group-open:mb-1", "transition-[margin,background,text] duration-[250ms] cursor-pointer list-none ease-in-out", item_color(@variant, @color), item[:summary_class]]}>
           <.native_chevron_position
             position={chevron_position(@rest)}
             chevron_icon={@chevron_icon}
@@ -306,12 +273,7 @@ defmodule PortfolioWeb.Components.Accordion do
           />
         </summary>
 
-        <div class={[
-          "-mt-1 shrink-0 transition-all duration-1000 ease-in-out opacity-0 group-open:opacity-100",
-          "-translate-y-4	group-open:translate-y-0 custom-accordion-content",
-          item_color(@variant, @color),
-          item[:content_class]
-        ]}>
+        <div class={["-mt-1 shrink-0 opacity-0 transition-all duration-1000 ease-in-out group-open:opacity-100", "custom-accordion-content -translate-y-4 group-open:translate-y-0", item_color(@variant, @color), item[:content_class]]}>
           {render_slot(item)}
         </div>
       </details>
@@ -337,18 +299,11 @@ defmodule PortfolioWeb.Components.Accordion do
   defp native_chevron_position(%{position: "left"} = assigns) do
     ~H"""
     <div id={@id} class={[@class]} {@rest}>
-      <div class={[
-        "flex flex-nowrap items-center rtl:justify-start ltr:justify-start gap-2",
-        @item[:hover]
-      ]}>
+      <div class={["flex flex-nowrap items-center gap-2 ltr:justify-start rtl:justify-start", @item[:hover]]}>
         <.icon
           :if={!@hide_chevron}
           name={@chevron_icon}
-          class={[
-            "accordion-chevron transition-transform duration-300",
-            "ease-in-out group-open:rotate-90 rotate-180 rtl:rotate-0 shrink-0",
-            @chevron_class
-          ]}
+          class={["accordion-chevron transition-transform duration-300", "shrink-0 rotate-180 ease-in-out group-open:rotate-90 rtl:rotate-0", @chevron_class]}
         />
 
         <div class="flex items-center gap-2">
@@ -367,10 +322,7 @@ defmodule PortfolioWeb.Components.Accordion do
           </div>
 
           <div class={["space-y-2"]}>
-            <div class={[
-              @item[:title_class],
-              @item[:font_weight]
-            ]}>
+            <div class={[@item[:title_class], @item[:font_weight]]}>
               {@item[:title]}
             </div>
 
@@ -387,10 +339,7 @@ defmodule PortfolioWeb.Components.Accordion do
   defp native_chevron_position(%{position: "right"} = assigns) do
     ~H"""
     <div id={@id} class={[@class]} {@rest}>
-      <div class={[
-        "flex items-center justify-between gap-2",
-        @item[:hover]
-      ]}>
+      <div class={["flex items-center justify-between gap-2", @item[:hover]]}>
         <div class="flex items-center gap-2">
           <img
             :if={!is_nil(@item[:image])}
@@ -407,10 +356,7 @@ defmodule PortfolioWeb.Components.Accordion do
           </div>
 
           <div class={["space-y-2", @item[:title_class]]}>
-            <div class={[
-              @item[:title_class],
-              @item[:font_weight]
-            ]}>
+            <div class={[@item[:title_class], @item[:font_weight]]}>
               {@item[:title]}
             </div>
 
@@ -423,11 +369,7 @@ defmodule PortfolioWeb.Components.Accordion do
         <.icon
           :if={!@hide_chevron}
           name={@chevron_icon}
-          class={[
-            "accordion-chevron transition-transform duration-300",
-            "ease-in-out group-open:rotate-90 rtl:rotate-180 shrink-0",
-            @chevron_class
-          ]}
+          class={["accordion-chevron transition-transform duration-300", "shrink-0 ease-in-out group-open:rotate-90 rtl:rotate-180", @chevron_class]}
         />
       </div>
     </div>

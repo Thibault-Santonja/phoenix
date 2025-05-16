@@ -54,12 +54,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <h1
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -108,12 +103,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <h2
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -162,12 +152,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <h3
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -215,12 +200,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <h4
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -268,12 +248,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <h5
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -321,12 +296,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <h6
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -376,12 +346,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <p
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -432,12 +397,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <strong
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -492,12 +452,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <em
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -548,12 +503,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <dl
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -602,12 +552,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <dt
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -660,12 +605,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <dd
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -727,12 +667,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <figure
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -789,12 +724,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <figcaption
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -845,12 +775,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <abbr
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -900,12 +825,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <mark
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -953,12 +873,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <small
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -1004,12 +919,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <s
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -1056,12 +966,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <u
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -1111,12 +1016,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <cite
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -1163,12 +1063,7 @@ defmodule PortfolioWeb.Components.Typography do
     ~H"""
     <del
       id={@id}
-      class={[
-        color(@color),
-        size_class(@size),
-        @font_weight,
-        @class
-      ]}
+      class={[color(@color), size_class(@size), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

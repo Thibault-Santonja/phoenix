@@ -108,19 +108,7 @@ defmodule PortfolioWeb.Components.Alert do
       role="alert"
       aria-live="assertive"
       aria-labelledby={@title && @id && "#{@id}-title"}
-      class={[
-        "flash-alert leading-5",
-        border_class(@border, @variant),
-        color_variant(@variant, @kind),
-        position_class(@position),
-        rounded_size(@rounded),
-        width_class(@width),
-        padding_size(@padding),
-        content_size(@size),
-        @font_weight,
-        @z_index,
-        @class
-      ]}
+      class={["flash-alert leading-5", border_class(@border, @variant), color_variant(@variant, @kind), position_class(@position), rounded_size(@rounded), width_class(@width), padding_size(@padding), content_size(@size), @font_weight, @z_index, @class]}
       {@rest}
     >
       <div class="flex items-center justify-between gap-2">
@@ -293,18 +281,7 @@ defmodule PortfolioWeb.Components.Alert do
       role="alert"
       aria-live="assertive"
       aria-labelledby={@title && @id && "#{@id}-title"}
-      class={[
-        border_class(@border, @variant),
-        color_variant(@variant, @kind),
-        position_class(@position),
-        rounded_size(@rounded),
-        width_class(@width),
-        padding_size(@padding),
-        content_size(@size),
-        @font_weight,
-        @z_index,
-        @class
-      ]}
+      class={[border_class(@border, @variant), color_variant(@variant, @kind), position_class(@position), rounded_size(@rounded), width_class(@width), padding_size(@padding), content_size(@size), @font_weight, @z_index, @class]}
       {@rest}
     >
       <div :if={@title} class={@title_class} id={@id && "#{@id}-title"}>

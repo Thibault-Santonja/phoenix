@@ -121,31 +121,11 @@ defmodule PortfolioWeb.Components.SpeedDial do
     ~H"""
     <div
       id={@id}
-      class={[
-        "fixed group",
-        "[&_.speed-dial-content]:invisible [&_.speed-dial-content]:opacity-0",
-        "[&_.speed-dial-content.show-speed-dial]:visible [&_.speed-dial-content.show-speed-dial]:opacity-100",
-        "[&_.speed-dial-base]:flex [&_.speed-dial-base]:items-center [&_.speed-dial-base]:justify-center",
-        !@clickable && trigger_dial(),
-        action_position(@position_size, @action_position),
-        space_class(@space, @wrapper_position),
-        position_class(@wrapper_position),
-        rounded_size(@rounded),
-        border_class(@border, @variant),
-        padding_class(@padding),
-        width_class(@width),
-        size_class(@size),
-        @class
-      ]}
+      class={["group fixed", "[&_.speed-dial-content]:invisible [&_.speed-dial-content]:opacity-0", "[&_.speed-dial-content.show-speed-dial]:visible [&_.speed-dial-content.show-speed-dial]:opacity-100", "[&_.speed-dial-base]:flex [&_.speed-dial-base]:items-center [&_.speed-dial-base]:justify-center", !@clickable && trigger_dial(), action_position(@position_size, @action_position), space_class(@space, @wrapper_position), position_class(@wrapper_position), rounded_size(@rounded), border_class(@border, @variant), padding_class(@padding), width_class(@width), size_class(@size), @class]}
       {@rest}
     >
       <div
-        class={[
-          "speed-dial-content flex items-center",
-          "absolute z-10 w-full transition-all ease-in-out delay-100 duratio-500",
-          (@wrapper_position == "top" || @wrapper_position == "bottom") && "flex-col",
-          @wrapper_content_class
-        ]}
+        class={["speed-dial-content flex items-center", "duratio-500 absolute z-10 w-full transition-all delay-100 ease-in-out", (@wrapper_position == "top" || @wrapper_position == "bottom") && "flex-col", @wrapper_content_class]}
         id={@id && "#{@id}-speed-dial-content"}
         role="menu"
         phx-click-away={
@@ -159,11 +139,7 @@ defmodule PortfolioWeb.Components.SpeedDial do
         <div
           :for={{item, index} <- Enum.with_index(@item, 1)}
           id={"#{@id}-item-#{index}"}
-          class={[
-            "speed-dial-item w-fit h-fit",
-            item[:icon_position] == "end" && "flex-row-reverse",
-            item[:class]
-          ]}
+          class={["speed-dial-item h-fit w-fit", item[:icon_position] == "end" && "flex-row-reverse", item[:class]]}
         >
           <.speed_dial_content id={@id} index={index} {item}>
             {render_slot(item)}
@@ -188,10 +164,7 @@ defmodule PortfolioWeb.Components.SpeedDial do
         <.icon
           :if={!is_nil(@icon)}
           name={@icon}
-          class={[
-            "speed-dial-icon-base",
-            @icon_animated && "transition-transform group-hover:rotate-45"
-          ]}
+          class={["speed-dial-icon-base", @icon_animated && "transition-transform group-hover:rotate-45"]}
         />
         <span :if={is_nil(@icon)} class={@trigger_content[:class]}>{@trigger_content}</span>
         <span class="sr-only">{gettext("Open actions menu")}</span>
@@ -228,7 +201,7 @@ defmodule PortfolioWeb.Components.SpeedDial do
     ~H"""
     <.link
       id={"#{@id}-speed-dial-item-#{@index}"}
-      class={["block speed-dial-base flex flex-col", color_variant(@variant, @color)]}
+      class={["speed-dial-base block flex flex-col", color_variant(@variant, @color)]}
       role="menuitem"
       tabindex="0"
       navigate={@navigate}
@@ -236,7 +209,7 @@ defmodule PortfolioWeb.Components.SpeedDial do
       href={@href}
     >
       <.icon :if={@icon} name={@icon} class={["speed-dial-icon-base", @icon_class]} />
-      <span :if={is_nil(@icon)} class={["block text-xs text-center", @content_class]}>
+      <span :if={is_nil(@icon)} class={["block text-center text-xs", @content_class]}>
         {render_slot(@inner_block)}
       </span>
     </.link>
@@ -250,7 +223,7 @@ defmodule PortfolioWeb.Components.SpeedDial do
       class={["speed-dial-base flex flex-col", color_variant(@variant, @color)]}
     >
       <.icon :if={@icon} name={@icon} class={["speed-dial-icon-base", @icon_class]} />
-      <span :if={is_nil(@icon)} class={["block text-xs text-center", @content_class]}>
+      <span :if={is_nil(@icon)} class={["block text-center text-xs", @content_class]}>
         {render_slot(@inner_block)}
       </span>
     </div>

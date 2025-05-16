@@ -87,13 +87,7 @@ defmodule PortfolioWeb.Components.Image do
       decoding={@decoding}
       fetchpriority={@fetchpriority}
       referrerpolicy={@referrerpolicy}
-      class={[
-        "max-w-full",
-        rounded_size(@rounded),
-        shadow_size(@shadow),
-        filter_class(@filter, @filter_size),
-        @class
-      ]}
+      class={["max-w-full", rounded_size(@rounded), shadow_size(@shadow), filter_class(@filter, @filter_size), @class]}
       {@rest}
     />
     """

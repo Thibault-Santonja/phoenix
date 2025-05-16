@@ -115,15 +115,7 @@ defmodule PortfolioWeb.Components.Dropdown do
       data-clickable={to_string(@clickable)}
       data-smart-position={to_string(@smart_position)}
       phx-hook="Floating"
-      class={[
-        "relative [&>.dropdown-content]:invisible [&>.dropdown-content]:opacity-0",
-        "[&>.dropdown-content.show-dropdown]:visible [&>.dropdown-content.show-dropdown]:opacity-100",
-        (!@nomobile && @position == "left") ||
-          (@position == "right" && dropdown_mobile_position(@position)),
-        @relative,
-        @width,
-        @class
-      ]}
+      class={["[&>.dropdown-content]:invisible [&>.dropdown-content]:opacity-0 relative", "[&>.dropdown-content.show-dropdown]:visible [&>.dropdown-content.show-dropdown]:opacity-100", (!@nomobile && @position == "left") || (@position == "right" && dropdown_mobile_position(@position)), @relative, @width, @class]}
       {@rest}
     >
       <div
@@ -149,18 +141,7 @@ defmodule PortfolioWeb.Components.Dropdown do
         aria-hidden="true"
         data-floating-content="true"
         hidden
-        class={[
-          "dropdown-content transition-all ease-in-out",
-          space_class(@space),
-          color_variant(@variant, @color),
-          rounded_size(@rounded),
-          size_class(@size),
-          width_class(@width),
-          border_class(@border, @variant),
-          padding_size(@padding),
-          @font_weight,
-          @class
-        ]}
+        class={["dropdown-content transition-all ease-in-out", space_class(@space), color_variant(@variant, @color), rounded_size(@rounded), size_class(@size), width_class(@width), border_class(@border, @variant), padding_size(@padding), @font_weight, @class]}
         {@rest}
       >
         {render_slot(content)}
@@ -204,7 +185,7 @@ defmodule PortfolioWeb.Components.Dropdown do
       aria-expanded="false"
       aria-controls={@id && "#{@id}-dropdown-content"}
       data-floating-trigger="true"
-      class={["cursor-pointer dropdown-trigger", @class]}
+      class={["dropdown-trigger cursor-pointer", @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -271,18 +252,7 @@ defmodule PortfolioWeb.Components.Dropdown do
       aria-hidden="true"
       data-floating-content="true"
       hidden
-      class={[
-        "dropdown-content transition-all ease-in-out",
-        space_class(@space),
-        color_variant(@variant, @color),
-        rounded_size(@rounded),
-        size_class(@size),
-        width_class(@width),
-        border_class(@border, @variant),
-        padding_size(@padding),
-        @font_weight,
-        @class
-      ]}
+      class={["dropdown-content transition-all ease-in-out", space_class(@space), color_variant(@variant, @color), rounded_size(@rounded), size_class(@size), width_class(@width), border_class(@border, @variant), padding_size(@padding), @font_weight, @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

@@ -134,22 +134,12 @@ defmodule PortfolioWeb.Components.Carousel do
       data-active-slide-class={@active_slide_class}
       data-hidden-slide-class={@hidden_slide_class}
       data-active-indicator-class={@active_indicator_class}
-      class={[
-        "relative w-full overflow-hidden",
-        "[&_.slide:not(.active-slide)]:absolute [&_.slide]:inset-0 [&_.slide]:opacity-0 [&_.slide.active-slide]:opacity-100 [&_.slide:not(.active-slide)]:pointer-events-none [&_.slide:not(.active-slide)]:z-0",
-        "[&_.slide.active-slide]:z-10",
-        "[&_.slide]:transition-opacity [&_.slide]:delay-[50ms] [&_.slide]:duration-[700ms] [&_.slide]:ease-in-out",
-        text_position(@text_position),
-        padding_size(@padding),
-        color_class(@overlay),
-        size_class(@size),
-        @class
-      ]}
+      class={["relative w-full overflow-hidden", "[&_.slide:not(.active-slide)]:absolute [&_.slide]:inset-0 [&_.slide]:opacity-0 [&_.slide.active-slide]:opacity-100 [&_.slide:not(.active-slide)]:pointer-events-none [&_.slide:not(.active-slide)]:z-0", "[&_.slide.active-slide]:z-10", "[&_.slide]:transition-opacity [&_.slide]:delay-[50ms] [&_.slide]:duration-[700ms] [&_.slide]:ease-in-out", text_position(@text_position), padding_size(@padding), color_class(@overlay), size_class(@size), @class]}
     >
       <button
         :if={@control}
         id={"#{@id}-carousel-prev"}
-        class="absolute left-0 inset-y-0 z-20 p-4 bg-black/10 hover:bg-black/30 transition focus:outline-none"
+        class="bg-black/10 absolute inset-y-0 left-0 z-20 p-4 transition hover:bg-black/30 focus:outline-none"
       >
         <.icon name="hero-chevron-left" class="size-7 text-white" />
       </button>
@@ -157,7 +147,7 @@ defmodule PortfolioWeb.Components.Carousel do
       <button
         :if={@control}
         id={"#{@id}-carousel-next"}
-        class="absolute right-0 inset-y-0 z-20 p-4 bg-black/10 hover:bg-black/30 transition focus:outline-none"
+        class="bg-black/10 absolute inset-y-0 right-0 z-20 p-4 transition hover:bg-black/30 focus:outline-none"
       >
         <.icon name="hero-chevron-right" class="size-7 text-white" />
       </button>
@@ -168,7 +158,7 @@ defmodule PortfolioWeb.Components.Carousel do
         class={["slide h-full", slide[:class]]}
         aria-hidden={@actived_carousel + 1 != index}
       >
-        <div class="relative w-full h-full">
+        <div class="relative h-full w-full">
           <.slide_image id={@id} index={index} {slide}>
             <.slide_content id={@id} index={index} {slide} />
           </.slide_image>
@@ -257,11 +247,7 @@ defmodule PortfolioWeb.Components.Carousel do
       id={"#{@id}-carousel-slide-content-#{@index}"}
     >
       <div
-        class={[
-          "description-wrapper h-full mx-auto flex flex-col gap-5",
-          content_position(@content_position),
-          @wrapper_class
-        ]}
+        class={["description-wrapper mx-auto flex h-full flex-col gap-5", content_position(@content_position), @wrapper_class]}
         id={"#{@id}-carousel-slide-content-position-#{@index}"}
       >
         <div
@@ -294,13 +280,7 @@ defmodule PortfolioWeb.Components.Carousel do
     ~H"""
     <div
       id={"#{@id}-carousel-slide-indicator"}
-      class={[
-        "absolute inset-x-0 bottom-0 z-10 flex justify-center gap-3 py-2.5",
-        "[&>.carousel-indicator]:h-1 [&>.carousel-indicator]:w-6 [&>.carousel-indicator]:bg-white",
-        "[&>.carousel-indicator.active-indicator]:opacity-100",
-        "[&>.carousel-indicator]:opacity-40 [&>.carousel-indicator]:transition-all",
-        "[&>.carousel-indicator]:duration-500 [&>.carousel-indicator]:ease-in-out shadow"
-      ]}
+      class={["absolute inset-x-0 bottom-0 z-10 flex justify-center gap-3 py-2.5", "[&>.carousel-indicator]:h-1 [&>.carousel-indicator]:w-6 [&>.carousel-indicator]:bg-white", "[&>.carousel-indicator.active-indicator]:opacity-100", "[&>.carousel-indicator]:opacity-40 [&>.carousel-indicator]:transition-all", "[&>.carousel-indicator]:duration-500 [&>.carousel-indicator]:ease-in-out shadow"]}
     >
       <button
         :for={indicator_item <- 1..@count}
