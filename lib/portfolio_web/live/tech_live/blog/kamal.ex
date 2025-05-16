@@ -1,4 +1,7 @@
 defmodule PortfolioWeb.TechLive.Blog.Kamal do
+  @moduledoc """
+  Blog post about my Kamal usage
+  """
   use PortfolioWeb, :live_view
 
   @impl true

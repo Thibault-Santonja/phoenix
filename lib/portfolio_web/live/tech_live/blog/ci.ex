@@ -1,4 +1,7 @@
 defmodule PortfolioWeb.TechLive.Blog.Ci do
+  @moduledoc """
+    Blog post about my CI usage
+  """
   use PortfolioWeb, :live_view
 
   @impl true
