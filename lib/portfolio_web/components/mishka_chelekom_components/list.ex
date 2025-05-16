@@ -155,11 +155,7 @@ defmodule PortfolioWeb.Components.List do
   @spec li(map()) :: Phoenix.LiveView.Rendered.t()
   def li(assigns) do
     ~H"""
-    <li
-      id={@id}
-      class={[padding_size(@padding), @class]}
-      {@rest}
-    >
+    <li id={@id} class={[padding_size(@padding), @class]} {@rest}>
       <div class={["flex w-full items-center gap-2", content_position(@position)]}>
         <.icon :if={!is_nil(@icon)} name={@icon} class={@icon_class} />
         <span :if={is_integer(@count)}>{@count}{@count_separator}</span>

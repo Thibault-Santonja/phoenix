@@ -355,11 +355,7 @@ defmodule PortfolioWeb.Components.Menu do
 
   def menu(assigns) do
     ~H"""
-    <ul
-      id={@id}
-      class={[padding_size(@padding), space_class(@space), @class]}
-      {@rest}
-    >
+    <ul id={@id} class={[padding_size(@padding), space_class(@space), @class]} {@rest}>
       <li :for={menu_item <- @menu_items} class={@item_class}>
         <.button_link
           :if={Map.get(menu_item, :sub_items, []) == []}

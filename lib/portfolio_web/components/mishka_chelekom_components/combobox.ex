@@ -207,10 +207,7 @@ defmodule PortfolioWeb.Components.Combobox do
             type="button"
           >
             <div class="flex flex-1 items-center gap-2">
-              <div
-                :if={@start_section != []}
-                class={["shrink-0", @start_section[:class]]}
-              >
+              <div :if={@start_section != []} class={["shrink-0", @start_section[:class]]}>
                 {render_slot(@start_section)}
               </div>
 
@@ -388,10 +385,7 @@ defmodule PortfolioWeb.Components.Combobox do
             type="button"
           >
             <div id={"#{@id}-select-toggle-label"} class="flex flex-1 items-center gap-2">
-              <div
-                :if={@start_section != []}
-                class={["shrink-0", @start_section[:class]]}
-              >
+              <div :if={@start_section != []} class={["shrink-0", @start_section[:class]]}>
                 {render_slot(@start_section)}
               </div>
 

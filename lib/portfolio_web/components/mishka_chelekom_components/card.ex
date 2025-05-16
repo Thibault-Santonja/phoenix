@@ -264,10 +264,7 @@ defmodule PortfolioWeb.Components.Card do
 
   def card_content(assigns) do
     ~H"""
-    <div
-      id={@id}
-      class={["card-section", space_class(@space), padding_size(@padding), @class]}
-    >
+    <div id={@id} class={["card-section", space_class(@space), padding_size(@padding), @class]}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -304,11 +301,7 @@ defmodule PortfolioWeb.Components.Card do
 
   def card_footer(assigns) do
     ~H"""
-    <div
-      id={@id}
-      class={["card-section", padding_size(@padding), @class]}
-      {@rest}
-    >
+    <div id={@id} class={["card-section", padding_size(@padding), @class]} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """

@@ -188,11 +188,7 @@ defmodule PortfolioWeb.Components.TableContent do
 
   def content_wrapper(assigns) do
     ~H"""
-    <div
-      id={@id}
-      class={["content-wrapper", @font_weight, @class]}
-      {@rest}
-    >
+    <div id={@id} class={["content-wrapper", @font_weight, @class]} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """

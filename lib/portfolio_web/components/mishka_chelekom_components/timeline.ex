@@ -224,12 +224,7 @@ defmodule PortfolioWeb.Components.Timeline do
 
   def timeline_section(%{horizontal: true} = assigns) do
     ~H"""
-    <div
-      id={@id}
-      role="listitem"
-      class={["timeline-section relative mb-6 sm:mb-0", @class]}
-      {@rest}
-    >
+    <div id={@id} role="listitem" class={["timeline-section relative mb-6 sm:mb-0", @class]} {@rest}>
       <div :if={!@image} class={["flex items-center", @bullet_wrapper_Class]}>
         <div class={["timeline-bullet z-10 flex shrink-0 items-center justify-center rounded-full", bullet_size(@size), @bullet_class]}>
           <.icon
