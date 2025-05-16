@@ -1,0 +1,337 @@
+<article class="border-tech-base-300 bg-tech-base-100 mx-auto rounded-lg border px-6 py-12 shadow-lg md:px-[3rem] md:m-[5rem]">
+  <h1 class="text-tech-primary text-balance mb-16 text-center text-3xl font-thin uppercase">
+    {gettext("Deploying a Phoenix App with Kamal and Docker on a VPS")}
+  </h1>
+
+  <nav class="my-10">
+    <h2 class="text-tech-secondary mb-2 text-xl font-bold">{gettext("Table of Contents")}</h2>
+    <ul class="space-y-1 pl-4">
+      <li class="pb-2"><a href="#1-introduction">1. {gettext("Introduction")}</a></li>
+      <li class="pb-2"><a href="#2-requirements">2. {gettext("Requirements")}</a></li>
+      <li class="pb-2"><a href="#3-preparing-your-app">3. {gettext("Preparing Your App")}</a></li>
+      <li class="pb-2"><a href="#4-installing-kamal">4. {gettext("Installing Kamal")}</a></li>
+      <li class="pb-2"><a href="#5-configuring-kamal">5. {gettext("Configuring Kamal")}</a></li>
+      <li class="pb-2"><a href="#6-deployment">6. {gettext("Deployment")}</a></li>
+      <li class="pb-2"><a href="#7-conclusion">7. {gettext("Conclusion")}</a></li>
+    </ul>
+  </nav>
+
+  <h2 id="1-introduction" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    1. {gettext("Introduction")}
+  </h2>
+  <p class="mb-6">
+    {gettext(
+      "In this guide, I'll talk about how to deploy a Phoenix (Elixir) app to a VPS using Kamal, a deployment tool developed by the team behind Ruby on Rails. Kamal provides a simple and powerful way to deploy containerized apps over SSH with Docker."
+    )}
+  </p>
+
+  <h2 id="2-requirements" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    2. {gettext("Requirements")}
+  </h2>
+  <ul class="mb-6 list-disc pl-6">
+    <li>{gettext("An application to deploy")}</li>
+    <li>{gettext("A Dockerfile for the app")}</li>
+    <li>{gettext("A VPS with SSH access (e.g. Hetzner)")}</li>
+    <li>{gettext("A domain name managed by Cloudflare or similar")}</li>
+    <li>{gettext("Ruby >= 3.1 (for Kamal)")}</li>
+  </ul>
+
+  <h2 id="3-preparing-your-app" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    3. {gettext("Preparing Your App")}
+  </h2>
+  <p class="mb-6">
+    {gettext(
+      "Once a functional app base has been created (in the case of an Elixir / Phoenix app, a simple `mix phx.new my_app` will suffice), it needs to be containerised. Kamal will need a container to deploy on the VPS. This container may not be hosted on Docker Hub, but in my case it is. By default, Phoenix offers a Docker file, which can be generated with the command `mix phx gen.release --docker`, which may do the trick. In my case I preferred to make a new one. An Elixir app is easy to containerise, so I took advantage!"
+    )}
+  </p>
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+<code># Dockerfile
+FROM ubuntu:noble
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# For Kamal deployment using --skip-push argument
+LABEL service=portfolio
+
+# Set environment variables for locale settings
+ENV SHELL=/bin/bash
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+ENV PHX_SERVER=true
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Change ownership of /app to the "nobody" user
+# Update the package index, upgrade packages, install required dependencies,
+# then clean up to reduce image size
+# Uncomment the locale in locale.gen and generate it
+RUN chown nobody /app && \
+    apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y bash libstdc++6 openssl libncurses6 locales ca-certificates && \
+    apt-get clean && \
+    rm -f /var/lib/apt/lists/*_* && \
+    sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
+
+# Copy the Phoenix release into the image and set ownership to "nobody"
+COPY --chown=nobody:root ./_build/prod/rel/portfolio/ ./
+
+# Open Phoenix port (4000 by default)
+EXPOSE 4000
+
+# Run the container as an unprivileged user for better security
+USER nobody
+
+# Start the Phoenix server when the container starts
+SHELL ["bash", "-c"]
+# CMD ["/app/bin/server"]
+CMD ["/app/bin/portfolio", "start"]
+</code></pre>
+
+  <h2 id="4-installing-kamal" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    4. {gettext("Installing Kamal")}
+  </h2>
+  <p class="mb-6">
+    {gettext("To install Kamal, follow the doc using RubyGems:")}
+  </p>
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+<code>gem install kamal</code></pre>
+
+  <p class="mb-6">
+    {gettext("It's easy and straight forward !")}
+  </p>
+
+  <h2 id="5-configuring-kamal" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    5. {gettext("Configuring Kamal")}
+  </h2>
+  <p class="mb-6">
+    {gettext("Use Kamal to initialize your deployment configuration:")}
+  </p>
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+<code>kamal init --deploy-to production --app my_app</code></pre>
+  <p class="mb-6">
+    {gettext(
+      "Edit the generated files under config/deploy to match your app, domain, and VPS settings. Define environment variables, ports, and Docker image name."
+    )}
+  </p>
+
+  <p class="mb-6">
+    {gettext(
+      "Here's how I configured Kamal for my own Phoenix project deployed to a Hetzner VPS using Docker and PostgreSQL."
+    )}
+  </p>
+
+  <h3 class="text-tech-secondary mb-2 text-xl font-semibold">
+    {gettext("5.1 Sample kamal.yml")}
+  </h3>
+
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+<code>service: my_app
+image: user_name/my_app
+servers:
+  web:
+    - 123.45.67.89
+ssh:
+  user: amvcc
+env:
+  clear:
+    PHX_HOST: myapp.com
+    PHX_SERVER: true
+    DATABASE_URL: ecto://postgres:motdepasse@localhost/mon_app_prod
+    SECRET_KEY_BASE: ...
+  secret:
+    - SECRET_KEY_BASE
+proxy:
+  ssl: true
+  hosts:
+    - thibaultsan.com
+    - amvcc.thibaultsan.com
+    - photo.thibaultsan.com
+  # Proxy connects to your container on port 80 by default.
+  app_port: 4000
+  healthcheck:
+    interval: 3
+    path: /
+    timeout: 10
+registry:
+  username:
+    - KAMAL_REGISTRY_USERNAME
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+builder:
+  context: .
+  arch: amd64
+</code></pre>
+
+  <h3 class="text-tech-secondary mb-2 text-xl font-semibold">{gettext("5.2 Explanation")}</h3>
+
+  <div class="mb-12 overflow-x-auto">
+    <table class="min-w-full rounded-lg border border-gray-300 text-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border-b px-4 py-2 text-left">{gettext("Line")}</th>
+          <th class="border-b px-4 py-2 text-left">{gettext("Explanation")}</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white">
+        <tr>
+          <td class="border-b px-4 py-2">service</td>
+          <td class="border-b px-4 py-2">
+            {gettext(
+              "The name of your app/service, consistent with your Docker image and Elixir project."
+            )}
+          </td>
+        </tr>
+        <tr>
+          <td class="border-b px-4 py-2">image</td>
+          <td class="border-b px-4 py-2">
+            {gettext("Full Docker image name, hosted on GitHub Container Registry in this case.")}
+          </td>
+        </tr>
+        <tr>
+          <td class="border-b px-4 py-2">servers.web.hosts</td>
+          <td class="border-b px-4 py-2">{gettext("Public IP address of your VPS.")}</td>
+        </tr>
+        <tr>
+          <td class="border-b px-4 py-2">user</td>
+          <td class="border-b px-4 py-2">
+            {gettext("SSH user on the VPS, typically 'deploy' or 'root'.")}
+          </td>
+        </tr>
+        <tr>
+          <td class="border-b px-4 py-2">env.clear</td>
+          <td class="border-b px-4 py-2">
+            {gettext(
+              "Environment variables that are safe to commit (e.g. hostname, database URL)."
+            )}
+          </td>
+        </tr>
+        <tr>
+          <td class="border-b px-4 py-2">env.secret</td>
+          <td class="border-b px-4 py-2">
+            {gettext(
+              "Points to a secret .env file (not committed) used for sensitive data like SECRET_KEY_BASE."
+            )}
+          </td>
+        </tr>
+        <tr>
+          <td class="border-b px-4 py-2">registry</td>
+          <td class="border-b px-4 py-2">
+            {gettext("Registry credentials for pushing images (GitHub, DockerHub, etc.).")}
+          </td>
+        </tr>
+        <tr>
+          <td class="border-b px-4 py-2">builder.remote</td>
+          <td class="border-b px-4 py-2">
+            {gettext(
+              "If needed, builds the image remotely to match your server architecture (e.g. amd64)."
+            )}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="text-tech-secondary mb-2 text-xl font-semibold">
+    {gettext("5.3 Example .env.secret")}
+  </h3>
+
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm"><code>SECRET_KEY_BASE=super_long_secret_key
+DATABASE_PASSWORD=motdepasse
+</code></pre>
+
+  <p class="mb-4">
+    {gettext(
+      "This file should be kept out of version control. Kamal will read it and inject the variables into the container."
+    )}
+  </p>
+
+  <h2 id="6-deployment" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    6. {gettext("Deployment")}
+  </h2>
+  <p class="mb-6">
+    {gettext("Once configured, deploy your app with:")}
+  </p>
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+<code>kamal deploy</code></pre>
+  <p class="mb-6">
+    {gettext(
+      "Kamal will build the Docker image, push it, connect to your VPS, and deploy the containers. Use Kamal commands like"
+    )}
+    <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">kamal env push</code>,
+    <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">
+      kamal restart
+    </code>
+    <p class="mb-6">
+      {gettext(
+        "For the moment, I haven't pipelined the deployment. To avoid rebuilding the image and push the build image directly into the CI, Kamal offers these options:"
+      )}
+    </p>
+    <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+<code>kamal deploy --skip-push --version=latest</code></pre>
+  </p>
+
+  <h2 id="7-conclusion" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    7. {gettext("Conclusion")}
+  </h2>
+  <p class="mb-6">
+    {gettext(
+      "Kamal is a great choice for Phoenix developers who want a fast, reliable deployment pipeline without complex orchestration. Combined with Docker and a VPS like Hetzner, it provides full control over your stack."
+    )}
+  </p>
+
+  <p class="mb-4">
+    {gettext(
+      "Using Kamal to deploy a Phoenix application has significantly simplified the process compared to traditional methods like manual SSH setup, Ansible playbooks, or even some PaaS solutions."
+    )}
+  </p>
+
+  <p class="mb-4">
+    {gettext(
+      "Unlike manual deployments that require repetitive steps, or Ansible that adds a layer of complexity, Kamal offers a modern, Ruby-based deployment tool that is simple, transparent, and Docker-native."
+    )}
+  </p>
+
+  <h3 class="mb-2 text-xl font-semibold">{gettext("Why Kamal?")}</h3>
+  <ul class="mb-4 list-disc space-y-2 pl-6 text-gray-800">
+    <li>{gettext("Minimal configuration: a single kamal.yml file controls everything.")}</li>
+    <li>
+      {gettext(
+        "Docker-native: builds and deploys containers without needing additional orchestration tools."
+      )}
+    </li>
+    <li>
+      {gettext(
+        "Remote builder support: useful when your local architecture differs from the server (e.g., M1 Mac to amd64 VPS)."
+      )}
+    </li>
+    <li>{gettext("No vendor lock-in: works with any VPS or cloud provider.")}</li>
+    <li>{gettext("Secure secrets management: easily handles private .env files.")}</li>
+    <li>
+      {gettext(
+        "Easy rollback and redeploy with simple commands like `kamal deploy` or `kamal rollback`."
+      )}
+    </li>
+  </ul>
+
+  <p class="mb-4">
+    {gettext(
+      "Compared to solutions like Fly.io, which abstract away the infrastructure, Kamal gives you full control while keeping the workflow efficient and reproducible."
+    )}
+  </p>
+
+  <p class="mb-4">
+    {gettext(
+      "Overall, Kamal bridges the gap between manual server management and fully managed platforms, providing a great balance of simplicity, power, and transparency."
+    )}
+  </p>
+
+  <p class="mb-4 font-semibold">
+    {gettext(
+      "If you're looking for a straightforward and self-hosted deployment solution for Elixir Phoenix apps, Kamal is a fantastic choice."
+    )}
+  </p>
+</article>

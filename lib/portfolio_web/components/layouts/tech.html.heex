@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr" class="[scrollbar-gutter:stable] scroll-smooth">
+  <head>
+    {Application.get_env(:live_debugger, :live_debugger_tags)}
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title default="tech" suffix=" · Seigneurie de Coucy">
+      {assigns[:page_title]}
+    </.live_title>
+    <link rel="icon" type="image/x-icon" href="/images/photography/logo.png" />
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+  </head>
+  <body class="bg-tech-base-200 w-screen font-light">
+    <div class="follower w-sceen absolute inset-x-0 bottom-0 h-0 ">
+      <%!-- For the scroll animation --%>
+    </div>
+    <main class="text-tech-base-content flex h-full min-h-screen w-screen flex-col">
+      <header class="bg-tech-base-100 border-tech-base-300 h-[3rem] sticky top-0 z-10 flex w-full flex-none items-stretch justify-between p-4 shadow md:px-16">
+        <div class="flex items-center text-xl font-thin">
+          <a href={~p"/"}>
+            Thibault San • {gettext("The tech blog")}
+          </a>
+        </div>
+
+        <div class="flex items-center">
+          <a href={~p"/"} class="hover:underline">{gettext("Home")}</a>
+        </div>
+      </header>
+
+      <main class="max-w-screen grid flex-auto grid-cols-1 content-center text-justify">
+        {@inner_content}
+      </main>
+
+      <footer class="text-tech-neutral-content bg-tech-neutral min-h-[3rem] bottom-0 z-10 flex w-full flex-none items-stretch justify-center p-4 text-xs shadow md:px-16">
+        <p>Thibault Santonja - {NaiveDateTime.utc_now().year}</p>
+      </footer>
+    </main>
+  </body>
+</html>

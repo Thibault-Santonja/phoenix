@@ -1,0 +1,442 @@
+<article class="border-tech-base-300 bg-tech-base-100 mx-auto rounded-lg border px-6 py-12 shadow-lg md:px-[3rem] md:m-[5rem]">
+  <h1 class="text-tech-primary text-balance mb-16 text-center text-3xl font-thin uppercase">
+    {gettext("Continuous Integration for a Phoenix LiveView Site (Without Postgres)")}
+  </h1>
+
+  <nav class="my-10">
+    <h2 class="text-tech-secondary mb-2 text-xl font-bold">{gettext("Table of Contents")}</h2>
+    <ul class="space-y-1 pl-4">
+      <li class="pb-2"><a href="#1-triggers">1. {gettext("Triggers")}</a></li>
+      <li class="pb-2">
+        <a href="#2-what-is-mise">2. {gettext("What is Mise?")}</a>
+        <ul class="pl-4">
+          <li><a href="#2-1-defined-tool-versions">2.1 {gettext("Defined Tool Versions")}</a></li>
+          <li><a href="#2-2-reusable-tasks">2.2 {gettext("Reusable Tasks")}</a></li>
+          <li><a href="#2-3-mise-in-ci">2.3 {gettext("Mise in CI")}</a></li>
+        </ul>
+      </li>
+      <li class="pb-2">
+        <a href="#3-job-overview">3. {gettext("Job Overview")}</a>
+        <ul class="pl-4">
+          <li><a href="#3-1-tools">3.1 {gettext("Tools")}</a></li>
+          <li><a href="#3-2-lint">3.2 {gettext("Lint")}</a></li>
+          <li><a href="#3-3-test">3.3 {gettext("Test")}</a></li>
+          <li><a href="#3-4-build">3.4 {gettext("Build")}</a></li>
+        </ul>
+      </li>
+      <li class="pb-2">
+        <a href="#4-docker-image-release">4. {gettext("Docker Image Release")}</a>
+      </li>
+      <li class="pb-2"><a href="#5-conclusion">5. {gettext("Conclusion")}</a></li>
+    </ul>
+  </nav>
+
+  <p class="mb-6">
+    {gettext(
+      "As part of building and maintaining a reliable LiveView site, a solid CI pipeline is essential."
+    )}
+    {gettext(
+      "Below, I’ll walk you through the CI setup we use for this site, which is built with Phoenix (Elixir), and deployed using Kamal (another article will be write on it !) and Docker."
+    )}
+    {gettext(
+      "At the time of writing, the app doesn’t rely on a database like Postgres, but we’ve left support commented out for future expansion."
+    )}
+  </p>
+
+  <p class="mb-6">
+    {gettext("We use")}
+    <a
+      href="https://github.com/features/actions"
+      target="_blank"
+      class="text-tech-accent hover:underline"
+    >
+      GitHub Actions
+    </a>
+    {gettext(
+      "for CI, which gives us clean, isolated environments and good integration with Docker Hub and versioned releases."
+    )}
+  </p>
+
+  <h2 id="1-triggers" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    1. {gettext("Triggers")}
+  </h2>
+
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+<code>on:
+  push:
+    branches: [main]
+    tags:
+      - "*"
+  pull_request:
+    branches: [main]</code>
+  </pre>
+
+  <p class=" mb-6">
+    {gettext("The CI pipeline runs automatically:")}
+    <ul class="mt-2 mb-4 list-disc pl-6 ">
+      <li>
+        {gettext("On any push to the")}
+        <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">main</code> {gettext(
+          "branch"
+        )}
+      </li>
+      <li>{gettext("When a new tag is pushed (used for Docker image release)")}</li>
+      <li>
+        {gettext("On pull requests targeting")}
+        <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">main</code>
+      </li>
+    </ul>
+  </p>
+
+  <h2 id="2-what-is-mise" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    2. {gettext("What Is Mise?")}
+  </h2>
+
+  <p class=" mb-6">
+    {gettext(
+      "Mise is a modern version manager that supports multiple languages and tools — similar to asdf, but faster and easier to configure."
+    )}
+    {gettext(
+      "Using a single configuration file (`mise.toml`), you can define the exact versions of tools like Elixir, Erlang, Ruby, and even JavaScript runtimes like Bun."
+    )}
+  </p>
+
+  <p class=" mb-6">
+    {gettext(
+      "In both local development and CI, this ensures everyone — and every job — uses the same versions."
+    )}
+    {gettext("No more surprises between your machine and GitHub Actions!")}
+  </p>
+
+  <h3 id="2-1-defined-tool-versions" class="text-tech-primary mb-2 text-xl font-medium">
+    2.1 {gettext("Defined Tool Versions")}
+  </h3>
+
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-4 overflow-auto rounded-lg p-4 text-sm">
+  <code>[tools]
+  bun = "1.2.11"
+  elixir = "1.18.3"
+  erlang = "27.3.4"
+  ruby = "3.4.2"</code>
+  </pre>
+
+  <p class="">
+    {gettext("This setup guarantees consistent runtime environments:")}
+    <ul class="mt-2 mb-6 list-disc pl-6">
+      <li>
+        <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">bun</code>
+        for asset management
+      </li>
+      <li>
+        <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">elixir</code>
+        and
+        <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">erlang</code>
+        for the Phoenix backend
+      </li>
+      <li>
+        <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">ruby</code>
+        for tools like Kamal used in deployment
+      </li>
+    </ul>
+  </p>
+
+  <h3 id="2-2-reusable-tasks" class="text-tech-primary mb-2 text-xl font-medium">
+    2.2 {gettext("Reusable Tasks")}
+  </h3>
+
+  <p class=" mb-6">
+    {gettext(
+      "Mise also lets you define CLI tasks, so you can standardize common workflows like setup, cleanups, and deployment helpers."
+    )}
+    {gettext("These tasks are great for onboarding and automation.")}
+  </p>
+
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+  <code>[tasks.reset]
+  description = "Reset and recompile project"
+  run = "rm -rf deps _build .elixir_ls && mix deps.get && mix && mix test"
+
+  [tasks."clean:images"]
+  description = "Delete images folders"
+  run = "rm -rf priv/waffle"
+
+  [tasks."setup:kamal"]
+  description = "Install kamal to manage deployment"
+  run = "gem install kamal"
+
+  [tasks."assets:install"]
+  description = "Install JS assets"
+  run = "bun install --cwd assets"</code>
+  </pre>
+
+  <h3 id="2-3-mise-in-ci" class="text-tech-primary mb-2 text-xl font-medium">
+    2.3 {gettext("Mise in CI")}
+  </h3>
+
+  <p class=" mb-6">
+    {gettext("In the CI, we use the official")}
+    <a href="https://github.com/jdx/mise-action" class="text-tech-accent hover:underline">
+      `jdx/mise-action`
+    </a>
+    {gettext("to install and cache these tools quickly.")}
+    {gettext(
+      "This speeds up builds, avoids mismatched versions, and keeps CI mirrors of local dev environments."
+    )}
+  </p>
+
+  <p class=" mb-6">
+    {gettext(
+      "By caching mix and build artifacts per tool version and environment, we also save time on repeat CI runs:"
+    )}
+  </p>
+
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+  <code>{~c"key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}"}</code>
+  </pre>
+
+  <h2 id="3-job-overview" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    3. {gettext("Job Overview")}
+  </h2>
+
+  <p class=" mb-6">
+    {gettext("The workflow defines four jobs. Let's dig into these !")}
+  </p>
+
+  <h3 id="3-1-tools" class="text-tech-primary mb-2 text-xl font-semibold">
+    3.1 {gettext("Tools")}
+  </h3>
+  <p>
+    {gettext("This job initializes the CI environment by installing all required tools using")}
+    <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">mise</code>. {gettext(
+      "It ensures consistency across development and CI by aligning the tool versions defined in"
+    )}
+    <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">mise.toml</code>.
+  </p>
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+  <code>  tools:
+    name: TOOLS
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: jdx/mise-action@v2
+</code>
+    </pre>
+
+  <h3 id="3-2-lint" class="text-tech-primary mb-2 text-xl font-semibold">
+    3.2 {gettext("Lint")}
+  </h3>
+  <p>
+    {gettext(
+      "The LINT job enforces code quality and security rules. It checks for formatting, unused dependencies, security vulnerabilities, and stylistic issues."
+    )}
+    {gettext("Tools like")}
+    <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">credo</code>, <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">sobelow</code>, <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">hex.audit</code>, {gettext(
+      "and"
+    )}
+    <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">
+      mix deps.unlock --check-unused
+    </code>
+    {gettext("are used to ensure the codebase stays clean and secure.")}
+  </p>
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+  <code>{~c"""
+  lint:
+    name: LINT
+    needs: [tools]
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: jdx/mise-action@v2
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
+            ${{ env.MIX_ENV }}-mise-
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile without warnings
+        run: mix compile --warnings-as-errors
+      - name: Check code format
+        run: mix format --dry-run --check-formatted
+      - name: Check unused deps
+        run: mix deps.unlock --check-unused
+      - name: Hex audit
+        run: mix hex.audit
+      - name: Deps audit
+        run: mix deps.audit
+      - name: Run credo
+        run: mix credo
+      - name: Run sobelow
+        run: mix sobelow --config
+"""}</code>
+    </pre>
+
+  <h3 id="3-3-test" class="text-tech-primary mb-2 text-xl font-semibold">
+    3.3 {gettext("Test")}
+  </h3>
+  <p>
+    {gettext("This job runs the test suite with")}
+    <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">mix test</code>. {gettext(
+      "It ensures the application behaves as expected."
+    )}
+    {gettext(
+      "PostgreSQL is commented out for now because the project does not currently require a database, but the configuration is ready for future use."
+    )}
+  </p>
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+  <code>{~c"""
+  test:
+    name: TEST
+    needs: [tools]
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: jdx/mise-action@v2
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
+            ${{ env.MIX_ENV }}-mise-
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Run tests
+        run: mix test --max-failures=1 --color
+"""}</code>
+    </pre>
+
+  <h3 id="3-4-build" class="text-tech-primary mb-2 text-xl font-semibold">
+    3.4 {gettext("Build")}
+  </h3>
+  <p>
+    {gettext(
+      "The BUILD job compiles the application, builds the assets, and generates a release."
+    )}
+    {gettext(
+      "It uses production settings to ensure that the compiled output matches what will be deployed."
+    )}
+    {gettext(
+      "If a Git tag is pushed, it also builds and pushes a Docker image to Docker Hub using the configured secrets."
+    )}
+  </p>
+  <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
+  <code>{~c"""
+  build:
+    name: BUILD
+    needs: [lint, test]
+    runs-on: ubuntu-24.04
+    env:
+      MIX_ENV: prod
+      PHX_SERVER: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up tools
+        uses: jdx/mise-action@v2
+        with:
+          cache_key_prefix: mise-${{ runner.os }}
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
+            ${{ runner.os }}-${{ env.MIX_ENV }}-mise-
+      - name: Install web dependencies
+        run: mise run assets:install
+      - name: Install backend dependencies
+        run: mix deps.get --only prod
+      - name: Build
+        run: MIX_ENV=${{ env.MIX_ENV }} mix do assets.setup, assets.deploy, compile --warnings-as-errors, release --overwrite
+      - name: Docker meta
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      - name: Set up docker buildx
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to docker hub
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Release
+        if: ${{ contains(github.ref, 'refs/tags/') }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+"""}</code>
+    </pre>
+
+  <h2 id="4-docker-image-release" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    4. {gettext("Docker Image Release")}
+  </h2>
+
+  <p class=" mb-6">
+    {gettext("On each tagged commit, the workflow:")}
+  </p>
+
+  <ul class="mb-6 list-disc pl-6 ">
+    <li>{gettext("Builds the Phoenix release with static assets")}</li>
+    <li>{gettext("Generates Docker metadata and tags")}</li>
+    <li>{gettext("Logs into Docker Hub using secrets")}</li>
+    <li>
+      {gettext("Builds and pushes the image using")}
+      <a
+        href="https://github.com/docker/build-push-action"
+        class="text-tech-accent hover:underline"
+      >
+        build-push-action
+      </a>
+    </li>
+  </ul>
+
+  <h2 id="5-conclusion" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
+    5. {gettext("Conclusion")}
+  </h2>
+
+  <p class=" mb-6">
+    {gettext(
+      "This setup gives us confidence in code quality and makes production releases seamless."
+    )}
+    {gettext(
+      "If you’re building a Phoenix LiveView site without a database, this is a good baseline."
+    )}
+    {gettext("When you're ready to enable Postgres, the foundation is already there.")}
+  </p>
+</article>

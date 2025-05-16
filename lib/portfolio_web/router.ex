@@ -21,6 +21,16 @@ defmodule PortfolioWeb.Router do
     plug PortfolioWeb.Plugs.SetLocale
   end
 
+  pipeline :tech do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :tech}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
+  end
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -49,12 +59,21 @@ defmodule PortfolioWeb.Router do
     live "/", PhotographyLive.Index, :index
   end
 
+  scope "/", PortfolioWeb, host: "tech." do
+    pipe_through :tech
+
+    live "/", TechLive.Index, :index
+    live "/blog/ci", TechLive.Blog.Ci, :index
+    live "/blog/kamal", TechLive.Blog.Kamal, :index
+  end
+
   scope "/", PortfolioWeb do
     pipe_through :browser
 
     live "/", IndexLive.Index, :index
     get "/amvcc", PageController, :subdomain_redirect
     get "/photo", PageController, :subdomain_redirect
+    get "/tech", PageController, :subdomain_redirect
   end
 
   # Other scopes may use custom stacks.
