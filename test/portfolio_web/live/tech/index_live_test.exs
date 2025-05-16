@@ -13,7 +13,7 @@ defmodule PortfolioWeb.Tech.IndexLiveTest do
 
     test "/ path render default page", %{conn: conn, subdomain: subdomain} do
       {:ok, _index_live, html} = live(conn, subdomain <> "/")
-      assert html =~ "Le blog tech"
+      assert html =~ "Le tech blog"
     end
 
     test "/blog/ci path render default page", %{conn: conn, subdomain: subdomain} do

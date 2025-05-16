@@ -314,7 +314,7 @@ msgstr "Chaussures"
 #: lib/portfolio_web/live/tech_live/index.ex:17
 #, elixir-autogen, elixir-format
 msgid "The tech blog"
-msgstr "Le blog tech"
+msgstr "Le tech blog"
 
 #: lib/portfolio_web/live/tech_live/blog/ci.html.heex:33
 #, elixir-autogen, elixir-format
@@ -786,7 +786,7 @@ msgstr "Le nom de votre application/service, cohérent avec votre image Docker e
 #: lib/portfolio_web/live/tech_live/index.ex:89
 #, elixir-autogen, elixir-format
 msgid "The tech blog is under construction — come back soon for articles on Phoenix, CI/CD, and historical web storytelling."
-msgstr "Le blog tech est en construction — revenez bientôt pour des articles sur Phoenix, CI/CD, et la narration web historique."
+msgstr "Le blog est en construction — revenez bientôt pour des articles sur Phoenix, CI/CD, et la narration web historique."
 
 #: lib/portfolio_web/live/tech_live/blog/ci.html.heex:200
 #, elixir-autogen, elixir-format, fuzzy
