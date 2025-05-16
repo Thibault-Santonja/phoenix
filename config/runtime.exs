@@ -39,6 +39,11 @@ if config_env() == :prod do
   config :portfolio, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :portfolio, PortfolioWeb.Endpoint,
+    check_origin: [
+      "https://" <> System.get_env("PHX_HOST"),
+      "https://amvcc." <> System.get_env("PHX_HOST"),
+      "https://photo." <> System.get_env("PHX_HOST")
+    ],
     url: [host: host, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
