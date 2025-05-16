@@ -285,3 +285,605 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Weeding"
 msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.ex:18
+#, elixir-autogen, elixir-format
+msgid "CI"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:30
+#, elixir-autogen, elixir-format
+msgid "Clothes"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:24
+#: lib/portfolio_web/components/layouts/tech.html.heex:30
+#, elixir-autogen, elixir-format
+msgid "Home"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "Shoes"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/tech.html.heex:25
+#: lib/portfolio_web/live/index_live/index.html.heex:14
+#: lib/portfolio_web/live/tech_live/blog/ci.ex:18
+#: lib/portfolio_web/live/tech_live/blog/kamal.ex:18
+#: lib/portfolio_web/live/tech_live/index.ex:17
+#, elixir-autogen, elixir-format
+msgid "The tech blog"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:33
+#, elixir-autogen, elixir-format
+msgid "As part of building and maintaining a reliable LiveView site, a solid CI pipeline is essential."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:39
+#, elixir-autogen, elixir-format
+msgid "At the time of writing, the app doesn’t rely on a database like Postgres, but we’ve left support commented out for future expansion."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:417
+#, elixir-autogen, elixir-format
+msgid "Builds and pushes the image using"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:413
+#, elixir-autogen, elixir-format
+msgid "Builds the Phoenix release with static assets"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:428
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:281
+#, elixir-autogen, elixir-format
+msgid "Conclusion"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Continuous Integration for a Phoenix LiveView Site (Without Postgres)"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:405
+#, elixir-autogen, elixir-format
+msgid "Docker Image Release"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:414
+#, elixir-autogen, elixir-format
+msgid "Generates Docker metadata and tags"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:435
+#, elixir-autogen, elixir-format
+msgid "If you’re building a Phoenix LiveView site without a database, this is a good baseline."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:196
+#, elixir-autogen, elixir-format
+msgid "Job Overview"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:415
+#, elixir-autogen, elixir-format
+msgid "Logs into Docker Hub using secrets"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:76
+#, elixir-autogen, elixir-format
+msgid "On any push to the"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:409
+#, elixir-autogen, elixir-format
+msgid "On each tagged commit, the workflow:"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:83
+#, elixir-autogen, elixir-format
+msgid "On pull requests targeting"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:73
+#, elixir-autogen, elixir-format
+msgid "The CI pipeline runs automatically:"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:432
+#, elixir-autogen, elixir-format
+msgid "This setup gives us confidence in code quality and makes production releases seamless."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:59
+#, elixir-autogen, elixir-format
+msgid "Triggers"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:45
+#, elixir-autogen, elixir-format
+msgid "We use"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:81
+#, elixir-autogen, elixir-format
+msgid "When a new tag is pushed (used for Docker image release)"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:438
+#, elixir-autogen, elixir-format
+msgid "When you're ready to enable Postgres, the foundation is already there."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:77
+#, elixir-autogen, elixir-format
+msgid "branch"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:53
+#, elixir-autogen, elixir-format
+msgid "for CI, which gives us clean, isolated environments and good integration with Docker Hub and versioned releases."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:128
+#, elixir-autogen, elixir-format
+msgid "5.1 Sample kamal.yml"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:170
+#, elixir-autogen, elixir-format
+msgid "5.2 Explanation"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:240
+#, elixir-autogen, elixir-format
+msgid "5.3 Example .env.secret"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:33
+#, elixir-autogen, elixir-format
+msgid "A Dockerfile for the app"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:34
+#, elixir-autogen, elixir-format
+msgid "A VPS with SSH access (e.g. Hetzner)"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "A domain name managed by Cloudflare or similar"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/index.ex:29
+#, elixir-autogen, elixir-format
+msgid "A growing collection of ideas, tools, and experiments in web development, DevOps, and medieval digital humanities."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:32
+#, elixir-autogen, elixir-format
+msgid "An application to deploy"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:36
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Below, I’ll walk you through the CI setup we use for this site, which is built with Phoenix (Elixir), and deployed using Kamal (another article will be write on it !) and Docker."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:326
+#, elixir-autogen, elixir-format
+msgid "Build"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:186
+#, elixir-autogen, elixir-format
+msgid "By caching mix and build artifacts per tool version and environment, we also save time on repeat CI runs:"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:324
+#, elixir-autogen, elixir-format
+msgid "Compared to solutions like Fly.io, which abstract away the infrastructure, Kamal gives you full control while keeping the workflow efficient and reproducible."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:108
+#, elixir-autogen, elixir-format
+msgid "Configuring Kamal"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:110
+#, elixir-autogen, elixir-format
+msgid "Defined Tool Versions"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Deploying a Phoenix App with Kamal and Docker on a VPS"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/index.ex:73
+#, elixir-autogen, elixir-format
+msgid "Deploying with Kamal"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:256
+#, elixir-autogen, elixir-format
+msgid "Deployment"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:305
+#, elixir-autogen, elixir-format
+msgid "Docker-native: builds and deploys containers without needing additional orchestration tools."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:317
+#, elixir-autogen, elixir-format
+msgid "Easy rollback and redeploy with simple commands like `kamal deploy` or `kamal rollback`."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:116
+#, elixir-autogen, elixir-format
+msgid "Edit the generated files under config/deploy to match your app, domain, and VPS settings. Define environment variables, ports, and Docker image name."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:208
+#, elixir-autogen, elixir-format
+msgid "Environment variables that are safe to commit (e.g. hostname, database URL)."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:177
+#, elixir-autogen, elixir-format
+msgid "Explanation"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/index.ex:55
+#, elixir-autogen, elixir-format
+msgid "Explore how the site is built and deployed using GitHub Actions, Docker, and Elixir Phoenix."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:272
+#, elixir-autogen, elixir-format
+msgid "For the moment, I haven't pipelined the deployment. To avoid rebuilding the image and push the build image directly into the CI, Kamal offers these options:"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:192
+#, elixir-autogen, elixir-format
+msgid "Full Docker image name, hosted on GitHub Container Registry in this case."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:122
+#, elixir-autogen, elixir-format
+msgid "Here's how I configured Kamal for my own Phoenix project deployed to a Hetzner VPS using Docker and PostgreSQL."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/index.ex:77
+#, elixir-autogen, elixir-format
+msgid "How I use Kamal to deploy Phoenix apps with Docker on a VPS — simple, elegant, and production-ready."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:335
+#, elixir-autogen, elixir-format
+msgid "If a Git tag is pushed, it also builds and pushes a Docker image to Docker Hub using the configured secrets."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:230
+#, elixir-autogen, elixir-format
+msgid "If needed, builds the image remotely to match your server architecture (e.g. amd64)."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:336
+#, elixir-autogen, elixir-format
+msgid "If you're looking for a straightforward and self-hosted deployment solution for Elixir Phoenix apps, Kamal is a fantastic choice."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:103
+#, elixir-autogen, elixir-format
+msgid "In both local development and CI, this ensures everyone — and every job — uses the same versions."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:175
+#, elixir-autogen, elixir-format
+msgid "In the CI, we use the official"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:23
+#, elixir-autogen, elixir-format
+msgid "In this guide, I'll talk about how to deploy a Phoenix (Elixir) app to a VPS using Kamal, a deployment tool developed by the team behind Ruby on Rails. Kamal provides a simple and powerful way to deploy containerized apps over SSH with Docker."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:95
+#, elixir-autogen, elixir-format
+msgid "Installing Kamal"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "Introduction"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:208
+#, elixir-autogen, elixir-format
+msgid "It ensures consistency across development and CI by aligning the tool versions defined in"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:288
+#, elixir-autogen, elixir-format
+msgid "It ensures the application behaves as expected."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:332
+#, elixir-autogen, elixir-format
+msgid "It uses production settings to ensure that the compiled output matches what will be deployed."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:104
+#, elixir-autogen, elixir-format
+msgid "It's easy and straight forward !"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.ex:18
+#, elixir-autogen, elixir-format
+msgid "Kamal"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:284
+#, elixir-autogen, elixir-format
+msgid "Kamal is a great choice for Phoenix developers who want a fast, reliable deployment pipeline without complex orchestration. Combined with Docker and a VPS like Hetzner, it provides full control over your stack."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:264
+#, elixir-autogen, elixir-format
+msgid "Kamal will build the Docker image, push it, connect to your VPS, and deploy the containers. Use Kamal commands like"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:176
+#, elixir-autogen, elixir-format
+msgid "Line"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:226
+#, elixir-autogen, elixir-format
+msgid "Lint"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:303
+#, elixir-autogen, elixir-format
+msgid "Minimal configuration: a single kamal.yml file controls everything."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:146
+#, elixir-autogen, elixir-format
+msgid "Mise also lets you define CLI tasks, so you can standardize common workflows like setup, cleanups, and deployment helpers."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:171
+#, elixir-autogen, elixir-format
+msgid "Mise in CI"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:94
+#, elixir-autogen, elixir-format
+msgid "Mise is a modern version manager that supports multiple languages and tools — similar to asdf, but faster and easier to configure."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/index.ex:37
+#, elixir-autogen, elixir-format
+msgid "My latest articles"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:106
+#, elixir-autogen, elixir-format
+msgid "No more surprises between your machine and GitHub Actions!"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:314
+#, elixir-autogen, elixir-format
+msgid "No vendor lock-in: works with any VPS or cloud provider."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:43
+#, elixir-autogen, elixir-format
+msgid "Once a functional app base has been created (in the case of an Elixir / Phoenix app, a simple `mix phx.new my_app` will suffice), it needs to be containerised. Kamal will need a container to deploy on the VPS. This container may not be hosted on Docker Hub, but in my case it is. By default, Phoenix offers a Docker file, which can be generated with the command `mix phx gen.release --docker`, which may do the trick. In my case I preferred to make a new one. An Elixir app is easy to containerise, so I took advantage!"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:259
+#, elixir-autogen, elixir-format
+msgid "Once configured, deploy your app with:"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:330
+#, elixir-autogen, elixir-format
+msgid "Overall, Kamal bridges the gap between manual server management and fully managed platforms, providing a great balance of simplicity, power, and transparency."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:216
+#, elixir-autogen, elixir-format
+msgid "Points to a secret .env file (not committed) used for sensitive data like SECRET_KEY_BASE."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:291
+#, elixir-autogen, elixir-format
+msgid "PostgreSQL is commented out for now because the project does not currently require a database, but the configuration is ready for future use."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:40
+#, elixir-autogen, elixir-format
+msgid "Preparing Your App"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:197
+#, elixir-autogen, elixir-format
+msgid "Public IP address of your VPS."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:224
+#, elixir-autogen, elixir-format
+msgid "Registry credentials for pushing images (GitHub, DockerHub, etc.)."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:310
+#, elixir-autogen, elixir-format
+msgid "Remote builder support: useful when your local architecture differs from the server (e.g., M1 Mac to amd64 VPS)."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "Requirements"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:142
+#, elixir-autogen, elixir-format
+msgid "Reusable Tasks"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:36
+#, elixir-autogen, elixir-format
+msgid "Ruby >= 3.1 (for Kamal)"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:202
+#, elixir-autogen, elixir-format
+msgid "SSH user on the VPS, typically 'deploy' or 'root'."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:315
+#, elixir-autogen, elixir-format
+msgid "Secure secrets management: easily handles private .env files."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:7
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:7
+#, elixir-autogen, elixir-format
+msgid "Table of Contents"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:284
+#, elixir-autogen, elixir-format
+msgid "Test"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:329
+#, elixir-autogen, elixir-format
+msgid "The BUILD job compiles the application, builds the assets, and generates a release."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:229
+#, elixir-autogen, elixir-format
+msgid "The LINT job enforces code quality and security rules. It checks for formatting, unused dependencies, security vulnerabilities, and stylistic issues."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/index.ex:51
+#, elixir-autogen, elixir-format, fuzzy
+msgid "The Project CI"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:184
+#, elixir-autogen, elixir-format
+msgid "The name of your app/service, consistent with your Docker image and Elixir project."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/index.ex:89
+#, elixir-autogen, elixir-format
+msgid "The tech blog is under construction — come back soon for articles on Phoenix, CI/CD, and historical web storytelling."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:200
+#, elixir-autogen, elixir-format, fuzzy
+msgid "The workflow defines four jobs. Let's dig into these !"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:149
+#, elixir-autogen, elixir-format
+msgid "These tasks are great for onboarding and automation."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:250
+#, elixir-autogen, elixir-format
+msgid "This file should be kept out of version control. Kamal will read it and inject the variables into the container."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:207
+#, elixir-autogen, elixir-format
+msgid "This job initializes the CI environment by installing all required tools using"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:287
+#, elixir-autogen, elixir-format
+msgid "This job runs the test suite with"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:122
+#, elixir-autogen, elixir-format
+msgid "This setup guarantees consistent runtime environments:"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:180
+#, elixir-autogen, elixir-format
+msgid "This speeds up builds, avoids mismatched versions, and keeps CI mirrors of local dev environments."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:98
+#, elixir-autogen, elixir-format
+msgid "To install Kamal, follow the doc using RubyGems:"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:204
+#, elixir-autogen, elixir-format
+msgid "Tools"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:232
+#, elixir-autogen, elixir-format
+msgid "Tools like"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:296
+#, elixir-autogen, elixir-format
+msgid "Unlike manual deployments that require repetitive steps, or Ansible that adds a layer of complexity, Kamal offers a modern, Ruby-based deployment tool that is simple, transparent, and Docker-native."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:111
+#, elixir-autogen, elixir-format
+msgid "Use Kamal to initialize your deployment configuration:"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:290
+#, elixir-autogen, elixir-format
+msgid "Using Kamal to deploy a Phoenix application has significantly simplified the process compared to traditional methods like manual SSH setup, Ansible playbooks, or even some PaaS solutions."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:97
+#, elixir-autogen, elixir-format
+msgid "Using a single configuration file (`mise.toml`), you can define the exact versions of tools like Elixir, Erlang, Ruby, and even JavaScript runtimes like Bun."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/index.ex:26
+#, elixir-autogen, elixir-format
+msgid "Welcome to Thibault's dev blog"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:90
+#, elixir-autogen, elixir-format
+msgid "What Is Mise?"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:301
+#, elixir-autogen, elixir-format
+msgid "Why Kamal?"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:233
+#, elixir-autogen, elixir-format
+msgid "and"
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:239
+#, elixir-autogen, elixir-format
+msgid "are used to ensure the codebase stays clean and secure."
+msgstr ""
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:179
+#, elixir-autogen, elixir-format
+msgid "to install and cache these tools quickly."
+msgstr ""
