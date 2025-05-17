@@ -109,7 +109,7 @@ defmodule PortfolioWeb.TechLive.Index do
       <article class="mt-16 text-center">
         <p class="text-tech-muted-foreground animate-fade-in-up text-sm delay-300">
           {gettext(
-            "The tech blog is under construction — come back soon for articles on Phoenix, CI/CD, and historical web storytelling."
+            "The tech blog is under construction — come back soon for articles on Elixir, Phoenix, CI/CD, and more !."
           )}
         </p>
       </article>

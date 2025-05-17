@@ -64,6 +64,7 @@ config :portfolio, PortfolioWeb.Endpoint,
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
 config :portfolio, Portfolio.Mailer, adapter: Swoosh.Adapters.Local
+config :portfolio, PortfolioWeb.Gettext, locales: ~w(en fr)
 
 # Configure esbuild (the version is required)
 config :esbuild,

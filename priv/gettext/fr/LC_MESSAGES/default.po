@@ -291,27 +291,27 @@ msgstr "Mariage"
 msgid "CI"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:30
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:31
 #, elixir-autogen, elixir-format
 msgid "Clothes"
 msgstr "Vetements"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:24
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:25
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:35
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:36
 #, elixir-autogen, elixir-format
 msgid "Shoes"
 msgstr "Chaussures"
 
-#: lib/portfolio_web/components/layouts/tech.html.heex:25
+#: lib/portfolio_web/components/layouts/tech.html.heex:26
 #: lib/portfolio_web/live/index_live/index.html.heex:14
 #: lib/portfolio_web/live/tech_live/blog/ci.ex:21
 #: lib/portfolio_web/live/tech_live/blog/elixir.ex:23
 #: lib/portfolio_web/live/tech_live/blog/kamal.ex:21
-#: lib/portfolio_web/live/tech_live/index.ex:17
+#: lib/portfolio_web/live/tech_live/index.ex:18
 #, elixir-autogen, elixir-format
 msgid "The tech blog"
 msgstr "Le tech blog"
@@ -462,7 +462,7 @@ msgstr "Un VPS (Virtual Private Server ou serveur dédié virtuel) avec une conn
 msgid "A domain name managed by Cloudflare or similar"
 msgstr "Un nom de domain managé par un provider comme Cloudflare"
 
-#: lib/portfolio_web/live/tech_live/index.ex:29
+#: lib/portfolio_web/live/tech_live/index.ex:30
 #, elixir-autogen, elixir-format
 msgid "A growing collection of ideas, tools, and experiments in web development, DevOps, and medieval digital humanities."
 msgstr "Une collection croissante d'idées, d'outils et d'expériences en développement web, DevOps et humanités numériques médiévales."
@@ -510,7 +510,7 @@ msgstr "Version d'outils définit"
 msgid "Deploying a Phoenix App with Kamal and Docker on a VPS"
 msgstr "Déployer une application Phoenix avec Kamal & Docker sur un VPS"
 
-#: lib/portfolio_web/live/tech_live/index.ex:74
+#: lib/portfolio_web/live/tech_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Deploying with Kamal"
 msgstr "Déployer avec Kamal"
@@ -546,7 +546,7 @@ msgstr "Variables d'environnement qu'il est sécuriser de commit (p.e. nom de do
 msgid "Explanation"
 msgstr "Explication"
 
-#: lib/portfolio_web/live/tech_live/index.ex:56
+#: lib/portfolio_web/live/tech_live/index.ex:57
 #, elixir-autogen, elixir-format
 msgid "Explore how the site is built and deployed using GitHub Actions, Docker, and Elixir Phoenix."
 msgstr "Explorer comment le site est construit et déployé en utilisant les actions GitHub, Docker et Elixir Phoenix."
@@ -566,7 +566,7 @@ msgstr "Nom complet de l'image Docker, hébergée sur DockerHub dans ce cas."
 msgid "Here's how I configured Kamal for my own Phoenix project deployed to a Hetzner VPS using Docker and PostgreSQL."
 msgstr "Voici comment j'ai configuré Kamal pour mon propre projet Phoenix déployé sur un VPS Hetzner en utilisant Docker et PostgreSQL."
 
-#: lib/portfolio_web/live/tech_live/index.ex:78
+#: lib/portfolio_web/live/tech_live/index.ex:79
 #, elixir-autogen, elixir-format
 msgid "How I use Kamal to deploy Phoenix apps with Docker on a VPS — simple, elegant, and production-ready."
 msgstr "Comment j'utilise Kamal pour déployer des applications Phoenix avec Docker sur un VPS — simple, élégant et prêt pour la production."
@@ -680,7 +680,7 @@ msgstr "'Mise' dans la CI"
 msgid "Mise is a modern version manager that supports multiple languages and tools — similar to asdf, but faster and easier to configure."
 msgstr "Mise est un gestionnaire de versions moderne qui prend en charge plusieurs langages et outils — similaire à asdf, mais plus rapide et plus facile à configurer."
 
-#: lib/portfolio_web/live/tech_live/index.ex:37
+#: lib/portfolio_web/live/tech_live/index.ex:38
 #, elixir-autogen, elixir-format
 msgid "My latest articles"
 msgstr "Mes derniers articles"
@@ -790,7 +790,7 @@ msgstr "Le job BUILD compile l'application, construit les assets et génère une
 msgid "The LINT job enforces code quality and security rules. It checks for formatting, unused dependencies, security vulnerabilities, and stylistic issues."
 msgstr "Le job LINT applique les règles de qualité de code et de sécurité. Il vérifie le formatage, les dépendances inutilisées, les vulnérabilités de sécurité et les problèmes stylistiques."
 
-#: lib/portfolio_web/live/tech_live/index.ex:52
+#: lib/portfolio_web/live/tech_live/index.ex:53
 #, elixir-autogen, elixir-format, fuzzy
 msgid "The Project CI"
 msgstr "La CI du projet"
@@ -800,10 +800,10 @@ msgstr "La CI du projet"
 msgid "The name of your app/service, consistent with your Docker image and Elixir project."
 msgstr "Le nom de votre application/service, cohérent avec votre image Docker et votre projet Elixir."
 
-#: lib/portfolio_web/live/tech_live/index.ex:111
+#: lib/portfolio_web/live/tech_live/index.ex:112
 #, elixir-autogen, elixir-format
-msgid "The tech blog is under construction — come back soon for articles on Phoenix, CI/CD, and historical web storytelling."
-msgstr "Le blog est en construction — revenez bientôt pour des articles sur Phoenix, CI/CD, et la narration web historique."
+msgid "The tech blog is under construction — come back soon for articles on Elixir, Phoenix, CI/CD, and more !."
+msgstr "Le blog est en construction — revenez bientôt pour des articles sur Elixir, Phoenix, CI/CD, et plus !"
 
 #: lib/portfolio_web/live/tech_live/blog/ci.html.heex:202
 #, elixir-autogen, elixir-format, fuzzy
@@ -876,7 +876,7 @@ msgstr "L'utilisation de Kamal pour déployer une application Phoenix a considé
 msgid "Using a single configuration file (`mise.toml`), you can define the exact versions of tools like Elixir, Erlang, Ruby, and even JavaScript runtimes like Bun."
 msgstr "En utilisant un seul fichier de configuration (`mise.toml`), vous pouvez définir les versions exactes d'outils comme Elixir, Erlang, Ruby, et même des environnements JavaScript comme Bun."
 
-#: lib/portfolio_web/live/tech_live/index.ex:26
+#: lib/portfolio_web/live/tech_live/index.ex:27
 #, elixir-autogen, elixir-format
 msgid "Welcome to Thibault's dev blog"
 msgstr "Bienvenue sur le blog de développement de Thibault"
@@ -1156,7 +1156,7 @@ msgstr "Les serveurs web Phoenix, les plateformes de traitement de tâches comme
 msgid "Processes are lightweight and isolated, making Elixir ideal for handling thousands of concurrent users. Phoenix Channels make real-time communication trivial."
 msgstr "Les processus sont légers et isolés, rendant Elixir idéal pour gérer des milliers d'utilisateurs simultanés. Les Phoenix Channels rendent la communication en temps réel triviale."
 
-#: lib/portfolio_web/live/tech_live/index.ex:100
+#: lib/portfolio_web/live/tech_live/index.ex:101
 #, elixir-autogen, elixir-format
 msgid "Quick dig into Elixir's concurrency model and its impact on building scalable applications."
 msgstr "Plongée rapide dans le modèle de concurrence d'Elixir et son impact sur la construction d'applications évolutives."
@@ -1181,7 +1181,7 @@ msgstr "Grâce à des outils comme Rustler ou les NIFs (Native Implemented Funct
 msgid "The MyApp.Application module defines the entry point of your application. When deployed, this module ensures that your system starts in a predictable, fault-tolerant way using the supervision tree."
 msgstr "Le module MyApp.Application définit le point d'entrée de votre application. Une fois déployé, ce module garantit que votre système démarre de manière prévisible et tolérante aux pannes en utilisant l'arbre de supervision."
 
-#: lib/portfolio_web/live/tech_live/index.ex:96
+#: lib/portfolio_web/live/tech_live/index.ex:97
 #, elixir-autogen, elixir-format
 msgid "The future-proof Elixir programing language"
 msgstr "Le langage de programmation Elixir, paré pour l'avenir"

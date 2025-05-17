@@ -62,3 +62,11 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+
+const SetLocale = () => {
+  if (document.cookie.match("locale=") == null) {
+    document.cookie = `locale=${navigator.language};path=/`;
+    location.reload();
+  }
+};
+SetLocale();
