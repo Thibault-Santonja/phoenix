@@ -36,7 +36,7 @@ defmodule PortfolioWeb.Components.ArticleSection do
     ~H"""
     <article id={@id} class="bg-tech-base-50 lg:p-10 pt-[5rem]">
       <h2 class="text-tech-secondary mb-6 text-2xl font-semibold tracking-tight">
-        {render_slot(@title)}
+        {@title}
       </h2>
       <div class="indent-8 prose prose-tech max-w-none flex flex-col space-y-4">
         {render_slot(@inner_block)}

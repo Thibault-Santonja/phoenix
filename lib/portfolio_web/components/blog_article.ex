@@ -28,12 +28,12 @@ defmodule PortfolioWeb.Components.BlogArticle do
     ~H"""
     <section class="border-tech-base-300 bg-tech-base-100 mx-auto rounded-lg border px-6 py-12 shadow-lg md:px-[3rem] md:m-[5rem]">
       <h1 class="text-tech-primary text-balance mb-16 text-center text-3xl font-thin uppercase">
-        {render_slot(@title)}
+        {@title}
       </h1>
 
       <div class="flex flex-col gap-4">
         <p :if={@overview} class="italic">
-          {render_slot(@overview)}
+          {@overview}
         </p>
 
         {render_slot(@inner_block)}

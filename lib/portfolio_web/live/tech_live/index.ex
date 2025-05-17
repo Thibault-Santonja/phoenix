@@ -36,8 +36,9 @@ defmodule PortfolioWeb.TechLive.Index do
         <h2 class="text-tech-primary animate-fade-in-up mb-6 text-center text-xl font-semibold delay-200">
           {gettext("My latest articles")}
         </h2>
-        <ul class="flex flex-col items-stretch justify-center space-y-4 sm:flex-row sm:space-x-8 sm:space-y-0">
-          <li class="flex-1">
+        <%!-- <ul class="flex flex-col justify-evenly flex-wrap sm:flex-row sm:space-x-8 sm:space-y-0"> --%>
+        <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-fill">
+          <li>
             <a
               href={~p"/blog/ci"}
               class="group border-tech-base-300 bg-tech-base-100 block rounded-xl border p-6 shadow-sm transition-all duration-300 hover:bg-tech-base-200 hover:shadow-md"
@@ -59,7 +60,7 @@ defmodule PortfolioWeb.TechLive.Index do
             </a>
           </li>
 
-          <li class="flex-1">
+          <li>
             <a
               href={~p"/blog/kamal"}
               class="group border-tech-base-300 bg-tech-base-100 block rounded-xl border p-6 shadow-sm transition-all duration-300 hover:bg-tech-base-200 hover:shadow-md"
@@ -81,7 +82,7 @@ defmodule PortfolioWeb.TechLive.Index do
             </a>
           </li>
 
-          <li class="flex-1">
+          <li>
             <a
               href={~p"/blog/elixir"}
               class="group border-tech-base-300 bg-tech-base-100 block rounded-xl border p-6 shadow-sm transition-all duration-300 hover:bg-tech-base-200 hover:shadow-md"

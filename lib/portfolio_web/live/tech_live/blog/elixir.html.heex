@@ -1,12 +1,11 @@
-<.blog_article>
-  <:title>{gettext("Elixir's Concurrency Model")}</:title>
-
-  <:overview>
-    {gettext(
+<.blog_article
+  title={gettext("Elixir's Concurrency Model")}
+  overview={
+    gettext(
       "Elixir is a functional and concurrent programming language built on top of the Erlang VM (BEAM), which was designed from the ground up for building scalable and fault-tolerant systems. In a world increasingly reliant on distributed, real-time applications, Elixir's model is more relevant than ever. This article explores why Elixir stands out for concurrent software development, how its runtime operates, and how developers can build reliable and performant systems using tools like GenServer, Supervisors, and OTP applications."
-    )}
-  </:overview>
-
+    )
+  }
+>
   <.table_content color="primary" animated>
     <.content_item icon="hero-hashtag">
       <.link href="#why-elixir">{gettext("1. Why Elixir is really powerful")}</.link>
@@ -37,8 +36,10 @@
     </.content_item>
   </.table_content>
 
-  <.article_section id="why-elixir">
-    <:title>{gettext("1. Why Elixir is Powerful for today and tomorrow usages")}</:title>
+  <.article_section
+    id="why-elixir"
+    title={gettext("1. Why Elixir is Powerful for today and tomorrow usages")}
+  >
     <p>
       {gettext(
         "Elixir is built on the Erlang VM (BEAM), which was designed from the start to support massive concurrency, fault-tolerant systems, and high availability — qualities that are becoming non-negotiable in modern web services, real-time applications, and distributed platforms."
@@ -61,11 +62,10 @@
     </p>
   </.article_section>
 
-  <.article_section id="beam-machine">
-    <:title>
-      {gettext("2. What Is the BEAM? Understanding the Virtual Machine Behind Elixir")}
-    </:title>
-
+  <.article_section
+    id="beam-machine"
+    title={gettext("2. What Is the BEAM? Understanding the Virtual Machine Behind Elixir")}
+  >
     <p>
       {gettext(
         "At the heart of Elixir lies the BEAM — the Erlang virtual machine — purpose-built for running thousands to millions of lightweight processes simultaneously."
@@ -114,9 +114,10 @@
     </p>
   </.article_section>
 
-  <.article_section id="genserver">
-    <:title>{gettext("3. What Is a GenServer? Concurrency with Abstraction")}</:title>
-
+  <.article_section
+    id="genserver"
+    title={gettext("3. What Is a GenServer? Concurrency with Abstraction")}
+  >
     <p>
       {gettext(
         "While Elixir allows you to spawn raw processes using `spawn/1`, it also offers powerful abstractions like `GenServer` for building robust, concurrent systems with clear structure."
@@ -187,9 +188,10 @@
     </p>
   </.article_section>
 
-  <.article_section id="use-cases">
-    <:title>{gettext("4. Real-World Use Cases: Why Elixir Shines in Production")}</:title>
-
+  <.article_section
+    id="use-cases"
+    title={gettext("4. Real-World Use Cases: Why Elixir Shines in Production")}
+  >
     <p>
       {gettext(
         "Elixir’s concurrency model isn’t just theoretically sound — it solves real problems at scale. Thanks to BEAM and abstractions like GenServer, Elixir excels in building systems that are highly available, fault-tolerant, and concurrent by default."
@@ -240,9 +242,10 @@
     </p>
   </.article_section>
 
-  <.article_section id="supervisor">
-    <:title>{gettext("5. Supervisors: Building Fault-Tolerant Systems")}</:title>
-
+  <.article_section
+    id="supervisor"
+    title={gettext("5. Supervisors: Building Fault-Tolerant Systems")}
+  >
     <p>
       {gettext(
         "One of the core strengths of the BEAM is its philosophy of « let it crash » Instead of trying to prevent every possible failure, Elixir encourages writing small, isolated processes that can fail safely — and then be automatically restarted. This is where Supervisors come into play."
@@ -308,11 +311,10 @@
     </p>
   </.article_section>
 
-  <.article_section id="otp-application">
-    <:title>
-      {gettext("6. What is an OTP Application? Building Scalable and Distributed Systems")}
-    </:title>
-
+  <.article_section
+    id="otp-application"
+    title={gettext("6. What is an OTP Application? Building Scalable and Distributed Systems")}
+  >
     <p>
       {gettext(
         "At the heart of every Elixir project lies an OTP Application — a standardized way to package, configure, and run an Elixir system. An OTP Application is more than a module or a set of functions: it's a self-contained unit of behavior that defines how your app starts, supervises its processes, and integrates with other applications."
@@ -383,9 +385,10 @@
     </p>
   </.article_section>
 
-  <.article_section id="conclusion">
-    <:title>{gettext("Conclusion: Performance, Interoperability, and What's Next")}</:title>
-
+  <.article_section
+    id="conclusion"
+    title={gettext("Conclusion: Performance, Interoperability, and What's Next")}
+  >
     <p>
       {gettext(
         "Elixir's strength lies in its concurrency model, fault-tolerant design, and its ability to scale efficiently for IO-heavy, distributed applications. However, it's important to understand that Elixir — running on the BEAM — is not optimized for raw CPU-intensive computation."
