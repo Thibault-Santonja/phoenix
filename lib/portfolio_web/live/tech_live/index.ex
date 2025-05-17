@@ -20,7 +20,7 @@ defmodule PortfolioWeb.TechLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <article class="border-tech-base-300 bg-tech-base-100 mx-auto w-fit border px-6 py-12 shadow-lg transition-all duration-500 md:px-[3rem] md:m-[5rem] md:rounded-lg">
+    <section class="border-tech-base-300 bg-tech-base-100 mx-auto w-fit border px-6 py-12 shadow-lg transition-all duration-500 md:px-[3rem] md:m-[5rem] md:rounded-lg">
       <header class="space-y-4 text-center">
         <h1 class="text-tech-primary animate-fade-in-up text-3xl font-bold md:text-4xl">
           {gettext("Welcome to Thibault's dev blog")}
@@ -32,7 +32,7 @@ defmodule PortfolioWeb.TechLive.Index do
         </p>
       </header>
 
-      <section class="mt-12">
+      <article class="mt-12">
         <h2 class="text-tech-primary animate-fade-in-up mb-6 text-center text-xl font-semibold delay-200">
           {gettext("My latest articles")}
         </h2>
@@ -45,7 +45,7 @@ defmodule PortfolioWeb.TechLive.Index do
               <div class="mb-3 flex items-center space-x-4">
                 <.icon
                   name="hero-wrench-screwdriver-solid"
-                  class="text-tech-accent h-6 w-6 transition group-hover:rotate-12"
+                  class="text-tech-accent h-6 w-6 flex-none transition group-hover:rotate-12"
                 />
                 <h3 class="text-tech-accent text-lg font-medium">
                   {gettext("The Project CI")}
@@ -67,7 +67,7 @@ defmodule PortfolioWeb.TechLive.Index do
               <div class="mb-3 flex items-center space-x-4">
                 <.icon
                   name="hero-server-stack-solid"
-                  class="text-tech-accent h-6 w-6 transition group-hover:rotate-12"
+                  class="text-tech-accent h-6 w-6 flex-none transition group-hover:rotate-12"
                 />
                 <h3 class="text-tech-accent text-lg font-medium">
                   {gettext("Deploying with Kamal")}
@@ -80,18 +80,39 @@ defmodule PortfolioWeb.TechLive.Index do
               </p>
             </a>
           </li>
-          <!-- Add more articles here as needed -->
-        </ul>
-      </section>
 
-      <section class="mt-16 text-center">
+          <li class="flex-1">
+            <a
+              href={~p"/blog/elixir"}
+              class="group border-tech-base-300 bg-tech-base-100 block rounded-xl border p-6 shadow-sm transition-all duration-300 hover:bg-tech-base-200 hover:shadow-md"
+            >
+              <div class="mb-3 flex items-center space-x-4">
+                <.icon
+                  name="hero-language-solid"
+                  class="text-tech-accent h-6 w-6 flex-none transition group-hover:rotate-12"
+                />
+                <h3 class="text-tech-accent text-lg font-medium">
+                  {gettext("The future-proof Elixir programing language")}
+                </h3>
+              </div>
+              <p class="text-tech-muted-foreground text-sm">
+                {gettext(
+                  "Quick dig into Elixir's concurrency model and its impact on building scalable applications."
+                )}
+              </p>
+            </a>
+          </li>
+        </ul>
+      </article>
+
+      <article class="mt-16 text-center">
         <p class="text-tech-muted-foreground animate-fade-in-up text-sm delay-300">
           {gettext(
             "The tech blog is under construction — come back soon for articles on Phoenix, CI/CD, and historical web storytelling."
           )}
         </p>
-      </section>
-    </article>
+      </article>
+    </section>
     """
   end
 end

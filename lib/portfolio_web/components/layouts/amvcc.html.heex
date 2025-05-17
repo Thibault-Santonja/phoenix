@@ -18,7 +18,7 @@
     <div class="follower w-sceen absolute inset-x-0 bottom-0 h-0 ">
       <%!-- For the scroll animation --%>
     </div>
-    <main class="text-amvcc-neutral flex h-full min-h-screen w-screen flex-col">
+    <div class="text-amvcc-neutral flex h-full min-h-screen w-screen flex-col">
       <header class="h-[3rem] fixed z-10 mb-4 flex w-full flex-none items-stretch justify-between bg-white p-4 shadow md:px-16">
         <div class="flex items-center">
           <a href={~p"/"} class="hover:text-amvcc-primary">{gettext("Home")}</a>
@@ -46,6 +46,6 @@
       <footer class="text-amvcc-content-neutral bg-amvcc-neutral min-h-[3rem] bottom-0 z-10 flex w-full flex-none items-stretch justify-center p-4 text-xs shadow md:px-16">
         <p>Thibault Santonja - {NaiveDateTime.utc_now().year}</p>
       </footer>
-    </main>
+    </div>
   </body>
 </html>

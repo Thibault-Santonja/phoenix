@@ -65,6 +65,7 @@ defmodule PortfolioWeb.Router do
     live "/", TechLive.Index, :index
     live "/blog/ci", TechLive.Blog.Ci, :index
     live "/blog/kamal", TechLive.Blog.Kamal, :index
+    live "/blog/elixir", TechLive.Blog.Elixir, :index
   end
 
   scope "/", PortfolioWeb do

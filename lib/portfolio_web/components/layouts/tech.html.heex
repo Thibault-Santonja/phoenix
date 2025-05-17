@@ -18,8 +18,8 @@
     <div class="follower w-sceen absolute inset-x-0 bottom-0 h-0 ">
       <%!-- For the scroll animation --%>
     </div>
-    <main class="text-tech-base-content flex h-full min-h-screen w-screen flex-col">
-      <header class="bg-tech-base-100 border-tech-base-300 h-[3rem] sticky top-0 z-10 flex w-full flex-none items-stretch justify-between p-4 shadow md:px-16">
+    <div class="text-tech-base-content flex h-full min-h-screen w-screen flex-col">
+      <header class="bg-tech-base-100 opacity-95 border-tech-base-300 h-[3rem] sticky top-0 z-10 flex w-full flex-none items-stretch justify-between p-4 shadow md:px-16">
         <div class="flex items-center text-xl font-thin w-full ">
           <a href={~p"/"} class="mx-auto">
             Thibault San • {gettext("The tech blog")}
@@ -34,6 +34,6 @@
       <footer class="text-tech-neutral-content bg-tech-neutral min-h-[3rem] bottom-0 z-10 flex w-full flex-none items-stretch justify-center p-4 text-xs shadow md:px-16">
         <p>Thibault Santonja - {NaiveDateTime.utc_now().year}</p>
       </footer>
-    </main>
+    </div>
   </body>
 </html>

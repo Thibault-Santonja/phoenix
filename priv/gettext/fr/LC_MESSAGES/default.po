@@ -286,7 +286,7 @@ msgstr "Taïwan"
 msgid "Weeding"
 msgstr "Mariage"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.ex:18
+#: lib/portfolio_web/live/tech_live/blog/ci.ex:21
 #, elixir-autogen, elixir-format
 msgid "CI"
 msgstr ""
@@ -297,7 +297,6 @@ msgid "Clothes"
 msgstr "Vetements"
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:24
-#: lib/portfolio_web/components/layouts/tech.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr ""
@@ -309,35 +308,38 @@ msgstr "Chaussures"
 
 #: lib/portfolio_web/components/layouts/tech.html.heex:25
 #: lib/portfolio_web/live/index_live/index.html.heex:14
-#: lib/portfolio_web/live/tech_live/blog/ci.ex:18
-#: lib/portfolio_web/live/tech_live/blog/kamal.ex:18
+#: lib/portfolio_web/live/tech_live/blog/ci.ex:21
+#: lib/portfolio_web/live/tech_live/blog/elixir.ex:23
+#: lib/portfolio_web/live/tech_live/blog/kamal.ex:21
 #: lib/portfolio_web/live/tech_live/index.ex:17
 #, elixir-autogen, elixir-format
 msgid "The tech blog"
 msgstr "Le tech blog"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:33
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "As part of building and maintaining a reliable LiveView site, a solid CI pipeline is essential."
 msgstr "Dans le cadre de la construction et du maintien d'un site LiveView fiable, un pipeline CI solide est essentiel."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:39
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:41
 #, elixir-autogen, elixir-format
 msgid "At the time of writing, the app doesn’t rely on a database like Postgres, but we’ve left support commented out for future expansion."
 msgstr "Au moment où nous écrivons ces lignes, l'application ne repose pas sur une base de données comme Postgres, mais nous avons laissé le support commenté pour une expansion future."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:417
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:419
 #, elixir-autogen, elixir-format
 msgid "Builds and pushes the image using"
 msgstr "Construit et pousse l'image en utilisant"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:413
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:415
 #, elixir-autogen, elixir-format
 msgid "Builds the Phoenix release with static assets"
 msgstr "Construit la version Phoenix avec des actifs statiques"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:428
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:281
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:30
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:430
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:15
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:278
 #, elixir-autogen, elixir-format
 msgid "Conclusion"
 msgstr ""
@@ -347,82 +349,85 @@ msgstr ""
 msgid "Continuous Integration for a Phoenix LiveView Site (Without Postgres)"
 msgstr "Intégration continue pour un site Phoenix LiveView (sans Postgres)"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:405
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:28
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:407
 #, elixir-autogen, elixir-format
 msgid "Docker Image Release"
 msgstr "Publication d'une image Docker"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:414
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:416
 #, elixir-autogen, elixir-format
 msgid "Generates Docker metadata and tags"
 msgstr "Generates Docker metadata and tags"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:435
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:437
 #, elixir-autogen, elixir-format
 msgid "If you’re building a Phoenix LiveView site without a database, this is a good baseline."
 msgstr "Si vous construisez un site Phoenix LiveView sans base de données, c'est une bonne base."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:196
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:19
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "Job Overview"
 msgstr "Apreçu des jobs"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:415
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:417
 #, elixir-autogen, elixir-format
 msgid "Logs into Docker Hub using secrets"
 msgstr "Se connecte à Docker Hub en utilisant des secrets"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:76
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:78
 #, elixir-autogen, elixir-format
 msgid "On any push to the"
 msgstr "Lors de tout push vers le"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:409
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:411
 #, elixir-autogen, elixir-format
 msgid "On each tagged commit, the workflow:"
 msgstr "Sur chaque commit tagué, le flux de travail:"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:83
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "On pull requests targeting"
 msgstr "Sur les pull requests vers"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:73
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:75
 #, elixir-autogen, elixir-format
 msgid "The CI pipeline runs automatically:"
 msgstr "La pipeline CI s'exécute automatiquement :"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:432
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:434
 #, elixir-autogen, elixir-format
 msgid "This setup gives us confidence in code quality and makes production releases seamless."
 msgstr "This setup gives us confidence in code quality and makes production releases seamless"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:59
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:9
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "Triggers"
 msgstr "Déclencheurs"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:45
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "We use"
 msgstr "Nous utilisons"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:81
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "When a new tag is pushed (used for Docker image release)"
 msgstr "Quand un nouveau tag est créé (utilisé pour la création de la Docker Image)"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:438
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:440
 #, elixir-autogen, elixir-format
 msgid "When you're ready to enable Postgres, the foundation is already there."
 msgstr "Lorsque vous êtes prêt à activer Postgres, les fondations sont déjà là."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:77
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "branch"
 msgstr "branche"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:53
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "for CI, which gives us clean, isolated environments and good integration with Docker Hub and versioned releases."
 msgstr "pour CI, ce qui nous donne des environnements propres et isolés et une bonne intégration avec Docker Hub et les versions versionnées."
@@ -432,12 +437,12 @@ msgstr "pour CI, ce qui nous donne des environnements propres et isolés et une 
 msgid "5.1 Sample kamal.yml"
 msgstr "5.1 Extrait de kamal.yml"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:170
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "5.2 Explanation"
 msgstr "5.2 Explications"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:240
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:239
 #, elixir-autogen, elixir-format
 msgid "5.3 Example .env.secret"
 msgstr "5.3 Exemple d'un .env.secret"
@@ -467,32 +472,35 @@ msgstr "Une collection croissante d'idées, d'outils et d'expériences en dével
 msgid "An application to deploy"
 msgstr "Une application à déployer"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:36
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:38
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Below, I’ll walk you through the CI setup we use for this site, which is built with Phoenix (Elixir), and deployed using Kamal (another article will be write on it !) and Docker."
 msgstr "Ci-dessous, je vais vous guider à travers la configuration CI que nous utilisons pour ce site, qui est construit avec Phoenix (Elixir), et déployé en utilisant Kamal (un autre article sera écrit à ce sujet !) et Docker."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:326
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:24
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:328
 #, elixir-autogen, elixir-format
 msgid "Build"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:186
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:188
 #, elixir-autogen, elixir-format
 msgid "By caching mix and build artifacts per tool version and environment, we also save time on repeat CI runs:"
 msgstr "En mettant en cache les artefacts de mixage et de construction par version d'outil et par environnement, nous gagnons également du temps sur les exécutions répétées de CI :"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:324
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:321
 #, elixir-autogen, elixir-format
 msgid "Compared to solutions like Fly.io, which abstract away the infrastructure, Kamal gives you full control while keeping the workflow efficient and reproducible."
 msgstr "Comparé à des solutions comme Fly.io, qui font abstraction de l'infrastructure, Kamal vous donne un contrôle total tout en gardant le flux de travail efficace et reproductible."
 
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:13
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:108
 #, elixir-autogen, elixir-format
 msgid "Configuring Kamal"
 msgstr "Configurer Kamal"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:110
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:13
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:112
 #, elixir-autogen, elixir-format
 msgid "Defined Tool Versions"
 msgstr "Version d'outils définit"
@@ -507,17 +515,18 @@ msgstr "Déployer une application Phoenix avec Kamal & Docker sur un VPS"
 msgid "Deploying with Kamal"
 msgstr "Déployer avec Kamal"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:256
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:14
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:253
 #, elixir-autogen, elixir-format
 msgid "Deployment"
 msgstr "Déploiement"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:305
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:302
 #, elixir-autogen, elixir-format
 msgid "Docker-native: builds and deploys containers without needing additional orchestration tools."
 msgstr "Docker-native : construit et déploie des conteneurs sans avoir besoin d'outils d'orchestration supplémentaires."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:317
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:314
 #, elixir-autogen, elixir-format
 msgid "Easy rollback and redeploy with simple commands like `kamal deploy` or `kamal rollback`."
 msgstr "Retour en arrière et redéploiement faciles avec des commandes simples comme `kamal deploy` ou `kamal rollback`."
@@ -527,12 +536,12 @@ msgstr "Retour en arrière et redéploiement faciles avec des commandes simples 
 msgid "Edit the generated files under config/deploy to match your app, domain, and VPS settings. Define environment variables, ports, and Docker image name."
 msgstr "Modifiez les fichiers générés sous config/deploy pour qu'ils correspondent à vos paramètres d'application, de domaine et de VPS. Définissez les variables d'environnement, les ports et le nom de l'image Docker."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:208
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:207
 #, elixir-autogen, elixir-format
 msgid "Environment variables that are safe to commit (e.g. hostname, database URL)."
 msgstr "Variables d'environnement qu'il est sécuriser de commit (p.e. nom de domaine)."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:177
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:176
 #, elixir-autogen, elixir-format
 msgid "Explanation"
 msgstr "Explication"
@@ -542,12 +551,12 @@ msgstr "Explication"
 msgid "Explore how the site is built and deployed using GitHub Actions, Docker, and Elixir Phoenix."
 msgstr "Explorer comment le site est construit et déployé en utilisant les actions GitHub, Docker et Elixir Phoenix."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:272
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:269
 #, elixir-autogen, elixir-format
 msgid "For the moment, I haven't pipelined the deployment. To avoid rebuilding the image and push the build image directly into the CI, Kamal offers these options:"
 msgstr "Pour l'instant, je n'ai pas pipelisé le déploiement. Pour éviter de reconstruire l'image et pousser l'image de construction directement dans le CI, Kamal offre ces options :"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:192
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:191
 #, elixir-autogen, elixir-format
 msgid "Full Docker image name, hosted on GitHub Container Registry in this case."
 msgstr "Nom complet de l'image Docker, hébergée sur DockerHub dans ce cas."
@@ -562,27 +571,27 @@ msgstr "Voici comment j'ai configuré Kamal pour mon propre projet Phoenix dépl
 msgid "How I use Kamal to deploy Phoenix apps with Docker on a VPS — simple, elegant, and production-ready."
 msgstr "Comment j'utilise Kamal pour déployer des applications Phoenix avec Docker sur un VPS — simple, élégant et prêt pour la production."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:335
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:337
 #, elixir-autogen, elixir-format
 msgid "If a Git tag is pushed, it also builds and pushes a Docker image to Docker Hub using the configured secrets."
 msgstr "Si un tag Git est poussé, il construit également et pousse une image Docker vers Docker Hub en utilisant les secrets configurés."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:230
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:229
 #, elixir-autogen, elixir-format
 msgid "If needed, builds the image remotely to match your server architecture (e.g. amd64)."
 msgstr "Si nécessaire, construit l'image à distance pour correspondre à l'architecture de votre serveur (par exemple amd64)."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:336
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:333
 #, elixir-autogen, elixir-format
 msgid "If you're looking for a straightforward and self-hosted deployment solution for Elixir Phoenix apps, Kamal is a fantastic choice."
 msgstr "Si vous recherchez une solution de déploiement autonome et simple pour les applications Elixir Phoenix, Kamal est un choix fantastique."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:103
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "In both local development and CI, this ensures everyone — and every job — uses the same versions."
 msgstr "En développement local comme en CI, cela garantit que tout le monde — et chaque tâche — utilise les mêmes versions."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:175
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:177
 #, elixir-autogen, elixir-format
 msgid "In the CI, we use the official"
 msgstr "Dans la CI, nous utilisons l'officiel"
@@ -592,27 +601,29 @@ msgstr "Dans la CI, nous utilisons l'officiel"
 msgid "In this guide, I'll talk about how to deploy a Phoenix (Elixir) app to a VPS using Kamal, a deployment tool developed by the team behind Ruby on Rails. Kamal provides a simple and powerful way to deploy containerized apps over SSH with Docker."
 msgstr "Dans ce guide, je vais parler de comment déployer une application Phoenix (Elixir) sur un VPS en utilisant Kamal, un outil de déploiement développé par l'équipe derrière Ruby on Rails. Kamal offre une façon simple et puissante de déployer des applications conteneurisées via SSH avec Docker."
 
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:12
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "Installing Kamal"
 msgstr "Installation de Kamal"
 
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:9
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:20
 #, elixir-autogen, elixir-format
 msgid "Introduction"
 msgstr "Introduction"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:208
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:210
 #, elixir-autogen, elixir-format
 msgid "It ensures consistency across development and CI by aligning the tool versions defined in"
 msgstr "Il assure la cohérence entre le développement et la CI en alignant les versions des outils définies dans"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:288
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:290
 #, elixir-autogen, elixir-format
 msgid "It ensures the application behaves as expected."
 msgstr "Il garantit que l'application se comporte comme prévu."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:332
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:334
 #, elixir-autogen, elixir-format
 msgid "It uses production settings to ensure that the compiled output matches what will be deployed."
 msgstr "Il utilise les paramètres de production pour s'assurer que la sortie compilée correspond à ce qui sera déployé."
@@ -622,47 +633,49 @@ msgstr "Il utilise les paramètres de production pour s'assurer que la sortie co
 msgid "It's easy and straight forward !"
 msgstr "C'est facile et direct !"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.ex:18
+#: lib/portfolio_web/live/tech_live/blog/kamal.ex:21
 #, elixir-autogen, elixir-format
 msgid "Kamal"
 msgstr "Kamal"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:284
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:281
 #, elixir-autogen, elixir-format
 msgid "Kamal is a great choice for Phoenix developers who want a fast, reliable deployment pipeline without complex orchestration. Combined with Docker and a VPS like Hetzner, it provides full control over your stack."
 msgstr "Kamal est un excellent choix pour les développeurs Phoenix qui veulent une pipeline de déploiement rapide et fiable sans orchestration complexe. Combiné avec Docker et un VPS comme Hetzner, il offre un contrôle total sur votre stack."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:264
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:261
 #, elixir-autogen, elixir-format
 msgid "Kamal will build the Docker image, push it, connect to your VPS, and deploy the containers. Use Kamal commands like"
 msgstr "Kamal va construire l'image Docker, la pousser, se connecter à votre VPS, et déployer les conteneurs. Utilisez les commandes Kamal comme"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:176
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "Line"
 msgstr "Ligne"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:226
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:22
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:228
 #, elixir-autogen, elixir-format
 msgid "Lint"
 msgstr "Lint"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:303
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:300
 #, elixir-autogen, elixir-format
 msgid "Minimal configuration: a single kamal.yml file controls everything."
 msgstr "Configuration minimale : un seul fichier kamal.yml contrôle tout."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:146
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:148
 #, elixir-autogen, elixir-format
 msgid "Mise also lets you define CLI tasks, so you can standardize common workflows like setup, cleanups, and deployment helpers."
 msgstr "Mise vous permet également de définir des tâches CLI, vous pouvez donc standardiser les flux de travail courants comme la configuration, les nettoyages et les assistants de déploiement."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:171
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:15
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:173
 #, elixir-autogen, elixir-format
 msgid "Mise in CI"
 msgstr "'Mise' dans la CI"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:94
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Mise is a modern version manager that supports multiple languages and tools — similar to asdf, but faster and easier to configure."
 msgstr "Mise est un gestionnaire de versions moderne qui prend en charge plusieurs langages et outils — similaire à asdf, mais plus rapide et plus facile à configurer."
@@ -672,12 +685,12 @@ msgstr "Mise est un gestionnaire de versions moderne qui prend en charge plusieu
 msgid "My latest articles"
 msgstr "Mes derniers articles"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:106
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:108
 #, elixir-autogen, elixir-format
 msgid "No more surprises between your machine and GitHub Actions!"
 msgstr "Plus de surprises entre votre machine et GitHub Actions !"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:314
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:311
 #, elixir-autogen, elixir-format
 msgid "No vendor lock-in: works with any VPS or cloud provider."
 msgstr "Pas de dépendance à un fournisseur : fonctionne avec n'importe quel VPS ou fournisseur cloud."
@@ -687,52 +700,55 @@ msgstr "Pas de dépendance à un fournisseur : fonctionne avec n'importe quel VP
 msgid "Once a functional app base has been created (in the case of an Elixir / Phoenix app, a simple `mix phx.new my_app` will suffice), it needs to be containerised. Kamal will need a container to deploy on the VPS. This container may not be hosted on Docker Hub, but in my case it is. By default, Phoenix offers a Docker file, which can be generated with the command `mix phx gen.release --docker`, which may do the trick. In my case I preferred to make a new one. An Elixir app is easy to containerise, so I took advantage!"
 msgstr "Une fois qu'une base d'application fonctionnelle a été créée (dans le cas d'une application Elixir / Phoenix, un simple `mix phx.new my_app` suffira), elle doit être conteneurisée. Kamal aura besoin d'un conteneur à déployer sur le VPS. Ce conteneur peut ne pas être hébergé sur Docker Hub, mais dans mon cas, il l'est. Par défaut, Phoenix propose un fichier Docker, qui peut être généré avec la commande `mix phx gen.release --docker`, ce qui peut faire l'affaire. Dans mon cas, j'ai préféré en créer un nouveau. Une application Elixir est facile à conteneuriser, j'en ai donc profité !"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:259
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:256
 #, elixir-autogen, elixir-format
 msgid "Once configured, deploy your app with:"
 msgstr "Une fois configuré, déployez votre application avec :"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:330
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:327
 #, elixir-autogen, elixir-format
 msgid "Overall, Kamal bridges the gap between manual server management and fully managed platforms, providing a great balance of simplicity, power, and transparency."
 msgstr "Dans l'ensemble, Kamal comble le fossé entre la gestion manuelle des serveurs et les plateformes entièrement gérées, offrant un excellent équilibre entre simplicité, puissance et transparence."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:216
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:215
 #, elixir-autogen, elixir-format
 msgid "Points to a secret .env file (not committed) used for sensitive data like SECRET_KEY_BASE."
 msgstr "Pointe vers un fichier .env secret (non commité) utilisé pour les données sensibles comme SECRET_KEY_BASE."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:291
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:293
 #, elixir-autogen, elixir-format
 msgid "PostgreSQL is commented out for now because the project does not currently require a database, but the configuration is ready for future use."
 msgstr "PostgreSQL est commenté pour l'instant car le projet ne nécessite pas actuellement de base de données, mais la configuration est prête pour une utilisation future."
 
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:11
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:40
 #, elixir-autogen, elixir-format
 msgid "Preparing Your App"
 msgstr "Préparer votre application"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:197
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:196
 #, elixir-autogen, elixir-format
 msgid "Public IP address of your VPS."
 msgstr "Adresse IP publique de votre VPS."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:224
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:223
 #, elixir-autogen, elixir-format
 msgid "Registry credentials for pushing images (GitHub, DockerHub, etc.)."
 msgstr "Identifiants de registre pour pousser des images (GitHub, DockerHub, etc.)."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:310
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:307
 #, elixir-autogen, elixir-format
 msgid "Remote builder support: useful when your local architecture differs from the server (e.g., M1 Mac to amd64 VPS)."
 msgstr "Support de construction à distance : utile lorsque votre architecture locale diffère du serveur (par exemple, M1 Mac vers VPS amd64)."
 
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:10
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "Requirements"
 msgstr "Prérequis"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:142
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:14
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:144
 #, elixir-autogen, elixir-format
 msgid "Reusable Tasks"
 msgstr "Tâches réutilisables"
@@ -742,12 +758,12 @@ msgstr "Tâches réutilisables"
 msgid "Ruby >= 3.1 (for Kamal)"
 msgstr "Ruby >= 3.1 (pour Kamal)"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:202
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:201
 #, elixir-autogen, elixir-format
 msgid "SSH user on the VPS, typically 'deploy' or 'root'."
 msgstr "Utilisateur SSH sur le VPS, généralement 'deploy' ou 'root'."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:315
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:312
 #, elixir-autogen, elixir-format
 msgid "Secure secrets management: easily handles private .env files."
 msgstr "Gestion sécurisée des secrets : gère facilement les fichiers .env privés."
@@ -758,17 +774,18 @@ msgstr "Gestion sécurisée des secrets : gère facilement les fichiers .env pri
 msgid "Table of Contents"
 msgstr "Table des matières"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:284
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:23
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:286
 #, elixir-autogen, elixir-format
 msgid "Test"
 msgstr "Test"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:329
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:331
 #, elixir-autogen, elixir-format
 msgid "The BUILD job compiles the application, builds the assets, and generates a release."
 msgstr "Le job BUILD compile l'application, construit les assets et génère une release."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:229
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:231
 #, elixir-autogen, elixir-format
 msgid "The LINT job enforces code quality and security rules. It checks for formatting, unused dependencies, security vulnerabilities, and stylistic issues."
 msgstr "Le job LINT applique les règles de qualité de code et de sécurité. Il vérifie le formatage, les dépendances inutilisées, les vulnérabilités de sécurité et les problèmes stylistiques."
@@ -778,47 +795,47 @@ msgstr "Le job LINT applique les règles de qualité de code et de sécurité. I
 msgid "The Project CI"
 msgstr "La CI du projet"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:184
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:183
 #, elixir-autogen, elixir-format
 msgid "The name of your app/service, consistent with your Docker image and Elixir project."
 msgstr "Le nom de votre application/service, cohérent avec votre image Docker et votre projet Elixir."
 
-#: lib/portfolio_web/live/tech_live/index.ex:89
+#: lib/portfolio_web/live/tech_live/index.ex:110
 #, elixir-autogen, elixir-format
 msgid "The tech blog is under construction — come back soon for articles on Phoenix, CI/CD, and historical web storytelling."
 msgstr "Le blog est en construction — revenez bientôt pour des articles sur Phoenix, CI/CD, et la narration web historique."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:200
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:202
 #, elixir-autogen, elixir-format, fuzzy
 msgid "The workflow defines four jobs. Let's dig into these !"
 msgstr "Le workflow définit quatre jobs. Examinons-les !"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:149
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "These tasks are great for onboarding and automation."
 msgstr "Ces tâches sont excellentes pour l'intégration et l'automatisation."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:250
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:247
 #, elixir-autogen, elixir-format
 msgid "This file should be kept out of version control. Kamal will read it and inject the variables into the container."
 msgstr "Ce fichier doit être maintenu en dehors du contrôle de version. Kamal le lira et injectera les variables dans le conteneur."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:207
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:209
 #, elixir-autogen, elixir-format
 msgid "This job initializes the CI environment by installing all required tools using"
 msgstr "Ce job initialise l'environnement CI en installant tous les outils requis en utilisant"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:287
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:289
 #, elixir-autogen, elixir-format
 msgid "This job runs the test suite with"
 msgstr "Ce job exécute la suite de tests avec"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:122
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:124
 #, elixir-autogen, elixir-format
 msgid "This setup guarantees consistent runtime environments:"
 msgstr "Cette configuration garantit des environnements d'exécution cohérents :"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:180
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:182
 #, elixir-autogen, elixir-format
 msgid "This speeds up builds, avoids mismatched versions, and keeps CI mirrors of local dev environments."
 msgstr "Cela accélère les builds, évite les versions incompatibles et maintient des environnements CI miroirs des environnements de développement locaux."
@@ -828,17 +845,18 @@ msgstr "Cela accélère les builds, évite les versions incompatibles et maintie
 msgid "To install Kamal, follow the doc using RubyGems:"
 msgstr "Pour installer Kamal, suivez la documentation en utilisant RubyGems :"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:204
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:21
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:206
 #, elixir-autogen, elixir-format
 msgid "Tools"
 msgstr "Outils"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:232
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:234
 #, elixir-autogen, elixir-format
 msgid "Tools like"
 msgstr "Des outils comme"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:296
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:293
 #, elixir-autogen, elixir-format
 msgid "Unlike manual deployments that require repetitive steps, or Ansible that adds a layer of complexity, Kamal offers a modern, Ruby-based deployment tool that is simple, transparent, and Docker-native."
 msgstr "Contrairement aux déploiements manuels qui nécessitent des étapes répétitives, ou à Ansible qui ajoute une couche de complexité, Kamal offre un outil de déploiement moderne basé sur Ruby qui est simple, transparent et natif à Docker."
@@ -848,12 +866,12 @@ msgstr "Contrairement aux déploiements manuels qui nécessitent des étapes ré
 msgid "Use Kamal to initialize your deployment configuration:"
 msgstr "Utilisez Kamal pour initialiser votre configuration de déploiement :"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:290
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:287
 #, elixir-autogen, elixir-format
 msgid "Using Kamal to deploy a Phoenix application has significantly simplified the process compared to traditional methods like manual SSH setup, Ansible playbooks, or even some PaaS solutions."
 msgstr "L'utilisation de Kamal pour déployer une application Phoenix a considérablement simplifié le processus par rapport aux méthodes traditionnelles comme la configuration SSH manuelle, les playbooks Ansible, ou même certaines solutions PaaS."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:97
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Using a single configuration file (`mise.toml`), you can define the exact versions of tools like Elixir, Erlang, Ruby, and even JavaScript runtimes like Bun."
 msgstr "En utilisant un seul fichier de configuration (`mise.toml`), vous pouvez définir les versions exactes d'outils comme Elixir, Erlang, Ruby, et même des environnements JavaScript comme Bun."
@@ -863,27 +881,367 @@ msgstr "En utilisant un seul fichier de configuration (`mise.toml`), vous pouvez
 msgid "Welcome to Thibault's dev blog"
 msgstr "Bienvenue sur le blog de développement de Thibault"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:90
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:92
 #, elixir-autogen, elixir-format
 msgid "What Is Mise?"
 msgstr "Qu'est-ce que Mise ?"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:301
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:298
 #, elixir-autogen, elixir-format
 msgid "Why Kamal?"
 msgstr "Pourquoi Kamal ?"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:233
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:235
 #, elixir-autogen, elixir-format
 msgid "and"
 msgstr "et"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:239
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:241
 #, elixir-autogen, elixir-format
 msgid "are used to ensure the codebase stays clean and secure."
 msgstr "sont utilisés pour garantir que le code reste propre et sécurisé."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:179
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:181
 #, elixir-autogen, elixir-format
 msgid "to install and cache these tools quickly."
 msgstr "pour installer et mettre en cache ces outils rapidement."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:41
+#, elixir-autogen, elixir-format
+msgid "1. Why Elixir is Powerful for today and tomorrow usages"
+msgstr "1. Pourquoi Elixir est puissant pour les usages d'aujourd'hui et de demain"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:12
+#, elixir-autogen, elixir-format
+msgid "1. Why Elixir is really powerful"
+msgstr "1. Pourquoi Elixir est vraiment puissant"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "2. What Is the BEAM? Understanding the Virtual Machine Behind Elixir"
+msgstr "2. Qu'est-ce que BEAM ? Comprendre la machine virtuelle derrière Elixir"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "2. What is the BEAM machine"
+msgstr "2. Qu'est-ce que la machine BEAM"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:118
+#, elixir-autogen, elixir-format
+msgid "3. What Is a GenServer? Concurrency with Abstraction"
+msgstr "3. Qu'est-ce qu'un GenServer ? La concurrence avec abstraction"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "3. What is GenServer and concurrency"
+msgstr "3. Qu'est-ce que GenServer et la concurrence"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:191
+#, elixir-autogen, elixir-format
+msgid "4. Real-World Use Cases: Why Elixir Shines in Production"
+msgstr "4. Cas d'utilisation réels : Pourquoi Elixir brille en production"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:24
+#, elixir-autogen, elixir-format
+msgid "4. Real-world use cases for GenServer"
+msgstr "4. Cas d'utilisation réels pour GenServer"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:244
+#, elixir-autogen, elixir-format
+msgid "5. Supervisors: Building Fault-Tolerant Systems"
+msgstr "5. Superviseurs : Construire des systèmes tolérants aux pannes"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "5. What is a Supervisor and fault tolerance"
+msgstr "5. Qu'est-ce qu'un Superviseur et la tolérance aux pannes"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:313
+#, elixir-autogen, elixir-format
+msgid "6. What is an OTP Application? Building Scalable and Distributed Systems"
+msgstr "6. Qu'est-ce qu'une application OTP ? Construire des systèmes évolutifs et distribués"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:32
+#, elixir-autogen, elixir-format
+msgid "6. What is an OTP application"
+msgstr "6. Qu'est-ce qu'une application OTP"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:253
+#, elixir-autogen, elixir-format
+msgid "A Supervisor is a special process whose job is to monitor and restart child processes when they fail. This design promotes high availability and fault isolation by ensuring that failures are contained and automatically recovered from."
+msgstr "Un Superviseur est un processus spécial dont le travail est de surveiller et redémarrer les processus enfants lorsqu'ils échouent. Cette conception favorise la haute disponibilité et l'isolation des pannes en garantissant que les défaillances sont contenues et automatiquement récupérées."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:127
+#, elixir-autogen, elixir-format
+msgid "A `GenServer` is a generic server process — a behavior module provided by Elixir that helps you encapsulate state, handle messages, and manage synchronous or asynchronous operations."
+msgstr "Un `GenServer` est un processus serveur générique — un module de comportement fourni par Elixir qui vous aide à encapsuler l'état, gérer les messages et gérer des opérations synchrones ou asynchrones."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:223
+#, elixir-autogen, elixir-format
+msgid "APIs at scale"
+msgstr "APIs à grande échelle"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:323
+#, elixir-autogen, elixir-format
+msgid "An OTP Application typically defines a supervision tree and is started by the BEAM runtime when your project boots. This pattern enables you to structure your code as modular and resilient components, ideal for long-running services like web servers, messaging queues, or background job processors."
+msgstr "Une application OTP définit généralement un arbre de supervision et est démarrée par le runtime BEAM au démarrage de votre projet. Ce modèle vous permet de structurer votre code en composants modulaires et résilients, idéaux pour les services de longue durée comme les serveurs web, les files d'attente de messagerie ou les processeurs de tâches en arrière-plan."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:48
+#, elixir-autogen, elixir-format, fuzzy
+msgid "As applications scale across cores, nodes, and even data centers, Elixir’s lightweight processes and message-passing model allow developers to manage concurrency naturally, without the complexity of traditional threading models."
+msgstr "À mesure que les applications s'étendent sur les cœurs, les nœuds, et même les centres de données, les processus légers d'Elixir et son modèle de passage de messages permettent aux développeurs de gérer la concurrence naturellement, sans la complexité des modèles traditionnels de threading."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:70
+#, elixir-autogen, elixir-format
+msgid "At the heart of Elixir lies the BEAM — the Erlang virtual machine — purpose-built for running thousands to millions of lightweight processes simultaneously."
+msgstr "Au cœur d'Elixir se trouve BEAM — la machine virtuelle Erlang — conçue spécifiquement pour exécuter simultanément des milliers à des millions de processus légers."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:317
+#, elixir-autogen, elixir-format
+msgid "At the heart of every Elixir project lies an OTP Application — a standardized way to package, configure, and run an Elixir system. An OTP Application is more than a module or a set of functions: it's a self-contained unit of behavior that defines how your app starts, supervises its processes, and integrates with other applications."
+msgstr "Au cœur de chaque projet Elixir se trouve une application OTP — une façon standardisée d'empaqueter, configurer et exécuter un système Elixir. Une application OTP est plus qu'un module ou un ensemble de fonctions : c'est une unité autonome de comportement qui définit comment votre application démarre, supervise ses processus et s'intègre avec d'autres applications."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:217
+#, elixir-autogen, elixir-format
+msgid "Background processing"
+msgstr "Traitement en arrière-plan"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:205
+#, elixir-autogen, elixir-format
+msgid "Chat applications"
+msgstr "Applications de chat"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:36
+#, elixir-autogen, elixir-format
+msgid "Conclusion and performance considerations"
+msgstr "Conclusion et considérations de performance"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:387
+#, elixir-autogen, elixir-format
+msgid "Conclusion: Performance, Interoperability, and What's Next"
+msgstr "Conclusion : Performance, Interopérabilité et ce qui suit"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:111
+#, elixir-autogen, elixir-format
+msgid "Each call to `spawn/1` creates a new process in less time and memory than a typical thread. These processes are entirely managed by the BEAM, offering fault isolation, parallelism, and scalability."
+msgstr "Chaque appel à `spawn/1` crée un nouveau processus en moins de temps et avec moins de mémoire qu'un thread typique. Ces processus sont entièrement gérés par BEAM, offrant isolation des pannes, parallélisme et évolutivité."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:82
+#, elixir-autogen, elixir-format
+msgid "Each process runs in a preemptively scheduled environment with its own heap and stack. The BEAM schedules these processes in small reductions (units of execution) and guarantees fairness, allowing responsive systems even under high load."
+msgstr "Chaque processus s'exécute dans un environnement planifié de manière préemptive avec son propre tas et sa propre pile. BEAM planifie ces processus en `petites réductions` (unités d'exécution) et garantit l'équité, permettant des systèmes réactifs même sous forte charge."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.ex:23
+#, elixir-autogen, elixir-format
+msgid "Elixir"
+msgstr "Elixir"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:212
+#, elixir-autogen, elixir-format
+msgid "Elixir handles large volumes of incoming data efficiently, with GenServers maintaining state and processing in parallel."
+msgstr "Elixir gère efficacement de grands volumes de données entrantes, avec des GenServers qui maintiennent l'état et traitent en parallèle."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Elixir is a functional and concurrent programming language built on top of the Erlang VM (BEAM), which was designed from the ground up for building scalable and fault-tolerant systems. In a world increasingly reliant on distributed, real-time applications, Elixir's model is more relevant than ever. This article explores why Elixir stands out for concurrent software development, how its runtime operates, and how developers can build reliable and performant systems using tools like GenServer, Supervisors, and OTP applications."
+msgstr "Elixir est un langage de programmation fonctionnel et concurrent construit sur la VM Erlang (BEAM), qui a été conçue de A à Z pour construire des systèmes évolutifs et tolérants aux pannes. Dans un monde de plus en plus dépendant des applications distribuées en temps réel, le modèle d'Elixir est plus pertinent que jamais. Cet article explore pourquoi Elixir se démarque pour le développement logiciel concurrent, comment son runtime fonctionne, et comment les développeurs peuvent construire des systèmes fiables et performants en utilisant des outils comme GenServer, les Superviseurs, et les applications OTP."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:43
+#, elixir-autogen, elixir-format
+msgid "Elixir is built on the Erlang VM (BEAM), which was designed from the start to support massive concurrency, fault-tolerant systems, and high availability — qualities that are becoming non-negotiable in modern web services, real-time applications, and distributed platforms."
+msgstr "Elixir est construit sur la VM Erlang (BEAM), qui a été conçue dès le départ pour supporter une concurrence massive, des systèmes tolérants aux pannes et une haute disponibilité — des qualités qui deviennent non négociables dans les services web modernes, les applications en temps réel et les plateformes distribuées."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:2
+#, elixir-autogen, elixir-format
+msgid "Elixir's Concurrency Model"
+msgstr "Le modèle de concurrence d'Elixir"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:390
+#, elixir-autogen, elixir-format
+msgid "Elixir's strength lies in its concurrency model, fault-tolerant design, and its ability to scale efficiently for IO-heavy, distributed applications. However, it's important to understand that Elixir — running on the BEAM — is not optimized for raw CPU-intensive computation."
+msgstr "La force d'Elixir réside dans son modèle de concurrence, sa conception tolérante aux pannes et sa capacité à évoluer efficacement pour les applications distribuées à forte intensité d'E/S. Cependant, il est important de comprendre qu'Elixir — fonctionnant sur BEAM — n'est pas optimisé pour les calculs intensifs bruts du CPU."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:194
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Elixir’s concurrency model isn’t just theoretically sound — it solves real problems at scale. Thanks to BEAM and abstractions like GenServer, Elixir excels in building systems that are highly available, fault-tolerant, and concurrent by default."
+msgstr "Le modèle de concurrence d'Elixir n'est pas seulement théoriquement solide — il résout de vrais problèmes à grande échelle. Grâce à BEAM et aux abstractions comme GenServer, Elixir excelle dans la construction de systèmes hautement disponibles, tolérants aux pannes et concurrents par défaut."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:366
+#, elixir-autogen, elixir-format
+msgid "For example, a cluster of OTP applications can coordinate work across nodes, balance load, or recover from partial failures — making Elixir a powerful choice for building distributed systems, microservices, and globally available APIs."
+msgstr "Par exemple, un cluster d'applications OTP peut coordonner le travail entre les nœuds, équilibrer la charge ou récupérer après des défaillances partielles — faisant d'Elixir un choix puissant pour construire des systèmes distribués, des microservices et des API disponibles mondialement."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:231
+#, elixir-autogen, elixir-format
+msgid "For instance, Discord originally used Elixir to reduce latency and improve reliability for millions of concurrent voice connections. Elixir helped them simplify complexity without sacrificing performance."
+msgstr "Par exemple, Discord a initialement utilisé Elixir pour réduire la latence et améliorer la fiabilité pour des millions de connexions vocales simultanées. Elixir les a aidés à simplifier la complexité sans sacrifier les performances."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:200
+#, elixir-autogen, elixir-format
+msgid "Here are some concrete examples of where Elixir shines:"
+msgstr "Voici quelques exemples concrets où Elixir brille :"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:138
+#, elixir-autogen, elixir-format
+msgid "Here is a minimal example of a GenServer implementation:"
+msgstr "Voici un exemple minimal d'implémentation d'un GenServer :"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:94
+#, elixir-autogen, elixir-format
+msgid "Here's an example of spawning thousands of processes in Elixir — a common pattern, thanks to the BEAM's efficiency."
+msgstr "Voici un exemple de création de milliers de processus dans Elixir — un modèle courant, grâce à l'efficacité de BEAM."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:430
+#, elixir-autogen, elixir-format
+msgid "In an upcoming article, we'll dive into Phoenix, LiveView, and how Elixir enables real-time, interactive web applications — with less JavaScript and more reliability."
+msgstr "Dans un prochain article, nous plongerons dans Phoenix, LiveView, et comment Elixir permet de créer des applications web interactives en temps réel — avec moins de JavaScript et plus de fiabilité."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:293
+#, elixir-autogen, elixir-format
+msgid "In this example, MyApp.Supervisor starts a MyApp.Worker GenServer. If that worker crashes, the supervisor restarts it automatically, using the :one_for_one strategy. Other strategies include :one_for_all and :rest_for_one, depending on how processes are related."
+msgstr "Dans cet exemple, MyApp.Supervisor démarre un GenServer MyApp.Worker. Si ce worker plante, le superviseur le redémarre automatiquement, en utilisant la stratégie :one_for_one. D'autres stratégies incluent :one_for_all et :rest_for_one, selon la relation entre les processus."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:211
+#, elixir-autogen, elixir-format
+msgid "IoT and telemetry"
+msgstr "IoT et télémétrie"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:133
+#, elixir-autogen, elixir-format
+msgid "It abstracts away the message-passing boilerplate and encourages a consistent architecture. Using `GenServer`, developers can focus on application logic while relying on proven patterns for reliability and supervision."
+msgstr "Il abstrait le code standard de passage de messages et encourage une architecture cohérente. En utilisant `GenServer`, les développeurs peuvent se concentrer sur la logique de l'application tout en s'appuyant sur des modèles éprouvés pour la fiabilité et la supervision."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:53
+#, elixir-autogen, elixir-format
+msgid "Its supervision trees make applications self-healing and resilient by design — a vital feature for systems that require near-zero downtime, like messaging platforms, IoT backends, and fintech applications."
+msgstr "Ses arbres de supervision rendent les applications auto-réparatrices et résilientes par conception — une caractéristique vitale pour les systèmes qui nécessitent un temps d'arrêt quasi nul, comme les plateformes de messagerie, les backends IoT et les applications fintech."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:218
+#, elixir-autogen, elixir-format
+msgid "Libraries like Oban use GenServer and supervision trees to manage job queues, retries, and scheduling reliably."
+msgstr "Des bibliothèques comme Oban utilisent GenServer et les arbres de supervision pour gérer de manière fiable les files d'attente de tâches, les nouvelles tentatives et la planification."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:421
+#, elixir-autogen, elixir-format
+msgid "Looking Ahead: Phoenix and the Web"
+msgstr "Perspectives : Phoenix et le Web"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:58
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Looking ahead, the shift toward decentralized and reactive systems (edge computing, AI coordination, live dashboards) plays directly into Elixir’s strengths — positioning it as one of the most future-proof choices for scalable, concurrent software."
+msgstr "En se tournant vers l'avenir, la tendance vers des systèmes décentralisés et réactifs (edge computing, coordination IA, tableaux de bord en direct) joue directement en faveur des forces d'Elixir — le positionnant comme l'un des choix les plus pérennes pour les logiciels évolutifs et concurrents."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:360
+#, elixir-autogen, elixir-format
+msgid "OTP Applications can easily be combined and deployed across nodes in a distributed system. With node-to-node communication, you can scale horizontally and delegate tasks between different physical or virtual machines."
+msgstr "Les applications OTP peuvent facilement être combinées et déployées sur plusieurs nœuds dans un système distribué. Avec la communication de nœud à nœud, vous pouvez évoluer horizontalement et déléguer des tâches entre différentes machines physiques ou virtuelles."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:356
+#, elixir-autogen, elixir-format
+msgid "OTP Applications in Distributed Systems"
+msgstr "Applications OTP dans les systèmes distribués"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:247
+#, elixir-autogen, elixir-format, fuzzy
+msgid "One of the core strengths of the BEAM is its philosophy of « let it crash » Instead of trying to prevent every possible failure, Elixir encourages writing small, isolated processes that can fail safely — and then be automatically restarted. This is where Supervisors come into play."
+msgstr "L'une des forces principales de BEAM est sa philosophie de « laissez-le planter » (let it crash). Au lieu d'essayer de prévenir chaque défaillance possible, Elixir encourage l'écriture de petits processus isolés qui peuvent échouer en toute sécurité — puis être automatiquement redémarrés. C'est là que les Superviseurs entrent en jeu."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:374
+#, elixir-autogen, elixir-format
+msgid "Phoenix web servers, job processing platforms like Oban, and chat systems all leverage OTP applications behind the scenes. Each application encapsulates its logic, dependencies, and supervision trees, making them easy to compose and maintain."
+msgstr "Les serveurs web Phoenix, les plateformes de traitement de tâches comme Oban et les systèmes de chat utilisent tous des applications OTP en coulisse. Chaque application encapsule sa logique, ses dépendances et ses arbres de supervision, les rendant faciles à composer et à maintenir."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:206
+#, elixir-autogen, elixir-format
+msgid "Processes are lightweight and isolated, making Elixir ideal for handling thousands of concurrent users. Phoenix Channels make real-time communication trivial."
+msgstr "Les processus sont légers et isolés, rendant Elixir idéal pour gérer des milliers d'utilisateurs simultanés. Les Phoenix Channels rendent la communication en temps réel triviale."
+
+#: lib/portfolio_web/live/tech_live/index.ex:99
+#, elixir-autogen, elixir-format
+msgid "Quick dig into Elixir's concurrency model and its impact on building scalable applications."
+msgstr "Plongée rapide dans le modèle de concurrence d'Elixir et son impact sur la construction d'applications évolutives."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:299
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Supervision trees are hierarchical structures of supervisors and workers, forming a resilient system where localized errors don’t bring down the entire application."
+msgstr "Les arbres de supervision sont des structures hiérarchiques de superviseurs et de workers, formant un système résilient où les erreurs localisées ne font pas tomber l'ensemble de l'application."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:224
+#, elixir-autogen, elixir-format
+msgid "Thanks to the underlying Erlang VM, Elixir applications handle high throughput with low latency, even under heavy load."
+msgstr "Grâce à la VM Erlang sous-jacente, les applications Elixir gèrent un débit élevé avec une faible latence, même sous forte charge."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:416
+#, elixir-autogen, elixir-format
+msgid "Thanks to tools like Rustler or NIFs (Native Implemented Functions), you can strike a balance: keep your business logic and resilience in Elixir, while offloading the most CPU-heavy logic to native code."
+msgstr "Grâce à des outils comme Rustler ou les NIFs (Native Implemented Functions), vous pouvez trouver un équilibre : garder votre logique métier et votre résilience dans Elixir, tout en déchargeant la logique la plus gourmande en CPU vers du code natif."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:350
+#, elixir-autogen, elixir-format
+msgid "The MyApp.Application module defines the entry point of your application. When deployed, this module ensures that your system starts in a predictable, fault-tolerant way using the supervision tree."
+msgstr "Le module MyApp.Application définit le point d'entrée de votre application. Une fois déployé, ce module garantit que votre système démarre de manière prévisible et tolérante aux pannes en utilisant l'arbre de supervision."
+
+#: lib/portfolio_web/live/tech_live/index.ex:95
+#, elixir-autogen, elixir-format
+msgid "The future-proof Elixir programing language"
+msgstr "Le langage de programmation Elixir, paré pour l'avenir"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:178
+#, elixir-autogen, elixir-format
+msgid "This `Counter` module starts a process with an initial value, supports incrementing it asynchronously via `cast`, and retrieving the current value with `call`."
+msgstr "Ce module `Counter` démarre un processus avec une valeur initiale, permet de l'incrémenter de manière asynchrone via `cast`, et de récupérer la valeur actuelle avec `call`."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:88
+#, elixir-autogen, elixir-format
+msgid "This architecture also enables hot code swapping, letting you update parts of your system in production without stopping the application — a critical advantage for systems that require continuous availability."
+msgstr "Cette architecture permet également le remplacement à chaud du code, permettant de mettre à jour des parties du système en production sans arrêter l'application — un avantage crucial pour les systèmes qui nécessitent une disponibilité continue."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:424
+#, elixir-autogen, elixir-format
+msgid "This article focused on the foundations of Elixir and the BEAM, but there's even more power waiting in the Elixir ecosystem. The Phoenix Framework builds on top of these concepts to provide a full-featured, scalable web development platform."
+msgstr "Cet article s'est concentré sur les fondements d'Elixir et de BEAM, mais il y a encore plus de puissance qui attend dans l'écosystème Elixir. Le framework Phoenix s'appuie sur ces concepts pour fournir une plateforme de développement web complète et évolutive."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:380
+#, elixir-autogen, elixir-format
+msgid "This modularity is one of the reasons why Elixir systems are considered easy to reason about — even as they scale to millions of users."
+msgstr "Cette modularité est l'une des raisons pour lesquelles les systèmes Elixir sont considérés comme faciles à comprendre — même lorsqu'ils évoluent pour servir des millions d'utilisateurs."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:396
+#, elixir-autogen, elixir-format
+msgid "To handle performance-critical operations, many teams combine Elixir with native code written in Rust or C. One of the most famous examples is Discord, which replaced certain parts of its Elixir stack with Rust-based components to improve performance, while keeping the benefits of Elixir for the rest of the system."
+msgstr "Pour gérer les opérations critiques en termes de performance, de nombreuses équipes combinent Elixir avec du code natif écrit en Rust ou C. L'un des exemples les plus célèbres est Discord, qui a remplacé certaines parties de sa pile Elixir par des composants basés sur Rust pour améliorer les performances, tout en conservant les avantages d'Elixir pour le reste du système."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:76
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Unlike traditional operating system threads, BEAM processes are extremely lightweight and isolated: they don’t share memory and communicate only via message passing. This model eliminates entire classes of concurrency bugs such as race conditions and deadlocks."
+msgstr "Contrairement aux threads traditionnels du système d'exploitation, les processus BEAM sont extrêmement légers et isolés : ils ne partagent pas de mémoire et communiquent uniquement via des passages de messages. Ce modèle élimine des classes entières de bugs de concurrence tels que les race conditions et les blocages."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:371
+#, elixir-autogen, elixir-format
+msgid "Used in Production Systems"
+msgstr "Utilisé dans les systèmes de production"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:184
+#, elixir-autogen, elixir-format
+msgid "Using GenServer encourages fault-tolerant and well-organized concurrent code, especially when combined with Elixir's supervision trees."
+msgstr "L'utilisation de GenServer favorise un code concurrent tolérant aux pannes et bien organisé, en particulier lorsqu'il est combiné avec les arbres de supervision d'Elixir."
+
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:11
+#, elixir-autogen, elixir-format, fuzzy
+msgid "What is Mise?"
+msgstr "Qu'est-ce que Mise ?"
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:237
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Whether you’re building a scalable SaaS backend, real-time app, or processing pipeline, Elixir provides the tools to keep things simple and resilient."
+msgstr "Que vous construisiez un backend SaaS évolutif, une application en temps réel ou un pipeline de traitement, Elixir fournit les outils pour garder les choses simples et résilientes."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "While Elixir allows you to spawn raw processes using `spawn/1`, it also offers powerful abstractions like `GenServer` for building robust, concurrent systems with clear structure."
+msgstr "Bien qu'Elixir permette de créer des processus bruts en utilisant `spawn/1`, il offre également de puissantes abstractions comme `GenServer` pour construire des systèmes concurrents robustes avec une structure claire."
+
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:305
+#, elixir-autogen, elixir-format
+msgid "With supervision trees, Elixir apps gracefully recover from runtime failures, making them ideal for systems that require high availability, like banking platforms, messaging services, and distributed web applications."
+msgstr "Avec les arbres de supervision, les applications Elixir récupèrent élégamment des défaillances d'exécution, ce qui les rend idéales pour les systèmes qui nécessitent une haute disponibilité, comme les plateformes bancaires, les services de messagerie et les applications web distribuées."

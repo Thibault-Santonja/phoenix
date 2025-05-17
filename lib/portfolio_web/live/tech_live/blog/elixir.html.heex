@@ -1,0 +1,435 @@
+<.blog_article>
+  <:title>{gettext("Elixir's Concurrency Model")}</:title>
+
+  <:overview>
+    {gettext(
+      "Elixir is a functional and concurrent programming language built on top of the Erlang VM (BEAM), which was designed from the ground up for building scalable and fault-tolerant systems. In a world increasingly reliant on distributed, real-time applications, Elixir's model is more relevant than ever. This article explores why Elixir stands out for concurrent software development, how its runtime operates, and how developers can build reliable and performant systems using tools like GenServer, Supervisors, and OTP applications."
+    )}
+  </:overview>
+
+  <.table_content color="primary" animated>
+    <.content_item icon="hero-hashtag">
+      <.link href="#why-elixir">{gettext("1. Why Elixir is really powerful")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#beam-machine">{gettext("2. What is the BEAM machine")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#genserver">{gettext("3. What is GenServer and concurrency")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#use-cases">{gettext("4. Real-world use cases for GenServer")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#supervisor">{gettext("5. What is a Supervisor and fault tolerance")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#otp-application">{gettext("6. What is an OTP application")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#conclusion">{gettext("Conclusion and performance considerations")}</.link>
+    </.content_item>
+  </.table_content>
+
+  <.article_section id="why-elixir">
+    <:title>{gettext("1. Why Elixir is Powerful for today and tomorrow usages")}</:title>
+    <p>
+      {gettext(
+        "Elixir is built on the Erlang VM (BEAM), which was designed from the start to support massive concurrency, fault-tolerant systems, and high availability — qualities that are becoming non-negotiable in modern web services, real-time applications, and distributed platforms."
+      )}
+    </p>
+    <p>
+      {gettext(
+        "As applications scale across cores, nodes, and even data centers, Elixir’s lightweight processes and message-passing model allow developers to manage concurrency naturally, without the complexity of traditional threading models."
+      )}
+    </p>
+    <p>
+      {gettext(
+        "Its supervision trees make applications self-healing and resilient by design — a vital feature for systems that require near-zero downtime, like messaging platforms, IoT backends, and fintech applications."
+      )}
+    </p>
+    <p>
+      {gettext(
+        "Looking ahead, the shift toward decentralized and reactive systems (edge computing, AI coordination, live dashboards) plays directly into Elixir’s strengths — positioning it as one of the most future-proof choices for scalable, concurrent software."
+      )}
+    </p>
+  </.article_section>
+
+  <.article_section id="beam-machine">
+    <:title>
+      {gettext("2. What Is the BEAM? Understanding the Virtual Machine Behind Elixir")}
+    </:title>
+
+    <p>
+      {gettext(
+        "At the heart of Elixir lies the BEAM — the Erlang virtual machine — purpose-built for running thousands to millions of lightweight processes simultaneously."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "Unlike traditional operating system threads, BEAM processes are extremely lightweight and isolated: they don’t share memory and communicate only via message passing. This model eliminates entire classes of concurrency bugs such as race conditions and deadlocks."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "Each process runs in a preemptively scheduled environment with its own heap and stack. The BEAM schedules these processes in small reductions (units of execution) and guarantees fairness, allowing responsive systems even under high load."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "This architecture also enables hot code swapping, letting you update parts of your system in production without stopping the application — a critical advantage for systems that require continuous availability."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "Here's an example of spawning thousands of processes in Elixir — a common pattern, thanks to the BEAM's efficiency."
+      )}
+    </p>
+
+    <.code_bloc>
+      <code>
+        {~c"""
+
+        for i <- 1..10_000 do
+          spawn(fn -> IO.puts("Hello from process #\{i\}") end)
+        end
+        """}
+      </code>
+    </.code_bloc>
+
+    <p>
+      {gettext(
+        "Each call to `spawn/1` creates a new process in less time and memory than a typical thread. These processes are entirely managed by the BEAM, offering fault isolation, parallelism, and scalability."
+      )}
+    </p>
+  </.article_section>
+
+  <.article_section id="genserver">
+    <:title>{gettext("3. What Is a GenServer? Concurrency with Abstraction")}</:title>
+
+    <p>
+      {gettext(
+        "While Elixir allows you to spawn raw processes using `spawn/1`, it also offers powerful abstractions like `GenServer` for building robust, concurrent systems with clear structure."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "A `GenServer` is a generic server process — a behavior module provided by Elixir that helps you encapsulate state, handle messages, and manage synchronous or asynchronous operations."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "It abstracts away the message-passing boilerplate and encourages a consistent architecture. Using `GenServer`, developers can focus on application logic while relying on proven patterns for reliability and supervision."
+      )}
+    </p>
+
+    <p>{gettext("Here is a minimal example of a GenServer implementation:")}</p>
+
+    <.code_bloc>
+      <code>
+        {~c"""
+
+        defmodule Counter do
+          use GenServer
+
+          # Client API
+          def start_link(initial_value) do
+            GenServer.start_link(__MODULE__, initial_value, name: __MODULE__)
+          end
+
+          def increment do
+            GenServer.cast(__MODULE__, :increment)
+          end
+
+          def get do
+            GenServer.call(__MODULE__, :get)
+          end
+
+          # Server Callbacks
+          def init(initial_value) do
+            {:ok, initial_value}
+          end
+
+          def handle_cast(:increment, state) do
+            {:noreply, state + 1}
+          end
+
+          def handle_call(:get, _from, state) do
+            {:reply, state, state}
+          end
+        end
+        """}
+      </code>
+    </.code_bloc>
+
+    <p>
+      {gettext(
+        "This `Counter` module starts a process with an initial value, supports incrementing it asynchronously via `cast`, and retrieving the current value with `call`."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "Using GenServer encourages fault-tolerant and well-organized concurrent code, especially when combined with Elixir's supervision trees."
+      )}
+    </p>
+  </.article_section>
+
+  <.article_section id="use-cases">
+    <:title>{gettext("4. Real-World Use Cases: Why Elixir Shines in Production")}</:title>
+
+    <p>
+      {gettext(
+        "Elixir’s concurrency model isn’t just theoretically sound — it solves real problems at scale. Thanks to BEAM and abstractions like GenServer, Elixir excels in building systems that are highly available, fault-tolerant, and concurrent by default."
+      )}
+    </p>
+
+    <p>
+      {gettext("Here are some concrete examples of where Elixir shines:")}
+    </p>
+
+    <ul class="list-disc pl-6 indent-0 list-inside">
+      <li>
+        <strong>{gettext("Chat applications")}</strong>
+        : {gettext(
+          "Processes are lightweight and isolated, making Elixir ideal for handling thousands of concurrent users. Phoenix Channels make real-time communication trivial."
+        )}
+      </li>
+      <li>
+        <strong>{gettext("IoT and telemetry")}</strong>
+        : {gettext(
+          "Elixir handles large volumes of incoming data efficiently, with GenServers maintaining state and processing in parallel."
+        )}
+      </li>
+      <li>
+        <strong>{gettext("Background processing")}</strong>
+        : {gettext(
+          "Libraries like Oban use GenServer and supervision trees to manage job queues, retries, and scheduling reliably."
+        )}
+      </li>
+      <li>
+        <strong>{gettext("APIs at scale")}</strong>
+        : {gettext(
+          "Thanks to the underlying Erlang VM, Elixir applications handle high throughput with low latency, even under heavy load."
+        )}
+      </li>
+    </ul>
+
+    <p>
+      {gettext(
+        "For instance, Discord originally used Elixir to reduce latency and improve reliability for millions of concurrent voice connections. Elixir helped them simplify complexity without sacrificing performance."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "Whether you’re building a scalable SaaS backend, real-time app, or processing pipeline, Elixir provides the tools to keep things simple and resilient."
+      )}
+    </p>
+  </.article_section>
+
+  <.article_section id="supervisor">
+    <:title>{gettext("5. Supervisors: Building Fault-Tolerant Systems")}</:title>
+
+    <p>
+      {gettext(
+        "One of the core strengths of the BEAM is its philosophy of « let it crash » Instead of trying to prevent every possible failure, Elixir encourages writing small, isolated processes that can fail safely — and then be automatically restarted. This is where Supervisors come into play."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "A Supervisor is a special process whose job is to monitor and restart child processes when they fail. This design promotes high availability and fault isolation by ensuring that failures are contained and automatically recovered from."
+      )}
+    </p>
+
+    <.code_bloc>
+      <code>
+        {~c"""
+
+        defmodule MyApp.Worker do
+          use GenServer
+
+          def start_link(_args) do
+            GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+          end
+
+          def init(state), do: {:ok, state}
+        end
+
+        defmodule MyApp.Supervisor do
+          use Supervisor
+
+          def start_link(_init_arg) do
+            Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
+          end
+
+          @impl true
+          def init(:ok) do
+            children = [
+              {MyApp.Worker, []}
+            ]
+
+            Supervisor.init(children, strategy: :one_for_one)
+          end
+        end
+        """}
+      </code>
+    </.code_bloc>
+
+    <p>
+      {gettext(
+        "In this example, MyApp.Supervisor starts a MyApp.Worker GenServer. If that worker crashes, the supervisor restarts it automatically, using the :one_for_one strategy. Other strategies include :one_for_all and :rest_for_one, depending on how processes are related."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "Supervision trees are hierarchical structures of supervisors and workers, forming a resilient system where localized errors don’t bring down the entire application."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "With supervision trees, Elixir apps gracefully recover from runtime failures, making them ideal for systems that require high availability, like banking platforms, messaging services, and distributed web applications."
+      )}
+    </p>
+  </.article_section>
+
+  <.article_section id="otp-application">
+    <:title>
+      {gettext("6. What is an OTP Application? Building Scalable and Distributed Systems")}
+    </:title>
+
+    <p>
+      {gettext(
+        "At the heart of every Elixir project lies an OTP Application — a standardized way to package, configure, and run an Elixir system. An OTP Application is more than a module or a set of functions: it's a self-contained unit of behavior that defines how your app starts, supervises its processes, and integrates with other applications."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "An OTP Application typically defines a supervision tree and is started by the BEAM runtime when your project boots. This pattern enables you to structure your code as modular and resilient components, ideal for long-running services like web servers, messaging queues, or background job processors."
+      )}
+    </p>
+
+    <.code_bloc>
+      <code>
+        {~c"""
+
+        defmodule MyApp.Application do
+          use Application
+
+          @impl true
+          def start(_type, _args) do
+            children = [
+              {MyApp.Worker, []}
+            ]
+
+            opts = [strategy: :one_for_one, name: MyApp.Supervisor]
+            Supervisor.start_link(children, opts)
+          end
+        end
+        """}
+      </code>
+    </.code_bloc>
+
+    <p>
+      {gettext(
+        "The MyApp.Application module defines the entry point of your application. When deployed, this module ensures that your system starts in a predictable, fault-tolerant way using the supervision tree."
+      )}
+    </p>
+
+    <h3 class="text-lg font-semibold mt-4">
+      {gettext("OTP Applications in Distributed Systems")}
+    </h3>
+
+    <p>
+      {gettext(
+        "OTP Applications can easily be combined and deployed across nodes in a distributed system. With node-to-node communication, you can scale horizontally and delegate tasks between different physical or virtual machines."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "For example, a cluster of OTP applications can coordinate work across nodes, balance load, or recover from partial failures — making Elixir a powerful choice for building distributed systems, microservices, and globally available APIs."
+      )}
+    </p>
+
+    <h3 class="text-lg font-semibold mt-4">{gettext("Used in Production Systems")}</h3>
+
+    <p>
+      {gettext(
+        "Phoenix web servers, job processing platforms like Oban, and chat systems all leverage OTP applications behind the scenes. Each application encapsulates its logic, dependencies, and supervision trees, making them easy to compose and maintain."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "This modularity is one of the reasons why Elixir systems are considered easy to reason about — even as they scale to millions of users."
+      )}
+    </p>
+  </.article_section>
+
+  <.article_section id="conclusion">
+    <:title>{gettext("Conclusion: Performance, Interoperability, and What's Next")}</:title>
+
+    <p>
+      {gettext(
+        "Elixir's strength lies in its concurrency model, fault-tolerant design, and its ability to scale efficiently for IO-heavy, distributed applications. However, it's important to understand that Elixir — running on the BEAM — is not optimized for raw CPU-intensive computation."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "To handle performance-critical operations, many teams combine Elixir with native code written in Rust or C. One of the most famous examples is Discord, which replaced certain parts of its Elixir stack with Rust-based components to improve performance, while keeping the benefits of Elixir for the rest of the system."
+      )}
+    </p>
+
+    <.code_bloc>
+      <code>
+        {~c"""
+
+        # Example: calling Rust from Elixir using Rustler
+        defmodule Math.NIF do
+          use Rustler, otp_app: :my_app, crate: "native_math"
+
+          def add(_a, _b), do: :erlang.nif_error(:nif_not_loaded)
+        end
+        """}
+      </code>
+    </.code_bloc>
+
+    <p>
+      {gettext(
+        "Thanks to tools like Rustler or NIFs (Native Implemented Functions), you can strike a balance: keep your business logic and resilience in Elixir, while offloading the most CPU-heavy logic to native code."
+      )}
+    </p>
+
+    <h3 class="text-lg font-semibold mt-4">{gettext("Looking Ahead: Phoenix and the Web")}</h3>
+
+    <p>
+      {gettext(
+        "This article focused on the foundations of Elixir and the BEAM, but there's even more power waiting in the Elixir ecosystem. The Phoenix Framework builds on top of these concepts to provide a full-featured, scalable web development platform."
+      )}
+    </p>
+
+    <p>
+      {gettext(
+        "In an upcoming article, we'll dive into Phoenix, LiveView, and how Elixir enables real-time, interactive web applications — with less JavaScript and more reliability."
+      )}
+    </p>
+  </.article_section>
+</.blog_article>
