@@ -1,4 +1,4 @@
-defmodule PortfolioWeb.IndexLive.Index do
+defmodule PortfolioWeb.Live.Index do
   use PortfolioWeb, :live_view
 
   @impl true
