@@ -89,7 +89,7 @@ defmodule PortfolioWeb.TechLive.Index do
             >
               <div class="mb-3 flex items-center space-x-4">
                 <.icon
-                  name="hero-language-solid"
+                  name="hero-beaker-solid"
                   class="text-tech-accent h-6 w-6 flex-none transition group-hover:rotate-12"
                 />
                 <h3 class="text-tech-accent text-lg font-medium">
