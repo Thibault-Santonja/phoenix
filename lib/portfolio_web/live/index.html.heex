@@ -1,19 +1,284 @@
-<div class="w-full py-4">
-  <nav class="">
-    <h2 class="text-balance mx-auto my-4 w-1/2 text-center text-xl font-semibold text-zinc-900 ">
-      Currently in production websites
-    </h2>
-    <ul class="my-8 flex flex-row items-stretch justify-evenly space-x-8">
-      <li>
-        <a href={~p"/amvcc"} class="hover:text-blue-600">La Seigneurie de Coucy</a>
-      </li>
-      <li>
-        <a href={~p"/photo"} class="hover:text-blue-600">Portfolio photographique</a>
-      </li>
-      <li>
-        <a href={~p"/tech"} class="hover:text-blue-600">{gettext("The tech blog")}</a>
-      </li>
-    </ul>
-  </nav>
-  <p class="py-4 text-center text-xs">App version (v.{Application.spec(:portfolio)[:vsn]})</p>
-</div>
+<section class={[
+  "w-full min-h-screen",
+  "flex items-center justify-center",
+  "bg-[url(/images/photography/street.jpg)] bg-cover bg-center",
+  "font-thin text-center"
+]}>
+  <div class={[
+    "m-2 md:m-8",
+    "w-full max-w-2xl lg:max-w-3xl min-h-1/2",
+    "bg-black/20 backdrop-blur-md text-white rounded-3xl",
+    "grid grid-cols-1"
+  ]}>
+    <article class={[
+      "p-8 md:p-16 pb-2 md:pb-4",
+      "grid grid-cols-1"
+    ]}>
+      <h1 class={[
+        "my-2 mx-auto px-4",
+        "uppercase text-4xl"
+      ]}>
+        Thibault Santonja
+      </h1>
+
+      <div class="my-8 text-balance grid grid-cols-1 gap-4">
+        <div>
+          <h2 class="text-base font-black mb-2">
+            {gettext("Welcome to my digital workshop")}
+          </h2>
+
+          <p>{gettext("A quiet place shaped by hand and heart,")}</p>
+          <p>{gettext("Where light meets ink, Where code meets craft.")}</p>
+        </div>
+
+        <p>{gettext("Here, you can wander through the different threads of my work:")}</p>
+
+        <ul class={[
+          "grid grid-cols-2 gap-4",
+          "text-white text-sm",
+          "my-2"
+        ]}>
+          <li class={[
+            "p-4 group",
+            "bg-white/20 backdrop-blur-md rounded-lg"
+          ]}>
+            <a href={~p"/photo"} class="group-hover:font-medium duration-500">
+              <h2 class="text-base font-black mb-2">
+                <.icon
+                  name="hero-photo-solid"
+                  class={[
+                    "text-white",
+                    "h-6 w-6",
+                    "mr-2"
+                  ]}
+                />
+                {gettext("Photography")}
+              </h2>
+              <p>{gettext("Fragments of light, stories without words")}</p>
+            </a>
+          </li>
+
+          <li class={[
+            "p-4 group",
+            "bg-white/20 backdrop-blur-md rounded-lg"
+          ]}>
+            <a href={~p"/amvcc"} class="group-hover:font-medium duration-500">
+              <h2 class="text-base font-black mb-2">
+                <.icon
+                  name="hero-building-library-solid"
+                  class={[
+                    "text-white",
+                    "h-6 w-6",
+                    "mr-2"
+                  ]}
+                /> La Seigneurie de Coucy
+              </h2>
+              <p>
+                <%!-- weaving --%>
+                {gettext(
+                  "Breathing life into history, and kindling a strong friendship community of care, curiosity, and craft"
+                )}
+              </p>
+            </a>
+          </li>
+
+          <li class={[
+            "p-4 group",
+            "bg-white/20 backdrop-blur-md rounded-lg"
+          ]}>
+            <a href={~p"/tech"} class="group-hover:font-medium duration-500">
+              <h2 class="text-base font-black mb-2">
+                <.icon
+                  name="hero-command-line-solid"
+                  class={[
+                    "text-white",
+                    "h-6 w-6",
+                    "mr-2"
+                  ]}
+                />
+                {gettext("Software crafter")}
+              </h2>
+              <p>{gettext("Thoughtful code, built to last")}</p>
+            </a>
+          </li>
+
+          <li class={[
+            "p-4 group",
+            "bg-white/20 backdrop-blur-md rounded-lg"
+          ]}>
+            <a href={~p"/"} class="cursor-not-allowed">
+              <h2 class="text-base font-black mb-2">
+                <.icon
+                  name="hero-book-open-solid"
+                  class={[
+                    "text-white",
+                    "h-6 w-6",
+                    "mr-2"
+                  ]}
+                />
+                {gettext("The bookshelf")}
+              </h2>
+              <p>{gettext("A curated digital bookshelf")}</p>
+              <p>~ <strong>{gettext("Coming soon")}</strong> ~</p>
+            </a>
+          </li>
+        </ul>
+
+        <p>{gettext("Take your time, each path tells a part of the story.")}</p>
+      </div>
+    </article>
+
+    <footer class="bg-white h-min rounded-b-3xl">
+      <nav>
+        <ul class={[
+          "flex items-center justify-center space-x-8",
+          "mx-auto my-3",
+          "h-full"
+        ]}>
+          <li>
+            <a
+              href="mailto:thibault.santonja@gmail.com"
+              class={[
+                "group hover:scale-[1.2] duration-500",
+                "rounded-full aspect-square flex items-center justify-center",
+                "bg-zinc-200",
+                "p-2"
+              ]}
+            >
+              <.icon
+                name="hero-envelope-solid"
+                class={[
+                  "text-black",
+                  "h-6 w-6",
+                  "flex-none",
+                  "transition group-hover:text-white duration-300"
+                ]}
+              />
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.instagram.com/thibault__san/"
+              class={[
+                "group hover:scale-[1.2] duration-500",
+                "rounded-full aspect-square flex items-center justify-center",
+                "bg-zinc-200",
+                "p-2"
+              ]}
+            >
+              <svg
+                id="instagram-svg"
+                viewBox="0 0 420 420"
+                xmlns="http://www.w3.org/2000/svg"
+                class={[
+                  "text-black",
+                  "h-6 w-6",
+                  "flex-none",
+                  "transition group-hover:fill-white duration-300"
+                ]}
+              >
+                <path
+                  d="M388.818,146.28a24.3,24.3,0,1,1-24.295-24.295A24.3,24.3,0,0,1,388.818,146.28ZM466,256l-0.005.306-1.38,88.105a121.58,121.58,0,0,1-120.2,120.2L256,466l-0.306-.006-88.105-1.376a121.586,121.586,0,0,1-120.206-120.2L46,256l0.006-.306,1.376-88.108a121.59,121.59,0,0,1,120.206-120.2L256,46l0.306,0.006,88.105,1.376a121.584,121.584,0,0,1,120.2,120.2Zm-39.112,0-1.374-87.8A82.654,82.654,0,0,0,343.8,86.485L256,85.114l-87.8,1.371A82.658,82.658,0,0,0,86.484,168.2L85.113,256l1.371,87.8A82.655,82.655,0,0,0,168.2,425.515l87.8,1.371,87.8-1.371A82.651,82.651,0,0,0,425.514,343.8Zm-63.048,0A107.841,107.841,0,1,1,256,148.159,107.962,107.962,0,0,1,363.84,256Zm-39.107,0A68.734,68.734,0,1,0,256,324.734,68.812,68.812,0,0,0,324.732,256Z"
+                  transform="translate(-46 -46.001)"
+                />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.linkedin.com/in/thibaultsantonja/"
+              class={[
+                "group hover:scale-[1.2] duration-500",
+                "rounded-full aspect-square flex items-center justify-center",
+                "bg-zinc-200",
+                "p-2"
+              ]}
+            >
+              <svg
+                id="linkedin-svg"
+                viewBox="11 13 36 36"
+                xmlns="http://www.w3.org/2000/svg"
+                class={[
+                  "text-black",
+                  "h-6 w-6",
+                  "flex-none",
+                  "transition group-hover:fill-white duration-300"
+                ]}
+              >
+                <g stroke="none" stroke-width="1">
+                  <g id="linkedin">
+                    <path d="M21.8830754,43.8231512 L21.8830754,25.5243389 L16.22737,25.5243389 L16.22737,43.8231512 L21.8830754,43.8231512 Z M21.8830754,19.0382145 C21.8493882,17.40066 20.7580156,16.1538462 18.9850543,16.1538462 C17.2116316,16.1538462 16.0528846,17.40066 16.0528846,19.0382145 C16.0528846,20.6402023 17.1779444,21.9230769 18.9172185,21.9230769 L18.9509057,21.9230769 C20.7580156,21.9230769 21.8830754,20.6402023 21.8830754,19.0382145 Z M31.1100418,43.8231517 L31.1100418,33.3973729 C31.1100418,32.8394014 31.1503704,32.28143 31.3144472,31.8836682 C31.7630341,30.7682778 32.7839561,29.6136637 34.498199,29.6136637 C36.7438958,29.6136637 38.152278,30.8881587 38.152278,33.3973727 L38.152278,43.8231516 L43.8461538,43.8231517 L43.8461538,33.1183872 C43.8461538,27.3839878 40.7850453,24.715669 36.7019099,24.715669 C33.3540813,24.715669 31.8845724,26.5873593 31.0686083,27.861302 L31.1094893,25.4139123 L25.425462,25.4139123 C25.5072241,27.1657215 25.425462,43.8231516 25.425462,43.8231516 L31.1100418,43.8231517 Z" />
+                  </g>
+                </g>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.facebook.com/thibault.san/"
+              class={[
+                "group hover:scale-[1.2] duration-500",
+                "rounded-full aspect-square flex items-center justify-center",
+                "bg-zinc-200",
+                "p-2"
+              ]}
+            >
+              <svg
+                id="linkedin-svg"
+                viewBox="2.5 2 28 28"
+                xmlns="http://www.w3.org/2000/svg"
+                class={[
+                  "text-black",
+                  "h-6 w-6",
+                  "transition group-hover:fill-white duration-300"
+                ]}
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke="#CCCCCC"
+                  stroke-width="0.128"
+                >
+                </g>
+                <g id="SVGRepo_iconCarrier">
+                  <path d="M21.95 5.005l-3.306-.004c-3.206 0-5.277 2.124-5.277 5.415v2.495H10.05v4.515h3.317l-.004 9.575h4.641l.004-9.575h3.806l-.003-4.514h-3.803v-2.117c0-1.018.241-1.533 1.566-1.533l2.366-.001.01-4.256z">
+                  </path>
+                </g>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.amvcc.com/"
+              class={[
+                "group hover:scale-[1.2] duration-500",
+                "rounded-full flex items-center justify-center",
+                "bg-zinc-200",
+                "p-2"
+              ]}
+            >
+              <p class={[
+                "text-black font-black text-sm",
+                "transition group-hover:text-white duration-300"
+              ]}>
+                AMVCC
+              </p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+  </div>
+
+  <p class="py-4 text-center text-xs fixed bottom-1">
+    <span>
+      Thibault Santonja {NaiveDateTime.utc_now().year}
+    </span>
+    •
+    <span>
+      App version v.{Application.spec(:portfolio)[:vsn]}
+    </span>
+  </p>
+</section>
