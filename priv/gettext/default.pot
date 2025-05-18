@@ -307,11 +307,10 @@ msgid "Shoes"
 msgstr ""
 
 #: lib/portfolio_web/components/layouts/tech.html.heex:26
-#: lib/portfolio_web/live/index_live/index.html.heex:14
 #: lib/portfolio_web/live/tech_live/blog/ci.ex:21
 #: lib/portfolio_web/live/tech_live/blog/elixir.ex:23
 #: lib/portfolio_web/live/tech_live/blog/kamal.ex:21
-#: lib/portfolio_web/live/tech_live/index.ex:18
+#: lib/portfolio_web/live/tech_live/index.ex:17
 #, elixir-autogen, elixir-format
 msgid "The tech blog"
 msgstr ""
@@ -462,7 +461,7 @@ msgstr ""
 msgid "A domain name managed by Cloudflare or similar"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:30
+#: lib/portfolio_web/live/tech_live/index.ex:29
 #, elixir-autogen, elixir-format
 msgid "A growing collection of ideas, tools, and experiments in web development, DevOps, and medieval digital humanities."
 msgstr ""
@@ -510,7 +509,7 @@ msgstr ""
 msgid "Deploying a Phoenix App with Kamal and Docker on a VPS"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:75
+#: lib/portfolio_web/live/tech_live/index.ex:74
 #, elixir-autogen, elixir-format
 msgid "Deploying with Kamal"
 msgstr ""
@@ -546,7 +545,7 @@ msgstr ""
 msgid "Explanation"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:57
+#: lib/portfolio_web/live/tech_live/index.ex:56
 #, elixir-autogen, elixir-format
 msgid "Explore how the site is built and deployed using GitHub Actions, Docker, and Elixir Phoenix."
 msgstr ""
@@ -566,7 +565,7 @@ msgstr ""
 msgid "Here's how I configured Kamal for my own Phoenix project deployed to a Hetzner VPS using Docker and PostgreSQL."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:79
+#: lib/portfolio_web/live/tech_live/index.ex:78
 #, elixir-autogen, elixir-format
 msgid "How I use Kamal to deploy Phoenix apps with Docker on a VPS — simple, elegant, and production-ready."
 msgstr ""
@@ -680,7 +679,7 @@ msgstr ""
 msgid "Mise is a modern version manager that supports multiple languages and tools — similar to asdf, but faster and easier to configure."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:38
+#: lib/portfolio_web/live/tech_live/index.ex:37
 #, elixir-autogen, elixir-format
 msgid "My latest articles"
 msgstr ""
@@ -790,7 +789,7 @@ msgstr ""
 msgid "The LINT job enforces code quality and security rules. It checks for formatting, unused dependencies, security vulnerabilities, and stylistic issues."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:53
+#: lib/portfolio_web/live/tech_live/index.ex:52
 #, elixir-autogen, elixir-format
 msgid "The Project CI"
 msgstr ""
@@ -800,7 +799,7 @@ msgstr ""
 msgid "The name of your app/service, consistent with your Docker image and Elixir project."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:112
+#: lib/portfolio_web/live/tech_live/index.ex:111
 #, elixir-autogen, elixir-format
 msgid "The tech blog is under construction — come back soon for articles on Elixir, Phoenix, CI/CD, and more !."
 msgstr ""
@@ -876,7 +875,7 @@ msgstr ""
 msgid "Using a single configuration file (`mise.toml`), you can define the exact versions of tools like Elixir, Erlang, Ruby, and even JavaScript runtimes like Bun."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:27
+#: lib/portfolio_web/live/tech_live/index.ex:26
 #, elixir-autogen, elixir-format
 msgid "Welcome to Thibault's dev blog"
 msgstr ""
@@ -1156,7 +1155,7 @@ msgstr ""
 msgid "Processes are lightweight and isolated, making Elixir ideal for handling thousands of concurrent users. Phoenix Channels make real-time communication trivial."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:101
+#: lib/portfolio_web/live/tech_live/index.ex:100
 #, elixir-autogen, elixir-format
 msgid "Quick dig into Elixir's concurrency model and its impact on building scalable applications."
 msgstr ""
@@ -1181,7 +1180,7 @@ msgstr ""
 msgid "The MyApp.Application module defines the entry point of your application. When deployed, this module ensures that your system starts in a predictable, fault-tolerant way using the supervision tree."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:97
+#: lib/portfolio_web/live/tech_live/index.ex:96
 #, elixir-autogen, elixir-format
 msgid "The future-proof Elixir programing language"
 msgstr ""
@@ -1244,4 +1243,69 @@ msgstr ""
 #: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:308
 #, elixir-autogen, elixir-format
 msgid "With supervision trees, Elixir apps gracefully recover from runtime failures, making them ideal for systems that require high availability, like banking platforms, messaging services, and distributed web applications."
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "A curated digital bookshelf"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:30
+#, elixir-autogen, elixir-format
+msgid "A quiet place shaped by hand and heart,"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:78
+#, elixir-autogen, elixir-format
+msgid "Breathing life into history, and kindling a strong friendship community of care, curiosity, and craft"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:122
+#, elixir-autogen, elixir-format
+msgid "Coming soon"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:57
+#, elixir-autogen, elixir-format
+msgid "Fragments of light, stories without words and emotional journey"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:34
+#, elixir-autogen, elixir-format
+msgid "Here, you can wander through the different threads of my work:"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:55
+#, elixir-autogen, elixir-format
+msgid "Photography"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:99
+#, elixir-autogen, elixir-format
+msgid "Software crafter"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:127
+#, elixir-autogen, elixir-format
+msgid "Take your time, each path tells a part of the story."
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:119
+#, elixir-autogen, elixir-format
+msgid "The bookshelf"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:101
+#, elixir-autogen, elixir-format
+msgid "Thoughtful crafted code, shaped with care for people and planet"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:27
+#, elixir-autogen, elixir-format
+msgid "Welcome to my digital workshop"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:31
+#, elixir-autogen, elixir-format
+msgid "Where light meets ink, Where code meets craft."
 msgstr ""
