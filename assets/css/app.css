@@ -1,6 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import "./photography.css";
 
 /* This file is for your main application CSS */
 blockquote {
@@ -25,62 +26,4 @@ blockquote > p {
 
 p {
     text-justify: inter-word;
-}
-
-/* --- For photography menu --- */
-
-/* Display image only when related link is hovered */
-#photography #gallery img {
-    display: none;
-}
-
-#photography #gallery a:hover + img,
-#photography #gallery img:hover {
-    display: block;
-}
-
-/* Display animation on link hover (only medium or bigger screens)) */
-@media only screen and (min-width: 48rem) {
-    #photography #gallery li {
-        font-size: 1.5rem (24px);
-        line-height: calc(2 / 1.5);
-    }
-
-    #photography #gallery li:not(:first-child) {
-        padding-top: 0.5rem;
-    }
-
-    #photography #gallery li:hover {
-        font-size: 1.875rem;
-        line-height: calc(2.25 / 1.875);
-    }
-
-    /* Right side */
-    #photography #gallery li:hover + li {
-        font-size: 1.75rem;
-        line-height: calc(2.25 / 1.75);
-    }
-
-    #photography #gallery li:hover + li + li {
-        font-size: 1.625rem;
-        line-height: calc(2.25 / 1.625);
-    }
-
-    /* Left side */
-    #photography #gallery li:has(+ li:hover) {
-        font-size: 1.75rem;
-        line-height: calc(2.25 / 1.75);
-    }
-
-    #photography #gallery li:has(+ li + li:hover) {
-        font-size: 1.625rem;
-        line-height: calc(2.25 / 1.625);
-    }
-
-    #photography #gallery li {
-        transition:
-            font-size,
-            line-height,
-            cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
-    }
 }

@@ -1,0 +1,58 @@
+/* --- For photography menu --- */
+#photography {
+    /* Display image only when related link is hovered */
+    #gallery img {
+        display: none;
+    }
+
+    #gallery a:hover + img,
+    #gallery img:hover {
+        display: block;
+    }
+
+    /* Display animation on link hover (only medium or bigger screens)) */
+    @media only screen and (min-width: 48rem) {
+        #gallery li {
+            font-size: 1.5rem (24px);
+            line-height: calc(2 / 1.5);
+        }
+
+        #gallery li:not(:first-child) {
+            padding-top: 0.5rem;
+        }
+
+        #gallery li:hover {
+            font-size: 1.875rem;
+            line-height: calc(2.25 / 1.875);
+        }
+
+        /* Right side */
+        #gallery li:hover + li {
+            font-size: 1.75rem;
+            line-height: calc(2.25 / 1.75);
+        }
+
+        #gallery li:hover + li + li {
+            font-size: 1.625rem;
+            line-height: calc(2.25 / 1.625);
+        }
+
+        /* Left side */
+        #gallery li:has(+ li:hover) {
+            font-size: 1.75rem;
+            line-height: calc(2.25 / 1.75);
+        }
+
+        #gallery li:has(+ li + li:hover) {
+            font-size: 1.625rem;
+            line-height: calc(2.25 / 1.625);
+        }
+
+        #gallery li {
+            transition:
+                font-size,
+                line-height,
+                cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
+        }
+    }
+}
