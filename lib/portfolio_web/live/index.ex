@@ -1,4 +1,9 @@
 defmodule PortfolioWeb.Live.Index do
+  @moduledoc """
+  The main live view for the landing page of the portfolio.
+
+  This module handles the initial entry point into the digital workshop.
+  """
   use PortfolioWeb, :live_view
 
   @impl true
