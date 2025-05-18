@@ -5,7 +5,7 @@ defmodule PortfolioWeb.IndexLiveTest do
   describe "Website index" do
     test "/ path render default page", %{conn: conn} do
       {:ok, _index_live, html} = live(conn, ~p"/")
-      assert html =~ "Currently in production websites"
+      assert html =~ "Thibault Santonja"
     end
   end
 end

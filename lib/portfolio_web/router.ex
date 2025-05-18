@@ -71,7 +71,7 @@ defmodule PortfolioWeb.Router do
   scope "/", PortfolioWeb do
     pipe_through :browser
 
-    live "/", IndexLive.Index, :index
+    live "/", Live.Index, :index
     get "/amvcc", PageController, :subdomain_redirect
     get "/photo", PageController, :subdomain_redirect
     get "/tech", PageController, :subdomain_redirect
