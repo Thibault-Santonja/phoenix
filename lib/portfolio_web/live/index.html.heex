@@ -1,10 +1,16 @@
-<section class={[
+<main class={[
   "w-full min-h-screen",
   "flex items-center justify-center",
-  "bg-[url(/images/photography/street.jpg)] bg-cover bg-center",
   "font-thin text-center"
 ]}>
-  <div class={[
+  <img
+    src="/images/photography/street.webp"
+    alt="Background photography"
+    loading="lazy"
+    class="object-cover fixed top-0 -z-50 min-h-full min-w-full"
+  />
+
+  <section class={[
     "m-2 md:m-8",
     "w-full max-w-2xl lg:max-w-3xl min-h-1/2",
     "bg-black/20 backdrop-blur-md text-white rounded-3xl",
@@ -106,7 +112,7 @@
             "p-4 group",
             "bg-white/20 backdrop-blur-md rounded-lg"
           ]}>
-            <a href={~p"/"} class="cursor-not-allowed">
+            <a href={~p"/"} class="cursor-not-allowed" aria-disabled>
               <h2 class="text-base font-black mb-2">
                 <.icon
                   name="hero-book-open-solid"
@@ -144,6 +150,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
+              aria-label={gettext("E-mail me")}
             >
               <.icon
                 name="hero-envelope-solid"
@@ -166,6 +173,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
+              aria-label={gettext("Instagram profile")}
             >
               <svg
                 id="instagram-svg"
@@ -195,6 +203,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
+              aria-label={gettext("Github profile")}
             >
               <svg
                 id="github-svg"
@@ -221,6 +230,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
+              aria-label={gettext("Linkedin profile")}
             >
               <svg
                 id="linkedin-svg"
@@ -251,6 +261,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
+              aria-label={gettext("Facebook profile")}
             >
               <svg
                 id="facebook-svg"
@@ -288,6 +299,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
+              aria-label={gettext("AMVCC page")}
             >
               <p class={[
                 "text-black font-black text-sm",
@@ -300,9 +312,9 @@
         </ul>
       </nav>
     </footer>
-  </div>
+  </section>
 
-  <p class="py-4 text-center text-xs fixed bottom-1">
+  <p class="py-4 text-center text-xs fixed bottom-1 -z-20">
     <span>
       Thibault Santonja {NaiveDateTime.utc_now().year}
     </span>
@@ -311,4 +323,4 @@
       App version v.{Application.spec(:portfolio)[:vsn]}
     </span>
   </p>
-</section>
+</main>
