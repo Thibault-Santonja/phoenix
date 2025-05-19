@@ -6,11 +6,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
+    <!-- Langue principale -->
+    <meta name="language" content="en" />
+    <meta http-equiv="content-language" content="en" />
+    <!-- Open Graph pour SEO et réseaux sociaux -->
+    <meta
+      property="og:locale"
+      content={if Gettext.get_locale() == "fr", do: "fr_FR", else: "en_GB"}
+    />
+    <meta property="og:locale:alternate" content="fr_CH" />
+    <meta property="og:locale:alternate" content="en_US" />
+
     <.live_title default="tech" suffix=" · Seigneurie de Coucy">
       {assigns[:page_title]}
     </.live_title>
+
     <link rel="icon" type="image/x-icon" href="/images/photography/logo.png" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>

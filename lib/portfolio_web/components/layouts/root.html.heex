@@ -6,11 +6,28 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
+    <!-- Langue principale -->
+    <meta name="language" content={Gettext.get_locale()} />
+    <meta http-equiv="content-language" content={Gettext.get_locale()} />
+    <!-- Open Graph pour SEO et réseaux sociaux -->
+    <meta
+      property="og:locale"
+      content={if Gettext.get_locale() == "fr", do: "fr_FR", else: "en_GB"}
+    />
+    <meta property="og:locale:alternate" content="fr_BE" />
+    <meta property="og:locale:alternate" content="fr_CH" />
+    <meta property="og:locale:alternate" content="en_US" />
+
     <.live_title default="Portfolio" suffix=" · Phoenix Framework">
       {assigns[:page_title]}
     </.live_title>
+    <title>{gettext("Thibault Santonja – Portfolio créatif et technique")}</title>
+
     <link rel="icon" type="image/x-icon" href="/images/photography/logo.png" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <!-- preload background image -->
+    <link rel="preload" href="/images/photography/street.jpg" as="image" />
+
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
