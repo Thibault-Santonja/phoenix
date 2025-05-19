@@ -8,7 +8,8 @@ defmodule PortfolioWeb.Endpoint do
     store: :cookie,
     key: "_portfolio_key",
     signing_salt: "sisdz80o",
-    same_site: "Lax"
+    same_site: "Lax",
+    compress: true
   ]
 
   socket "/live", Phoenix.LiveView.Socket,

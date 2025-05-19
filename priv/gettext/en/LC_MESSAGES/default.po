@@ -291,22 +291,22 @@ msgstr ""
 msgid "CI"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:31
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "Clothes"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:25
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:36
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:67
 #, elixir-autogen, elixir-format
 msgid "Shoes"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/tech.html.heex:26
+#: lib/portfolio_web/components/layouts/tech.html.heex:48
 #: lib/portfolio_web/live/tech_live/blog/ci.ex:21
 #: lib/portfolio_web/live/tech_live/blog/elixir.ex:23
 #: lib/portfolio_web/live/tech_live/blog/kamal.ex:21
@@ -1245,67 +1245,137 @@ msgstr ""
 msgid "With supervision trees, Elixir apps gracefully recover from runtime failures, making them ideal for systems that require high availability, like banking platforms, messaging services, and distributed web applications."
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:121
+#: lib/portfolio_web/live/index.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "A curated digital bookshelf"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:30
+#: lib/portfolio_web/live/index.html.heex:40
 #, elixir-autogen, elixir-format
 msgid "A quiet place shaped by hand and heart,"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:78
+#: lib/portfolio_web/live/index.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "Breathing life into history, and kindling a strong friendship community of care, curiosity, and craft"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:122
+#: lib/portfolio_web/live/index.html.heex:132
 #, elixir-autogen, elixir-format
 msgid "Coming soon"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:57
+#: lib/portfolio_web/live/index.html.heex:67
 #, elixir-autogen, elixir-format
 msgid "Fragments of light, stories without words and emotional journey"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:34
+#: lib/portfolio_web/live/index.html.heex:44
 #, elixir-autogen, elixir-format
 msgid "Here, you can wander through the different threads of my work:"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:55
+#: lib/portfolio_web/live/index.html.heex:65
 #, elixir-autogen, elixir-format
 msgid "Photography"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:99
+#: lib/portfolio_web/live/index.html.heex:109
 #, elixir-autogen, elixir-format
 msgid "Software crafter"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:127
+#: lib/portfolio_web/live/index.html.heex:137
 #, elixir-autogen, elixir-format
 msgid "Take your time, each path tells a part of the story."
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:119
+#: lib/portfolio_web/live/index.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "The bookshelf"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:101
+#: lib/portfolio_web/live/index.html.heex:111
 #, elixir-autogen, elixir-format
 msgid "Thoughtful crafted code, shaped with care for people and planet"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:27
+#: lib/portfolio_web/live/index.html.heex:37
 #, elixir-autogen, elixir-format
 msgid "Welcome to my digital workshop"
 msgstr ""
 
-#: lib/portfolio_web/live/index.html.heex:31
+#: lib/portfolio_web/live/index.html.heex:41
 #, elixir-autogen, elixir-format
 msgid "Where light meets ink, Where code meets craft."
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:306
+#, elixir-autogen, elixir-format, fuzzy
+msgid "AMVCC page"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:157
+#, elixir-autogen, elixir-format
+msgid "E-mail me"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:268
+#, elixir-autogen, elixir-format
+msgid "Facebook profile"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:210
+#, elixir-autogen, elixir-format
+msgid "Github profile"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:180
+#, elixir-autogen, elixir-format
+msgid "Instagram profile"
+msgstr ""
+
+#: lib/portfolio_web/live/index.html.heex:237
+#, elixir-autogen, elixir-format
+msgid "Linkedin profile"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/root.html.heex:24
+#, elixir-autogen, elixir-format
+msgid "Thibault Santonja - Creative and technical portfolio"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/root.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "Thibault Santonja - Creative and technical portfolio, explore artistic photography, historical research, software projects, and creative works."
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/photography.html.heex:33
+#, elixir-autogen, elixir-format
+msgid "Thibault Santonja – Creative portfolio"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:32
+#, elixir-autogen, elixir-format
+msgid "Thibault Santonja – La Seigneurie de Coucy"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:36
+#, elixir-autogen, elixir-format
+msgid "Thibault Santonja for Seigneurie de Coucy - find out more about the activities of the medieval association, its events, historical re-enactments and publications about life in the 14th century."
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/tech.html.heex:23
+#, elixir-autogen, elixir-format
+msgid "Thibault Santonja – Tech & craft blog"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/photography.html.heex:37
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Photographic portfolio by Thibault San - visual explorations of life, landscapes, historical reconstructions and documentary artistic photography."
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/tech.html.heex:27
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Thibault San's technical blog - articles on code crafting, Elixir, Phoenix, Docker, deployment, and modern tools for developers."
 msgstr ""

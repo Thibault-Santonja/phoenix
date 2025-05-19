@@ -30,6 +30,15 @@
     <.live_title default="Photography" suffix=" · Thibault San">
       {assigns[:page_title]}
     </.live_title>
+    <title>{gettext("Thibault Santonja – Creative portfolio")}</title>
+    <meta
+      name="description"
+      content={
+        gettext(
+          "Photographic portfolio by Thibault San - visual explorations of life, landscapes, historical reconstructions and documentary artistic photography."
+        )
+      }
+    />
 
     <link rel="icon" type="image/x-icon" href="/images/photography/logo.webp" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />

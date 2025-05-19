@@ -21,7 +21,15 @@
     <.live_title default="Portfolio" suffix=" · Phoenix Framework">
       {assigns[:page_title]}
     </.live_title>
-    <title>{gettext("Thibault Santonja – Portfolio créatif et technique")}</title>
+    <title>{gettext("Thibault Santonja - Creative and technical portfolio")}</title>
+    <meta
+      name="description"
+      content={
+        gettext(
+          "Thibault Santonja - Creative and technical portfolio, explore artistic photography, historical research, software projects, and creative works."
+        )
+      }
+    />
 
     <link rel="icon" type="image/x-icon" href="/images/photography/logo.webp" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
