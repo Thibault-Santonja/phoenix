@@ -18,6 +18,14 @@ defmodule PortfolioWeb.Live.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
+  @impl true
+  def handle_event("change_locale", %{"locale" => locale}, socket) do
+    {
+      :noreply,
+      push_event(socket, "change_locale", %{"locale" => locale})
+    }
+  end
+
   defp apply_action(socket, :index, _params) do
     socket
   end

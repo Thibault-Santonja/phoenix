@@ -20,6 +20,8 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import MishkaComponents from "../vendor/mishka_components.js";
+import Floating from "../vendor/floating.js";
+
 import {
   AnimateThis,
   AnimateGallery,
@@ -31,6 +33,7 @@ import {
 const Hooks = {};
 
 Hooks.MishkaComponents = MishkaComponents;
+Hooks.Floating = Floating;
 Hooks.AnimateThis = AnimateThis;
 Hooks.AnimateGallery = AnimateGallery;
 Hooks.AnimatePath = AnimatePath;
@@ -70,3 +73,8 @@ const SetLocale = () => {
   }
 };
 SetLocale();
+
+window.addEventListener("phx:change_locale", (e) => {
+  document.cookie = `locale=${e.detail.locale};path=/`;
+  location.reload();
+});

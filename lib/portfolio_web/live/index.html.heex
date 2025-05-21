@@ -8,7 +8,7 @@
     /images/photography/street_960.webp 480w,
     /images/photography/street_1600.webp 800w,
     /images/photography/street_2400.webp 1200w"
-    src="/images/photography/street_1600.webp"
+    src="/images/photography/street_960.webp"
     alt="Background photography"
     loading="lazy"
     class="object-cover fixed top-0 -z-50 min-h-full min-w-full"
@@ -139,9 +139,9 @@
     </article>
 
     <footer class="bg-white h-min rounded-b-3xl">
-      <nav>
+      <nav class="relative">
         <ul class={[
-          "flex items-center justify-evenly sm:justify-center sm:space-x-4",
+          "flex items-center justify-center space-x-2 sm:space-x-4",
           "mx-auto my-3",
           "h-full"
         ]}>
@@ -314,6 +314,36 @@
             </a>
           </li>
         </ul>
+
+        <div class="absolute top-1 right-4">
+          <.dropdown id="dd" position="top" clickable={false}>
+            <:trigger>
+              <.icon
+                name="hero-language-solid"
+                class={[
+                  "text-black",
+                  "h-7 w-7",
+                  "mr-2"
+                ]}
+              />
+            </:trigger>
+
+            <.dropdown_content rounded="large" padding="extra_small">
+              <.list size="small">
+                <:item>
+                  <button class="hover:font-black" phx-click="change_locale" phx-value-locale="fr">
+                    Français
+                  </button>
+                </:item>
+                <:item>
+                  <button class="hover:font-black" phx-click="change_locale" phx-value-locale="en">
+                    English
+                  </button>
+                </:item>
+              </.list>
+            </.dropdown_content>
+          </.dropdown>
+        </div>
       </nav>
     </footer>
   </section>
