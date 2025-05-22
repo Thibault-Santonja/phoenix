@@ -1,5 +1,6 @@
 defmodule PortfolioWeb.TechLive.Index do
   use PortfolioWeb, :live_view
+  import PortfolioWeb.Components.ArticleCard
 
   @impl true
   def mount(_, session, socket) do
@@ -32,79 +33,42 @@ defmodule PortfolioWeb.TechLive.Index do
         </p>
       </header>
 
-      <article class="mt-12">
-        <h2 class="text-tech-primary animate-fade-in-up mb-6 text-center text-xl font-semibold delay-200">
-          {gettext("My latest articles")}
-        </h2>
-        <%!-- <ul class="flex flex-col justify-evenly flex-wrap sm:flex-row sm:space-x-8 sm:space-y-0"> --%>
-        <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-fill">
-          <li>
-            <a
-              href={~p"/blog/ci"}
-              class="group border-tech-base-300 bg-tech-base-100 block rounded-xl border p-6 shadow-sm transition-all duration-300 hover:bg-tech-base-200 hover:shadow-md"
-            >
-              <div class="mb-3 flex items-center space-x-4">
-                <.icon
-                  name="hero-wrench-screwdriver-solid"
-                  class="text-tech-accent h-6 w-6 flex-none transition group-hover:rotate-12"
-                />
-                <h3 class="text-tech-accent text-lg font-medium">
-                  {gettext("The Project CI")}
-                </h3>
-              </div>
-              <p class="text-tech-muted-foreground text-sm">
-                {gettext(
-                  "Explore how the site is built and deployed using GitHub Actions, Docker, and Elixir Phoenix."
-                )}
-              </p>
-            </a>
-          </li>
-
-          <li>
-            <a
-              href={~p"/blog/kamal"}
-              class="group border-tech-base-300 bg-tech-base-100 block rounded-xl border p-6 shadow-sm transition-all duration-300 hover:bg-tech-base-200 hover:shadow-md"
-            >
-              <div class="mb-3 flex items-center space-x-4">
-                <.icon
-                  name="hero-server-stack-solid"
-                  class="text-tech-accent h-6 w-6 flex-none transition group-hover:rotate-12"
-                />
-                <h3 class="text-tech-accent text-lg font-medium">
-                  {gettext("Deploying with Kamal")}
-                </h3>
-              </div>
-              <p class="text-tech-muted-foreground text-sm">
-                {gettext(
-                  "How I use Kamal to deploy Phoenix apps with Docker on a VPS — simple, elegant, and production-ready."
-                )}
-              </p>
-            </a>
-          </li>
-
-          <li>
-            <a
-              href={~p"/blog/elixir"}
-              class="group border-tech-base-300 bg-tech-base-100 block rounded-xl border p-6 shadow-sm transition-all duration-300 hover:bg-tech-base-200 hover:shadow-md"
-            >
-              <div class="mb-3 flex items-center space-x-4">
-                <.icon
-                  name="hero-beaker-solid"
-                  class="text-tech-accent h-6 w-6 flex-none transition group-hover:rotate-12"
-                />
-                <h3 class="text-tech-accent text-lg font-medium">
-                  {gettext("The future-proof Elixir programing language")}
-                </h3>
-              </div>
-              <p class="text-tech-muted-foreground text-sm">
-                {gettext(
-                  "Quick dig into Elixir's concurrency model and its impact on building scalable applications."
-                )}
-              </p>
-            </a>
-          </li>
-        </ul>
-      </article>
+      <.article_card_list
+        card_class="border-tech-base-300 bg-tech-base-100 hover:bg-tech-base-200"
+        header_class="text-tech-accent"
+        title={gettext("My latest articles")}
+      >
+        <:article_card
+          url={~p"/blog/ci"}
+          icon="hero-wrench-screwdriver-solid"
+          title={gettext("The Project CI")}
+          description={
+            gettext(
+              "Explore how the site is built and deployed using GitHub Actions, Docker, and Elixir Phoenix."
+            )
+          }
+        />
+        <:article_card
+          url={~p"/blog/kamal"}
+          icon="hero-server-stack-solid"
+          title={gettext("Deploying with Kamal")}
+          description={
+            gettext(
+              "How I use Kamal to deploy Phoenix apps with Docker on a VPS — simple, elegant, and production-ready."
+            )
+          }
+        />
+        <:article_card
+          url={~p"/blog/elixir"}
+          icon="hero-beaker-solid"
+          title={gettext("The future-proof Elixir programing language")}
+          description={
+            gettext(
+              "Quick dig into Elixir's concurrency model and its impact on building scalable applications."
+            )
+          }
+        />
+      </.article_card_list>
 
       <article class="mt-16 text-center">
         <p class="text-tech-muted-foreground animate-fade-in-up text-sm delay-300">

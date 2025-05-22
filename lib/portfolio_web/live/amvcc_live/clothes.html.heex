@@ -1,71 +1,118 @@
-<article class="font-serif mx-auto grid max-w-4xl grid-cols-1 gap-16 bg-gray-50 p-6 text-justify text-gray-800 md:p-12 lg:my-12">
+<section class="font-serif mx-auto grid max-w-4xl grid-cols-1 gap-16 bg-gray-50 p-6 text-justify text-gray-800 md:p-12 lg:my-12">
   <h1 class="text-center text-3xl font-bold">L'habit au milieu du XIV<sup>e</sup> siècle</h1>
 
-  <section class="">
-    <h2 class="mb-2 text-xl font-semibold">1. Éléments de base de l’habillement</h2>
+  <.table_content color="primary" padding="extra_small" rounded="medium" animated>
+    <.content_item icon="hero-hashtag">
+      <.link href="#1-elements-de-base">{gettext("1. Basic Garments")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#2-materiaux-et-couleurs">{gettext("2. Materials and Colors")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#3-accessoires">{gettext("3. Accessories")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#4-lois-somptuaires">{gettext("4. Sumptuary Laws")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#illustrations">{gettext("Illustrations")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#sources">{gettext("Sources")}</.link>
+    </.content_item>
+  </.table_content>
+
+  <article id="elements-de-base">
+    <h2 class="mb-2 text-xl font-semibold">{gettext("1. Éléments de base de l’habillement")}</h2>
     <p>
-      L’habit d’un individu de la « classe moyenne » — un artisan aisé, un marchand, un clerc ou un petit notable urbain — reflète à la fois son statut social, les matériaux disponibles localement, les lois somptuaires, et les modes du moment.
+      {gettext(
+        "L’habit d’un individu de la « classe moyenne » — un artisan aisé, un marchand, un clerc ou un petit notable urbain — reflète à la fois son statut social, les matériaux disponibles localement, les lois somptuaires, et les modes du moment."
+      )}
     </p>
     <ul class="list-disc space-y-2 pl-6">
       <li>
-        <strong>La chemise</strong>
-        : blanchie en lin ou chanvre, à manches longues, portée à même la peau.
+        <strong>{gettext("La chemise")}</strong>
+        : {gettext("blanchie en lin ou chanvre, à manches longues, portée à même la peau.")}
       </li>
       <li>
-        <strong>Les braies</strong>
-        : sorte de caleçon ample en lin, tenu à la taille par une corde, porté sous la chausse.
+        <strong>{gettext("Les braies")}</strong>
+        : {gettext(
+          "sorte de caleçon ample en lin, tenu à la taille par une corde, porté sous la chausse."
+        )}
       </li>
       <li>
-        <strong>Les chausses</strong>
-        : sorte de chaussette haute. Pièces de tissu (laine, parfois doublée) couvrant les jambes, attachées à la ceinture des braies.
+        <strong>{gettext("Les chausses")}</strong>
+        : {gettext(
+          "sorte de chaussette haute. Pièces de tissu (laine, parfois doublée) couvrant les jambes, attachées à la ceinture des braies."
+        )}
       </li>
       <li>
-        <strong>La cotte ou cotehardie</strong>
-        : tunique ajustée, pouvant être boutonnée (du col à la taille), portée sur la chemise, descendant aux genoux pour les hommes et aux pieds pour les femmes.
-      </li>
-      <li><strong>Le surcot</strong> : ample, souvent sans manches, porté pour sortir.</li>
-      <li>
-        <strong>Le chaperon</strong>
-        : capuchon avec une longue pointe (liripipe) et parfois une cape courte (patte).
-      </li>
-      <li><strong>Les chaussures</strong> : en cuir, souvent à bout pointu.</li>
-      <li>
-        <strong>La coiffe de lin</strong>
-        : pour les femmes, couvrant les cheveux, souvent attachée sous le menton.
+        <strong>{gettext("La cotte ou cotehardie")}</strong>
+        : {gettext(
+          "tunique ajustée, pouvant être boutonnée (du col à la taille), portée sur la chemise, descendant aux genoux pour les hommes et aux pieds pour les femmes."
+        )}
       </li>
       <li>
-        <strong>Le voile</strong> : porté sur la coiffe, flottant ou enroulé autour de la tête.
+        <strong>{gettext("Le surcot")}</strong>
+        : {gettext("ample, souvent sans manches, porté pour sortir.")}
+      </li>
+      <li>
+        <strong>{gettext("Le chaperon")}</strong>
+        : {gettext(
+          "capuchon avec une longue pointe (liripipe) et parfois une cape courte (patte)."
+        )}
+      </li>
+      <li>
+        <strong>{gettext("Les chaussures")}</strong>
+        : {gettext("en cuir, souvent à bout pointu.")}
+      </li>
+      <li>
+        <strong>{gettext("La coiffe de lin")}</strong>
+        : {gettext("pour les femmes, couvrant les cheveux, souvent attachée sous le menton.")}
+      </li>
+      <li>
+        <strong>{gettext("Le voile")}</strong>
+        : {gettext("porté sur la coiffe, flottant ou enroulé autour de la tête.")}
       </li>
     </ul>
-  </section>
+  </article>
 
-  <section class="">
-    <h2 class="mb-2 text-xl font-semibold">2. Matériaux et couleurs</h2>
+  <article id="materiaux-et-couleurs">
+    <h2 class="mb-2 text-xl font-semibold">{gettext("2. Matériaux et couleurs")}</h2>
     <p>
-      Les vêtements sont principalement en <strong>laine</strong>
-      et <strong>lin</strong>. Les couleurs varient selon le statut social, avec des teintures naturelles : guède pour le bleu, garance pour le rouge, etc.
+      {gettext("Les vêtements sont principalement en")}
+      <strong>{gettext("laine")}</strong> {gettext("et")} <strong><%= gettext "lin" %></strong>. {gettext(
+        "Les couleurs varient selon le statut social, avec des teintures naturelles : guède pour le bleu, garance pour le rouge, etc."
+      )}
     </p>
-  </section>
+  </article>
 
-  <section class="">
-    <h2 class="mb-2 text-xl font-semibold">3. Accessoires</h2>
+  <article id="accessoires">
+    <h2 class="mb-2 text-xl font-semibold">{gettext("3. Accessoires")}</h2>
     <ul class="list-disc space-y-2 pl-6">
-      <li>Ceinture en cuir avec boucles ou plaques décoratives</li>
-      <li>Bourse suspendue à la ceinture</li>
-      <li>Couteau personnel</li>
-      <li>Petits bijoux comme bague ou croix</li>
+      <li>{gettext("Ceinture en cuir avec boucles ou plaques décoratives")}</li>
+      <li>{gettext("Bourse suspendue à la ceinture")}</li>
+      <li>{gettext("Couteau personnel")}</li>
+      <li>{gettext("Petits bijoux comme bague ou croix")}</li>
     </ul>
-  </section>
+  </article>
 
-  <section class="">
-    <h2 class="mb-2 text-xl font-semibold">4. Lois somptuaires</h2>
+  <article id="lois-somptuaires">
+    <h2 class="mb-2 text-xl font-semibold">{gettext("4. Lois somptuaires")}</h2>
     <p>
-      Des lois limitaient l’usage de certains matériaux et couleurs pour éviter l’ostentation chez les non-nobles.
+      {gettext(
+        "Des lois limitaient l’usage de certains matériaux et couleurs pour éviter l’ostentation chez les non-nobles."
+      )}
     </p>
-  </section>
+  </article>
 
-  <section class="">
-    <h2 class="mb-2 text-xl font-semibold">Illustrations</h2>
+  <article id="illustrations">
+    <h2 class="mb-2 text-xl font-semibold">{gettext("Illustrations")}</h2>
     <div id="gallery" class="centered grid grid-cols-3 gap-8" phx-hook="AnimateGallery">
       <span class="gallery__image">
         <img
@@ -74,7 +121,8 @@
           class="mx-auto rounded-xl shadow-md"
         />
         <p class="mt-2 text-center text-sm">
-          Miniature des <em>Très Riches Heures du Duc de Berry</em> (début XVe siècle).
+          {gettext("Miniature des")} <em>{gettext("Très Riches Heures du Duc de Berry")}</em>
+          ({gettext("début XVe siècle")}).
         </p>
       </span>
       <span class="gallery__image">
@@ -84,8 +132,8 @@
           class="mx-auto rounded-xl shadow-md"
         />
         <p class="mt-2 text-center text-sm">
-          <em>Weltchronik</em>
-          (Ratisbonne), New York, Pierpont Morgan Library, ms. m.769, f. 172 r°, v. 1360.
+          <em>{gettext("Weltchronik")}</em>
+          ({gettext("Ratisbonne")}), New York, Pierpont Morgan Library, ms. m.769, f. 172 r°, v. 1360.
         </p>
       </span>
       <span class="gallery__image">
@@ -95,22 +143,24 @@
           class="mx-auto rounded-xl shadow-md"
         />
         <p class="mt-2 text-center text-sm">
-          <em>Pèlerinage de vie humaine</em>, Guillaume de Digulleville, BNF, Fr 823, f. 89, xive siècle
+          <em><%= gettext "Pèlerinage de vie humaine" %></em>, Guillaume de Digulleville, BNF, Fr 823, f. 89, {gettext(
+            "xive siècle"
+          )}
         </p>
       </span>
       <span class="gallery__image">
         <img
-          src="https://scontent-cdg4-2.xx.fbcdn.net/v/t39.30808-6/487127205_1093671939471138_1159647718379727871_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=QzRw4fotgIkQ7kNvwEjMbL2&_nc_oc=AdlxJNZJfNRiQ_aRFNF8e-EdiQ-9CdfmHczbtYP5fO_Rh2fWDNlU6EWG2O5eI0inlKR16Cf0F6Xmcma_zCwROk9A&_nc_zt=23&_nc_ht=scontent-cdg4-2.xx&_nc_gid=P-ijYQbt2UdV5j7A1rwLfQ&oh=00_AfGlKboPqMJjdt2RlaYAlX1zaTZgdbTMjqA2tIOZMyEKlQ&oe=681ED58C"
+          src="https://scontent-cdg4-2.xx.fbcdn.net/...jpg"
           alt="Pont-Croix 1358"
           class="mx-auto rounded-xl shadow-md"
         />
-        <p class="mt-2 text-center text-sm">Reconstitution à Pont-Croix 1358</p>
+        <p class="mt-2 text-center text-sm">{gettext("Reconstitution à Pont-Croix 1358")}</p>
       </span>
     </div>
-  </section>
+  </article>
 
   <footer class="border-t pt-4 text-sm text-gray-600">
-    <p><strong>Sources</strong></p>
+    <p><strong>{gettext("Sources")}</strong></p>
     <ul class="list-inside list-disc">
       <li>
         <i>Textiles and Clothing c.1150–c.1450 London</i> - Crowfoot, Pritchard & Staniland (2001)
@@ -119,8 +169,8 @@
       <li><i>Fashion in medieval France</i> - Sarah-Grace Heller (2007)</li>
       <li>
         <i>Palette et nuancier : les rouges des teinturiers et des peintres</i>
-        Inès Villela-Petit (<a href="https://expositions.bnf.fr/rouge/arret/05.htm">link</a>)
+        Inès Villela-Petit (<a href="https://expositions.bnf.fr/rouge/arret/05.htm"><%= gettext "link" %></a>)
       </li>
     </ul>
   </footer>
-</article>
+</section>

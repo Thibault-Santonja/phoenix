@@ -1,37 +1,54 @@
-<article class="border-tech-base-300 bg-tech-base-100 mx-auto rounded-lg border px-6 py-12 shadow-lg md:px-[3rem] md:m-[5rem]">
+<section class="border-tech-base-300 bg-tech-base-100 mx-auto rounded-lg border px-6 py-12 shadow-lg md:px-[3rem] md:m-[5rem]">
   <h1 class="text-tech-primary text-balance mb-16 text-center text-3xl font-thin uppercase">
     {gettext("Continuous Integration for a Phoenix LiveView Site (Without Postgres)")}
   </h1>
 
-  <nav class="my-10">
-    <h2 class="text-tech-secondary mb-2 text-xl font-bold">{gettext("Table of Contents")}</h2>
-    <ul class="space-y-1 pl-4">
-      <li class="pb-2"><a href="#1-triggers">1. {gettext("Triggers")}</a></li>
-      <li class="pb-2">
-        <a href="#2-what-is-mise">2. {gettext("What is Mise?")}</a>
-        <ul class="pl-4">
-          <li><a href="#2-1-defined-tool-versions">2.1 {gettext("Defined Tool Versions")}</a></li>
-          <li><a href="#2-2-reusable-tasks">2.2 {gettext("Reusable Tasks")}</a></li>
-          <li><a href="#2-3-mise-in-ci">2.3 {gettext("Mise in CI")}</a></li>
-        </ul>
-      </li>
-      <li class="pb-2">
-        <a href="#3-job-overview">3. {gettext("Job Overview")}</a>
-        <ul class="pl-4">
-          <li><a href="#3-1-tools">3.1 {gettext("Tools")}</a></li>
-          <li><a href="#3-2-lint">3.2 {gettext("Lint")}</a></li>
-          <li><a href="#3-3-test">3.3 {gettext("Test")}</a></li>
-          <li><a href="#3-4-build">3.4 {gettext("Build")}</a></li>
-        </ul>
-      </li>
-      <li class="pb-2">
-        <a href="#4-docker-image-release">4. {gettext("Docker Image Release")}</a>
-      </li>
-      <li class="pb-2"><a href="#5-conclusion">5. {gettext("Conclusion")}</a></li>
-    </ul>
-  </nav>
+  <.table_content color="primary" padding="extra_small" rounded="medium" animated>
+    <.content_item icon="hero-hashtag">
+      <.link href="#1-triggers">1. {gettext("Triggers")}</.link>
+    </.content_item>
 
-  <p class="mb-6">
+    <.content_item title={"2. #{gettext("What is Mise?")}"}>
+      <.content_wrapper>
+        <.content_item icon="hero-hashtag">
+          <.link href="#2-1-defined-tool-versions">2.1 {gettext("Defined Tool Versions")}</.link>
+        </.content_item>
+        <.content_item icon="hero-hashtag">
+          <.link href="#2-2-reusable-tasks">2.2 {gettext("Reusable Tasks")}</.link>
+        </.content_item>
+        <.content_item icon="hero-hashtag">
+          <.link href="#2-3-mise-in-ci">2.3 {gettext("Mise in CI")}</.link>
+        </.content_item>
+      </.content_wrapper>
+    </.content_item>
+
+    <.content_item title={"3. #{gettext("Job Overview")}"}>
+      <.content_wrapper>
+        <.content_item icon="hero-hashtag">
+          <.link href="#3-1-tools">3.1 {gettext("Tools")}</.link>
+        </.content_item>
+        <.content_item icon="hero-hashtag">
+          <.link href="#3-2-lint">3.2 {gettext("Lint")}</.link>
+        </.content_item>
+        <.content_item icon="hero-hashtag">
+          <.link href="#3-3-test">3.3 {gettext("Test")}</.link>
+        </.content_item>
+        <.content_item icon="hero-hashtag">
+          <.link href="#3-4-build">3.4 {gettext("Build")}</.link>
+        </.content_item>
+      </.content_wrapper>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#4-docker-image-release">4. {gettext("Docker Image Release")}</.link>
+    </.content_item>
+
+    <.content_item icon="hero-hashtag">
+      <.link href="#5-conclusion">5. {gettext("Conclusion")}</.link>
+    </.content_item>
+  </.table_content>
+
+  <p class="mt-6">
     {gettext(
       "As part of building and maintaining a reliable LiveView site, a solid CI pipeline is essential."
     )}
@@ -439,4 +456,4 @@
     )}
     {gettext("When you're ready to enable Postgres, the foundation is already there.")}
   </p>
-</article>
+</section>

@@ -132,24 +132,65 @@ export const AnimatePath = {
 
 export const AnimateTimelineScroll = {
   mounted() {
-    const [$timeline] = utils.$("#timeline");
-    const events = utils.$(".event");
-    const scrollY = window.scrollY;
+    const timeline = this.el;
+    const container = this.el.closest("#timeline_container") || window;
 
-    animate($timeline, {
-      translateX: -scrollY * 0.5,
-      duration: 30000,
-      easing: "easeOutQuad",
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          animate(timeline.querySelectorAll(".event"), {
+            opacity: [0, 1],
+            translateY: [30, 0],
+            delay: 100,
+            duration: 800,
+            easing: "easeOutQuad",
+          });
+          this.enableScrollSync(timeline, container);
+        } else {
+          this.disableScrollSync(container);
+        }
+      },
+      {
+        root: null,
+        threshold: 0.5, // 50% visible
+        rootMargin: "-20% 0px -70% 0px", // zone d’activation centrée verticalement
+      },
+    );
 
-    events.forEach(($event) => {
-      animate($event, {
-        opacity: [0, 1],
-        translateY: [20, 0],
-        delay: stagger(150),
-        duration: 800,
-        easing: "easeOutQuad",
-      });
-    });
+    observer.observe(timeline);
+    this.observer = observer;
+  },
+
+  destroyed() {
+    this.observer?.disconnect?.();
+    this.disableScrollSync(window); // clean up
+  },
+
+  enableScrollSync(timeline, container) {
+    this.scrollHandler = (e) => {
+      const atStart = timeline.scrollLeft === 0;
+      const atEnd =
+        timeline.scrollLeft + timeline.clientWidth >= timeline.scrollWidth - 1;
+
+      const goingUp = e.deltaY < 0;
+      const goingDown = e.deltaY > 0;
+
+      // Allow vertical scroll only at edges
+      const allowVerticalScroll = (goingUp && atStart) || (goingDown && atEnd);
+
+      if (!allowVerticalScroll) {
+        timeline.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    };
+
+    container.addEventListener("wheel", this.scrollHandler, { passive: false });
+  },
+
+  disableScrollSync(container) {
+    if (this.scrollHandler) {
+      container.removeEventListener("wheel", this.scrollHandler);
+      this.scrollHandler = null;
+    }
   },
 };
