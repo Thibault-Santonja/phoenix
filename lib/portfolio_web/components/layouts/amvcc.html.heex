@@ -45,33 +45,69 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
+
   <body id="amvcc" class="h-full min-h-screen w-screen bg-white">
     <div class="follower w-sceen absolute inset-x-0 bottom-0 h-0 ">
       <%!-- For the scroll animation --%>
     </div>
 
     <div class="text-amvcc-neutral flex h-full min-h-screen w-screen flex-col">
-      <header class="h-[3rem] fixed z-10 mb-4 flex w-full flex-none items-stretch justify-between bg-white p-4 shadow md:px-16">
-        <div class="flex items-center">
-          <a href={~p"/"} class="hover:text-amvcc-primary">{gettext("Home")}</a>
-        </div>
+      <header class={[
+        "sticky top-0",
+        "flex flex-none items-stretch justify-between space-x-2",
+        "w-full z-10  py-2 px-4 md:px-16 ",
+        "shadow bg-white"
+      ]}>
+        <h1 class="flex items-center font-black">
+          <a href={~p"/"} class="hover:text-amvcc-primary">{gettext("La Seigneurie de Coucy")}</a>
+        </h1>
         <nav class="flex items-center">
           <ul class="space-around flex flex-row items-stretch space-x-8">
-            <li>
-              <a href={~p"/vetements"} class="hover:text-amvcc-primary">
-                {gettext("Clothes")}
+            <li class="flex items-center">
+              <a href={~p"/#about"} class="hover:text-amvcc-primary">
+                {gettext("About")}
               </a>
             </li>
-            <li>
-              <a href={~p"/chaussures"} class="hover:text-amvcc-primary">
-                {gettext("Shoes")}
+            <li class="flex items-center">
+              <a href={~p"/#events"} class="hover:text-amvcc-primary">
+                {gettext("Events")}
               </a>
+            </li>
+            <li class="flex items-center">
+              <a href={~p"/#gallery"} class="hover:text-amvcc-primary">
+                {gettext("Gallery")}
+              </a>
+            </li>
+            <li class="flex items-center">
+              <.dropdown clickable smart_position={true} id="unique_id">
+                <:trigger>
+                  <span class="flex items-center">
+                    {gettext("Blog")}
+                    <.icon name="hero-chevron-double-down-solid" class="ml-1 mt-1 h-3 w-3" />
+                  </span>
+                </:trigger>
+
+                <.dropdown_content rounded="large" padding="small" class="z-50">
+                  <.list size="medium">
+                    <:item>
+                      <a href={~p"/vetements"} class="hover:text-amvcc-primary">
+                        {gettext("Clothes")}
+                      </a>
+                    </:item>
+                    <:item>
+                      <a href={~p"/chaussures"} class="hover:text-amvcc-primary">
+                        {gettext("Shoes")}
+                      </a>
+                    </:item>
+                  </.list>
+                </.dropdown_content>
+              </.dropdown>
             </li>
           </ul>
         </nav>
       </header>
 
-      <main class="pt-[3rem] font-serif h-auto flex-auto text-justify">
+      <main class="font-serif h-auto flex-auto text-justify">
         {@inner_content}
       </main>
 
