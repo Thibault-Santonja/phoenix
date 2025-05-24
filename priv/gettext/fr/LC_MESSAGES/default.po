@@ -250,7 +250,7 @@ msgstr ""
 #: lib/portfolio_web/live/photography_live/index.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "Events"
-msgstr "Évennements"
+msgstr "Événements"
 
 #: lib/portfolio_web/live/photography_live/index.html.heex:52
 #, elixir-autogen, elixir-format
@@ -295,7 +295,7 @@ msgstr ""
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Clothes"
-msgstr "Vetements"
+msgstr "Vêtements"
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:94
 #, elixir-autogen, elixir-format
@@ -594,7 +594,7 @@ msgstr "Dans la CI, nous utilisons l'officiel"
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:40
 #, elixir-autogen, elixir-format
 msgid "In this guide, I'll talk about how to deploy a Phoenix (Elixir) app to a VPS using Kamal, a deployment tool developed by the team behind Ruby on Rails. Kamal provides a simple and powerful way to deploy containerized apps over SSH with Docker."
-msgstr "Dans ce guide, je vais parler de comment déployer une application Phoenix (Elixir) sur un VPS en utilisant Kamal, un outil de déploiement développé par l'équipe derrière Ruby on Rails. Kamal offre une façon simple et puissante de déployer des applications conteneurisées via SSH avec Docker."
+msgstr "Dans ce guide, je vais expliquer comment déployer une application Phoenix (Elixir) sur un VPS en utilisant Kamal, un outil de déploiement développé par l'équipe derrière Ruby on Rails. Kamal offre une façon simple et puissante de déployer des applications conteneurisées via SSH avec Docker."
 
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:20
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:112
@@ -1413,7 +1413,7 @@ msgstr "4. Lois Somptuaires"
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "About"
-msgstr "A propos"
+msgstr "À propos"
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:80
 #, elixir-autogen, elixir-format
@@ -1448,7 +1448,7 @@ msgstr "Explorer nos articles"
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Gallery"
-msgstr "Gallerie"
+msgstr "Galerie"
 
 #: lib/portfolio_web/live/amvcc_live/clothes.html.heex:22
 #: lib/portfolio_web/live/amvcc_live/clothes.html.heex:115
