@@ -42,9 +42,6 @@ export const AnimateThis = {
 
     $button.addEventListener("click", rotateLogo);
   },
-  updated() {
-    console.log("updated");
-  },
 };
 
 export const AnimateGallery = {
@@ -138,13 +135,13 @@ export const AnimateTimelineScroll = {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          animate(timeline.querySelectorAll(".event"), {
-            opacity: [0, 1],
-            translateY: [30, 0],
-            delay: 100,
-            duration: 800,
-            easing: "easeOutQuad",
-          });
+          // animate(timeline.querySelectorAll(".event"), {
+          //   opacity: [0, 1],
+          //   translateY: [30, 0],
+          //   delay: 100,
+          //   duration: 800,
+          //   easing: "easeOutQuad",
+          // });
           this.enableScrollSync(timeline, container);
         } else {
           this.disableScrollSync(container);
@@ -152,8 +149,8 @@ export const AnimateTimelineScroll = {
       },
       {
         root: null,
-        threshold: 0.5, // 50% visible
-        rootMargin: "-20% 0px -70% 0px", // zone d’activation centrée verticalement
+        threshold: 0.2, // 20% visible
+        rootMargin: "-20% 0px -50% 0px", // zone d’activation centrée verticalement
       },
     );
 

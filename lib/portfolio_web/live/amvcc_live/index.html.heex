@@ -58,8 +58,6 @@
   <div class="mx-auto max-w-6xl px-4">
     <h2 class="mb-12 text-center text-3xl font-semibold">Nos animations et démonstrations</h2>
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      
-<!-- Carte -->
       <div class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg">
         <span class="text-amvcc-content-secondary bg-amvcc-secondary absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-semibold">
           Animation
@@ -188,15 +186,16 @@
   </div>
 </section>
 
+<!-- Timeline -->
 <section class="px-4 py-16">
   <h2 class="mb-8 text-center text-3xl font-bold">Calendrier 2025</h2>
 
-  <div id="timeline_container bg-lime-200 h-md">
+  <article id="timeline_container" class="">
     <div id="timeline" phx-hook="AnimateTimelineScroll" class="overflow-x-scroll flex items-start">
       <div class="event text-center">
-        <div class="flex items-center">
+        <div class="flex items-center flex-nowrap">
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -204,7 +203,7 @@
             "timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0 bg-blue-300 w-4 h-4 mx-1"
           ]} />
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -228,7 +227,7 @@
       <div class="event text-center">
         <div class="flex items-center">
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -236,7 +235,7 @@
             "timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0 bg-blue-300 w-4 h-4 mx-1"
           ]} />
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -260,7 +259,7 @@
       <div class="event text-center">
         <div class="flex items-center">
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -268,7 +267,7 @@
             "timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0 bg-blue-300 w-4 h-4 mx-1"
           ]} />
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -295,7 +294,7 @@
       <div class="event text-center">
         <div class="flex items-center">
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -303,7 +302,7 @@
             "timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0 bg-blue-300 w-4 h-4 mx-1"
           ]} />
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -327,7 +326,7 @@
       <div class="event text-center">
         <div class="flex items-center ">
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -335,7 +334,7 @@
             "timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0 bg-blue-300 w-4 h-4 mx-1"
           ]} />
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -349,7 +348,7 @@
       <div class="event text-center">
         <div class="flex items-center">
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -357,7 +356,7 @@
             "timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0 bg-blue-300 w-4 h-4 mx-1"
           ]} />
           <div class={[
-            "timeline-horizontal-line hidden sm:flex w-full",
+            "timeline-horizontal-line flex w-full",
             "border-t-[0.063rem]",
             "border-solid"
           ]} />
@@ -380,14 +379,14 @@
 
       <div class="event text-center">
         <div class="flex items-center">
-          <div class="timeline-horizontal-line hidden sm:flex w-full border-t-[0.063rem] border-solid">
+          <div class="timeline-horizontal-line flex w-full border-t-[0.063rem] border-solid">
           </div>
           <div class="timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0 bg-blue-300 w-4 h-4 mx-1">
           </div>
-          <div class="timeline-horizontal-line hidden sm:flex w-full border-t-[0.063rem] border-solid">
+          <div class="timeline-horizontal-line flex w-full border-t-[0.063rem] border-solid">
           </div>
         </div>
-        <div class="bg-amvcc-base-200 rounded-xl px-4 py-2 shadow my-2 mx-4 w-36">
+        <div class="bg-amvcc-base-200 rounded-xl px-4 py-2 shadow my-2 mx-4 w-64">
           <p class="text-amvcc-primary-secondary text-sm font-semibold">19-20 sept.</p>
           <p class="text-sm font-semibold">Saint-Quentin</p>
           <p class="text-xs text-amvcc-content-secondary mt-1">
@@ -398,14 +397,14 @@
 
       <div class="event text-center">
         <div class="flex items-center">
-          <div class="timeline-horizontal-line hidden sm:flex w-full border-t-[0.063rem] border-solid">
+          <div class="timeline-horizontal-line flex w-full border-t-[0.063rem] border-solid">
           </div>
           <div class="timeline-bullet z-10 flex items-center justify-center rounded-full shrink-0 bg-blue-300 w-4 h-4 mx-1">
           </div>
-          <div class="timeline-horizontal-line hidden sm:flex w-full border-t-[0.063rem] border-solid">
+          <div class="timeline-horizontal-line flex w-full border-t-[0.063rem] border-solid">
           </div>
         </div>
-        <div class="bg-amvcc-base-200 rounded-xl px-4 py-2 shadow my-2 mx-4 w-36">
+        <div class="bg-amvcc-base-200 rounded-xl px-4 py-2 shadow my-2 mx-4 w-64">
           <p class="text-amvcc-primary-secondary text-sm font-semibold">15-17 nov.</p>
           <p class="text-sm font-semibold">Fous d’Histoire</p>
           <p class="text-xs text-amvcc-content-secondary mt-1">
@@ -414,7 +413,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </article>
 
   <div class="bg-white rounded-2xl shadow-md p-6">
     <h2 class="text-2xl font-bold text-amvcc-primary mb-4">📅 Liste des ateliers</h2>
@@ -470,21 +469,19 @@
       <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl"></div>
     </div>
   </div>
-</section>
-
-<section class="bg-amvcc-base-100 relative py-16">
-  <!-- SVG PATH -->
-  <div class="pointer-events-none absolute inset-0 z-0 hidden md:block">
-    <svg viewBox="0 0 800 800" class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-      <path
-        id="path-zigzag"
-        phx-hook="AnimatePath"
-        d="M 100 80 Q 400 150, 100 230 Q 400 300, 100 380 Q 400 450, 100 530"
-        stroke="#a1a1aa"
-        stroke-width="2"
-        stroke-dasharray="8 8"
-        fill="none"
-      />
-    </svg>
-  </div>
+  <section class="bg-amvcc-base-100 relative py-16 m-4">
+    <div class="pointer-events-none absolute inset-0 z-0 hidden md:block">
+      <svg viewBox="0 0 800 800" class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+        <path
+          id="path-zigzag"
+          phx-hook="AnimatePath"
+          d="M 100 80 Q 400 150, 100 230 Q 400 300, 100 380 Q 400 450, 100 530"
+          stroke="#a1a1aa"
+          stroke-width="2"
+          stroke-dasharray="8 8"
+          fill="none"
+        />
+      </svg>
+    </div>
+  </section>
 </section>
