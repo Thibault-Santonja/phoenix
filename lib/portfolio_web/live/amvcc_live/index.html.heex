@@ -1,15 +1,16 @@
-<div class="hidden">
-  <section
+<header>
+  <article
     id="hero"
     class="relative min-h-screen flex items-center justify-center overflow-hidden bg-neutral-900"
   >
-    <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 z-0 top-0">
+      <%!-- Image Loading loading={"lazy" || "eager"} --%>
       <img
         src="https://www.amvcc.com/wp-content/uploads/2025/03/cropped-2024-05-03-05_Seigneuriales_8604_102833-1-scaled-1.jpg"
         alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
-        class="w-full h-full object-cover"
-        loading="eager"
-        style="transform: translateY(153.25px);"
+        title={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        class="w-full h-full object-cover animate-fade-in"
+        loading="lazy"
       />
       <div class="absolute inset-0 bg-neutral-900 bg-opacity-60"></div>
     </div>
@@ -25,15 +26,16 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
           <a
             href="/blog"
-            class="bg-primary hover:bg-opacity-90 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+            class="bg-primary hover:bg-opacity-90 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
           >
-            {gettext("Explore Our Research")}
+            {gettext("Explorez nos articles")}
           </a>
+
           <a
-            href="#activities"
-            class="border-2 border-white text-white hover:bg-white hover:text-neutral-900 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+            href="#about"
+            class="border-2 border-white text-white hover:bg-amvcc-base-100 hover px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105"
           >
-            {gettext("Join our activities")}
+            {gettext("Découvrez nous")}
           </a>
         </div>
       </div>
@@ -91,152 +93,595 @@
         });
       });
     </script>
-  </section>
-</div>
-
-<header
-  class="h-[70vh] relative flex items-center justify-center bg-cover bg-center"
-  style="background-image: url('https://www.amvcc.com/wp-content/uploads/2025/03/cropped-2024-05-03-05_Seigneuriales_8604_102833-1-scaled-1.jpg');"
->
-  <div class="bg-black/60 absolute inset-0"></div>
-  <div class="relative z-10 px-4 text-center">
-    <h1 class="text-4xl font-bold text-white md:text-6xl">La Seigneurie de Coucy</h1>
-    <p class="mt-4 text-lg text-white md:text-xl">
-      Troupe médiévale de reconstitution historique
-    </p>
-  </div>
+  </article>
 </header>
 
-<section id="about" class="bg-amvcc-base-100 py-16">
-  <div class="mx-auto max-w-4xl px-4 text-center">
-    <h2 class="mb-6 text-3xl font-bold text-zinc-900">
-      Une démarche rigoureuse et ancrée dans la recherche
+<section id="about" class="bg-amvcc-base-200 py-16 px-4 md:px-16 lg:px-32">
+  <header>
+    <h2 class="text-center mb-6 text-3xl font-bold text-zinc-900 px-8 sm:px-16 text-balance">
+      {gettext("Une démarche rigoureuse et ancrée dans la recherche")}
     </h2>
-    <p class="mb-8 text-lg ">
-      À la Seigneurie de Coucy, notre travail de reconstitution s’appuie sur les recherches les plus récentes en histoire médiévale, en archéologie et en anthropologie des pratiques.
+
+    <p class="text-center mb-8 text-lg px-2 sm:px-4">
+      {gettext(
+        "À la Seigneurie de Coucy, notre travail de reconstitution s’appuie sur les recherches les plus récentes en histoire médiévale, en archéologie et en anthropologie des pratiques."
+      )}
     </p>
-    <div class="grid gap-6 text-left md:grid-cols-2">
-      <div class="rounded-xl bg-white p-6 shadow transition hover:shadow-md">
-        <h3 class="mb-2 text-xl font-semibold">Fondée sur les sources et l'archéologie</h3>
-        <p class=" text-justify">
-          Chaque animation est élaborée à partir de sources historiques fiables : fouilles, archives, iconographie, et objets conservés en musée. Nous croisons ces sources pour restituer au plus juste les gestes, les objets, les vêtements et les pratiques du XIV<sup>e</sup> siècle.
+  </header>
+
+  <article class={[
+    "grid grid-cols-1 sm:grid-cols-2 gap-12 md:gap-16",
+    "items-center my-16"
+  ]}>
+    <div class="space-y-8 text-left">
+      <section>
+        <h3 class="text-2xl font-semibold mb-2">
+          {gettext("Valoriser les travaux des historiens")}
+        </h3>
+        <p class="leading-relaxed font-light">
+          {gettext(
+            "En nous inspirant des travaux menés par les chercheurs et chercheuses, nous assurons une médiation la plus fidèle, vivante et rigoureuse. Nos présentations permettent d’incarner les savoirs scientifiques pour les rendre accessibles à tous les publics."
+          )}
         </p>
-      </div>
-      <div class="rounded-xl bg-white p-6 shadow transition hover:shadow-md">
-        <h3 class="mb-2 text-xl font-semibold">Comprendre les usages et les pratiques</h3>
-        <p class=" text-justify">
-          Notre démarche ne vise pas seulement à montrer des objets : elle s’attache à comprendre les <em>usages</em>, les <em>gestes</em>, les
-          <em>coutumes</em>
-          et les <em>valeurs sociales</em>
-          du Moyen Âge picard, afin de redonner sens aux objets et à leur contexte.
+      </section>
+
+      <section>
+        <h3 class="text-2xl font-semibold mb-2">
+          {gettext("Reconstituer pour mieux transmettre")}
+        </h3>
+        <p class="leading-relaxed font-light">
+          {gettext(
+            "Nous faisons une mise en vie documentée des collections, des savoirs et des modes de vie médiévaux. Cette démarche de reconstitution est un outil de transmission, de pédagogie et de sensibilité historique."
+          )}
         </p>
-      </div>
-      <div class="rounded-xl bg-white p-6 shadow transition hover:shadow-md">
-        <h3 class="mb-2 text-xl font-semibold">Valoriser les travaux des historiens</h3>
-        <p class=" text-justify">
-          En nous inspirant des travaux menés par les chercheurs et chercheuses, nous assurons une médiation fidèle, vivante et rigoureuse. Nos présentations permettent d’<strong>incarner les savoirs scientifiques</strong> pour les rendre accessibles à tous les publics.
-        </p>
-      </div>
-      <div class="rounded-xl bg-white p-6 shadow transition hover:shadow-md">
-        <h3 class="mb-2 text-xl font-semibold">Reconstituer pour mieux transmettre</h3>
-        <p class=" text-justify">
-          Nous faisons une <strong>mise en vie documentée</strong>
-          des collections, des savoirs et des modes de vie médiévaux. Cette démarche de reconstitution est un outil de transmission, de pédagogie et de sensibilité historique.
+      </section>
+
+      <section class="grid grid-cols-2 gap-6 pt-6">
+        <div class="text-center p-6 bg-amvcc-base-100 rounded-lg border border-amvcc-base-300">
+          <div class="text-3xl font-bold text-primary mb-2">
+            {NaiveDateTime.utc_now().year - 2019}+
+          </div>
+          <div class="text-sm ">
+            {gettext("Années d’expérience")}
+          </div>
+        </div>
+
+        <div class="text-center p-6 bg-amvcc-base-100 rounded-lg border border-amvcc-base-300">
+          <div class="text-3xl font-bold text-primary mb-2">20+</div>
+          <div class="text-sm ">
+            {gettext("Membres")}
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="min-h-12">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_0124-scaled.jpg"
+        loading="lazy"
+        title={gettext("Photographie par Thibault San – Seigneuriales de Coucy")}
+        alt={gettext("Photographie par Thibault San pour la Seigneurie de Coucy")}
+      />
+    </aside>
+  </article>
+
+  <article class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+    <div class="flex flex-col md:flex-row gap-6 items-start">
+      <aside class="flex-shrink-0 mx-auto md:m-0 w-full md:w-32">
+        <img
+          decoding="async"
+          src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+          data-src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+          alt="AMVCC - La Seigneurie de Coucy"
+          data-full_image_src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+          title="Enluminure enseignement XIV°s"
+          data-srcset="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png 881w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-300x153.png 300w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-768x392.png 768w"
+          srcset="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png 881w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-300x153.png 300w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-768x392.png 768w"
+          class="w-full h-32 object-cover rounded-lg border border-amvcc-base-300"
+          loading="lazy"
+        />
+      </aside>
+      <div>
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Fondée sur les sources et l'archéologie")}
+        </h4>
+        <p>
+          {gettext(
+            "Chaque animation est élaborée à partir de sources historiques fiables : fouilles, archives, iconographie, et objets conservés en musée. Nous croisons ces sources pour restituer au plus juste les gestes, les objets, les vêtements et les pratiques du XIVe siècle."
+          )}
         </p>
       </div>
     </div>
-  </div>
-</section>
 
-<section id="activities" class="bg-amvcc-base-200 py-16">
-  <div class="mx-auto max-w-6xl px-4">
-    <h2 class="mb-12 text-center text-3xl font-semibold">Nos animations et démonstrations</h2>
-    <div class="grid gap-8 grid-cols-2 lg:grid-cols-3">
-      <div class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg">
-        <h3 class="mb-2 text-xl font-semibold">Vie de camp</h3>
+    <div class="flex flex-col md:flex-row gap-6 items-start">
+      <aside class="flex-shrink-0 mx-auto md:m-0 w-full md:w-32">
+        <img
+          src="https://www.amvcc.com/wp-content/uploads/2022/09/2022-08-27_Seigneuriales_de_Coucy_4784-2-scaled.jpg"
+          loading="lazy"
+          title={
+            gettext(
+              "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+            )
+          }
+          alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+          class="w-full h-32 object-cover rounded-lg border border-amvcc-base-300"
+          loading="lazy"
+        />
+      </aside>
+      <div>
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Comprendre les usages et les pratiques")}
+        </h4>
         <p>
-          Reconstitution d’un campement noble avec mobilier, cuisine, jeux et costumes fidèles à l’époque médiévale.
-        </p>
-      </div>
-
-      <div class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg">
-        <h3 class="mb-2 text-xl font-semibold">Démonstration de combat</h3>
-        <p>
-          Combats chorégraphiés en armure, démonstrations martiales et présentation de l’équipement du chevalier.
-        </p>
-      </div>
-
-      <div class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg">
-        <h3 class="mb-2 text-xl font-semibold">Déambulation en costume</h3>
-        <p>
-          Animations immersives et interactives en costumes reconstitués au sein du site historique.
-        </p>
-      </div>
-
-      <div class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg">
-        <h3 class="mb-2 text-xl font-semibold">Conférences & médiation</h3>
-        <p>
-          Interventions éducatives sur la société médiévale, ses structures et ses pratiques quotidiennes.
-        </p>
-      </div>
-
-      <div
-        class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg"
-        id="card-cuisine"
-      >
-        <h3 class="mb-2 text-xl font-semibold">Cuisine médiévale</h3>
-        <p>
-          Présentation de la gastronomie du XIV<sup>e</sup> siècle à travers ustensiles et recettes, fondée sur des sources archéologiques.
-        </p>
-      </div>
-
-      <div
-        class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg"
-        id="card-hostellerie"
-      >
-        <h3 class="mb-2 text-xl font-semibold">Hostellerie médiévale</h3>
-        <p>
-          Reconstitution d’un espace d’hostellerie, lieu d’accueil et d’échange essentiel dans la société médiévale.
-        </p>
-      </div>
-
-      <div
-        class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg"
-        id="card-mode"
-      >
-        <h3 class="mb-2 text-xl font-semibold">Mode et textile</h3>
-        <p>
-          Présentation des vêtements, techniques de couture et métiers liés (tailleur, teinturier) au XIV<sup>e</sup> siècle picard.
-        </p>
-      </div>
-
-      <div
-        class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg"
-        id="card-musique"
-      >
-        <h3 class="mb-2 text-xl font-semibold">Musique et instruments</h3>
-        <p>
-          Découverte des instruments profanes et ecclésiastiques du XIV<sup>e</sup> siècle à travers démonstrations sonores.
-        </p>
-      </div>
-
-      <div
-        class="relative rounded-2xl bg-white p-6 shadow transition hover:shadow-lg"
-        id="card-garde"
-      >
-        <h3 class="mb-2 text-xl font-semibold">Rondes de garde</h3>
-        <p>
-          Présentation d’une milice villageoise armée assurant la sécurité des communautés rurales médiévales.
+          {gettext(
+            "Notre démarche ne vise pas seulement à montrer des objets : elle s’attache à comprendre les usages, les gestes, les coutumes et les valeurs sociales du Moyen Âge picard, afin de redonner sens aux objets et à leur contexte."
+          )}
         </p>
       </div>
     </div>
+  </article>
+
+  <article class="bg-amvcc-base-100 rounded-xl p-8 md:p-12 border border-amvcc-base-300">
+    <div class="text-center mb-12">
+      <h3 class="text-3xl font-semibold mb-4">{gettext("Notre approche")}</h3>
+      <p class="text-lg ">
+        {gettext(
+          "Combiner la rigueur académique et l'engagement du public pour rendre l'histoire vivante."
+        )}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-white text-2xl">📚</span>
+        </div>
+        <h4 class="text-lg font-semibold mb-2">{gettext("Fondé sur la recherche")}</h4>
+        <p>
+          {gettext("Chaque activité est fondée sur des recherches historiques")}
+        </p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-white text-2xl">🎓</span>
+        </div>
+        <h4 class="text-lg font-semibold mb-2">Enseignement</h4>
+        <p>
+          {gettext("Donner vie à l'histoire et accessible à tous les publics")}
+        </p>
+      </div>
+
+      <div class="text-center">
+        <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-white text-2xl">🤝</span>
+        </div>
+        <h4 class="text-lg font-semibold mb-2">
+          {gettext("Une approche communautaire")}
+        </h4>
+        <p>{gettext("Faire participer le public grâce à des expériences pratiques")}</p>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section id="activities" class="bg-amvcc-base-100 py-16 px-4 md:px-16 lg:px-32">
+  <header>
+    <h2 class="text-center mb-6 text-3xl font-bold text-zinc-900 px-8 sm:px-16 text-balance">
+      {gettext("Nos animations et démonstrations")}
+    </h2>
+
+    <p class="text-center mb-8 text-lg px-2 sm:px-4">
+      {gettext(
+        "À la Seigneurie de Coucy, notre travail de reconstitution s’appuie sur les recherches les plus récentes en histoire médiévale, en archéologie et en anthropologie des pratiques."
+      )}
+    </p>
+  </header>
+
+  <article class={[
+    "grid grid-cols-1 sm:grid-cols-2 gap-12 md:gap-16",
+    "items-center my-16"
+  ]}>
+    <aside class="min-h-12">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2022/09/306123323_1828729300852382_4965956126231577681_n.jpg"
+        loading="lazy"
+        title={gettext("Photographie AMVCC - Seigneuriales de Coucy")}
+        alt={gettext("Photographie AMVCC - la Seigneurie de Coucy")}
+      />
+    </aside>
+
+    <div class="space-y-8 text-left">
+      <section>
+        <h3 class="text-2xl font-semibold mb-2">
+          {gettext("Reconstituer la vie quotidienne")}
+        </h3>
+        <p class="leading-relaxed font-light">
+          {gettext(
+            "À travers nos animations, nous faisons revivre les gestes du quotidien, les métiers, les savoir-faire et les traditions de l’époque, pour offrir aux visiteurs une immersion vivante dans la vie médiévale."
+          )}
+        </p>
+      </section>
+
+      <section class="grid grid-cols-2 gap-6 pt-6">
+        <div class="text-center p-6 bg-amvcc-base-200 rounded-lg border border-amvcc-base-300">
+          <div class="text-3xl font-bold text-primary mb-2">
+            8
+          </div>
+          <div class="text-sm ">
+            {gettext("Animations")}
+          </div>
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-16">
+    <article class="bg-amvcc-base-200 rounded-xl border border-amvcc-base-300 hover:shadow-lg transition-shadow duration-300">
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_1286-scaled.jpg"
+        class="w-full h-48 object-cover rounded-t-lg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+      <div class="p-4">
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Mode et textile")}
+        </h4>
+
+        <p class="mb-4">
+          {gettext(
+            "Présentation des vêtements, techniques de couture et métiers liés (tailleur, teinturier) au XIVe siècle picard."
+          )}
+        </p>
+
+        <footer class="text-sm ">
+          <div class="flex justify-between mb-2">
+            <span>Durée :</span>
+            <span class="font-semibold">5-10 minutes</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Format :</span>
+            <span class="font-semibold">Explications & Animation</span>
+          </div>
+        </footer>
+      </div>
+    </article>
+
+    <article class="bg-amvcc-base-200 rounded-xl border border-amvcc-base-300 hover:shadow-lg transition-shadow duration-300">
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_8790-1-scaled.jpg"
+        class="w-full h-48 object-cover rounded-t-lg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+      <div class="p-4">
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Déambulation en costume")}
+        </h4>
+
+        <p class="mb-4">
+          {gettext(
+            "Animations immersives et interactives en costumes reconstitués au sein du site historique."
+          )}
+        </p>
+      </div>
+    </article>
+
+    <article class="bg-amvcc-base-200 rounded-xl border border-amvcc-base-300 hover:shadow-lg transition-shadow duration-300">
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2022/06/287208249_348431117430078_6541805739733360231_n.jpg"
+        class="w-full h-48 object-cover rounded-t-lg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+      <div class="p-4">
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Démonstration de combat")}
+        </h4>
+
+        <p class="mb-4">
+          {gettext(
+            "Combats chorégraphiés en armure, démonstrations martiales et présentation de l’équipement du chevalier."
+          )}
+        </p>
+
+        <footer class="text-sm ">
+          <div class="flex justify-between mb-2">
+            <span>Durée :</span>
+            <span class="font-semibold">15-20 minutes</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Format :</span>
+            <span class="font-semibold">Explications & Animation</span>
+          </div>
+        </footer>
+      </div>
+    </article>
+
+    <article class="bg-amvcc-base-200 rounded-xl border border-amvcc-base-300 hover:shadow-lg transition-shadow duration-300">
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_9152-1-scaled.jpg"
+        class="w-full h-48 object-cover rounded-t-lg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+      <div class="p-4">
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Comptabilités ordinaires")}
+        </h4>
+
+        <p class="mb-4">
+          {gettext(
+            "Démonstration de frappe de monnaie sur flan de plomb ou d’étain. Présentation du rôle économique, politique et symbolique de la monnaie dans la société médiévale. Explication du droit de frappe, des figures représentées sur les monnaies (seigneurs, rois, évêques), et des lieux de production monétaire."
+          )}
+        </p>
+
+        <footer class="text-sm ">
+          <div class="flex justify-between mb-2">
+            <span>Durée :</span>
+            <span class="font-semibold">5-10 minutes</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Format :</span>
+            <span class="font-semibold">Explications & Animation</span>
+          </div>
+        </footer>
+      </div>
+    </article>
+
+    <article class="bg-amvcc-base-200 rounded-xl border border-amvcc-base-300 hover:shadow-lg transition-shadow duration-300">
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2022/09/2022-08-27_Seigneuriales_de_Coucy_5361-scaled.jpg"
+        class="w-full h-48 object-cover rounded-t-lg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+
+      <div class="p-4">
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Musique et instruments")}
+        </h4>
+
+        <p class="mb-4">
+          {gettext(
+            "Découverte des instruments profanes et ecclésiastiques du XIVe siècle à travers démonstrations sonores."
+          )}
+        </p>
+
+        <footer class="text-sm ">
+          <div class="flex justify-between mb-2">
+            <span>Durée :</span>
+            <span class="font-semibold">5-10 minutes</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Format :</span>
+            <span class="font-semibold">Explications & Animation</span>
+          </div>
+        </footer>
+      </div>
+    </article>
+
+    <article class="bg-amvcc-base-200 rounded-xl border border-amvcc-base-300 hover:shadow-lg transition-shadow duration-300">
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
+        class="w-full h-48 object-cover rounded-t-lg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+      <div class="p-4">
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Rondes de garde")}
+        </h4>
+
+        <p class="mb-4">
+          {gettext(
+            "Présentation d’une milice villageoise armée assurant la sécurité des communautés rurales médiévales."
+          )}
+        </p>
+
+        <footer class="text-sm ">
+          <div class="flex justify-between mb-2">
+            <span>Durée :</span>
+            <span class="font-semibold">5-10 minutes</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Format :</span>
+            <span class="font-semibold">Explications & Animation</span>
+          </div>
+        </footer>
+      </div>
+    </article>
+
+    <article class="bg-amvcc-base-200 rounded-xl border border-amvcc-base-300 hover:shadow-lg transition-shadow duration-300">
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_8680-scaled.jpg"
+        class="w-full h-48 object-cover rounded-t-lg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+      <div class="p-4">
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Cuisine médiévale")}
+        </h4>
+
+        <p class="mb-4">
+          {gettext(
+            "Présentation de la gastronomie du XIVe siècle à travers ustensiles et recettes, fondée sur des sources archéologiques."
+          )}
+        </p>
+
+        <footer class="text-sm ">
+          <div class="flex justify-between mb-2">
+            <span>Durée :</span>
+            <span class="font-semibold">5-10 minutes</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Format :</span>
+            <span class="font-semibold">Explications & Animation</span>
+          </div>
+        </footer>
+      </div>
+    </article>
+
+    <article class="bg-amvcc-base-200 rounded-xl border border-amvcc-base-300 hover:shadow-lg transition-shadow duration-300">
+      <img
+        class="w-full h-48 object-cover rounded-t-lg"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_1280-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+      <div class="p-4">
+        <h4 class="text-xl font-semibold mb-3">
+          {gettext("Hostellerie médiévale")}
+        </h4>
+
+        <p class="mb-4">
+          {gettext(
+            "Reconstitution d’un espace d’hostellerie, lieu d’accueil et d’échange essentiel dans la société médiévale."
+          )}
+        </p>
+
+        <footer class="text-sm ">
+          <div class="flex justify-between mb-2">
+            <span>Durée :</span>
+            <span class="font-semibold">5-10 minutes</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Format :</span>
+            <span class="font-semibold">Explications & Animation</span>
+          </div>
+        </footer>
+      </div>
+    </article>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+    <header class="col-span-full">
+      <h3 class="text-2xl font-semibold mb-2">
+        {gettext("Nos formats d'animation")}
+      </h3>
+
+      <p class="leading-relaxed font-light">
+        {gettext(
+          "Nous proposons différents formats d’animation pour nous adapter à tous les contextes. Dans chaque configuration, nous faisons découvrir la richesse de la vie quotidienne au XIVᵉ siècle."
+        )}
+      </p>
+    </header>
+
+    <article
+      class={[
+        "bg-amvcc-base-100",
+        "border border-amvcc-base-300 rounded-xl",
+        "flex items-start gap-6"
+      ]}
+      dir="ltr"
+    >
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2022/09/306123323_1828729300852382_4965956126231577681_n.jpg"
+        class="w-32 h-full rounded-l-lg flex-shrink-0 object-cover"
+        loading="lazy"
+      />
+
+      <div class="py-8 pr-8">
+        <h4 class="text-xl font-semibold text-neutral-900 mb-3">
+          {gettext("Vie de camp")}
+        </h4>
+
+        <p class="text-neutral-700 mb-4">
+          {gettext(
+            "Reconstitution d’un campement avec mobilier, cuisine, jeux et costumes type XIVe. "
+          )}
+        </p>
+
+        <ul class="text-sm text-neutral-600 space-y-1 list-disc list-inside">
+          <li>Installation de plusieurs tentes aménagées</li>
+          <li>Animation du camp en costume</li>
+        </ul>
+      </div>
+    </article>
+
+    <article
+      class={[
+        "bg-amvcc-base-100",
+        "border border-amvcc-base-300 rounded-xl",
+        "flex items-start gap-6"
+      ]}
+      dir="ltr"
+    >
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2021/10/cropped-245254487_236408021841524_4280091833722419194_n-1024x614.jpg"
+        class="w-32 h-full rounded-l-lg flex-shrink-0 object-cover"
+        loading="lazy"
+      />
+
+      <div class="py-8 pr-8">
+        <h4 class="text-xl font-semibold text-neutral-900 mb-3">
+          {gettext("Conférences & médiation")}
+        </h4>
+
+        <p class="text-neutral-700 mb-4">
+          {gettext(
+            "Interventions éducatives sur la société médiévale, ses structures et ses pratiques quotidiennes."
+          )}
+        </p>
+
+        <ul class="text-sm text-neutral-600 space-y-1 list-disc list-inside">
+          <li>Intervention en école, musée</li>
+          <li>Conférence sur un sujet que nous reconstituons</li>
+          <li>Échanges autour de la démarche de reconstitution</li>
+        </ul>
+      </div>
+    </article>
   </div>
 </section>
 
-<section id="events" class="px-4 py-16">
+<article id="events" class="px-4 py-16">
   <h2 class="mb-8 text-center text-3xl font-bold">Calendrier 2025</h2>
 
-  <article id="timeline_container" class="">
+  <article id="timeline_container">
     <div id="timeline" phx-hook="AnimateTimelineScroll" class="overflow-x-scroll flex items-start">
       <div class="event text-center">
         <div class="flex items-center flex-nowrap">
@@ -264,6 +709,7 @@
           <a
             href="https://www.amvcc.com/spectacles-animations/les-seigneuriales-de-coucy/"
             class="mt-2 inline-block text-amvcc-primary text-xs underline hover:text-amvcc-primary/80"
+            target="_blank"
           >
             En savoir plus →
           </a>
@@ -296,6 +742,7 @@
           <a
             href="https://journees-archeologie.eu/"
             class="mt-2 inline-block text-amvcc-primary text-xs underline hover:text-amvcc-primary/80"
+            target="_blank"
           >
             En savoir plus →
           </a>
@@ -363,6 +810,7 @@
           <a
             href="https://archea.roissypaysdefrance.fr/a-la-une/une/une-journee-dans-la-vie-dune-seigneurie-du-14e-siecle"
             class="mt-2 inline-block text-amvcc-primary text-xs underline hover:text-amvcc-primary/80"
+            target="_blank"
           >
             En savoir plus →
           </a>
@@ -417,6 +865,7 @@
           <a
             href="https://laon.fr/VILLE_LAON_21_WEB/FR/Agenda.awp?&a=2372"
             class="mt-2 inline-block text-amvcc-primary text-xs underline hover:text-amvcc-primary/80"
+            target="_blank"
           >
             En savoir plus →
           </a>
@@ -461,7 +910,7 @@
     </div>
   </article>
 
-  <div class="bg-white rounded-2xl shadow-md p-6">
+  <div class="bg-amvcc-base-100 rounded-2xl shadow-md p-6">
     <h2 class="text-2xl font-bold text-amvcc-primary my-4 text-center">📅 Liste des ateliers</h2>
     <div class="flex flex-wrap gap-3 justify-evenly p-5">
       <span class="bg-amvcc-muted text-amvcc-content-secondary text-sm font-medium px-3 py-1 rounded-full">
@@ -499,121 +948,238 @@
       </span>
     </div>
   </div>
-</section>
+</article>
 
-<section id="press">
+<article id="press">
   <!-- Talk about us -->
-</section>
+</article>
 
-<section id="gallery" class="bg-amvcc-base-200 py-16">
-  <div class="mx-auto max-w-5xl px-4 text-center">
-    <h2 class="mb-6 text-3xl font-semibold">Galerie photos</h2>
-    <p class="mb-4 text-lg">Découvrez des images de nos précédentes prestations.</p>
-    <div id="gallery" phx-hook="AnimateGallery" class="grid grid-cols-2 gap-4 md:grid-cols-3">
-      <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
-        <img
-          decoding="async"
-          width="1000"
-          height="624"
-          src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
-          data-src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
-          class="object-cover h-full w-full rounded-xl"
-          alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
-          data-full_image_src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
-          title="Enluminure campement XIV°s"
-          data-srcset="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg 1000w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-300x187.jpg 300w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-768x479.jpg 768w"
-          data-sizes="100vw"
-          sizes="100vw"
-          srcset="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg 1000w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-300x187.jpg 300w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-768x479.jpg 768w"
-          loading="lazy"
-        />
-      </div>
-      <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
-        <img
-          decoding="async"
-          width="881"
-          height="450"
-          src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
-          data-src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
-          class="object-cover h-full w-full rounded-xl"
-          alt="AMVCC - La Seigneurie de Coucy"
-          data-full_image_src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
-          title="Enluminure enseignement XIV°s"
-          data-srcset="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png 881w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-300x153.png 300w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-768x392.png 768w"
-          data-sizes="100vw"
-          sizes="100vw"
-          srcset="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png 881w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-300x153.png 300w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-768x392.png 768w"
-          loading="lazy"
-        />
-      </div>
-      <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
-        <img
-          class="object-cover h-full w-full rounded-xl"
-          src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_1286-scaled.jpg"
-          loading="lazy"
-          title={
-            gettext(
-              "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
-            )
-          }
-          alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
-        />
-      </div>
-      <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
-        <img
-          class="object-cover h-full w-full rounded-xl"
-          src="https://www.amvcc.com/wp-content/uploads/2022/09/306123323_1828729300852382_4965956126231577681_n.jpg"
-          loading="lazy"
-          title={
-            gettext(
-              "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
-            )
-          }
-          alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
-        />
-      </div>
-      <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
-        <img
-          class="object-cover h-full w-full rounded-xl"
-          src="https://www.amvcc.com/wp-content/uploads/2022/09/2022-08-27_Seigneuriales_de_Coucy_4784-2-scaled.jpg"
-          loading="lazy"
-          title={
-            gettext(
-              "Thibault San, - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
-            )
-          }
-          alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
-        />
-      </div>
-      <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
-        <img
-          class="object-cover h-full w-full rounded-xl"
-          src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_0124-scaled.jpg"
-          loading="lazy"
-          title={
-            gettext(
-              "Thibault San, - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
-            )
-          }
-          alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
-        />
-      </div>
+<article id="gallery" class="bg-amvcc-base-200 py-16 px-4 text-center">
+  <h2 class="mb-6 text-3xl font-semibold">Galerie photos</h2>
+  <p class="mb-4 text-lg">Découvrez des images de nos précédentes prestations.</p>
+
+  <div
+    id="gallery"
+    phx-hook="AnimateGallery"
+    class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+  >
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        decoding="async"
+        width="1000"
+        height="624"
+        src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
+        data-src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
+        class="object-cover h-full w-full rounded-xl"
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        data-full_image_src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
+        title="Enluminure campement XIV°s"
+        data-srcset="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg 1000w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-300x187.jpg 300w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-768x479.jpg 768w"
+        data-sizes="100vw"
+        sizes="100vw"
+        srcset="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg 1000w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-300x187.jpg 300w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-768x479.jpg 768w"
+        loading="lazy"
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        decoding="async"
+        width="881"
+        height="450"
+        src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+        data-src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+        class="object-cover h-full w-full rounded-xl"
+        alt="AMVCC - La Seigneurie de Coucy"
+        data-full_image_src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+        title="Enluminure enseignement XIV°s"
+        data-srcset="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png 881w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-300x153.png 300w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-768x392.png 768w"
+        data-sizes="100vw"
+        sizes="100vw"
+        srcset="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png 881w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-300x153.png 300w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-768x392.png 768w"
+        loading="lazy"
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_1286-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2022/09/306123323_1828729300852382_4965956126231577681_n.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2022/09/2022-08-27_Seigneuriales_de_Coucy_4784-2-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_0124-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_8680-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_1280-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_8479-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_0844-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_1421-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_8641-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_9152-1-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_8758-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_1548-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
+    </div>
+    <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
+      <img
+        class="object-cover h-full w-full rounded-xl"
+        src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_8880-scaled.jpg"
+        loading="lazy"
+        title={
+          gettext(
+            "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+          )
+        }
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+      />
     </div>
   </div>
-
-  <section class="bg-amvcc-base-100 relative py-16 m-4 hidden">
-    <div class="pointer-events-none absolute inset-0 z-0 hidden md:block">
-      <svg viewBox="0 0 800 800" class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-        <path
-          id="path-zigzag"
-          phx-hook="AnimatePath"
-          d="M 100 80 Q 400 150, 100 230 Q 400 300, 100 380 Q 400 450, 100 530"
-          stroke="#a1a1aa"
-          stroke-width="2"
-          stroke-dasharray="8 8"
-          fill="none"
-        />
-      </svg>
-    </div>
-  </section>
-</section>
+</article>

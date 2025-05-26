@@ -55,7 +55,7 @@
       <header class={[
         "sticky top-0",
         "flex flex-none items-stretch justify-between space-x-2",
-        "w-full z-10  py-2 px-4 md:px-16 ",
+        "w-full z-30 py-2 px-4 md:px-16",
         "shadow bg-white"
       ]}>
         <h1 class="flex items-center font-black">
@@ -79,23 +79,23 @@
               </a>
             </li>
             <li class="flex items-center">
-              <.dropdown clickable smart_position={true} id="unique_id">
+              <.dropdown clickable={false} smart_position={true} id="unique_id">
                 <:trigger>
-                  <span class="flex items-center">
+                  <a href={~p"/blog"} class="flex items-center">
                     {gettext("Blog")}
                     <.icon name="hero-chevron-double-down-solid" class="ml-1 mt-1 h-3 w-3" />
-                  </span>
+                  </a>
                 </:trigger>
 
                 <.dropdown_content rounded="large" padding="small" class="z-50">
                   <.list size="medium">
                     <:item>
-                      <a href={~p"/vetements"} class="hover:text-amvcc-primary">
+                      <a href={~p"/blog/vetements"} class="hover:text-amvcc-primary">
                         {gettext("Clothes")}
                       </a>
                     </:item>
                     <:item>
-                      <a href={~p"/chaussures"} class="hover:text-amvcc-primary">
+                      <a href={~p"/blog/chaussures"} class="hover:text-amvcc-primary">
                         {gettext("Shoes")}
                       </a>
                     </:item>
@@ -111,8 +111,76 @@
         {@inner_content}
       </main>
 
-      <footer class="text-amvcc-content-neutral bg-amvcc-neutral min-h-[3rem] bottom-0 z-10 flex w-full flex-none items-stretch justify-center p-4 text-xs shadow md:px-16">
-        <p>Thibault Santonja - {NaiveDateTime.utc_now().year}</p>
+      <footer class={[
+        "bottom-0 z-50",
+        "flex-none min-h-[3rem] w-full",
+        "text-amvcc-content-neutral  text-xs",
+        "bg-amvcc-neutral shadow p-8 md:p-16",
+        "grid grid-cols-1 sm:grid-cols-3 gap-16 sm:gap-24"
+      ]}>
+        <article class="sm:col-span-2">
+          <div class="flex items-center gap-4 mb-6">
+            <img
+              src="https://www.amvcc.com/wp-content/uploads/2025/03/cropped-2024-05-03-05_Seigneuriales_8604_102833-1-scaled-1.jpg"
+              alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+              title={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+              class="w-16 h-16 object-cover rounded-lg"
+              loading="lazy"
+            />
+            <div>
+              <h3 class="text-2xl font-bold text-white">Seigneurie de Coucy</h3>
+              <p class="text-gray-400 text-sm">{gettext("Rendons l'Histoire vivante !")}</p>
+            </div>
+          </div>
+
+          <p class="mb-6">
+            {gettext(
+              "Dédié à la reconstitution de l'histoire médiévale du XIVe, par le biais de recherches rigoureuses et d'activités de médiation au plus grand nombre."
+            )}
+          </p>
+
+          <div class="flex space-x-4 justify-evenly">
+            <a href="tel:+33323524455" class="text-base hover:text-lg duration-300">
+              {gettext("Téléphone")}
+            </a>
+
+            <a
+              href="https://www.amvcc.com/spectacles-animations/la-troupe-medievale-la-seigneurie-de-coucy/"
+              class="text-base hover:text-lg duration-300"
+              target="_blank"
+            >
+              {gettext("Site officiel")}
+            </a>
+          </div>
+        </article>
+
+        <article class="mx-auto">
+          <h4 class="text-lg font-semibold text-white mb-6">
+            {gettext("Informations de contact")}
+          </h4>
+
+          <nav class="space-y-4">
+            <div class="flex items-start gap-3">
+              <.icon name="hero-map-pin-solid" class="h-5 w-5" />
+              <a
+                href="https://www.google.com/maps/?q=AMVCC+Coucy+le+Chateau+France"
+                target="_blank"
+              >
+                <p class="text-sm">AMVCC</p>
+                <p class="text-sm">7-9 rue du Pot d’Etain</p>
+                <p class="text-sm">02380 Coucy-le-Château</p>
+              </a>
+            </div>
+            <div class="flex items-center gap-3">
+              <.icon name="hero-phone-solid" class="h-5 w-5" />
+              <a href="tel:+33323388893" class="block text-sm">+33 3 23 38 88 93</a>
+            </div>
+            <div class="flex items-center gap-3">
+              <.icon name="hero-envelope-solid" class="h-5 w-5" />
+              <p class="text-sm">contact@amvcc.com</p>
+            </div>
+          </nav>
+        </article>
       </footer>
     </div>
   </body>

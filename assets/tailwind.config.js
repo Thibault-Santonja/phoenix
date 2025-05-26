@@ -17,7 +17,7 @@ export const theme = {
       amvcc: {
         base: {
           100: "oklch(100% 0 0)",
-          200: "oklch(98% 0 0)",
+          200: "oklch(98.5% 0 0)",
           300: "oklch(95% 0 0)",
           400: "oklch(90% 0 0)",
           500: "oklch(80% 0 0)",

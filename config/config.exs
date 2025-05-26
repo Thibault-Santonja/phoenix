@@ -68,7 +68,7 @@ config :portfolio, PortfolioWeb.Gettext, locales: ~w(en fr)
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.17.11",
+  version: "0.25.4",
   portfolio: [
     args: ~w(
         js/app.js

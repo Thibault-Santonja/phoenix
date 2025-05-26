@@ -1,0 +1,199 @@
+<header>
+  <article
+    id="hero"
+    class="relative min-h-[33vh] flex items-center justify-center overflow-hidden bg-neutral-900"
+  >
+    <div class="absolute inset-0 z-0 top-0">
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2025/03/cropped-2024-05-03-05_Seigneuriales_8604_102833-1-scaled-1.jpg"
+        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        title={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        class="w-full h-full object-cover animate-fade-in"
+        loading="lazy"
+      />
+      <div class="absolute inset-0 bg-neutral-900 bg-opacity-60"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="space-y-8 animate-fade-in">
+        <h1 class="text-4xl font-bold text-white md:text-5xl">La Seigneurie de Coucy</h1>
+
+        <p class="mt-4 text-lg text-white md:text-xl">
+          {gettext("Nos articles de blog")}
+        </p>
+      </div>
+    </div>
+
+    <style>
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in {
+        animation: fade-in 1s ease-out;
+      }
+    </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Parallax effect for background image
+        window.addEventListener('scroll', function() {
+          const scrolled = window.pageYOffset;
+          const parallax = document.querySelector('#hero img');
+          const speed = scrolled * 0.5;
+
+          if (parallax) {
+            parallax.style.transform = `translateY(${speed}px)`;
+          }
+        });
+
+        // Smooth scroll for CTA buttons
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          });
+        });
+
+        // Add entrance animation delay for feature cards
+        const featureCards = document.querySelectorAll('#hero .grid > div');
+        featureCards.forEach((card, index) => {
+          card.style.animationDelay = `${0.2 + (index * 0.1)}s`;
+          card.classList.add('animate-fade-in');
+        });
+      });
+    </script>
+  </article>
+</header>
+
+<section class="p-8 sm:p-16 grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+  <article class="flex flex-col md:flex-row items-start">
+    <aside
+      dir="ltr"
+      class={[
+        "flex-shrink-0 mx-auto md:m-0",
+        "w-full md:w-32 h-32 md:h-full"
+      ]}
+    >
+      <img
+        decoding="async"
+        src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+        data-src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+        alt="AMVCC - La Seigneurie de Coucy"
+        data-full_image_src="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png"
+        title="Enluminure enseignement XIV°s"
+        data-srcset="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png 881w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-300x153.png 300w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-768x392.png 768w"
+        srcset="https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s.png 881w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-300x153.png 300w, https://www.amvcc.com/wp-content/uploads/2020/11/Enluminure-enseignement-XIV°s-768x392.png 768w"
+        class={[
+          "w-full h-full object-cover",
+          "border border-amvcc-base-300",
+          "rounded-t-lg md:rounded-tr-none md:rounded-s-lg"
+        ]}
+        loading="lazy"
+      />
+    </aside>
+
+    <div class={[
+      "flex flex-col bg-amvcc-base-200 p-4 h-full",
+      "rounded-b-lg md:rounded-bl-none md:rounded-e-lg"
+    ]}>
+      <h4 class="text-xl font-semibold mb-3">
+        {gettext("Les chaussures au milieu du XIVe siècle")}
+      </h4>
+
+      <p>
+        {gettext(
+          "Au XIVe siècle, les chaussures révèlent à la fois le rang social, les usages du quotidien et l’évolution des techniques artisanales. Entre modèles pratiques pour le travail et formes plus raffinées pour les milieux aisés, elles témoignent d’un monde en mouvement, du sol boueux des campagnes aux rues animées des villes."
+        )}
+      </p>
+
+      <a
+        href={~p"/blog/chaussures"}
+        class={[
+          "block mt-8 mx-auto",
+          "group hover:scale-110 duration-300",
+          "py-2 px-4 bg-amvcc-base-100",
+          "border-amvcc-base-300 rounded-lg border-2"
+        ]}
+      >
+        {gettext("Voir plus")}
+        <.icon
+          name="hero-arrow-right-circle-solid"
+          class={[
+            "ml-2 h-5 w-5",
+            "group-hover:rotate-[6.283rad] duration-500 ease-out"
+          ]}
+        />
+      </a>
+    </div>
+  </article>
+
+  <article class="flex flex-col md:flex-row items-start">
+    <aside
+      dir="ltr"
+      class={[
+        "flex-shrink-0 mx-auto md:m-0",
+        "w-full md:w-32 h-32 md:h-full"
+      ]}
+    >
+      <img
+        src="https://www.amvcc.com/wp-content/uploads/2022/09/2022-08-27_Seigneuriales_de_Coucy_4784-2-scaled.jpg"
+        loading="lazy"
+        title="Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
+        alt="Thibault San Photography for La Seigneurie de Coucy"
+        class={[
+          "w-full h-full object-cover",
+          "border border-amvcc-base-300",
+          "rounded-t-lg md:rounded-tr-none md:rounded-s-lg"
+        ]}
+      />
+    </aside>
+
+    <div class={[
+      "flex flex-col bg-amvcc-base-200 p-4 h-full",
+      "rounded-b-lg md:rounded-bl-none md:rounded-e-lg"
+    ]}>
+      <h4 class="text-xl font-semibold mb-3">
+        {gettext("L'habit du milieu du XIVe siècle")}
+      </h4>
+
+      <p>
+        {gettext(
+          "Les vêtements du XIVe siècle dans le nord de la France reflètent une société structurée par le statut, le genre et les saisons. En observant les coupes, les matières et les couleurs, on découvre une mode en pleine transformation, entre héritage médiéval et prémices du raffinement gothique."
+        )}
+      </p>
+
+      <a
+        href={~p"/blog/vetements"}
+        class={[
+          "block mt-8 mx-auto",
+          "group hover:scale-110 duration-300",
+          "py-2 px-4 bg-amvcc-base-100",
+          "border-amvcc-base-300 rounded-lg border-2"
+        ]}
+      >
+        {gettext("Voir plus")}
+        <.icon
+          name="hero-arrow-right-circle-solid"
+          class={[
+            "ml-2 h-5 w-5",
+            "group-hover:rotate-[6.283rad] duration-500 ease-out"
+          ]}
+        />
+      </a>
+    </div>
+  </article>
+</section>

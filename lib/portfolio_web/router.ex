@@ -49,8 +49,9 @@ defmodule PortfolioWeb.Router do
     pipe_through :amvcc
 
     live "/", AmvccLive.Index, :index
-    live "/vetements", AmvccLive.Clothes, :index
-    live "/chaussures", AmvccLive.Shoes, :index
+    live "/blog", AmvccLive.Blog, :index
+    live "/blog/vetements", AmvccLive.Blog.Clothes, :index
+    live "/blog/chaussures", AmvccLive.Blog.Shoes, :index
   end
 
   scope "/", PortfolioWeb, host: "photo." do
