@@ -1352,8 +1352,8 @@ msgstr ""
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:36
 #, elixir-autogen, elixir-format
-msgid "Thibault Santonja for Seigneurie de Coucy - find out more about the activities of the medieval association, its events, historical re-enactments and publications about life in the 14th century."
-msgstr "Thibault Santonja pour la Seigneurie de Coucy - en savoir plus sur les activités de l'association médiévale, ses manifestations, ses reconstitutions historiques et ses publications sur la vie au XIVe siècle."
+msgid "Thibault Santonja for Seigneurie de Coucy - find out more about the activities of the association, its events, historical re-enactments and publications about life in the 14th century."
+msgstr "Thibault Santonja pour la Seigneurie de Coucy - en savoir plus sur les activités de l'association, ses manifestations, ses reconstitutions historiques et ses publications sur la vie au XIVe siècle."
 
 #: lib/portfolio_web/components/layouts/tech.html.heex:23
 #, elixir-autogen, elixir-format
