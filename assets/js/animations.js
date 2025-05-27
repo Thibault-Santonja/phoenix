@@ -191,3 +191,48 @@ export const AnimateTimelineScroll = {
     }
   },
 };
+
+export const GalleryModal = {
+  mounted() {
+    const modal = document.getElementById("image-modal");
+    const modalImage = document.getElementById("modal-image");
+    const backdrop = document.getElementById("modal-backdrop");
+    const transitionDuration = 150;
+
+    document.querySelectorAll(".gallery__image img").forEach((img) => {
+      img.addEventListener("click", () => {
+        const src = img.getAttribute("data-full_image_src") || img.src;
+        modalImage.src = src;
+        modalImage.alt = img.alt || "";
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+
+        // Start zoom-in animation
+        setTimeout(() => {
+          modalImage.classList.remove("scale-50", "opacity-0");
+          modalImage.classList.add("scale-100", "opacity-100");
+        }, transitionDuration);
+      });
+    });
+
+    // Close modal on click outside or ESC
+    backdrop.addEventListener("click", () => {
+      modalImage.classList.remove("scale-100", "opacity-100");
+      modalImage.classList.add("scale-50", "opacity-0");
+
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        modalImage.src = "";
+      }, transitionDuration);
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        modalImage.src = "";
+      }
+    });
+  },
+};
