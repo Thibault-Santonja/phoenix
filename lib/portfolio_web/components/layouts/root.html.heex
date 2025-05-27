@@ -18,7 +18,7 @@
     <meta property="og:locale:alternate" content="fr_CH" />
     <meta property="og:locale:alternate" content="en_US" />
 
-    <.live_title default="Portfolio" suffix=" · Thibault Santonja">
+    <.live_title default="Digital Workshop and Portfolio" suffix=" · Thibault Santonja">
       {assigns[:page_title]}
     </.live_title>
     <title>{gettext("Thibault Santonja - Creative and technical portfolio")}</title>
@@ -26,11 +26,48 @@
       name="description"
       content={
         gettext(
-          "Thibault Santonja - Creative and technical portfolio, explore artistic photography, historical research, software projects, and creative works."
+          "Thibault Santonja - A quiet place shaped by hand and heart. Photography, history, and software crafting meet in harmony."
         )
       }
     />
 
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thibaultsan.com/" />
+    <meta
+      property="og:title"
+      content={gettext("Thibault Santonja — Digital Workshop & portfolio")}
+    />
+    <meta
+      property="og:description"
+      content={
+        gettext(
+          "A quiet place shaped by hand and heart. Photography, history, and software crafting meet in harmony."
+        )
+      }
+    />
+    <meta property="og:image" content="https://thibaultsan.com/images/photography/landscape.webp" />
+    <meta property="og:image:alt" content="Thibault Santonja background photography" />
+    <meta property="og:site_name" content="Thibault San" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content={gettext("Thibault Santonja — Digital Workshop & portfolio")}
+    />
+    <meta
+      name="twitter:description"
+      content={
+        gettext(
+          "A quiet place shaped by hand and heart. Photography, history, and software crafting meet in harmony."
+        )
+      }
+    />
+    <meta
+      name="twitter:image"
+      content="https://thibaultsan.com/images/photography/landscape.webp"
+    />
+    <meta name="twitter:image:alt" content="Thibault Santonja background photography" />
+
+    <link rel="canonical" href="https://thibaultsan.com/" />
     <link rel="icon" type="image/x-icon" href="/images/photography/logo.webp" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <!-- preload background image -->

@@ -1,0 +1,16 @@
+{
+  "name": "Thibault Santonja",
+  "short_name": "Thibault",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "description": "Photography, history, and digital craft by Thibault Santonja.",
+  "icons": [
+    {
+      "src": "/images/photography/logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ]
+}
