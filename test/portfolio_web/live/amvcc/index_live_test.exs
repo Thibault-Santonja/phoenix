@@ -32,7 +32,7 @@ defmodule PortfolioWeb.Amvcc.IndexLiveTest do
 
     test "/blog path render default page", %{conn: conn, subdomain: subdomain} do
       {:ok, _blog_live, html} = live(conn, subdomain <> "/blog")
-      assert html =~ "Nos articles de blog"
+      assert html =~ "Our blog post"
     end
 
     test "/blog/clothes path render default page", %{conn: conn, subdomain: subdomain} do

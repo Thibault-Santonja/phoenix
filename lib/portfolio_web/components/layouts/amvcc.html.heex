@@ -56,9 +56,10 @@
         "sticky top-0",
         "flex flex-none items-stretch justify-between space-x-2",
         "w-full z-30 py-2 px-4 md:px-16",
-        "shadow bg-white"
+        "shadow bg-white/90 backdrop-blur-sm",
+        "text-sm sm:text-base"
       ]}>
-        <h1 class="flex items-center font-black">
+        <h1 class="flex items-center font-black md:text-lg">
           <a href={~p"/"} class="hover:text-amvcc-primary">{gettext("La Seigneurie de Coucy")}</a>
         </h1>
         <nav class="flex items-center">
@@ -83,7 +84,10 @@
                 <:trigger>
                   <a href={~p"/blog"} class="flex items-center">
                     {gettext("Blog")}
-                    <.icon name="hero-chevron-double-down-solid" class="ml-1 mt-1 h-3 w-3" />
+                    <.icon
+                      name="hero-chevron-double-down-solid"
+                      class="ml-1 mt-1 h-3 w-3 hidden sm:block"
+                    />
                   </a>
                 </:trigger>
 
@@ -129,19 +133,19 @@
             />
             <div>
               <h3 class="text-2xl font-bold text-white">Seigneurie de Coucy</h3>
-              <p class="text-gray-400 text-sm">{gettext("Rendons l'Histoire vivante !")}</p>
+              <p class="text-gray-400 text-sm">{gettext("Let's bring History to life!")}</p>
             </div>
           </div>
 
           <p class="mb-6">
             {gettext(
-              "Dédié à la reconstitution de l'histoire médiévale du XIVe, par le biais de recherches rigoureuses et d'activités de médiation au plus grand nombre."
+              "Dedicated to reconstructing the medieval history of the XIVᵉ, through rigorous research and mediation activities to the widest possible audience."
             )}
           </p>
 
           <div class="flex space-x-4 justify-evenly">
             <a href="tel:+33323524455" class="text-base hover:text-lg duration-300">
-              {gettext("Téléphone")}
+              {gettext("Phone number")}
             </a>
 
             <a
@@ -149,14 +153,14 @@
               class="text-base hover:text-lg duration-300"
               target="_blank"
             >
-              {gettext("Site officiel")}
+              {gettext("Official website")}
             </a>
           </div>
         </article>
 
         <article class="mx-auto">
           <h4 class="text-lg font-semibold text-white mb-6">
-            {gettext("Informations de contact")}
+            {gettext("Contact information")}
           </h4>
 
           <nav class="space-y-4">
