@@ -2,12 +2,19 @@
 #photography {
     /* Display image only when related link is hovered */
     #gallery img {
-        display: none;
+        /* display: none; */
+        opacity: 0;
     }
 
     #gallery a:hover + img,
-    #gallery img:hover {
-        display: block;
+    #gallery img:hover,
+    #gallery a:active + img,
+    #gallery img:active {
+        /* display: block; */
+        opacity: 1;
+        transition:
+            opacity,
+            cubic-bezier(0.25, 1, 0.5, 1) 0.8s;
     }
 
     /* Display animation on link hover (only small or bigger screens)) */
