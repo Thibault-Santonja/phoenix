@@ -11,14 +11,14 @@
 msgid ""
 msgstr ""
 
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:482
+#: lib/portfolio_web/components/core_components.ex:482
 #: lib/portfolio_web/components/mishka_chelekom_components/table.ex:186
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
 
+#: lib/portfolio_web/components/core_components.ex:160
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:197
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:160
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
@@ -66,8 +66,8 @@ msgstr ""
 msgid "Drawer content"
 msgstr ""
 
+#: lib/portfolio_web/components/core_components.ex:151
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:182
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:151
 #, elixir-autogen, elixir-format
 msgid "Error!"
 msgstr ""
@@ -92,8 +92,8 @@ msgstr ""
 msgid "Go to slide %{index}"
 msgstr ""
 
+#: lib/portfolio_web/components/core_components.ex:172
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:211
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:172
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
 msgstr ""
@@ -154,8 +154,8 @@ msgstr ""
 msgid "Rate %{count} star"
 msgstr ""
 
+#: lib/portfolio_web/components/core_components.ex:167
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:205
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:167
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
@@ -171,8 +171,8 @@ msgstr ""
 msgid "Step %{number}: %{title}"
 msgstr ""
 
+#: lib/portfolio_web/components/core_components.ex:150
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:175
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:150
 #, elixir-autogen, elixir-format
 msgid "Success!"
 msgstr ""
@@ -194,8 +194,8 @@ msgstr ""
 msgid "Uploading %{file}: %{progress} percent"
 msgstr ""
 
+#: lib/portfolio_web/components/core_components.ex:155
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:191
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:155
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
@@ -205,11 +205,11 @@ msgstr ""
 msgid "Your browser does not support the video tag."
 msgstr ""
 
+#: lib/portfolio_web/components/core_components.ex:76
+#: lib/portfolio_web/components/core_components.ex:130
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:135
 #: lib/portfolio_web/components/mishka_chelekom_components/badge.ex:181
 #: lib/portfolio_web/components/mishka_chelekom_components/banner.ex:197
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:76
-#: lib/portfolio_web/components/mishka_chelekom_components/core_components.ex:130
 #: lib/portfolio_web/components/mishka_chelekom_components/modal.ex:152
 #: lib/portfolio_web/components/mishka_chelekom_components/toast.ex:293
 #, elixir-autogen, elixir-format
@@ -226,63 +226,72 @@ msgstr ""
 msgid "Shoes XIVc in western Europe"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:18
+#: lib/portfolio_web/live/photography_live/index.ex:40
+#: lib/portfolio_web/live/photography_live/index.html.heex:269
+#: lib/portfolio_web/live/photography_live/index.html.heex:270
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:27
+#: lib/portfolio_web/live/photography_live/index.ex:43
+#: lib/portfolio_web/live/photography_live/index.html.heex:39
 #, elixir-autogen, elixir-format
 msgid "AMVCC"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:59
+#: lib/portfolio_web/live/photography_live/index.ex:44
+#: lib/portfolio_web/live/photography_live/index.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "China"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:99
+#: lib/portfolio_web/live/photography_live/index.ex:45
+#: lib/portfolio_web/live/photography_live/index.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "Couples"
 msgstr ""
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:73
-#: lib/portfolio_web/live/photography_live/index.html.heex:91
+#: lib/portfolio_web/live/photography_live/index.ex:46
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:69
+#: lib/portfolio_web/live/photography_live/index.ex:47
+#: lib/portfolio_web/live/photography_live/index.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Japan"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:107
+#: lib/portfolio_web/live/photography_live/index.ex:49
+#: lib/portfolio_web/live/photography_live/index.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "Motherhood"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:47
+#: lib/portfolio_web/live/photography_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Music"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:15
+#: lib/portfolio_web/live/photography_live/index.ex:51
+#: lib/portfolio_web/live/photography_live/index.html.heex:20
 #, elixir-autogen, elixir-format
 msgid "Re-enactment"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:39
+#: lib/portfolio_web/live/photography_live/index.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Street photo"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:79
+#: lib/portfolio_web/live/photography_live/index.ex:53
+#: lib/portfolio_web/live/photography_live/index.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Taiwan"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:115
+#: lib/portfolio_web/live/photography_live/index.html.heex:205
 #, elixir-autogen, elixir-format
 msgid "Weeding"
 msgstr ""
@@ -880,11 +889,6 @@ msgstr ""
 msgid "Why Kamal?"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:256
-#, elixir-autogen, elixir-format
-msgid "and"
-msgstr ""
-
 #: lib/portfolio_web/live/tech_live/blog/ci.html.heex:262
 #, elixir-autogen, elixir-format
 msgid "are used to ensure the codebase stays clean and secure."
@@ -1371,41 +1375,25 @@ msgid "Thibault San's technical blog - articles on code crafting, Elixir, Phoeni
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:6
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:31
 #, elixir-autogen, elixir-format
 msgid "1. Basic Garments"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:31
-#, elixir-autogen, elixir-format
-msgid "1. Éléments de base de l’habillement"
-msgstr ""
-
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:10
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "2. Materials and Colors"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
-#, elixir-autogen, elixir-format
-msgid "2. Matériaux et couleurs"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:96
-#, elixir-autogen, elixir-format
-msgid "3. Accessoires"
-msgstr ""
-
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:14
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "3. Accessories"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:106
-#, elixir-autogen, elixir-format
-msgid "4. Lois somptuaires"
-msgstr ""
-
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:18
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:103
 #, elixir-autogen, elixir-format
 msgid "4. Sumptuary Laws"
 msgstr ""
@@ -1420,33 +1408,34 @@ msgstr ""
 msgid "Blog"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:99
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:96
 #, elixir-autogen, elixir-format
-msgid "Bourse suspendue à la ceinture"
+msgid "Purse hanging from your belt"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:98
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:95
 #, elixir-autogen, elixir-format
-msgid "Ceinture en cuir avec boucles ou plaques décoratives"
+msgid "Leather belt with buckles or decorative plates"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:100
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:97
 #, elixir-autogen, elixir-format
-msgid "Couteau personnel"
+msgid "Personal knife"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:108
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:105
 #, elixir-autogen, elixir-format
-msgid "Des lois limitaient l’usage de certains matériaux et couleurs pour éviter l’ostentation chez les non-nobles."
+msgid "Laws restricted the use of certain materials and colours to prevent ostentation among the non-noble."
 msgstr ""
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:78
+#: lib/portfolio_web/live/photography_live/index.ex:55
 #, elixir-autogen, elixir-format
 msgid "Gallery"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:22
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:115
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:112
 #, elixir-autogen, elixir-format
 msgid "Illustrations"
 msgstr ""
@@ -1458,12 +1447,12 @@ msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:39
 #, elixir-autogen, elixir-format
-msgid "La chemise"
+msgid "The shirt"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:75
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:72
 #, elixir-autogen, elixir-format
-msgid "La coiffe de lin"
+msgid "The cotte or cotehardie"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:55
@@ -1473,47 +1462,47 @@ msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:65
 #, elixir-autogen, elixir-format
-msgid "Le chaperon"
+msgid "The chaperon"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:61
 #, elixir-autogen, elixir-format
-msgid "Le surcot"
+msgid "The surcot"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:79
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:76
 #, elixir-autogen, elixir-format
-msgid "Le voile"
+msgid "The veil"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:43
 #, elixir-autogen, elixir-format
-msgid "Les braies"
+msgid "The pantsuits"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:49
 #, elixir-autogen, elixir-format
-msgid "Les chausses"
+msgid "The slippers"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:71
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:69
 #, elixir-autogen, elixir-format
-msgid "Les chaussures"
+msgid "The shoes"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
 #, elixir-autogen, elixir-format
-msgid "Les couleurs varient selon le statut social, avec des teintures naturelles : guède pour le bleu, garance pour le rouge, etc."
+msgid "Colours vary according to social status, with natural dyes: woad for blue, madder for red, etc."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:88
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:85
 #, elixir-autogen, elixir-format
-msgid "Les vêtements sont principalement en"
+msgid "The clothes are mainly made of"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:33
 #, elixir-autogen, elixir-format
-msgid "L’habit d’un individu de la « classe moyenne » — un artisan aisé, un marchand, un clerc ou un petit notable urbain — reflète à la fois son statut social, les matériaux disponibles localement, les lois somptuaires, et les modes du moment."
+msgid "The clothing worn by a member of the “middle class” - a well-to-do craftsman, merchant, cleric or small-town notable - reflects his or her social status, the materials available locally, sumptuary laws and the fashions of the day."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:23
@@ -1521,430 +1510,256 @@ msgstr ""
 msgid "Medieval re-enactment troupe"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:124
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:121
 #, elixir-autogen, elixir-format
-msgid "Miniature des"
+msgid "Illustration of"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:101
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:98
 #, elixir-autogen, elixir-format
-msgid "Petits bijoux comme bague ou croix"
+msgid "Small items of jewellery such as rings and crosses"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:146
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "Pèlerinage de vie humaine"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:136
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:133
 #, elixir-autogen, elixir-format
 msgid "Ratisbonne"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:157
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:154
 #, elixir-autogen, elixir-format
-msgid "Reconstitution à Pont-Croix 1358"
+msgid "Reenactment at Pont-Croix 1358"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:26
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:163
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Sources"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:124
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "Très Riches Heures du Duc de Berry"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:135
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:132
 #, elixir-autogen, elixir-format
 msgid "Weltchronik"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:62
 #, elixir-autogen, elixir-format
-msgid "ample, souvent sans manches, porté pour sortir."
+msgid "loose-fitting, often sleeveless, worn to go out."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:40
 #, elixir-autogen, elixir-format
-msgid "blanchie en lin ou chanvre, à manches longues, portée à même la peau."
+msgid "bleached linen or hemp, with long sleeves, worn next to the skin."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:66
 #, elixir-autogen, elixir-format
-msgid "capuchon avec une longue pointe (liripipe) et parfois une cape courte (patte)."
+msgid "cap with a long point (liripipe) and sometimes a short cape (patte)."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:125
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:122
 #, elixir-autogen, elixir-format
-msgid "début XVe siècle"
+msgid "beginning of XV century"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:72
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:69
 #, elixir-autogen, elixir-format
-msgid "en cuir, souvent à bout pointu."
+msgid "leather, often with a pointed toe."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:256
 #, elixir-autogen, elixir-format
-msgid "et"
+msgid "and"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
 #, elixir-autogen, elixir-format
-msgid "laine"
+msgid "wool"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
 #, elixir-autogen, elixir-format
-msgid "lin"
+msgid "linen"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:172
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "link"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:80
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:77
 #, elixir-autogen, elixir-format
-msgid "porté sur la coiffe, flottant ou enroulé autour de la tête."
+msgid "worn on the headdress, floating or wrapped around the head"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:76
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:73
 #, elixir-autogen, elixir-format
-msgid "pour les femmes, couvrant les cheveux, souvent attachée sous le menton."
+msgid "for women, covering the hair, often tied under the chin."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:44
 #, elixir-autogen, elixir-format
-msgid "sorte de caleçon ample en lin, tenu à la taille par une corde, porté sous la chausse."
+msgid "a loose-fitting pair of linen boxer shorts, held at the waist by a cord and worn under the sock."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:50
 #, elixir-autogen, elixir-format
-msgid "sorte de chaussette haute. Pièces de tissu (laine, parfois doublée) couvrant les jambes, attachées à la ceinture des braies."
+msgid "a kind of high sock. Pieces of fabric (wool, sometimes lined) covering the legs, attached to the waistband of braies."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:56
 #, elixir-autogen, elixir-format
-msgid "tunique ajustée, pouvant être boutonnée (du col à la taille), portée sur la chemise, descendant aux genoux pour les hommes et aux pieds pour les femmes."
+msgid "fitted tunic that can be buttoned from the collar to the waist, worn over a shirt and reaching down to the knees for men and to the feet for women."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:146
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:143
 #, elixir-autogen, elixir-format
-msgid "xive siècle"
+msgid "XIVth century"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:314
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:312
 #, elixir-autogen, elixir-format
 msgid "Animations"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:376
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:334
 #, elixir-autogen, elixir-format
-msgid "Animations immersives et interactives en costumes reconstitués au sein du site historique."
+msgid "Mode and textile"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:145
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:602
 #, elixir-autogen, elixir-format
-msgid "Années d’expérience"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/blog.html.heex:118
-#, elixir-autogen, elixir-format
-msgid "Au XIVe siècle, les chaussures révèlent à la fois le rang social, les usages du quotidien et l’évolution des techniques artisanales. Entre modèles pratiques pour le travail et formes plus raffinées pour les milieux aisés, elles témoignent d’un monde en mouvement, du sol boueux des campagnes aux rues animées des villes."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:242
-#, elixir-autogen, elixir-format
-msgid "Chaque activité est fondée sur des recherches historiques"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:190
-#, elixir-autogen, elixir-format
-msgid "Chaque animation est élaborée à partir de sources historiques fiables : fouilles, archives, iconographie, et objets conservés en musée. Nous croisons ces sources pour restituer au plus juste les gestes, les objets, les vêtements et les pratiques du XIVe siècle."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:401
-#, elixir-autogen, elixir-format
-msgid "Combats chorégraphiés en armure, démonstrations martiales et présentation de l’équipement du chevalier."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:229
-#, elixir-autogen, elixir-format
-msgid "Combiner la rigueur académique et l'engagement du public pour rendre l'histoire vivante."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:214
-#, elixir-autogen, elixir-format
-msgid "Comprendre les usages et les pratiques"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:433
-#, elixir-autogen, elixir-format
-msgid "Comptabilités ordinaires"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:662
-#, elixir-autogen, elixir-format
-msgid "Conférences & médiation"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:542
-#, elixir-autogen, elixir-format
-msgid "Cuisine médiévale"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:252
-#, elixir-autogen, elixir-format
-msgid "Donner vie à l'histoire et accessible à tous les publics"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:372
-#, elixir-autogen, elixir-format
-msgid "Déambulation en costume"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:474
-#, elixir-autogen, elixir-format
-msgid "Découverte des instruments profanes et ecclésiastiques du XIVe siècle à travers démonstrations sonores."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:38
-#, elixir-autogen, elixir-format
-msgid "Découvrez nous"
-msgstr ""
-
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:137
-#, elixir-autogen, elixir-format
-msgid "Dédié à la reconstitution de l'histoire médiévale du XIVe, par le biais de recherches rigoureuses et d'activités de médiation au plus grand nombre."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:397
-#, elixir-autogen, elixir-format
-msgid "Démonstration de combat"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:437
-#, elixir-autogen, elixir-format
-msgid "Démonstration de frappe de monnaie sur flan de plomb ou d’étain. Présentation du rôle économique, politique et symbolique de la monnaie dans la société médiévale. Explication du droit de frappe, des figures représentées sur les monnaies (seigneurs, rois, évêques), et des lieux de production monétaire."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:122
-#, elixir-autogen, elixir-format
-msgid "En nous inspirant des travaux menés par les chercheurs et chercheuses, nous assurons une médiation la plus fidèle, vivante et rigoureuse. Nos présentations permettent d’incarner les savoirs scientifiques pour les rendre accessibles à tous les publics."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:31
-#, elixir-autogen, elixir-format
-msgid "Explorez nos articles"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:263
-#, elixir-autogen, elixir-format
-msgid "Faire participer le public grâce à des expériences pratiques"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:240
-#, elixir-autogen, elixir-format
-msgid "Fondé sur la recherche"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:187
-#, elixir-autogen, elixir-format
-msgid "Fondée sur les sources et l'archéologie"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:578
-#, elixir-autogen, elixir-format
-msgid "Hostellerie médiévale"
-msgstr ""
-
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:159
-#, elixir-autogen, elixir-format
-msgid "Informations de contact"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:666
-#, elixir-autogen, elixir-format
-msgid "Interventions éducatives sur la société médiévale, ses structures et ses pratiques quotidiennes."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/blog.html.heex:170
-#, elixir-autogen, elixir-format
-msgid "L'habit du milieu du XIVe siècle"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/blog.html.heex:114
-#, elixir-autogen, elixir-format
-msgid "Les chaussures au milieu du XIVe siècle"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/blog.html.heex:174
-#, elixir-autogen, elixir-format
-msgid "Les vêtements du XIVe siècle dans le nord de la France reflètent une société structurée par le statut, le genre et les saisons. En observant les coupes, les matières et les couleurs, on découvre une mode en pleine transformation, entre héritage médiéval et prémices du raffinement gothique."
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:152
-#, elixir-autogen, elixir-format
-msgid "Membres"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:336
-#, elixir-autogen, elixir-format
-msgid "Mode et textile"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:470
-#, elixir-autogen, elixir-format
-msgid "Musique et instruments"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:272
-#, elixir-autogen, elixir-format
-msgid "Nos animations et démonstrations"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/blog.html.heex:22
-#, elixir-autogen, elixir-format
-msgid "Nos articles de blog"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:604
-#, elixir-autogen, elixir-format
-msgid "Nos formats d'animation"
+msgid "Our animation formats"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:227
 #, elixir-autogen, elixir-format
-msgid "Notre approche"
+msgid "Our approach"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:217
 #, elixir-autogen, elixir-format
-msgid "Notre démarche ne vise pas seulement à montrer des objets : elle s’attache à comprendre les usages, les gestes, les coutumes et les valeurs sociales du Moyen Âge picard, afin de redonner sens aux objets et à leur contexte."
+msgid "Our aim is not just to show objects, but to understand the uses, gestures, customs and social values of the Picardy Middle Ages, in order to give new meaning to the objects and their context."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:133
 #, elixir-autogen, elixir-format
-msgid "Nous faisons une mise en vie documentée des collections, des savoirs et des modes de vie médiévaux. Cette démarche de reconstitution est un outil de transmission, de pédagogie et de sensibilité historique."
+msgid "We bring medieval collections, knowledge and lifestyles to life in a documented way. This process of reconstruction is a tool for transmission, education and historical sensitivity."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:608
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:606
 #, elixir-autogen, elixir-format
-msgid "Nous proposons différents formats d’animation pour nous adapter à tous les contextes. Dans chaque configuration, nous faisons découvrir la richesse de la vie quotidienne au XIVᵉ siècle."
+msgid "We offer different animation formats to adapt to all contexts. In each configuration, we reveal the richness of daily life in the XIVᵉ century."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:291
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:289
 #, elixir-autogen, elixir-format
 msgid "Photographie AMVCC - Seigneuriales de Coucy"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:292
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:290
 #, elixir-autogen, elixir-format
 msgid "Photographie AMVCC - la Seigneurie de Coucy"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:164
 #, elixir-autogen, elixir-format
-msgid "Photographie par Thibault San pour la Seigneurie de Coucy"
+msgid "Thibault San photography for la Seigneurie de Coucy"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:163
 #, elixir-autogen, elixir-format
-msgid "Photographie par Thibault San – Seigneuriales de Coucy"
+msgid "Thibault San photography – Seigneuriales de Coucy"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:546
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:544
 #, elixir-autogen, elixir-format
-msgid "Présentation de la gastronomie du XIVe siècle à travers ustensiles et recettes, fondée sur des sources archéologiques."
+msgid "Presentation of XIVᵉ century gastronomy through utensils and recipes, based on archaeological sources."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:340
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:338
 #, elixir-autogen, elixir-format
-msgid "Présentation des vêtements, techniques de couture et métiers liés (tailleur, teinturier) au XIVe siècle picard."
+msgid "Presentation of clothing, sewing techniques and related trades (tailor, dyer) in XIVᵉ century Picardy."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:510
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:508
 #, elixir-autogen, elixir-format
-msgid "Présentation d’une milice villageoise armée assurant la sécurité des communautés rurales médiévales."
+msgid "Presentation of an armed village militia that ensured the security of medieval rural communities."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:299
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:297
 #, elixir-autogen, elixir-format
-msgid "Reconstituer la vie quotidienne"
+msgid "Reconstructing daily life"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:130
 #, elixir-autogen, elixir-format
-msgid "Reconstituer pour mieux transmettre"
+msgid "Reconstructing for better transmission"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:634
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:632
 #, elixir-autogen, elixir-format
-msgid "Reconstitution d’un campement avec mobilier, cuisine, jeux et costumes type XIVe. "
+msgid "Reconstruction of a camp with furniture, kitchen, games and XIVᵉ type costumes."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:582
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:580
 #, elixir-autogen, elixir-format
-msgid "Reconstitution d’un espace d’hostellerie, lieu d’accueil et d’échange essentiel dans la société médiévale."
+msgid "Reconstruction of a hostelry, an essential place of welcome and exchange in medieval society."
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:132
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:504
 #, elixir-autogen, elixir-format
-msgid "Rendons l'Histoire vivante !"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:506
-#, elixir-autogen, elixir-format
-msgid "Rondes de garde"
-msgstr ""
-
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:152
-#, elixir-autogen, elixir-format
-msgid "Site officiel"
+msgid "Guard rounds"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:203
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:328
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:364
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:389
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:425
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:461
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:498
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:534
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:570
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1008
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1021
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1034
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1047
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1060
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1073
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1086
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1099
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1112
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1125
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1138
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1151
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1164
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1177
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:326
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:362
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:387
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:423
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:459
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:496
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:532
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:568
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1006
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1019
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1032
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1045
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1058
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1071
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1084
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1097
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1110
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1123
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1136
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1149
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1162
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1175
 #, elixir-autogen, elixir-format
 msgid "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:64
+#: lib/portfolio_web/live/photography_live/index.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Artistic photography in China used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:74
+#: lib/portfolio_web/live/photography_live/index.html.heex:112
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Artistic photography in Japan used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:84
+#: lib/portfolio_web/live/photography_live/index.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Artistic photography in Taiwan used as background"
 msgstr ""
@@ -1954,42 +1769,37 @@ msgstr ""
 msgid "Thibault San Photography - Artistic photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:103
+#: lib/portfolio_web/live/photography_live/index.html.heex:181
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Couple photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:95
-#, elixir-autogen, elixir-format
-msgid "Thibault San Photography - Event photography used as background"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.html.heex:111
+#: lib/portfolio_web/live/photography_live/index.html.heex:196
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Motherhood photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:43
+#: lib/portfolio_web/live/photography_live/index.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Street photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:119
+#: lib/portfolio_web/live/photography_live/index.html.heex:211
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Wedding photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:32
+#: lib/portfolio_web/live/photography_live/index.html.heex:46
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography for AMVCC Chantier with REMPART - Assiociation photography used as background."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:20
+#: lib/portfolio_web/live/photography_live/index.html.heex:27
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography for AMVCC Seigneurie de Coucy - Re-enactment photography used as background."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:52
+#: lib/portfolio_web/live/photography_live/index.html.heex:148
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography for L'Imperatrice @ Minuit avant la Nuit Amiens 2024 - Music photography used as background"
 msgstr ""
@@ -2001,71 +1811,393 @@ msgstr ""
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:10
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:11
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:207
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:332
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:368
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:393
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:429
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:465
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:502
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:538
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:574
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:974
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1012
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1025
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1038
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1051
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1064
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1077
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1090
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1103
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1116
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1129
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1142
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1155
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1168
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1181
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:330
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:366
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:391
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:427
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:463
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:500
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:536
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:572
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:972
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1010
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1023
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1036
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1049
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1062
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1075
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1088
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1101
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1114
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1127
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1140
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1153
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1166
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1179
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography for La Seigneurie de Coucy"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:144
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:259
 #, elixir-autogen, elixir-format
-msgid "Téléphone"
-msgstr ""
-
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:261
-#, elixir-autogen, elixir-format
-msgid "Une approche communautaire"
+msgid "A community-based approach"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:102
 #, elixir-autogen, elixir-format
-msgid "Une démarche rigoureuse et ancrée dans la recherche"
+msgid "A rigorous approach rooted in research"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:119
 #, elixir-autogen, elixir-format
-msgid "Valoriser les travaux des historiens"
+msgid "Promoting the work of historians"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:630
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:628
 #, elixir-autogen, elixir-format
-msgid "Vie de camp"
+msgid "Campment life"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/blog.html.heex:132
 #: lib/portfolio_web/live/amvcc_live/blog.html.heex:188
+#: lib/portfolio_web/live/photography_live/index.ex:124
 #, elixir-autogen, elixir-format
-msgid "Voir plus"
+msgid "Show more"
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:106
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:276
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:274
 #, elixir-autogen, elixir-format
-msgid "À la Seigneurie de Coucy, notre travail de reconstitution s’appuie sur les recherches les plus récentes en histoire médiévale, en archéologie et en anthropologie des pratiques."
+msgid "At the Seigneurie de Coucy, our reconstruction work is based on the most recent research into medieval history, archaeology and the anthropology of practices."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:302
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:300
 #, elixir-autogen, elixir-format
-msgid "À travers nos animations, nous faisons revivre les gestes du quotidien, les métiers, les savoir-faire et les traditions de l’époque, pour offrir aux visiteurs une immersion vivante dans la vie médiévale."
+msgid "Through our events, we bring to life the everyday gestures, trades, skills and traditions of the period, offering visitors a living immersion in medieval life."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:283
+#, elixir-autogen, elixir-format
+msgid "A recurring theme in my work is solitude — not as loneliness, but as presence. I often photograph solitary figures integrated into wide scenes, at the border between street and landscape photography. It might be a person quietly immersed in their thoughts, a couple lost in the calm of nature, or someone standing still amid the blurry noise of a bustling city. These moments of solitude carry a certain poetry. Sometimes they evoke serenity, sometimes melancholy — but always a kind of truth."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:141
+#, elixir-autogen, elixir-format
+msgid "AMVCC (Association pour la Mise en Valeur du Château de Coucy) brings together passionate volunteers who work year-round to preserve, animate, and share the cultural heritage of Coucy castle. As a photographer, secretary, and active member, I contribute both behind the scenes and on the ground — where commitment meets creativity."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:209
+#, elixir-autogen, elixir-format
+msgid "As a concert photographer, I seek to convey the energy, emotion, and atmosphere of live music. From international acts like Hans Zimmer’s band, to national stars like Zaho de Sagazan, Eddy de Pretto, and L’Impératrice, or more eclectic and vibrant acts like Charlotte Adigéry & Boris Pupul or A2H, each performance is a living story that I try to preserve through images."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:227
+#, elixir-autogen, elixir-format
+msgid "As a music photographer, I still have dreams to fulfill. I hope one day to photograph Joe Hisaishi, whose compositions have deeply moved me, and Metallica, a band I have followed with passion since my youth. These are more than musical icons to me — they represent moments of life, inspiration, and enduring emotion."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:265
+#, elixir-autogen, elixir-format
+msgid "As a street photographer, I’m drawn to the evolving life of cities — the interplay between architecture, infrastructure, and the quiet rhythm of human presence. My camera becomes a way to observe, feel, and preserve these fragile moments of everyday life."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:187
+#, elixir-autogen, elixir-format
+msgid "At the same time, I’m drawn to the strength and majesty of the earth itself — mountains that command silence, forests that pulse with life, skies that stretch far beyond us. These landscapes are not just scenery; they are alive, ancient, and essential. They remind us of scale, of time, of fragility and force."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:153
+#, elixir-autogen, elixir-format
+msgid "Beyond the events, my lens seeks the gestures of dedication — the early morning preparations, the camaraderie around a fire, the quiet pride in historical transmission. These fleeting moments, often invisible to the public, are the beating heart of the association. They embody a spirit of generosity, intergenerational exchange, and resilience."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:103
+#, elixir-autogen, elixir-format
+msgid "Close"
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:50
+#, elixir-autogen, elixir-format
+msgid "Concerts & Music"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:38
+#, elixir-autogen, elixir-format
+msgid "Let's meet us"
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:237
+#, elixir-autogen, elixir-format
+msgid "Historical reenactment is the art of bringing the past to life — through costume, gesture, objects, and immersive scenes, grounded in careful historical research. It’s a vivid and engaging way to explore medieval life."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:243
+#, elixir-autogen, elixir-format
+msgid "I document this world through photography. I focus on reenactment and medieval-inspired imagery, capturing authentic scenes with an artistic eye — bringing them to life through vivid images that evoke the fabric of a 14th-century garment, the tension of a militia drill, or the stillness of a camp at dawn."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:175
+#, elixir-autogen, elixir-format
+msgid "I feel a strong, personal bond with the natural world — a place of both wonder and worry. As I witness climate change, biodiversity loss, and the growing scars of human activity, my photography becomes a form of quiet testimony. A way to say: this existed, this was beautiful, this matters."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:215
+#, elixir-autogen, elixir-format
+msgid "I have a particular love for small outdoor festivals — places where music meets nature, where the atmosphere is laid-back and genuine, and where human connection takes centre stage. These moments, charged with light, dust, sound and laughter, offer an ideal canvas for documentary and my artistic work."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:271
+#, elixir-autogen, elixir-format
+msgid "I often find beauty in the layered textures of urban history — an old house patched and repurposed over time, tangled cables tracing decades of adaptation, or a passerby moving through it all, unaware of the silent stories in the walls around them."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:48
+#: lib/portfolio_web/live/photography_live/index.html.heex:58
+#, elixir-autogen, elixir-format
+msgid "Landscape"
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:203
+#, elixir-autogen, elixir-format
+msgid "Music has always been at the heart of my life. I began playing guitar as a child, and this early connection to sound and rhythm continues to shape how I perceive the world — and how I capture it through photography."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:169
+#, elixir-autogen, elixir-format
+msgid "My landscape photography is deeply connected to my approach to street photography — both seek to capture the relationship between people and their environments. But in nature, the dialogue shifts. It becomes quieter, older, and more elemental."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:249
+#, elixir-autogen, elixir-format
+msgid "My main collaboration is with La Seigneurie de Coucy (my reenactment company), but I have also work with other inspiring reenactment groups such as Pont-Croix 1358, Gentes Comitis, Aeterna and more. These encounters enrich my photographic work, offering a tapestry of unique faces, gestures, and moments. Each project becomes a shared journey — where historical rigour meets artistic vision, and where the past finds new light through the lens."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:147
+#, elixir-autogen, elixir-format
+msgid "My photographic journey with AMVCC is deeply human : from capturing the energy of public events like the Seigneuriales with the joy of a family discovering medieval crafts, to documenting large-scale initiatives such as castle restoration workshops in collaboration with REMPART, or the silent focus before the major show : Coucy à la Merveille — a grand outdoor spectacle that combines medieval drama, music, and scenography on a fantastic and epic scale. Each image becomes a fragment of shared memory and lived heritage and reflects a unique facet of the association’s efforts to bring medieval history to life and promote Coucy's heritage."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:221
+#, elixir-autogen, elixir-format
+msgid "My photography is more than event coverage — it's a personal way to explore and share the emotional power of music. I aim to capture the invisible thread between artist and audience, the tension before the drop, the intimacy of a verse whispered under the stars."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:159
+#, elixir-autogen, elixir-format
+msgid "My visual work aims to support AMVCC’s mission by creating a lasting record of its cultural initiatives. These images are not just archives — they are storytelling tools that celebrate the dedication of volunteers, artisans, and performers, and help share the living heritage of Coucy with a wider audience."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:52
+#, elixir-autogen, elixir-format
+msgid "Street Photography"
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:295
+#, elixir-autogen, elixir-format
+msgid "Street photography, for me, is a way to witness time, humanity, and space converging. Each image is a silent dialogue — between place and person, solitude and movement, memory and moment."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:277
+#, elixir-autogen, elixir-format
+msgid "There is a deep humanity in the way people inhabit cities. I aim to capture this — not just the dramatic or spectacular, but the subtle poetry of a glance, a posture, a window left open. These details reveal the soul of a place and the quiet resilience of life."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.html.heex:64
+#, elixir-autogen, elixir-format
+msgid "Thibault San Photography - Landscape photography used as background."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:193
+#, elixir-autogen, elixir-format
+msgid "Through composition and light, I try to reveal the quiet power of nature — and our place within it. Not as rulers, not as outsiders, but as part of a larger story. My landscape work is about presence, memory, and respect. A way to reconnect with the world we too often overlook."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:255
+#, elixir-autogen, elixir-format
+msgid "Through this lens, I seek to create more than documentation — I strive to craft visual narratives with real artistic value. My photography brings history to life in ways that resonate emotionally and aesthetically. These images can support reenactment groups, medieval festivals, or even cosplay communities looking for a cinematic, historically grounded aesthetic."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:181
+#, elixir-autogen, elixir-format
+msgid "We often think of humanity as separate from nature, but we are part of it. I try to explore this tension — how we inhabit the land, how we shape it, and how, in return, it shapes us. Even in the most remote places, there are traces of our passage — paths, fences, forgotten ruins. My photography seeks to make these echoes visible."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.ex:54
+#, elixir-autogen, elixir-format
+msgid "Wedding"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:374
+#, elixir-autogen, elixir-format
+msgid "Immersive, interactive activities in reconstructed costumes on the historic site."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:145
+#, elixir-autogen, elixir-format
+msgid "Experience years"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:240
+#, elixir-autogen, elixir-format
+msgid "Each activity is based on historical research"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:190
+#, elixir-autogen, elixir-format
+msgid "Each animation is developed from reliable historical sources: excavations, archives, iconography, and objects kept in museums. We cross-reference these sources to recreate as accurately as possible the gestures, objects, clothing and practices of the XIVᵉ century."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:399
+#, elixir-autogen, elixir-format
+msgid "Choreographed fights in armour, martial demonstrations and presentation of the knight's equipment."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:229
+#, elixir-autogen, elixir-format
+msgid "Combining academic rigour and audience engagement to bring history to life."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:214
+#, elixir-autogen, elixir-format
+msgid "Understanding uses and practices"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:431
+#, elixir-autogen, elixir-format
+msgid "Ordinary accounting"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:660
+#, elixir-autogen, elixir-format
+msgid "Conferences & mediation"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:540
+#, elixir-autogen, elixir-format
+msgid "Cuisine médiévale"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:250
+#, elixir-autogen, elixir-format
+msgid "Bringing history to life and making it accessible to all audiences"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:370
+#, elixir-autogen, elixir-format
+msgid "Costume walk"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:472
+#, elixir-autogen, elixir-format
+msgid "Discover secular and ecclesiastical instruments from the XIVᵉ century through sound demonstrations."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:395
+#, elixir-autogen, elixir-format
+msgid "Fight demonstrations"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:435
+#, elixir-autogen, elixir-format
+msgid "Demonstration of the minting of coins on lead or tin blanks. Presentation of the economic, political and symbolic role of money in medieval society. Explanation of the right to mint, the figures represented on coins (lords, kings, bishops), and the places where money was produced."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:122
+#, elixir-autogen, elixir-format
+msgid "Drawing on the work carried out by researchers, we ensure the most faithful, lively and rigorous mediation possible. Our presentations bring scientific knowledge to life, making it accessible to all audiences."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:31
+#, elixir-autogen, elixir-format
+msgid "Explore our articles"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:261
+#, elixir-autogen, elixir-format
+msgid "Involving the public through hands-on experience"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:238
+#, elixir-autogen, elixir-format
+msgid "Based on research"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:187
+#, elixir-autogen, elixir-format
+msgid "Based on historical source and archeology"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:576
+#, elixir-autogen, elixir-format
+msgid "Medieval Inn"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:664
+#, elixir-autogen, elixir-format
+msgid "Educational activities on medieval society, its structures and everyday practices."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:152
+#, elixir-autogen, elixir-format
+msgid "Members"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/blog.html.heex:22
+#, elixir-autogen, elixir-format
+msgid "Our blog post"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/blog.html.heex:118
+#, elixir-autogen, elixir-format
+msgid "Au XIVᵉ siècle, les chaussures révèlent à la fois le rang social, les usages du quotidien et l’évolution des techniques artisanales. Entre modèles pratiques pour le travail et formes plus raffinées pour les milieux aisés, elles témoignent d’un monde en mouvement, du sol boueux des campagnes aux rues animées des villes."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/blog.html.heex:170
+#, elixir-autogen, elixir-format
+msgid "Mid-XIVth century dress"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/blog.html.heex:114
+#, elixir-autogen, elixir-format
+msgid "Mid-XIVth century shoes"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/blog.html.heex:174
+#, elixir-autogen, elixir-format
+msgid "Fourteenth century clothing in northern France reflects a society structured by status, gender and the seasons. By observing the cuts, materials and colours, we discover a fashion in full transformation, between medieval heritage and the beginnings of Gothic refinement."
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:468
+#, elixir-autogen, elixir-format
+msgid "Music and instruments"
+msgstr ""
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:270
+#, elixir-autogen, elixir-format
+msgid "Our animations and shows"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:159
+#, elixir-autogen, elixir-format
+msgid "Contact information"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:137
+#, elixir-autogen, elixir-format
+msgid "Dedicated to reconstructing the medieval history of the XIVᵉ, through rigorous research and mediation activities to the widest possible audience."
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:132
+#, elixir-autogen, elixir-format
+msgid "Let's bring History to life!"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:152
+#, elixir-autogen, elixir-format
+msgid "Official website"
+msgstr ""
+
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:144
+#, elixir-autogen, elixir-format
+msgid "Phone number"
 msgstr ""
