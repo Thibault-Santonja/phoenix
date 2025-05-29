@@ -226,44 +226,44 @@ msgstr "Vetements XIVᵉ en Europe de l'ouest"
 msgid "Shoes XIVc in western Europe"
 msgstr "Chaussures XIVᵉ en Europe de l'ouest"
 
-#: lib/portfolio_web/live/photography_live/index.ex:48
+#: lib/portfolio_web/live/photography_live/index.ex:53
+#: lib/portfolio_web/live/photography_live/index.html.heex:298
 #: lib/portfolio_web/live/photography_live/index.html.heex:299
-#: lib/portfolio_web/live/photography_live/index.html.heex:300
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Thibault San Photography"
 msgstr "Thibault San Photographie"
 
-#: lib/portfolio_web/live/photography_live/index.ex:51
+#: lib/portfolio_web/live/photography_live/index.ex:56
 #: lib/portfolio_web/live/photography_live/index.html.heex:39
 #, elixir-autogen, elixir-format
 msgid "AMVCC"
 msgstr "AMVCC"
 
-#: lib/portfolio_web/live/photography_live/index.ex:52
+#: lib/portfolio_web/live/photography_live/index.ex:57
 #: lib/portfolio_web/live/photography_live/index.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "China"
 msgstr "Chine"
 
-#: lib/portfolio_web/live/photography_live/index.ex:53
+#: lib/portfolio_web/live/photography_live/index.ex:58
 #: lib/portfolio_web/live/photography_live/index.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "Couples"
 msgstr "Couples"
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:110
-#: lib/portfolio_web/live/photography_live/index.ex:54
+#: lib/portfolio_web/live/photography_live/index.ex:59
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr "Événements"
 
-#: lib/portfolio_web/live/photography_live/index.ex:55
+#: lib/portfolio_web/live/photography_live/index.ex:60
 #: lib/portfolio_web/live/photography_live/index.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Japan"
 msgstr "Japon"
 
-#: lib/portfolio_web/live/photography_live/index.ex:57
+#: lib/portfolio_web/live/photography_live/index.ex:62
 #: lib/portfolio_web/live/photography_live/index.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "Motherhood"
@@ -274,7 +274,7 @@ msgstr "Maternité"
 msgid "Music"
 msgstr "Musique"
 
-#: lib/portfolio_web/live/photography_live/index.ex:59
+#: lib/portfolio_web/live/photography_live/index.ex:64
 #: lib/portfolio_web/live/photography_live/index.html.heex:20
 #, elixir-autogen, elixir-format
 msgid "Re-enactment"
@@ -285,7 +285,7 @@ msgstr "Reconstitution"
 msgid "Street photo"
 msgstr "Photo de rue"
 
-#: lib/portfolio_web/live/photography_live/index.ex:61
+#: lib/portfolio_web/live/photography_live/index.ex:66
 #: lib/portfolio_web/live/photography_live/index.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Taiwan"
@@ -1409,7 +1409,7 @@ msgid "Laws restricted the use of certain materials and colours to prevent osten
 msgstr "Des lois limitaient l’usage de certains matériaux et couleurs pour éviter l’ostentation chez les non-nobles."
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:115
-#: lib/portfolio_web/live/photography_live/index.ex:63
+#: lib/portfolio_web/live/photography_live/index.ex:68
 #, elixir-autogen, elixir-format
 msgid "Gallery"
 msgstr "Galerie"
@@ -1840,7 +1840,7 @@ msgstr "Vie de camp"
 
 #: lib/portfolio_web/live/amvcc_live/blog.html.heex:132
 #: lib/portfolio_web/live/amvcc_live/blog.html.heex:188
-#: lib/portfolio_web/live/photography_live/index.ex:122
+#: lib/portfolio_web/live/photography_live/index.ex:126
 #, elixir-autogen, elixir-format
 msgid "Show more"
 msgstr "Voir plus"
@@ -1856,47 +1856,47 @@ msgstr "À la Seigneurie de Coucy, notre travail de reconstitution s’appuie su
 msgid "Through our events, we bring to life the everyday gestures, trades, skills and traditions of the period, offering visitors a living immersion in medieval life."
 msgstr "À travers nos animations, nous faisons revivre les gestes du quotidien, les métiers, les savoir-faire et les traditions de l’époque, pour offrir aux visiteurs une immersion vivante dans la vie médiévale."
 
-#: lib/portfolio_web/live/photography_live/index.ex:281
+#: lib/portfolio_web/live/photography_live/index.ex:268
 #, elixir-autogen, elixir-format
 msgid "A recurring theme in my work is solitude — not as loneliness, but as presence. I often photograph solitary figures integrated into wide scenes, at the border between street and landscape photography. It might be a person quietly immersed in their thoughts, a couple lost in the calm of nature, or someone standing still amid the blurry noise of a bustling city. These moments of solitude carry a certain poetry. Sometimes they evoke serenity, sometimes melancholy — but always a kind of truth."
 msgstr "Un thème récurrent dans mon travail est la solitude - pas en tant que `loneliness`, mais plutôt en tant que présence. Je photographie souvent des figures solitaires intégrées dans des scènes larges, à la frontière entre la photographie de rue et la photographie de paysage. Il peut s'agir d'une personne tranquillement plongée dans ses pensées, d'un couple perdu dans le calme de la nature ou d'une personne immobile au milieu du bruit flou d'une ville animée. Ces moments de solitude sont empreints d'une certaine poésie. Ils évoquent parfois la sérénité, parfois la mélancolie, mais toujours une sorte de vérité."
 
-#: lib/portfolio_web/live/photography_live/index.ex:139
+#: lib/portfolio_web/live/photography_live/index.ex:143
 #, elixir-autogen, elixir-format
 msgid "AMVCC (Association pour la Mise en Valeur du Château de Coucy) brings together passionate volunteers who work year-round to preserve, animate, and share the cultural heritage of Coucy castle. As a photographer, secretary, and active member, I contribute both behind the scenes and on the ground — where commitment meets creativity."
 msgstr "L'AMVCC (Association pour la Mise en Valeur du Château de Coucy) regroupe des bénévoles passionnés qui œuvrent tout au long de l'année pour préserver, animer et partager le patrimoine culturel du château de Coucy. En tant que photographe, secrétaire et membre actif, j'apporte ma contribution en coulisses et sur le terrain, là où l'engagement rencontre la créativité."
 
-#: lib/portfolio_web/live/photography_live/index.ex:207
+#: lib/portfolio_web/live/photography_live/index.ex:203
 #, elixir-autogen, elixir-format
 msgid "As a concert photographer, I seek to convey the energy, emotion, and atmosphere of live music. From international acts like Hans Zimmer’s band, to national stars like Zaho de Sagazan, Eddy de Pretto, and L’Impératrice, or more eclectic and vibrant acts like Charlotte Adigéry & Boris Pupul or A2H, each performance is a living story that I try to preserve through images."
 msgstr "En photographie de concert, je cherche à transmettre l'énergie, l'émotion et l'atmosphère de la musique en direct. Qu'il s'agisse d'artistes internationaux comme le groupe de Hans Zimmer, de stars nationales comme Zaho de Sagazan, Eddy de Pretto et L'Impératrice, ou d'artistes plus éclectiques et dynamiques comme Charlotte Adigéry & Boris Pupul ou A2H, chaque représentation est une histoire vivante que j'essaie de préserver par l'image."
 
-#: lib/portfolio_web/live/photography_live/index.ex:225
+#: lib/portfolio_web/live/photography_live/index.ex:218
 #, elixir-autogen, elixir-format
 msgid "As a music photographer, I still have dreams to fulfill. I hope one day to photograph Joe Hisaishi, whose compositions have deeply moved me, and Metallica, a band I have followed with passion since my youth. These are more than musical icons to me — they represent moments of life, inspiration, and enduring emotion."
 msgstr "J'ai le doux rêve de pouvoir un jour photographier Joe Hisaishi, dont les compositions m'ont profondément ému, et Metallica, un groupe que je suis avec passion depuis ma jeunesse. Ils m'ont forgé et sont plus que des icônes musicales : ils représentent des moments de vie, d'inspiration et d'émotion durable."
 
-#: lib/portfolio_web/live/photography_live/index.ex:263
+#: lib/portfolio_web/live/photography_live/index.ex:253
 #, elixir-autogen, elixir-format
 msgid "As a street photographer, I’m drawn to the evolving life of cities — the interplay between architecture, infrastructure, and the quiet rhythm of human presence. My camera becomes a way to observe, feel, and preserve these fragile moments of everyday life."
 msgstr "En tant que photographe de rue, je suis attiré par la vie évolutive des villes - l'interaction entre l'architecture, l'infrastructure et le rythme tranquille de la présence humaine. Mon appareil photo devient un moyen d'observer, de ressentir et de préserver ces moments fragiles de la vie quotidienne."
 
-#: lib/portfolio_web/live/photography_live/index.ex:185
+#: lib/portfolio_web/live/photography_live/index.ex:183
 #, elixir-autogen, elixir-format
 msgid "At the same time, I’m drawn to the strength and majesty of the earth itself — mountains that command silence, forests that pulse with life, skies that stretch far beyond us. These landscapes are not just scenery; they are alive, ancient, and essential. They remind us of scale, of time, of fragility and force."
 msgstr "Dans le même temps, je suis attiré par la force et la majesté de la terre elle-même - des montagnes qui imposent le silence, des forêts qui palpitent de vie, des cieux qui s'étendent bien au-delà de nous. Ces paysages ne sont pas seulement des décors ; ils sont vivants, anciens et essentiels. Ils nous rappellent l'échelle, le temps, la fragilité et la force."
 
-#: lib/portfolio_web/live/photography_live/index.ex:151
+#: lib/portfolio_web/live/photography_live/index.ex:153
 #, elixir-autogen, elixir-format
 msgid "Beyond the events, my lens seeks the gestures of dedication — the early morning preparations, the camaraderie around a fire, the quiet pride in historical transmission. These fleeting moments, often invisible to the public, are the beating heart of the association. They embody a spirit of generosity, intergenerational exchange, and resilience."
 msgstr "Au-delà des événements, mon objectif recherche les gestes de dévouement - les préparatifs matinaux, la camaraderie autour d'un feu, la fierté tranquille de la transmission historique. Ces moments fugaces, souvent invisibles pour le public, sont le cœur battant de l'association. Ils incarnent un esprit de générosité, d'échange intergénérationnel et de résilience."
 
-#: lib/portfolio_web/live/photography_live/index.ex:101
+#: lib/portfolio_web/live/photography_live/index.ex:105
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Close"
 msgstr "Fermer"
 
-#: lib/portfolio_web/live/photography_live/index.ex:58
+#: lib/portfolio_web/live/photography_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Concerts & Music"
 msgstr "Concerts & Musique"
@@ -1906,12 +1906,12 @@ msgstr "Concerts & Musique"
 msgid "Let's meet us"
 msgstr "Découvrez-nous"
 
-#: lib/portfolio_web/live/photography_live/index.ex:235
+#: lib/portfolio_web/live/photography_live/index.ex:228
 #, elixir-autogen, elixir-format
 msgid "Historical reenactment is the art of bringing the past to life — through costume, gesture, objects, and immersive scenes, grounded in careful historical research. It’s a vivid and engaging way to explore medieval life."
 msgstr "La reconstitution historique est l'art de faire revivre l'Histoire par le biais de costumes, de gestes, d'objets et de scènes immersives, en s'appuyant sur des recherches historiques approfondies. C'est une façon vivante et attrayante d'explorer et de conter l'Histoire."
 
-#: lib/portfolio_web/live/photography_live/index.ex:241
+#: lib/portfolio_web/live/photography_live/index.ex:233
 #, elixir-autogen, elixir-format
 msgid "I document this world through photography. I focus on reenactment and medieval-inspired imagery, capturing authentic scenes with an artistic eye — bringing them to life through vivid images that evoke the fabric of a 14th-century garment, the tension of a militia drill, or the stillness of a camp at dawn."
 msgstr "Je documente ce monde par la photographie. Je veux donner vie à la reconstitution historique, en capturant des scènes authentiques avec un œil artistique - en leur donnant vie grâce à des images vivantes qui évoquent le tissu d'un vêtement du XIVe siècle, la tension d'un exercice de milice ou le calme d'un camp à l'aube."
@@ -1921,63 +1921,63 @@ msgstr "Je documente ce monde par la photographie. Je veux donner vie à la reco
 msgid "I feel a strong, personal bond with the natural world — a place of both wonder and worry. As I witness climate change, biodiversity loss, and the growing scars of human activity, my photography becomes a form of quiet testimony. A way to say: this existed, this was beautiful, this matters."
 msgstr "Je ressens un lien personnel fort avec le monde naturel - un lieu à la fois d'émerveillement et d'inquiétude. Alors que je suis témoin du changement climatique, de la perte de biodiversité et des cicatrices croissantes de l'activité humaine, ma photographie devient une forme de témoignage silencieux. Une façon de dire : ceci a existe, ceci est beau, ceci a de l'importance et il faut le protéger."
 
-#: lib/portfolio_web/live/photography_live/index.ex:213
+#: lib/portfolio_web/live/photography_live/index.ex:208
 #, elixir-autogen, elixir-format
 msgid "I have a particular love for small outdoor festivals — places where music meets nature, where the atmosphere is laid-back and genuine, and where human connection takes centre stage. These moments, charged with light, dust, sound and laughter, offer an ideal canvas for documentary and my artistic work."
 msgstr "J'ai un amour particulier pour les petits festivals en plein air - des lieux où la musique rencontre la nature, où l'atmosphère est décontractée et authentique, et où la connexion humaine occupe le devant de la scène. Ces moments, chargés de lumière, de fumées, de sons et de rires, offrent une toile idéale pour les documentaires et mon travail artistique."
 
-#: lib/portfolio_web/live/photography_live/index.ex:269
+#: lib/portfolio_web/live/photography_live/index.ex:258
 #, elixir-autogen, elixir-format, fuzzy
 msgid "I often find beauty in the layered textures of urban history — an old house patched and repurposed over time, tangled cables tracing decades of adaptation, or a passerby moving through it all, unaware of the silent stories in the walls around them."
 msgstr "Je trouve souvent de la beauté dans les textures superposées de l'histoire urbaine - une vieille maison rafistolée et réaffectée au fil du temps, des câbles enchevêtrés retraçant des décennies d'adaptation, et là, un passant se déplaçant à travers tout cela, ignorant les histoires silencieuses dans les murs qui l'entourent."
 
-#: lib/portfolio_web/live/photography_live/index.ex:56
+#: lib/portfolio_web/live/photography_live/index.ex:61
 #: lib/portfolio_web/live/photography_live/index.html.heex:58
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr "Paysage"
 
-#: lib/portfolio_web/live/photography_live/index.ex:201
+#: lib/portfolio_web/live/photography_live/index.ex:198
 #, elixir-autogen, elixir-format
 msgid "Music has always been at the heart of my life. I began playing guitar as a child, and this early connection to sound and rhythm continues to shape how I perceive the world — and how I capture it through photography."
 msgstr "La musique a toujours été au cœur de ma vie. J'ai commencé à jouer de la guitare lorsque j'étais enfant, et ce lien précoce avec le son et le rythme continue de façonner ma perception du monde et la façon dont je le capture à travers la photographie."
 
-#: lib/portfolio_web/live/photography_live/index.ex:167
+#: lib/portfolio_web/live/photography_live/index.ex:168
 #, elixir-autogen, elixir-format
 msgid "My landscape photography is deeply connected to my approach to street photography — both seek to capture the relationship between people and their environments. But in nature, the dialogue shifts. It becomes quieter, older, and more elemental."
 msgstr "Ma photographie de paysage est profondément liée à mon approche de la photographie de rue - toutes deux cherchent à capturer la relation entre les gens et leur environnement. Mais dans la nature, le dialogue change. Il devient plus silencieux, plus ancien et plus élémentaire."
 
-#: lib/portfolio_web/live/photography_live/index.ex:247
+#: lib/portfolio_web/live/photography_live/index.ex:238
 #, elixir-autogen, elixir-format
 msgid "My main collaboration is with La Seigneurie de Coucy (my reenactment company), but I have also work with other inspiring reenactment groups such as Pont-Croix 1358, Gentes Comitis, Aeterna and more. These encounters enrich my photographic work, offering a tapestry of unique faces, gestures, and moments. Each project becomes a shared journey — where historical rigour meets artistic vision, and where the past finds new light through the lens."
 msgstr "Ma principale collaboration est avec La Seigneurie de Coucy (ma compagnie de reconstitution), mais j'ai également travaillé avec d'autres groupes de reconstitution inspirants, tels que Pont-Croix 1358, Gentes Comitis, Aeterna et bien d'autres. Ces rencontres enrichissent mon travail photographique, offrant une tapisserie de visages, de gestes et de moments uniques. Chaque projet devient un voyage partagé - où la rigueur historique rencontre la vision artistique, et où le passé trouve une nouvelle lumière à travers l'objectif."
 
-#: lib/portfolio_web/live/photography_live/index.ex:145
+#: lib/portfolio_web/live/photography_live/index.ex:148
 #, elixir-autogen, elixir-format, fuzzy
 msgid "My photographic journey with AMVCC is deeply human : from capturing the energy of public events like the Seigneuriales with the joy of a family discovering medieval crafts, to documenting large-scale initiatives such as castle restoration workshops in collaboration with REMPART, or the silent focus before the major show : Coucy à la Merveille — a grand outdoor spectacle that combines medieval drama, music, and scenography on a fantastic and epic scale. Each image becomes a fragment of shared memory and lived heritage and reflects a unique facet of the association’s efforts to bring medieval history to life and promote Coucy's heritage."
 msgstr "Mon parcours photographique avec l'AMVCC est profondément humain : de la capture de l'énergie des événements publics comme les Seigneuriales avec la joie d'une famille découvrant nos ateliers, jusqu'à la documentation des ateliers de restauration de châteaux en collaboration avec REMPART, ou encore, la concentration silencieuse avant le grand spectacle : Coucy à la Merveille - un spectacle théâtrale en plein air, combinant médiéval, musique et scénographie à une échelle fantastique et épique. Chaque image devient un fragment de mémoire partagée et reflète une facette unique des efforts de l'association pour faire vivre l'Histoire et promouvoir le patrimoine de Coucy."
 
-#: lib/portfolio_web/live/photography_live/index.ex:219
+#: lib/portfolio_web/live/photography_live/index.ex:213
 #, elixir-autogen, elixir-format
 msgid "My photography is more than event coverage — it's a personal way to explore and share the emotional power of music. I aim to capture the invisible thread between artist and audience, the tension before the drop, the intimacy of a verse whispered under the stars."
 msgstr "Ma photographie est plus qu'une couverture d'événement - c'est une façon personnelle d'explorer et de partager le pouvoir émotionnel de la musique. Je cherche à capturer le lien invisible entre l'artiste et le public, la tension avant la chute, l'intimité d'un couplet chuchoté sous les étoiles."
 
-#: lib/portfolio_web/live/photography_live/index.ex:157
+#: lib/portfolio_web/live/photography_live/index.ex:158
 #, elixir-autogen, elixir-format
 msgid "My visual work aims to support AMVCC’s mission by creating a lasting record of its cultural initiatives. These images are not just archives — they are storytelling tools that celebrate the dedication of volunteers, artisans, and performers, and help share the living heritage of Coucy with a wider audience."
 msgstr "Mon travail visuel vise à soutenir la mission de l'AMVCC en créant une trace durable de ses initiatives culturelles. Ces images ne sont pas seulement des archives - ce sont des outils de narration qui célèbrent le dévouement des bénévoles, des artisans et des artistes, et qui aident à partager le patrimoine vivant de Coucy au plus grand nombre."
 
-#: lib/portfolio_web/live/photography_live/index.ex:60
+#: lib/portfolio_web/live/photography_live/index.ex:65
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Street Photography"
 msgstr "Photo de rue"
 
-#: lib/portfolio_web/live/photography_live/index.ex:287
+#: lib/portfolio_web/live/photography_live/index.ex:273
 #, elixir-autogen, elixir-format
 msgid "Street photography, for me, is a way to witness time, humanity, and space converging. Each image is a silent dialogue — between place and person, solitude and movement, memory and moment."
 msgstr "Pour moi, la photographie de rue est un moyen d'observer la convergence du temps, de l'humanité et de l'espace. Chaque image est un dialogue silencieux - entre le lieu et la personne, la solitude et le mouvement, la mémoire et le moment."
 
-#: lib/portfolio_web/live/photography_live/index.ex:275
+#: lib/portfolio_web/live/photography_live/index.ex:263
 #, elixir-autogen, elixir-format
 msgid "There is a deep humanity in the way people inhabit cities. I aim to capture this — not just the dramatic or spectacular, but the subtle poetry of a glance, a posture, a window left open. These details reveal the soul of a place and the quiet resilience of life."
 msgstr "Il y a une profonde humanité dans la façon dont les gens habitent les villes. C'est ce que je cherche à capter - pas seulement l'aspect dramatique ou spectaculaire, mais aussi la poésie subtile d'un regard, d'une posture, d'une fenêtre laissée ouverte. Ces détails révèlent l'âme d'un lieu et la résilience tranquille de la vie."
@@ -1987,22 +1987,22 @@ msgstr "Il y a une profonde humanité dans la façon dont les gens habitent les 
 msgid "Thibault San Photography - Landscape photography used as background."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:191
+#: lib/portfolio_web/live/photography_live/index.ex:188
 #, elixir-autogen, elixir-format
 msgid "Through composition and light, I try to reveal the quiet power of nature — and our place within it. Not as rulers, not as outsiders, but as part of a larger story. My landscape work is about presence, memory, and respect. A way to reconnect with the world we too often overlook."
 msgstr "Par la composition et la lumière, j'essaie de révéler le pouvoir tranquille de la nature et la place que nous y occupons. Non pas en tant que souverains, non pas en tant qu'étrangers, mais en tant qu'éléments d'une histoire plus vaste. Mon travail sur les paysages porte sur la présence, la mémoire et le respect. Une façon de se reconnecter avec le monde que nous oublions trop souvent."
 
-#: lib/portfolio_web/live/photography_live/index.ex:253
+#: lib/portfolio_web/live/photography_live/index.ex:243
 #, elixir-autogen, elixir-format
 msgid "Through this lens, I seek to create more than documentation — I strive to craft visual narratives with real artistic value. My photography brings history to life in ways that resonate emotionally and aesthetically. These images can support reenactment groups, medieval festivals, or even cosplay communities looking for a cinematic, historically grounded aesthetic."
 msgstr "À travers cet objectif, je cherche à créer plus que de la documentation - je m'efforce d'élaborer des récits visuels et esthétiques. Mes photographies font revivre l'histoire d'une manière qui a une résonance émotionnelle. Ces images peuvent servir de support à des groupes de reconstitution, à des festivals médiévaux ou même à des communautés de cosplay à la recherche de cette esthétique."
 
-#: lib/portfolio_web/live/photography_live/index.ex:179
+#: lib/portfolio_web/live/photography_live/index.ex:178
 #, elixir-autogen, elixir-format
 msgid "We often think of humanity as separate from nature, but we are part of it. I try to explore this tension — how we inhabit the land, how we shape it, and how, in return, it shapes us. Even in the most remote places, there are traces of our passage — paths, fences, forgotten ruins. My photography seeks to make these echoes visible."
 msgstr "Nous pensons souvent que l'humanité est séparée de la nature, mais nous en faisons partie. J'essaie d'explorer cette tension - comment nous habitons la terre, comment nous la façonnons et comment, en retour, elle nous façonne. Même dans les endroits les plus reculés, il y a des traces de notre passage - des chemins, des clôtures, des ruines oubliées. Ma photographie cherche à rendre ces échos visibles."
 
-#: lib/portfolio_web/live/photography_live/index.ex:62
+#: lib/portfolio_web/live/photography_live/index.ex:67
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Wedding"
 msgstr "Mariage"
@@ -2240,14 +2240,103 @@ msgstr "Thibault Santonja, Le blog tech — Analyses et expérimentations autour
 msgid "Thibault Santonja - A quiet place shaped by hand and heart. Photography, history, and software crafting meet in harmony."
 msgstr "Thibault Santonja — Un lieu paisible façonné à la main et au cœur. Photographie, histoire et artisanat logiciel en harmonie."
 
-#: lib/portfolio_web/components/layouts/root.html.heex:49
-#: lib/portfolio_web/components/layouts/root.html.heex:68
-#, elixir-autogen, elixir-format
-msgid "Thibault Santonja background photography"
-msgstr ""
-
 #: lib/portfolio_web/components/layouts/root.html.heex:38
 #: lib/portfolio_web/components/layouts/root.html.heex:54
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Thibault Santonja — Digital Workshop & portfolio"
 msgstr "Thibault Santonja — Atelier numérique & portfolio"
+
+#: lib/portfolio_web/live/photography_live/index.ex:358
+#, elixir-autogen, elixir-format
+msgid "Couple photography, as I practice it, is rooted in real life — a walk through the woods, a shared coffee, a quiet moment in a familiar place. My approach is discreet, respectful, and deeply human. I try to capture tenderness, connection, the gestures of daily life — everything that makes a relationship unique. These are not frozen memories, but living fragments, sincere and shared."
+msgstr "La photographie de couple, telle que je la pratique, s’ancre dans la vie réelle — une balade en forêt, un café partagé, un moment simple dans un lieu familier. Mon approche est discrète, respectueuse, et profondément humaine. Je cherche à capter la tendresse, la complicité, les gestes du quotidien — tout ce qui rend une relation unique. Ce ne sont pas des souvenirs figés, mais des fragments vivants, sincères et partagés."
+
+#: lib/portfolio_web/live/photography_live/index.ex:348
+#, elixir-autogen, elixir-format
+msgid "I aim to create images that truly resemble the people in them. Each session is unique: a meaningful place, an improvised walk, natural light. The setting becomes a quiet accomplice — present, yet never taking center stage. My approach is documentary and sensitive, with a refined aesthetic but no artifice."
+msgstr "Je cherche à créer des images qui ressemblent aux personnes qu’elles représentent. Chaque séance est unique : un lieu qui a du sens, une balade improvisée, une lumière naturelle. Le cadre devient complice, discret, toujours à l’arrière-plan d’une émotion vraie. Mon approche est documentaire et sensible, avec une esthétique soignée, mais sans artifices."
+
+#: lib/portfolio_web/live/photography_live/index.ex:353
+#, elixir-autogen, elixir-format
+msgid "I love capturing the silence between two laughs, the brush of a hand, the glance that says everything. These suspended moments speak far beyond a single photo: they tell of memory, of love, of presence. A couple is a story in motion — and my role is to preserve a faithful, simple, and precious trace of it."
+msgstr "J’aime capter les silences entre deux rires, la main qui frôle, le regard qui en dit long. Ces instants suspendus racontent bien plus qu’une simple photo : ils parlent de mémoire, d’amour, de présence. Un couple, c’est une histoire en mouvement — et mon rôle est d’en garder une mémoire fidèle, simple et précieuse."
+
+#: lib/portfolio_web/live/photography_live/index.ex:343
+#, elixir-autogen, elixir-format
+msgid "Photographing a couple means entering an intimate space — a space of connection, shared glances, and spontaneous gestures. It’s a work of trust and attentiveness, where the image becomes the extension of a lived moment. No stiff poses, no masks — only the authenticity of a relationship captured in its own light."
+msgstr "Photographier un couple, c’est entrer dans un espace intime — celui du lien, du regard partagé, du geste spontané. C’est un travail de confiance et d’écoute, où l’image devient le prolongement d’un moment vécu à deux. Pas de poses figées, pas de masques : seulement l’authenticité d’une relation captée dans sa lumière propre."
+
+#: lib/portfolio_web/live/photography_live/index.ex:368
+#, elixir-autogen, elixir-format
+msgid "Even before the first cries, there is already a story — that of a young couple, caught between wonder, joy, and quiet suspense. It unfolds in glances, in waiting, in the hands that care. Photographing this moment means capturing the ‘before’ — that blend of tenderness, momentum, and gentle intimacy."
+msgstr "Avant même les premiers cris, il y a déjà une histoire — celle d'un jeune couple entre émerveillement, joie et suspens. Elle se tisse dans les regards, dans l’attente, dans les mains qui prennent soin. Photographier ce moment, c’est capter l’avant — ce mélange de douceur, d’élan, de tendresse discrète."
+
+#: lib/portfolio_web/live/photography_live/index.ex:373
+#, elixir-autogen, elixir-format
+msgid "I don’t try to freeze time — I try to let it breathe. A soft light on a round belly, a tiny hand resting on a father’s beard, arms opening to hold. These raw and tender gestures are what move me — and what I strive to carry forward through my images."
+msgstr "Je ne cherche pas à figer l’instant mais à le laisser respirer. Une lumière douce sur un ventre rond, une petite main posée sur la barbe de papa, des bras qui accueillent. Ce sont ces gestes-là, bruts et tendres, qui me touchent — et que j’essaie de retransmettre."
+
+#: lib/portfolio_web/live/photography_live/index.ex:378
+#, elixir-autogen, elixir-format
+msgid "I go where life is — at home, in a garden, in the stillness of a slow morning or the whirlwind of a lively afternoon. There may be laughter, tears, surprises — that’s the beauty of these moments. My gaze is discreet, respectful, always seeking the simple truth of a world as it is — a beautiful mess, full of warmth and energy."
+msgstr "Je me déplace là où la vie se passe : à la maison, dans un jardin, au creux d’un matin lent ou d’un après-midi agité. Il peut y avoir des rires, des pleurs, des surprises — c’est tout cela qui fait la beauté de ces moments. Mon regard est discret, respectueux, toujours à la recherche de cette vérité simple d'un monde tel qu’il est — un désordre vivant d'énergie positive."
+
+#: lib/portfolio_web/live/photography_live/index.ex:388
+#, elixir-autogen, elixir-format
+msgid "A wedding is a whirlwind of faces, gestures, and shifting light. It’s a day that passes too quickly, where every moment deserves to be lived — and sometimes preserved. My approach is documentary, sensitive, and attentive: I don’t direct, I observe. I follow the natural rhythm of the day, the glances that connect, the laughter that bursts out, the hands that tighten when emotions overflow."
+msgstr "Un mariage, c’est un tourbillon de visages, de gestes, de lumières. C’est une journée qui file trop vite, où chaque instant mérite d’être vécu et préservé. Mon approche est documentaire, sensible, attentive : je ne dirige pas, je regarde. Je me laisse guider par le rythme de la journée, par les regards qui se cherchent, les rires qui éclatent, les mains qui s’agrippent un peu plus fort quand l’émotion déborde."
+
+#: lib/portfolio_web/live/photography_live/index.ex:398
+#, elixir-autogen, elixir-format
+msgid "Every wedding is a unique story, and I slip into it as a quiet witness. I’m here to capture the truth of a moment, not to stage it. What moves me are the genuine sparks: a held-back tear, a child running under the tables, a grandfather smiling softly. All these living fragments weave together the memory of your day."
+msgstr "Chaque mariage est une histoire unique, et je m’y glisse comme un témoin discret. Je suis là pour capter la vérité d’un moment, pas pour le mettre en scène. Ce qui m’émeut, ce sont les éclats sincères : une larme retenue, un enfant qui court entre les tables, un grand-père qui sourit en silence. Autant de fragments vivants qui composent la mémoire de cette journée."
+
+#: lib/portfolio_web/live/photography_live/index.ex:393
+#, elixir-autogen, elixir-format
+msgid "I photograph the behind-the-scenes, the quiet before the big moments, the details that are often forgotten. A wrinkled dress, shoes kicked off, sunlight on a bare neck. I love that gentle tension between the intimate and the shared, between fragility and joy. My aim is not to create perfect images, but honest ones — true to you, your energy, and the bond that unites you."
+msgstr "Je photographie les coulisses, les silences avant les grands moments, les détails qu’on oublie parfois. La robe froissée, les chaussures abandonnées, le soleil sur une nuque. J’aime cette douce tension entre l’intime et le collectif, entre le fragile et le joyeux. Mon but n’est pas de créer des images parfaites, mais fidèles — à vous, à votre énergie, à ce qui vous lie."
+
+#: lib/portfolio_web/live/photography_live/index.ex:283
+#, elixir-autogen, elixir-format
+msgid "China holds a deeply personal place in my life. I’ve lived there, studied there, loved there. Part of my family still resides in China, and every return is filled with emotion — echoes both old and new. This vast, multifaceted country continues to amaze me with the richness of its traditions, the strength of its contrasts, and the quiet beauty found in the gestures of daily life."
+msgstr "La Chine occupe une place intime dans ma vie. J’y ai vécu, étudié, aimé. Une partie de ma famille y réside, et c’est toujours un retour chargé d’émotion, de résonances anciennes et nouvelles. Ce pays immense, multiple, ne cesse de m’émerveiller par la richesse de ses traditions, la force de ses contrastes, la beauté tranquille de certains gestes du quotidien."
+
+#: lib/portfolio_web/live/photography_live/index.ex:288
+#, elixir-autogen, elixir-format
+msgid "Photographing in China, for me, is not about capturing exoticism or postcard scenes, but about entering—humbly—a world that feels both close and distant. I look for silences, laughter, habits, the invisible threads that weave everyday life. Morning markets, shared meals, slow walks through old neighborhoods. In alleyways and on sidewalks, I’m drawn to the quiet poetry I love in street photography — a fleeting solitude, an unexpected light, a passing glance. Each image is an attempt to preserve something honest, without noise or artifice."
+msgstr "Photographier en Chine, pour moi, ce n’est pas capter l’exotisme ou la carte postale, mais entrer avec humilité dans un monde qui m’est à la fois proche et lointain. Je cherche les silences, les rires, les habitudes, les liens invisibles qui tissent les jours. Les marchés du matin, les repas partagés, les balades des vieux quartiers. Il y a aussi, dans les ruelles, sur les trottoirs, dans les gestes ordinaires, cette poésie discrète que j’aime tant en photographie de rue — une solitude passagère, une lumière inattendue, un regard furtif. Chaque image est une tentative de garder trace, sans bruit, sans artifice."
+
+#: lib/portfolio_web/live/photography_live/index.ex:293
+#, elixir-autogen, elixir-format
+msgid "This is a deeply human form of photography — where you can feel the breath of a place, the presence of its people, the memory of a history. My gaze is that of someone who knows, and who is still learning — with respect, patience, and tenderness."
+msgstr "C’est une photographie profondément humaine, où l’on sent le souffle d’un lieu, la présence d’un peuple, la mémoire d’une histoire. Mon regard est celui de quelqu’un qui connaît et qui apprend encore, avec respect, patience et tendresse."
+
+#: lib/portfolio_web/live/photography_live/index.ex:333
+#, elixir-autogen, elixir-format
+msgid "Photographing Taiwan feels like entering a parallel time. It’s a gentle, attentive observation of life unfolding — unpretentious, yet full of humanity. I find here all that I love in street photography: quiet presences, textured details, and a discreet poetry that lives between walls, faces, and landscapes. It’s a country I never finish discovering."
+msgstr "Photographier Taïwan, c’est entrer dans un temps parallèle. C’est une observation tendre, attentive, de la vie telle qu’elle se déroule : sans prétention, mais pleine d’humanité. J’y retrouve tout ce que j’aime dans la photographie de rue — des présences calmes, des détails vibrants, une poésie discrète qui se glisse entre les murs, les visages, les paysages. C’est un pays que je n’ai jamais fini de découvrir."
+
+#: lib/portfolio_web/live/photography_live/index.ex:323
+#, elixir-autogen, elixir-format
+msgid "Taiwan is a country I hold close to my heart. There’s a singular gentleness to life here — a subtle blend of Chinese heritage and Japanese influence, especially felt in Taipei, in the architecture, the habits, the quiet rhythm of the days. The country has preserved its traditions, its temples, and a kind of everyday spirituality. It is both ancient and modern, vibrant and serene."
+msgstr "Taïwan est un pays que j’aime profondément. Il y a là une douceur de vivre singulière, un mélange subtil entre la culture chinoise et l’influence japonaise — surtout perceptible à Taipei, dans l’architecture, les habitudes, le rythme même des journées. Le pays a gardé vivantes ses traditions, ses temples, sa spiritualité du quotidien. C’est un territoire à la fois moderne et ancien, vibrant et apaisé."
+
+#: lib/portfolio_web/live/photography_live/index.ex:328
+#, elixir-autogen, elixir-format
+msgid "What I love in Taiwan are the streets — their calm energy. Beneath the arcades, people cook, knit, read, work. There’s steam, slow gestures, quiet conversations, laughter. The warm, humid climate wraps everything in a soft, diffuse light. Nature is spectacular: mountains, hot springs, rice fields, dense forests. And of course, the Oolong — this rich, fragrant tea, sipped under a tree or at a modest table, in a silence that soothes the soul."
+msgstr "Ce que j’aime à Taïwan, ce sont les rues — leur énergie tranquille. Sous les arcades, on cuisine de l'excellente street food, on lit calmement, on travaille. Il y a des discussions, de la vapeur et des rires. Le climat chaud et humide enveloppe tout cela dans une lumière douce et diffuse. La nature, tout autour, est spectaculaire : montagnes, sources chaudes, rizières, forêts épaisses. Et bien sûr, l’Oolong — ce thé aux arômes profonds, que l’on boit à l’ombre d’un arbre ou autour d’une table simple, dans un silence qui fait du bien."
+
+#: lib/portfolio_web/live/photography_live/index.ex:308
+#, elixir-autogen, elixir-format
+msgid "From isolated natural spots, unknown even to many locals, to the towering buildings of Tokyo and Osaka, Japan slowly reveals itself: in the light slipping between two doors, in the silence of a shrine at dusk, in the murmur of a street at night. Its culture holds a mystical gentleness, an elegance in everyday life, a grace that lingers long within you."
+msgstr "Des coins de nature isolés, inconnus, aux immenses buildings de Tokyo ou d’Osaka. Le Japon se dévoile lentement : dans la lumière qui glisse entre deux portes, dans le silence d’un sanctuaire au crépuscule, dans le murmure d’une rue la nuit. Il y a dans sa culture une douceur mystique, une élégance du quotidien, une grâce qui vous habite longtemps."
+
+#: lib/portfolio_web/live/photography_live/index.ex:313
+#, elixir-autogen, elixir-format
+msgid "I deeply love this country—its people, their hospitality, its complex history, and its serene resilience. I’m also profoundly inspired by its photographers, who capture fragility with overwhelming intensity. Photographing in Japan, for me, is about listening more than looking. It’s about letting the place speak and patiently tracing the silent beauty of presence."
+msgstr "J’aime profondément ce pays — ses gens, son accueil, son histoire complexe et sa résilience apaisée. Je suis aussi profondément inspiré par ses photographes, capables de capter la fragilité avec une intensité bouleversante. Photographier au Japon, pour moi, c’est écouter plus que regarder. C’est laisser le lieu parler, et tracer, avec patience, la beauté silencieuse de la présence."
+
+#: lib/portfolio_web/live/photography_live/index.ex:303
+#, elixir-autogen, elixir-format
+msgid "Like many in France, I grew up dreaming of Japan—immersed in manga, films, and the music of Joe Hisaishi, whom I hope to photograph one day. That fascination has never left me. As an adult, I wanted to go beyond the dream, to live there for several months and feel the soul and culture of the country from within."
+msgstr "Comme beaucoup en France, j’ai grandi en rêvant du Japon — bercé par les mangas, les films, et la musique de Joe Hisaishi, que je rêverais un jour de photographier. Cette fascination ne m’a jamais quitté. Devenu adulte, j’ai voulu aller au-delà du rêve, y vivre plusieurs mois, pour ressentir l’âme et la culture du pays de l’intérieur."
