@@ -2,13 +2,16 @@ defmodule PortfolioWeb.PhotographyLive.Index do
   use PortfolioWeb, :live_view
 
   @impl true
-  def mount(_, session, socket) do
-    Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])
+  def mount(params, session, socket) do
+    section = Map.get(params, "section", nil)
+    language = Map.get(params, "hl", session["locale"])
+    Gettext.put_locale(PortfolioWeb.Gettext, language)
 
     {
       :ok,
       socket
-      |> assign(modal_section: nil)
+      |> assign(modal_section: section)
+      |> assign(language: language)
     }
   end
 
@@ -23,6 +26,7 @@ defmodule PortfolioWeb.PhotographyLive.Index do
       :noreply,
       socket
       |> assign(:modal_section, section)
+      |> push_patch(to: ~p"/?section=#{section}&hl=#{socket.assigns.language}")
     }
   end
 
@@ -32,6 +36,7 @@ defmodule PortfolioWeb.PhotographyLive.Index do
       :noreply,
       socket
       |> assign(:modal_section, nil)
+      |> push_patch(to: ~p"/?hl=#{socket.assigns.language}")
     }
   end
 
@@ -86,9 +91,8 @@ defmodule PortfolioWeb.PhotographyLive.Index do
       </div>
 
       <nav class="flex">
-        <a
+        <button
           :if={@modal_section}
-          href={~p"/#{@modal_section}"}
           class={[
             "close-modal",
             "grow-0",
@@ -106,7 +110,7 @@ defmodule PortfolioWeb.PhotographyLive.Index do
               "group-hover:rotate-[1.57rad] duration-500 ease-out"
             ]}
           />
-        </a>
+        </button>
 
         <a
           :if={@modal_section}
@@ -291,7 +295,6 @@ defmodule PortfolioWeb.PhotographyLive.Index do
     """
   end
 
-  # Repeat or customize for other sections
   defp render_modal_content(assigns, _section) do
     ~H"""
     <p>No content available for this section yet.</p>

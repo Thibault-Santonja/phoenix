@@ -6,9 +6,9 @@
         opacity: 0;
     }
 
-    #gallery a:hover + img,
+    #gallery button:hover + img,
     #gallery img:hover,
-    #gallery a:active + img,
+    #gallery button:active + img,
     #gallery img:active {
         /* display: block; */
         opacity: 1;
@@ -24,7 +24,7 @@
         line-height: calc(2 / 1.5);
     }
 
-    #gallery li:not(:first-child) {
+    #gallery li:not(:first-child) button {
         padding-top: 0.5rem;
     }
 
@@ -44,6 +44,16 @@
         line-height: calc(2.25 / 1.625);
     }
 
+    #gallery li:hover + li + li + li {
+        font-size: 1.5375rem;
+        line-height: calc(2.25 / 1.5375);
+    }
+
+    #gallery li:hover + li + li + li {
+        font-size: 1.5125rem;
+        line-height: calc(2.25 / 1.5125);
+    }
+
     /* Left side */
     #gallery li:has(+ li:hover) {
         font-size: 1.75rem;
@@ -53,6 +63,16 @@
     #gallery li:has(+ li + li:hover) {
         font-size: 1.625rem;
         line-height: calc(2.25 / 1.625);
+    }
+
+    #gallery li:has(+ li + li:hover) {
+        font-size: 1.5375rem;
+        line-height: calc(2.25 / 1.5375);
+    }
+
+    #gallery li:has(+ li + li:hover) {
+        font-size: 1.5125rem;
+        line-height: calc(2.25 / 1.5125);
     }
 
     #gallery li {

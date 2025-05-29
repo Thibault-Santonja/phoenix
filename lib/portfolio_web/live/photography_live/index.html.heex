@@ -1,4 +1,4 @@
-<header class="flex items-stretch justify-between min-h-screen w-min flex-col p-8">
+<header class="flex items-stretch justify-between min-h-screen w-full flex-col p-8">
   <h1 class="text-nowrap flex-none py-4 text-4xl font-thin sm:text-6xl">
     Thibault San
   </h1>
@@ -8,17 +8,17 @@
       id="gallery"
       class={[
         "h-full text-lg sm:text-2xl justify-center",
-        "flex space-around items-stretch flex-col flex-nowrap space-x-0"
+        "flex items-stretch flex-col flex-nowrap"
       ]}
     >
       <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="reenactment"
         >
           {gettext("Re-enactment")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -31,13 +31,13 @@
         />
       </li>
       <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="amvcc"
         >
           {gettext("AMVCC")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -50,13 +50,13 @@
         />
       </li>
       <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="landscape"
         >
           {gettext("Landscape")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -65,13 +65,13 @@
         />
       </li>
       <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="street"
         >
           {gettext("Street photo")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -80,13 +80,13 @@
         />
       </li>
       <li class="pl-4">
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="china"
         >
           {gettext("China")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -97,13 +97,13 @@
         />
       </li>
       <li class="pl-4">
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="japan"
         >
           {gettext("Japan")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -114,13 +114,13 @@
         />
       </li>
       <li class="pl-4">
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="taiwan"
         >
           {gettext("Taiwan")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -133,13 +133,13 @@
         />
       </li>
       <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="music"
         >
           {gettext("Music")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -152,13 +152,13 @@
         />
       </li>
       <%!-- <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="events"
         >
           {gettext("Events")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -167,13 +167,13 @@
         />
       </li> --%>
       <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="couples"
         >
           {gettext("Couples")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -182,13 +182,13 @@
         />
       </li>
       <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="motherhood"
         >
           {gettext("Motherhood")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -197,13 +197,13 @@
         />
       </li>
       <li>
-        <a
+        <button
           class="font-black hover:uppercase h-full"
           phx-click="open_modal"
           phx-value-section="wedding"
         >
           {gettext("Weeding")}
-        </a>
+        </button>
         <img
           loading="lazy"
           class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
@@ -286,7 +286,7 @@
   ]}
   key={@modal_section}
 >
-  <div class={["h-full opacity-80 bg-black", "close-modal"]} phx-click="close_modal" />
+  <button class={["h-full opacity-80 bg-black", "close-modal"]} phx-click="close_modal" />
   <article class="col-span-4 bg-black text-white h-full">
     <img
       loading="lazy"
