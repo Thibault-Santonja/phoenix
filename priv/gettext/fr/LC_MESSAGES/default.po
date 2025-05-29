@@ -2212,7 +2212,7 @@ msgstr "Faire revivre le mi-XIVe siècle — La Seigneurie de Coucy (AMVCC) part
 #: lib/portfolio_web/components/layouts/tech.html.heex:49
 #, elixir-autogen, elixir-format
 msgid "Explore articles and experimentations on Elixir, Phoenix, deployment, and modern software development practices."
-msgstr "Explorez des articles et expérimentations sur Elixir, Phoenix, Docker, le déploiement et les pratiques modernes du développement logiciel."
+msgstr "Explorez des articles et expérimentations sur Elixir, Phoenix, le déploiement et les pratiques modernes du développement logiciel."
 
 #: lib/portfolio_web/components/layouts/photography.html.heex:59
 #, elixir-autogen, elixir-format
