@@ -19,6 +19,60 @@ defmodule PortfolioWeb.Photography.IndexLiveTest do
     end
   end
 
+  describe "Photography section" do
+    setup [:open_subdomain]
+
+    test "/?hl=fr path render default page in french", %{conn: conn, subdomain: subdomain} do
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=fr")
+      assert html =~ "Thibault San Photographie"
+    end
+
+    test "/?hl=en path render default page in english", %{conn: conn, subdomain: subdomain} do
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=en")
+      assert html =~ "Thibault San Photography"
+    end
+
+    test "/?hl=random path render default page in default language (french)", %{
+      conn: conn,
+      subdomain: subdomain
+    } do
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=random")
+      assert html =~ "Thibault San Photography"
+    end
+
+    test "/?hl=fr&section=landscape path render landscape section in french", %{
+      conn: conn,
+      subdomain: subdomain
+    } do
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=fr&section=landscape")
+      assert html =~ "photographie de paysage"
+    end
+
+    test "/?hl=en&section=landscape path render landscape section in english", %{
+      conn: conn,
+      subdomain: subdomain
+    } do
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=en&section=landscape")
+      assert html =~ "landscape photography"
+    end
+
+    test "/?section=landscape path render landscape section in default language (french)", %{
+      conn: conn,
+      subdomain: subdomain
+    } do
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?section=landscape")
+      assert html =~ "photographie de paysage"
+    end
+
+    test "/?section=random path render default section in default language (french)", %{
+      conn: conn,
+      subdomain: subdomain
+    } do
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?section=random")
+      assert html =~ "Galerie"
+    end
+  end
+
   describe "format_section_title/1" do
     test "returns translated title for known sections" do
       assert Index.format_section_title("amvcc") == "AMVCC"
