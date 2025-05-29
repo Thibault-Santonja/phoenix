@@ -13,3 +13,4 @@
 .dockerignore
 *.ez
 erl_crash.dump
+notes.md
