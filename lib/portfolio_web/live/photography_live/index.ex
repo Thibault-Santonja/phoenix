@@ -3,14 +3,14 @@ defmodule PortfolioWeb.PhotographyLive.Index do
 
   @impl true
   def mount(params, session, socket) do
-    section = Map.get(params, "section", nil)
+    chapter = Map.get(params, "chapter", nil)
     language = Map.get(params, "hl", session["locale"])
     Gettext.put_locale(PortfolioWeb.Gettext, language)
 
     {
       :ok,
       socket
-      |> assign(modal_section: section)
+      |> assign(modal_chapter: chapter)
       |> assign(language: language)
     }
   end
@@ -21,12 +21,12 @@ defmodule PortfolioWeb.PhotographyLive.Index do
   end
 
   @impl true
-  def handle_event("open_modal", %{"section" => section}, socket) do
+  def handle_event("open_modal", %{"chapter" => chapter}, socket) do
     {
       :noreply,
       socket
-      |> assign(:modal_section, section)
-      |> push_patch(to: ~p"/?section=#{section}&hl=#{socket.assigns.language}")
+      |> assign(:modal_chapter, chapter)
+      |> push_patch(to: ~p"/?chapter=#{chapter}&hl=#{socket.assigns.language}")
     }
   end
 
@@ -35,7 +35,7 @@ defmodule PortfolioWeb.PhotographyLive.Index do
     {
       :noreply,
       socket
-      |> assign(:modal_section, nil)
+      |> assign(:modal_chapter, nil)
       |> push_patch(to: ~p"/?hl=#{socket.assigns.language}")
     }
   end
@@ -53,23 +53,23 @@ defmodule PortfolioWeb.PhotographyLive.Index do
     |> assign(:page_title, gettext("Thibault San Photography"))
   end
 
-  def format_section_title("amvcc"), do: gettext("AMVCC")
-  def format_section_title("china"), do: gettext("China")
-  def format_section_title("couples"), do: gettext("Couples")
-  def format_section_title("events"), do: gettext("Events")
-  def format_section_title("japan"), do: gettext("Japan")
-  def format_section_title("landscape"), do: gettext("Landscape")
-  def format_section_title("motherhood"), do: gettext("Motherhood")
-  def format_section_title("music"), do: gettext("Concerts & Music")
-  def format_section_title("reenactment"), do: gettext("Re-enactment")
-  def format_section_title("street"), do: gettext("Street Photography")
-  def format_section_title("taiwan"), do: gettext("Taiwan")
-  def format_section_title("wedding"), do: gettext("Wedding")
-  def format_section_title(_), do: gettext("Gallery")
+  def format_chapter_title("amvcc"), do: gettext("AMVCC")
+  def format_chapter_title("china"), do: gettext("China")
+  def format_chapter_title("couples"), do: gettext("Couples")
+  def format_chapter_title("events"), do: gettext("Events")
+  def format_chapter_title("japan"), do: gettext("Japan")
+  def format_chapter_title("landscape"), do: gettext("Landscape")
+  def format_chapter_title("motherhood"), do: gettext("Motherhood")
+  def format_chapter_title("music"), do: gettext("Concerts & Music")
+  def format_chapter_title("reenactment"), do: gettext("Re-enactment")
+  def format_chapter_title("street"), do: gettext("Street Photography")
+  def format_chapter_title("taiwan"), do: gettext("Taiwan")
+  def format_chapter_title("wedding"), do: gettext("Wedding")
+  def format_chapter_title(_), do: gettext("Gallery")
 
-  def section_image(nil), do: ""
-  def section_image(""), do: ""
-  def section_image(name), do: "/images/photography/#{name}.webp"
+  def chapter_image(nil), do: ""
+  def chapter_image(""), do: ""
+  def chapter_image(name), do: "/images/photography/#{name}.webp"
 
   defp render_modal_content(assigns) do
     ~H"""
@@ -80,19 +80,19 @@ defmodule PortfolioWeb.PhotographyLive.Index do
       "flex flex-col"
     ]}>
       <header class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold uppercase">{format_section_title(@modal_section)}</h2>
+        <h2 class="text-2xl font-bold uppercase">{format_chapter_title(@modal_chapter)}</h2>
         <button class={["text-white text-2xl font-bold", "close-modal"]} phx-click="close_modal">
           &times;
         </button>
       </header>
 
       <div class="space-y-4">
-        {render_modal_content(assigns, @modal_section)}
+        {render_modal_content(assigns, @modal_chapter)}
       </div>
 
       <nav class="flex">
         <button
-          :if={@modal_section}
+          :if={@modal_chapter}
           class={[
             "close-modal",
             "grow-0",
@@ -113,8 +113,8 @@ defmodule PortfolioWeb.PhotographyLive.Index do
         </button>
 
         <a
-          :if={@modal_section}
-          href={~p"/#{@modal_section}"}
+          :if={@modal_chapter}
+          href={~p"/#{@modal_chapter}"}
           class={[
             "grow-0",
             "block mt-8 mx-auto",
@@ -402,9 +402,9 @@ defmodule PortfolioWeb.PhotographyLive.Index do
     """
   end
 
-  defp render_modal_content(assigns, _section) do
+  defp render_modal_content(assigns, _chapter) do
     ~H"""
-    <p>No content available for this section yet.</p>
+    <p>No content available for this chapter yet.</p>
     """
   end
 end
