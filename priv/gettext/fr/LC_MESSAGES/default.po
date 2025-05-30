@@ -1841,6 +1841,7 @@ msgstr "Vie de camp"
 #: lib/portfolio_web/live/amvcc_live/blog.html.heex:132
 #: lib/portfolio_web/live/amvcc_live/blog.html.heex:188
 #: lib/portfolio_web/live/photography_live/index.ex:126
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Show more"
 msgstr "Voir plus"
@@ -2340,3 +2341,124 @@ msgstr "J’aime profondément ce pays — ses gens, son accueil, son histoire c
 #, elixir-autogen, elixir-format
 msgid "Like many in France, I grew up dreaming of Japan—immersed in manga, films, and the music of Joe Hisaishi, whom I hope to photograph one day. That fascination has never left me. As an adult, I wanted to go beyond the dream, to live there for several months and feel the soul and culture of the country from within."
 msgstr "Comme beaucoup en France, j’ai grandi en rêvant du Japon — bercé par les mangas, les films, et la musique de Joe Hisaishi, que je rêverais un jour de photographier. Cette fascination ne m’a jamais quitté. Devenu adulte, j’ai voulu aller au-delà du rêve, y vivre plusieurs mois, pour ressentir l’âme et la culture du pays de l’intérieur."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:110
+#, elixir-autogen, elixir-format
+msgid "A heartfelt wedding in Coucy, from the intimate charm of the local church to a joyful priest and a family filled with warmth. Anaïs and Jean-Michel’s love, their radiant son, and the tender presence of loved ones made for a day full of life and grace — and perfect moments to photograph."
+msgstr "Un mariage plein de charme et d'émotion à Coucy. Cérémonie dans la jolie église, intimiste et tamisée. Un prêtre enjoué, des invités tendres, et ce couple merveilleux accompagné de leur fils — lumineux, aux mots bien trouvés, d'une énergie solaire et curieux de tout. Chaque lieu, chaque instant, a offert une matière photographique riche et vivante."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:20
+#, elixir-autogen, elixir-format
+msgid "A moment suspended in the workshop: ancient gestures, taut threads, concentrated silence, interspersed with bursts of laughter"
+msgstr "Un moment suspendu dans l’atelier : gestes anciens, fils tendus, silence concentré, entrecoupé d'éclats de rire."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:11
+#, elixir-autogen, elixir-format
+msgid "A soft winter light, a strong bond, and shared laughter among ancient stones."
+msgstr "Une lumière d’hiver douce, un lien fort et des rires partagés entre les pierres anciennes."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:44
+#, elixir-autogen, elixir-format
+msgid "A tender kiss under Geneva’s night lights, glowing softly beneath an artful play of illumination."
+msgstr "Lumière de Genève de nuit, doux baiser à la faible lueur d'une animation lumineuse."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:77
+#, elixir-autogen, elixir-format
+msgid "A vibrant university troupe: imaginary battles, sung epics, and bursts of humor. A breath of fresh theatrical air."
+msgstr "Spectacle d’une troupe universitaire pleine de talent : batailles imaginaires, épopées chantées et humour déployé. Un vrai souffle de fraîcheur."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:31
+#, elixir-autogen, elixir-format
+msgid "A warm winter wedding, an intimate celebration where every glance felt like a promise."
+msgstr "Un mariage d’hiver chaleureux, une fête intime où chaque regard était une promesse."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:55
+#, elixir-autogen, elixir-format
+msgid "A wedding filled with grace, joy, and depth. Glances met and smiled; the gentle spring breeze only made hearts warmer."
+msgstr "Un mariage entre grâce, joie et intensité. Les regards se cherchent, se trouvent, se sourient. Le vent léger du printemps n’a pas refroidi les cœurs — bien au contraire."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:176
+#, elixir-autogen, elixir-format
+msgid "A wedding in China, filled with elegance, grace, and affection. Chinese traditions intertwined with tender family glances, gentle gestures, and shy yet heartfelt smiles. XiaoYang and WenTian lit up the day with their quiet warmth and deep bond. I wholeheartedly wish them joy and love in their life together!"
+msgstr "Un mariage en Chine, plein de douceur, de respect et d’élégance. Les traditions chinoises se mêlaient aux regards tendres de la famille, aux gestes délicats, aux sourires timides mais sincères. XiaoYang et WenTian ont illuminé cette journée par leur complicité et leur calme rayonnant. Tous mes vœux de bonheur les accompagnent sur le chemin de leur vie commune !"
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:143
+#, elixir-autogen, elixir-format
+msgid "At the museum of the Battle of Crécy (1346), run by passionate enthusiasts, hosted our reenactment of life and combat in that era — especially honoring the Sir of Coucy who fell in the battle. A vibrant, human, and meaningful day of history brought to life."
+msgstr "Au musée de la bataille de Crécy (1346), animé par des passionnés. Nous y avons reconstitué la vie civile de l’époque, en hommage notamment au Sir de Coucy (Enguerrand VI de Coucy), mort lors de cette bataille. Une journée enrichissante, vivante et pleine d’humanité."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:18
+#, elixir-autogen, elixir-format
+msgid "Sewing workshop"
+msgstr "Atelier de couture"
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:66
+#, elixir-autogen, elixir-format
+msgid "Beneath ancient vaults, the orchestra brought the walls to life. Strings, woodwinds, and brass in conversation — emotion hanging in the air."
+msgstr "Sous les voûtes anciennes, l’orchestre a fait vibrer les murs. Cordes, bois et cuivres en dialogue, émotion suspendue dans l’air."
+
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:118
+#, elixir-autogen, elixir-format
+msgid "Empty portfolio chapter"
+msgstr "Chapitre du portfolio vide"
+
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:2
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:154
+#, elixir-autogen, elixir-format
+msgid "Home"
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:139
+#, elixir-autogen, elixir-format
+msgid "I am so sorry but at the moment, this portfolio gallery is empty"
+msgstr "Je suis désolée, mais pour le moment, cette galerie de portfolio est vide."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:200
+#, elixir-autogen, elixir-format
+msgid "Minuit avant la Nuit (La Lune des Pirates) returns to Amiens in the lush setting of Saint-Pierre park, with another promising lineup. 2025 will feature Hoshi, Philippe Katerine, or Kavinsky. I’m eager to revisit the unique vibe of this festival — blending greenery, electro-pop, and collective joy — just like in 2024!"
+msgstr "Le festival Minuit avant la Nuit (La Lune des Pirates) revient à Amiens, dans le parc Saint-Pierre, avec une programmation encore une fois prometteuse. Cette édition accueillera notamment Hoshi, Philippe Katerine ou encore Kavinsky. J’ai hâte d’y retrouver cette ambiance unique entre verdure, musique électro-pop et passion collective, comme ce fut le cas en 2024 !"
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:245
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Photographies gallery - "
+msgstr "Galerie de photographie - "
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:241
+#, elixir-autogen, elixir-format
+msgid "Photographies timeline gallery"
+msgstr "Galerie chronologique de photographie"
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:154
+#, elixir-autogen, elixir-format
+msgid "Pont-Croix 1358 is a medieval reenactment project in Brittany, recreating a 14th-century village. Over two weekends, we contributed to building the site and bringing it to life. One of the weekends brought together many reenactment groups, sharing knowledge and passion in a vibrant atmosphere. During the Perseid meteor shower — unusually enhanced by a solar storm — the night sky glowed with purple hues. A magical blend of history and the stars."
+msgstr "Pont-Croix 1358 est un projet de reconstitution médiévale situé dans le Finistère, en Bretagne, recréant un village au XIVe siècle. Durant deux week-ends, nous avons animé le lieu et participé à la construction de ce décor vivant. L’un de ces week-ends rassemblait plusieurs compagnies, dans une belle effervescence de passion, d’échanges et de savoir-faire. Le tout sous les Perséides, renforcées cette année par une tempête solaire qui a teinté le ciel nocturne de nuances violettes. Un moment suspendu, entre Histoire et cosmos."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:88
+#, elixir-autogen, elixir-format
+msgid "Stone restoration by calloused hands, shared effort under Coucy’s skies. Evenings filled with laughter and the scent of warm meals — unforgettable days of work and kinship."
+msgstr "Chantier de restauration entre pierres levées et charpente posée. Le soir, les rires se mêlent au fumet des repas partagés. Des journées pleines, humaines, inoubliables."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:121
+#, elixir-autogen, elixir-format
+msgid "The Minuit avant la Nuit festival in Amiens, set in the lush Saint-Pierre park, offered a warm and laid-back atmosphere. 2024’s edition was a true joy — especially photographing L’Impératrice, a French pop band I truly love."
+msgstr "Festival Minuit avant la Nuit à Amiens, dans le parc Saint-Pierre. Un cadre verdoyant, une ambiance douce et bienveillante. Cette édition 2024 fut un régal, notamment grâce à la présence de L’Impératrice, groupe de pop française que j’affectionne particulièrement."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:165
+#, elixir-autogen, elixir-format
+msgid "The Médiévales de Laon are a lively event celebrating the medieval heritage of Laon, in northern France, with musicians, craftsmen, living camps, and shows. We were there with the Seigneurie de Coucy, portraying 14th-century life. Despite moments of heavy rain, the atmosphere remained joyful, warm, and uplifted by the smiles of the public."
+msgstr "Les Médiévales de Laon sont un grand événement festif qui anime la cité médiévale de Laon, dans l’Aisne, avec musiciens, artisans, campements et spectacles. Nous y étions avec la Seigneurie de Coucy, pour faire revivre le quotidien du XIVe siècle. Malgré une pluie battante à certains moments, l’ambiance restait joyeuse, solidaire, et portée par les sourires des visiteurs."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:189
+#, elixir-autogen, elixir-format
+msgid "The Seigneuriales of Coucy (AMVCC) are held each year at the fortress of Coucy-le-Château, organized by the AMVCC. They gather reenactors and visitors around shows, crafts, and medieval life. The 2025 edition was blessed with sunny weather and record attendance. Birds of prey added a spectacular aerial touch to this immersive historical weekend."
+msgstr "Les Seigneuriales de Coucy sont organisées chaque année par l’AMVCC dans la forteresse de Coucy-le-Château, dans l’Aisne. Elles rassemblent compagnies médiévales et curieux autour de spectacles, animations et reconstitutions. L’édition 2025 fut marquée par une météo radieuse et une affluence record. Les démonstrations de rapaces ont émerveillé petits et grands, ajoutant une touche aérienne à ce week-end déjà riche d’histoire."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:99
+#, elixir-autogen, elixir-format
+msgid "The Seigneuriales of Coucy (AMVCC) bring the medieval city to life for a weekend. I joined as a reenactor with the Seigneurie de Coucy. Dancing, feasting, lively exchanges between groups from all over France, and quiet moments by the fire — a timeless escape."
+msgstr "Les Seigneuriales de Coucy (AMVCC) font revivre la cité médiévale le temps d’un week-end. J’y ai participé avec la Seigneurie de Coucy en tant que reconstituteur. Danses, ripailles, discussions passionnées entre plusieurs troupes de France et de Belgique, et veillées au coin du feu… Une bulle hors du temps."
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:132
+#, elixir-autogen, elixir-format
+msgid "New edition of Coucy à la Merveille — a grand historical show blending theatre, light, and emotion to bring Coucy’s history to life. This year leaned less into fantasy, but remained breathtaking thanks to a passionate team: from performers to costume designers, technicians to writers."
+msgstr "Nouvelle édition du grand spectacle historique de Coucy : Ordalies ! Coucy à la Merveille (AMVCC) retrace l’histoire du site, entre théâtre, lumière et émotion. Moins féérique, plus historique, mais toujours aussi époustouflant. L’équipe, des acteurs aux costumiers, des techniciens aux auteurs, a mis tout son cœur à l’ouvrage."
