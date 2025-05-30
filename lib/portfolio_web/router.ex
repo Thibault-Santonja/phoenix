@@ -58,7 +58,8 @@ defmodule PortfolioWeb.Router do
     pipe_through :photography
 
     live "/", PhotographyLive.Index, :index
-    live "/:gallery", PhotographyLive.Index, :index
+    live "/:section", PhotographyLive.Index, :index
+    live "/gallery/:section", PhotographyLive.Timeline, :index
   end
 
   scope "/", PortfolioWeb, host: "tech." do
