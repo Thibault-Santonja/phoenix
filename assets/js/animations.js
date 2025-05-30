@@ -58,8 +58,6 @@ export const AnimateGallery = {
         ease: "out(3)",
         duration: 2000,
         delay: i * 120,
-        // loop: true,
-        // alternate: true,
         autoplay: onScroll({
           target: $image,
           container: container, // $image.parentNode,
@@ -259,7 +257,6 @@ export const YearTrigger = {
     }
 
     function animateDigitRoll(digitWrapper, fromDigit, toDigit) {
-      console.log([digitWrapper, fromDigit, toDigit]);
       digitWrapper.innerHTML = ""; // Clear previous
       const sign = fromDigit > toDigit;
       const toElY = sign ? "translateY(100%)" : "translateY(-100%)";
