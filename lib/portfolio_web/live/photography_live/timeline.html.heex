@@ -1,34 +1,34 @@
-<style>
-  #timeline-year {
-    transition: transform 0.7s ease-out;
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
-  }
-
-  #timeline-year.flip {
-    transform: translate(-50%, -50%) rotateX(180deg);
-  }
-</style>
-
-<nav class="sticky top-0 z-10 bg-black/70 backdrop-blur-md px-4 py-2 flex justify-end gap-4 text-sm text-white">
-  <%= for year <- @years do %>
-    <a
-      href={"#year-#{year}"}
-      data-anchor-year
-      data-year={year}
-      class="transition-opacity duration-300 opacity-60 hover:opacity-100 hover:underline"
-    >
-      {year}
-    </a>
-  <% end %>
+<nav class="sticky top-0 z-10 bg-black/70 backdrop-blur-md px-4 py-2 text-sm text-white flex">
+  <a href={~p"/"}>{gettext("Home")}</a>
+  <div class="grow flex justify-end gap-4">
+    <%= for year <- @years do %>
+      <a
+        href={"#year-#{year}"}
+        data-anchor-year
+        data-year={year}
+        class="transition-opacity duration-300 opacity-60 hover:opacity-100"
+      >
+        {year}
+      </a>
+    <% end %>
+  </div>
 </nav>
 
 <div
   id="timeline-year"
-  class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-9xl font-bold text-white opacity-10 select-none pointer-events-none z-[-30] transition-transform duration-700 ease-out rotate-x-0"
+  class={[
+    "fixed top-1/2 left-1/2",
+    "-translate-x-1/2 -translate-y-1/2 z-[-30]",
+    "opacity-10 select-none pointer-events-none",
+    "transition-transform duration-700 ease-out rotate-x-0",
+    "text-9xl font-bold text-white",
+    "flex w-full flex-nowrap px-8"
+  ]}
 >
   <%= for year_digit <- List.first(@years) |> Integer.to_string() |> String.graphemes do %>
-    <span class="digit">{year_digit}</span>
+    <span class="digit-wrapper inline-block overflow-hidden h-[1em] w-[0.65em] align-baseline">
+      <span class="digit inline-block w-full text-center">{year_digit}</span>
+    </span>
   <% end %>
 </div>
 
@@ -37,51 +37,64 @@
     <li id={"year-#{year}"} class="scroll-mt-32" phx-hook="YearTrigger" data-year={year}>
       <div class="h-[70vh] flex items-center justify-center" />
 
-      <ul class="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6">
+      <ul class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         <%= for album <- @data[year] |> Enum.sort(&(&1.date > &2.date)) do %>
           <li class={[
-            "bg-black/80 text-white p-6 rounded-xl",
-            "col-span-2",
-            Enum.random(["sm:col-start-1", "sm:col-start-2"])
+            "bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl",
+            "col-span-2 lg:col-span-3",
+            Enum.random(["sm:col-start-1", "sm:col-start-2"]),
+            Enum.random(["lg:col-start-1", "lg:col-start-2"])
           ]}>
-            <header class="mb-4">
-              <h2 class="text-xl font-semibold">
-                <span class="text-xs text-gray-400 mr-4">{album.date}</span>
-                {album.title}
-              </h2>
-            </header>
+            <article>
+              <header class="mb-4">
+                <h2 class="text-xl font-semibold">
+                  <span class="text-xs text-gray-400 mr-4">{album.date}</span>
+                  {album.title}
+                </h2>
+              </header>
 
-            <img
-              src={album.photography}
-              class="object-cover max-h-60 w-full rounded-lg mb-4"
-              loading="lazy"
-            />
-            <p class="text-sm text-gray-300 leading-relaxed">
-              {album.description}
-            </p>
-
-            <nav class="flex justify-end mt-6">
-              <a
-                href={~p"/?section=#{album.url}"}
-                class={[
-                  "grow-0",
-                  "inline-flex items-center gap-2",
-                  "group hover:scale-105 duration-300",
-                  "py-2 px-4 mt-8",
-                  "text-sm",
-                  "border-amvcc-base-300 rounded-lg border-2"
-                ]}
-              >
-                {gettext("Show more")}
-                <.icon
-                  name="hero-arrow-right-circle-solid"
+              <section class="lg:grid lg:grid-cols-5">
+                <img
+                  src={album.photography}
                   class={[
-                    "h-4 w-4",
-                    "group-hover:rotate-[6.283rad] duration-500 ease-out"
+                    "object-cover w-full rounded-lg mb-4",
+                    "max-h-120",
+                    "lg:col-span-3"
                   ]}
+                  loading="lazy"
                 />
-              </a>
-            </nav>
+                <p class={[
+                  "text-sm text-gray-300 leading-relaxed",
+                  "lg:px-8",
+                  "lg:col-span-2"
+                ]}>
+                  {album.description}
+                </p>
+              </section>
+
+              <nav class="flex justify-end mt-4">
+                <a
+                  href={~p"/?section=#{album.url}"}
+                  class={[
+                    "grow-0",
+                    "inline-flex items-center gap-2",
+                    "group hover:scale-105 duration-300",
+                    "py-2 px-4 mt-8",
+                    "text-sm",
+                    "border-amvcc-base-300 rounded-lg border-2"
+                  ]}
+                >
+                  {gettext("Show more")}
+                  <.icon
+                    name="hero-arrow-right-circle-solid"
+                    class={[
+                      "h-4 w-4",
+                      "group-hover:rotate-[6.283rad] duration-500 ease-out"
+                    ]}
+                  />
+                </a>
+              </nav>
+            </article>
           </li>
         <% end %>
       </ul>

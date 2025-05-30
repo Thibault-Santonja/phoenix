@@ -1,5 +1,9 @@
-/* --- For photography menu --- */
 #photography {
+    /*
+    --------------------------------------------
+    --------------- LANDING PAGE ---------------
+    --------------------------------------------
+    */
     /* Display image only when related link is hovered */
     #gallery img {
         /* display: none; */
@@ -80,5 +84,25 @@
             font-size,
             line-height,
             cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
+    }
+
+    /*
+    ---------------------------------------------
+    --------------- TIMELINE PAGE ---------------
+    ---------------------------------------------
+    */
+    #timeline-year {
+        transition: transform 0.7s ease-out;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+    }
+
+    #timeline-year.flip {
+        transform: translate(-50%, -50%) rotateX(180deg);
+    }
+
+    .digit > div {
+        line-height: 1em;
+        font-size: inherit;
     }
 }
