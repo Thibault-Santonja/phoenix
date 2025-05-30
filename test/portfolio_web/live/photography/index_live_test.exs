@@ -17,9 +17,18 @@ defmodule PortfolioWeb.Photography.IndexLiveTest do
       {:ok, _index_live, html} = live(conn, subdomain <> "/")
       assert html =~ "Thibault San Photographie"
     end
+
+    test "redirection to gallery ", %{conn: conn, subdomain: subdomain} do
+      {:ok, index_live, _html} = live(conn, subdomain <> "/")
+
+      index_live
+      |> element("a", "Galerie")
+      |> render_click()
+      |> follow_redirect(conn, ~p"/timeline")
+    end
   end
 
-  describe "Photography section" do
+  describe "Photography chapter" do
     setup [:open_subdomain]
 
     test "/?hl=fr path render default page in french", %{conn: conn, subdomain: subdomain} do
@@ -40,60 +49,60 @@ defmodule PortfolioWeb.Photography.IndexLiveTest do
       assert html =~ "Thibault San Photography"
     end
 
-    test "/?hl=fr&section=landscape path render landscape section in french", %{
+    test "/?hl=fr&chapter=landscape path render landscape chapter in french", %{
       conn: conn,
       subdomain: subdomain
     } do
-      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=fr&section=landscape")
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=fr&chapter=landscape")
       assert html =~ "photographie de paysage"
     end
 
-    test "/?hl=en&section=landscape path render landscape section in english", %{
+    test "/?hl=en&chapter=landscape path render landscape chapter in english", %{
       conn: conn,
       subdomain: subdomain
     } do
-      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=en&section=landscape")
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?hl=en&chapter=landscape")
       assert html =~ "landscape photography"
     end
 
-    test "/?section=landscape path render landscape section in default language (french)", %{
+    test "/?chapter=landscape path render landscape chapter in default language (french)", %{
       conn: conn,
       subdomain: subdomain
     } do
-      {:ok, _index_live, html} = live(conn, subdomain <> "/?section=landscape")
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?chapter=landscape")
       assert html =~ "photographie de paysage"
     end
 
-    test "/?section=random path render default section in default language (french)", %{
+    test "/?chapter=random path render default chapter in default language (french)", %{
       conn: conn,
       subdomain: subdomain
     } do
-      {:ok, _index_live, html} = live(conn, subdomain <> "/?section=random")
+      {:ok, _index_live, html} = live(conn, subdomain <> "/?chapter=random")
       assert html =~ "Galerie"
     end
   end
 
-  describe "format_section_title/1" do
-    test "returns translated title for known sections" do
-      assert Index.format_section_title("amvcc") == "AMVCC"
-      assert Index.format_section_title("music") == "Concerts & Music"
-      assert Index.format_section_title("street") == "Street Photography"
+  describe "format_chapter_title/1" do
+    test "returns translated title for known chapters" do
+      assert Index.format_chapter_title("amvcc") == "AMVCC"
+      assert Index.format_chapter_title("music") == "Concerts & Music"
+      assert Index.format_chapter_title("street") == "Street Photography"
     end
 
-    test "returns 'Gallery' for unknown section" do
-      assert Index.format_section_title("unknown") == "Gallery"
+    test "returns 'Gallery' for unknown chapter" do
+      assert Index.format_chapter_title("unknown") == "Gallery"
     end
   end
 
-  describe "section_image/1" do
-    test "returns correct image paths for known sections" do
+  describe "chapter_image/1" do
+    test "returns correct image paths for known chapters" do
       string = "amvcc"
-      assert Index.section_image(string) == "/images/photography/#{string}.webp"
+      assert Index.chapter_image(string) == "/images/photography/#{string}.webp"
     end
 
-    test "returns empty string for sections without image" do
-      assert Index.section_image("") == ""
-      assert Index.section_image(nil) == ""
+    test "returns empty string for chapters without image" do
+      assert Index.chapter_image("") == ""
+      assert Index.chapter_image(nil) == ""
     end
   end
 end

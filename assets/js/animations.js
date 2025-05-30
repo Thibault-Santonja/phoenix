@@ -58,8 +58,6 @@ export const AnimateGallery = {
         ease: "out(3)",
         duration: 2000,
         delay: i * 120,
-        // loop: true,
-        // alternate: true,
         autoplay: onScroll({
           target: $image,
           container: container, // $image.parentNode,
@@ -149,7 +147,7 @@ export const AnimateTimelineScroll = {
       },
       {
         root: null,
-        threshold: 0.2, // 20% visible
+        // threshold: 0.2, // 20% visible
         rootMargin: "-20% 0px -50% 0px", // zone d’activation centrée verticalement
       },
     );
@@ -234,5 +232,125 @@ export const GalleryModal = {
         modalImage.src = "";
       }
     });
+  },
+};
+
+export const YearTrigger = {
+  mounted() {
+    if (window.__yearObserverInitialized) return;
+    window.__yearObserverInitialized = true;
+
+    const yearEl = document.getElementById("timeline-year");
+    const navLinks = document.querySelectorAll("[data-anchor-year]");
+    const sections = document.querySelectorAll("[data-year]");
+    let currentYear = parseInt(
+      [...yearEl.querySelectorAll(".digit")].map((d) => d.textContent).join(""),
+    );
+
+    function animateNavYearMenu(activeYear) {
+      navLinks.forEach((link) => {
+        const isActive = parseInt(link.dataset.year) === activeYear;
+        link.classList.toggle("opacity-100", isActive);
+        link.classList.toggle("opacity-60", !isActive);
+        link.classList.toggle("font-semibold", isActive);
+      });
+    }
+
+    function animateDigitRoll(digitWrapper, fromDigit, toDigit) {
+      digitWrapper.innerHTML = ""; // Clear previous
+      const sign = fromDigit > toDigit;
+      const toElY = sign ? "translateY(100%)" : "translateY(-100%)";
+      const fromElYTranslation = sign ? ["0%", "-100%"] : ["0%", "100%"];
+      const toElYTranslation = sign ? ["100%", "0%"] : ["-100%", "0%"];
+
+      const fromEl = document.createElement("div");
+      fromEl.textContent = fromDigit;
+      fromEl.style.position = "absolute";
+      fromEl.style.top = "0";
+      fromEl.style.left = "0";
+      fromEl.style.right = "0";
+      fromEl.style.textAlign = "center";
+      fromEl.style.opacity = "1";
+      fromEl.style.transform = "translateY(0%)";
+
+      const toEl = document.createElement("div");
+      toEl.textContent = toDigit;
+      toEl.style.position = "absolute";
+      toEl.style.top = "0";
+      toEl.style.left = "0";
+      toEl.style.right = "0";
+      toEl.style.textAlign = "center";
+      toEl.style.opacity = "0";
+      toEl.style.transform = toElY;
+
+      const container = document.createElement("div");
+      container.style.position = "relative";
+      container.style.height = "1em";
+      container.appendChild(fromEl);
+      container.appendChild(toEl);
+
+      digitWrapper.appendChild(container);
+
+      animate(fromEl, {
+        translateY: fromElYTranslation,
+        opacity: [1, 0],
+        duration: 500,
+        easing: "easeInOutCubic",
+      });
+
+      animate(toEl, {
+        translateY: toElYTranslation,
+        opacity: [0, 1],
+        duration: 500,
+        easing: "easeInOutCubic",
+        // complete: () => {
+        //   digitWrapper.innerHTML = `
+        //     <span class="digit inline-block w-full text-center">${toDigit}</span>
+        //   `;
+        // },
+      });
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort(
+            (a, b) =>
+              Math.abs(a.boundingClientRect.top) -
+              Math.abs(b.boundingClientRect.top),
+          );
+
+        const topEntry = visible[0];
+        if (!topEntry) return;
+
+        const newYear = parseInt(topEntry.target.dataset.year);
+        if (newYear !== currentYear) {
+          const fromStr = String(currentYear).padStart(4, "0");
+          const toStr = String(newYear).padStart(4, "0");
+          const digitWrappers = yearEl.querySelectorAll(".digit-wrapper");
+
+          for (let i = 0; i < 4; i++) {
+            const fromDigit = parseInt(fromStr[i]);
+            const toDigit = parseInt(toStr[i]);
+
+            if (fromDigit != toDigit) {
+              animateDigitRoll(digitWrappers[i], fromDigit, toDigit);
+            }
+          }
+
+          currentYear = newYear;
+
+          // Update navbar highlight
+          animateNavYearMenu(newYear);
+        }
+      },
+      {
+        rootMargin: "-20% 0px -80% 0px",
+      },
+    );
+
+    animateNavYearMenu(currentYear);
+    sections.forEach((section) => observer.observe(section));
   },
 };

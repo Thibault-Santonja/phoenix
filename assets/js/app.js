@@ -28,6 +28,7 @@ import {
   AnimatePath,
   AnimateTimelineScroll,
   GalleryModal,
+  YearTrigger,
 } from "./animations";
 
 // Hook animate this
@@ -40,6 +41,7 @@ Hooks.AnimateGallery = AnimateGallery;
 Hooks.AnimatePath = AnimatePath;
 Hooks.AnimateTimelineScroll = AnimateTimelineScroll;
 Hooks.GalleryModal = GalleryModal;
+Hooks.YearTrigger = YearTrigger;
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
