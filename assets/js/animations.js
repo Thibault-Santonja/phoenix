@@ -149,7 +149,7 @@ export const AnimateTimelineScroll = {
       },
       {
         root: null,
-        threshold: 0.2, // 20% visible
+        // threshold: 0.2, // 20% visible
         rootMargin: "-20% 0px -50% 0px", // zone d’activation centrée verticalement
       },
     );
@@ -234,5 +234,56 @@ export const GalleryModal = {
         modalImage.src = "";
       }
     });
+  },
+};
+
+export const YearTrigger = {
+  mounted() {
+    if (window.__yearObserverInitialized) return;
+    window.__yearObserverInitialized = true;
+
+    const yearEl = document.getElementById("timeline-year");
+    const navLinks = document.querySelectorAll("[data-anchor-year]");
+    const sections = document.querySelectorAll("[data-year]");
+
+    let currentYear = parseInt(
+      [...yearEl.querySelectorAll(".digit")].map((d) => d.textContent).join(""),
+    );
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(
+        (entry) => {
+          if (entry.isIntersecting) {
+            const newYear = parseInt(entry.target.dataset.year);
+
+            if (newYear !== currentYear) {
+              animate(yearEl, {
+                innerHTML: [currentYear, newYear],
+                easing: "easeInOutQuad",
+                round: true,
+                duration: 300,
+              });
+
+              currentYear = newYear;
+
+              // Update navbar highlight
+              navLinks.forEach((link) => {
+                const isActive = parseInt(link.dataset.year) === newYear;
+                link.classList.toggle("opacity-100", isActive);
+                link.classList.toggle("opacity-60", !isActive);
+                link.classList.toggle("font-semibold", isActive);
+                link.classList.toggle("underline", isActive);
+              });
+            }
+          }
+        },
+        {
+          root: null,
+          rootMargin: "-50% 0px -50% 0px", // zone d’activation centrée verticalement
+        },
+      );
+    });
+
+    sections.forEach((section) => observer.observe(section));
   },
 };
