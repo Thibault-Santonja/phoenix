@@ -1,4 +1,90 @@
 #photography {
+    .scanlines {
+        --scanlines-opacity: 0.4;
+        --scanlines-size: 4px;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 100;
+        opacity: calc(0.6 * var(--scanlines-opacity));
+        will-change: opacity;
+        animation: opacity 3s linear infinite;
+
+        &:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.5) 51%
+            );
+            background-size: 100% var(--scanlines-size);
+            will-change: background, background-size;
+            animation: scanlines 0.2s linear infinite;
+        }
+    }
+
+    .scanlines-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: oklch(0.5 0.1 260 / 90%); /*  oklch(0.5359 0.2572 266.5)*/
+    }
+
+    /* Animations */
+    @keyframes opacity {
+        0% {
+            opacity: calc(0.6 * var(--scanlines-opacity));
+        }
+        20% {
+            opacity: calc(0.3 * var(--scanlines-opacity));
+        }
+        35% {
+            opacity: calc(0.5 * var(--scanlines-opacity));
+        }
+        50% {
+            opacity: calc(0.8 * var(--scanlines-opacity));
+        }
+        60% {
+            opacity: calc(0.4 * var(--scanlines-opacity));
+        }
+        80% {
+            opacity: calc(0.7 * var(--scanlines-opacity));
+        }
+        100% {
+            opacity: calc(0.6 * var(--scanlines-opacity));
+        }
+    }
+
+    @keyframes scanlines {
+        from {
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.5) 51%
+            );
+            background-size: 100% var(--scanlines-size);
+        }
+        to {
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.5) 50%,
+                transparent 51%
+            );
+            background-size: 100% var(--scanlines-size);
+        }
+    }
+
     /*
     --------------------------------------------
     --------------- LANDING PAGE ---------------
@@ -8,6 +94,9 @@
     #gallery img {
         /* display: none; */
         opacity: 0;
+        transition:
+            opacity,
+            cubic-bezier(0.25, 1, 0.5, 1) 0.3s;
     }
 
     #gallery button:hover + img,
