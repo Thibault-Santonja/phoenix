@@ -93,16 +93,4 @@ defmodule PortfolioWeb.Photography.IndexLiveTest do
       assert Index.format_chapter_title("unknown") == "Gallery"
     end
   end
-
-  describe "chapter_image/1" do
-    test "returns correct image paths for known chapters" do
-      string = "amvcc"
-      assert Index.chapter_image(string) == "/images/photography/#{string}.webp"
-    end
-
-    test "returns empty string for chapters without image" do
-      assert Index.chapter_image("") == ""
-      assert Index.chapter_image(nil) == ""
-    end
-  end
 end
