@@ -1,4 +1,5 @@
 defmodule PortfolioWeb.PhotographyLive.Index do
+  import PortfolioWeb.Components.PhotographyList
   use PortfolioWeb, :live_view
 
   @impl true
@@ -59,17 +60,13 @@ defmodule PortfolioWeb.PhotographyLive.Index do
   def format_chapter_title("events"), do: gettext("Events")
   def format_chapter_title("japan"), do: gettext("Japan")
   def format_chapter_title("landscape"), do: gettext("Landscape")
-  def format_chapter_title("motherhood"), do: gettext("Motherhood")
+  def format_chapter_title("motherhood"), do: gettext("Motherhood & Families")
   def format_chapter_title("music"), do: gettext("Concerts & Music")
   def format_chapter_title("reenactment"), do: gettext("Re-enactment")
   def format_chapter_title("street"), do: gettext("Street Photography")
   def format_chapter_title("taiwan"), do: gettext("Taiwan")
   def format_chapter_title("wedding"), do: gettext("Wedding")
   def format_chapter_title(_), do: gettext("Gallery")
-
-  def chapter_image(nil), do: ""
-  def chapter_image(""), do: ""
-  def chapter_image(name), do: "/images/photography/#{name}.webp"
 
   defp render_modal_content(assigns) do
     ~H"""
