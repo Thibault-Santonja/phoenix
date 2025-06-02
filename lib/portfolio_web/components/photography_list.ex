@@ -61,7 +61,7 @@ defmodule PortfolioWeb.Components.PhotographyList do
     <ul
       id={@id}
       class={[
-        "h-full text-lg sm:text-2xl justify-center",
+        "h-full text-lg md:text-2xl justify-center",
         "flex items-stretch flex-col flex-nowrap",
         @class
       ]}

@@ -2372,11 +2372,6 @@ msgstr "Spectacle d’une troupe universitaire pleine de talent : batailles imag
 msgid "A warm winter wedding, an intimate celebration where every glance felt like a promise."
 msgstr "Un mariage d’hiver chaleureux, une fête intime où chaque regard était une promesse."
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:55
-#, elixir-autogen, elixir-format
-msgid "A wedding filled with grace, joy, and depth. Glances met and smiled; the gentle spring breeze only made hearts warmer."
-msgstr "Un mariage entre grâce, joie et intensité. Les regards se cherchent, se trouvent, se sourient. Le vent léger du printemps n’a pas refroidi les cœurs — bien au contraire."
-
 #: lib/portfolio_web/live/photography_live/timeline.ex:176
 #, elixir-autogen, elixir-format
 msgid "A wedding in China, filled with elegance, grace, and affection. Chinese traditions intertwined with tender family glances, gentle gestures, and shy yet heartfelt smiles. XiaoYang and WenTian lit up the day with their quiet warmth and deep bond. I wholeheartedly wish them joy and love in their life together!"

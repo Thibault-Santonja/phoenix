@@ -48,12 +48,11 @@
     --scanlines-background-color: oklch(
         0.5 0.1 260 / 80%
     ); /*  oklch(0.5359 0.2572 266.5)*/
-    --list-element-font-size: 1.5;
 
     .scanlines {
         position: fixed;
-        left: 0;
         top: 0;
+        left: 0;
         width: 100vw;
         height: 100vh;
         pointer-events: none;
@@ -90,11 +89,6 @@
         background: var(--scanlines-background-color);
     }
 
-    /*
-    --------------------------------------------
-    --------------- LANDING PAGE ---------------
-    --------------------------------------------
-    */
     /* Display image only when related link is hovered */
     #gallery aside {
         /* display: none; */
@@ -118,8 +112,8 @@
     /* Display animation on link hover (only small or bigger screens)) */
     /* @media only screen and (min-width: 40rem) { */
     #gallery li {
-        font-size: calc(var(--list-element-font-size) * 1rem);
-        line-height: calc(2 / var(--list-element-font-size));
+        font-size: 1.5rem (24px);
+        line-height: calc(2 / 1.5);
     }
 
     #gallery li:not(:first-child) button {
@@ -127,50 +121,50 @@
     }
 
     #gallery li:hover {
-        font-size: calc(var(--list-element-font-size) * 1.25rem);
-        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.25));
+        font-size: 1.875rem;
+        line-height: calc(2.25 / 1.875);
     }
 
     /* Right side */
     #gallery li:hover + li {
-        font-size: calc(var(--list-element-font-size) * 1.15rem);
-        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.15));
+        font-size: 1.75rem;
+        line-height: calc(2.25 / 1.75);
     }
 
     #gallery li:hover + li + li {
-        font-size: calc(var(--list-element-font-size) * 1.08rem);
-        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.08));
+        font-size: 1.62rem;
+        line-height: calc(2.25 / 1.62);
     }
 
     #gallery li:hover + li + li + li {
-        font-size: calc(var(--list-element-font-size) * 1.03rem);
-        line-height: calc(2.25 / var(--list-element-font-size) * 1.03);
+        font-size: 1.545rem;
+        line-height: calc(2.25 / 1.545);
     }
 
     #gallery li:hover + li + li + li {
-        font-size: calc(var(--list-element-font-size) * 1.01rem);
-        line-height: calc(2.25 / var(--list-element-font-size) * 1.01);
+        font-size: 1.515rem;
+        line-height: calc(2.25 / 1.515);
     }
 
     /* Left side */
     #gallery li:has(+ li:hover) {
-        font-size: calc(var(--list-element-font-size) * 1.15rem);
-        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.15));
+        font-size: 1.75rem;
+        line-height: calc(2.25 / 1.75);
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: calc(var(--list-element-font-size) * 1.08rem);
-        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.08));
+        font-size: 1.62rem;
+        line-height: calc(2.25 / 1.62);
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: calc(var(--list-element-font-size) * 1.03rem);
-        line-height: calc(2.25 / var(--list-element-font-size) * 1.03);
+        font-size: 1.545rem;
+        line-height: calc(2.25 / 1.545);
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: calc(var(--list-element-font-size) * 1.01rem);
-        line-height: calc(2.25 / var(--list-element-font-size) * 1.01);
+        font-size: 1.515rem;
+        line-height: calc(2.25 / 1.515);
     }
 
     #gallery li {
@@ -179,10 +173,11 @@
             line-height,
             cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
     }
-
     /*
+    --------------------------------------------
     ---------------------------------------------
     --------------- TIMELINE PAGE ---------------
+    --------------------------------------------
     ---------------------------------------------
     */
     #timeline-year {

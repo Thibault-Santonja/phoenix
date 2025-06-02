@@ -110,8 +110,8 @@ defmodule PortfolioWeb.PhotographyLive.Index do
         </button>
 
         <a
-          :if={@modal_chapter}
-          href={~p"/#{@modal_chapter}"}
+          :if={@modal_chapter in ~w(reenactment amvcc music)}
+          href={~p"/timeline/#{@modal_chapter}"}
           class={[
             "grow-0",
             "block mt-8 mx-auto",
