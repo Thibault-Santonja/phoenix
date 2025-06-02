@@ -4,214 +4,112 @@
   </h1>
 
   <nav class="flex items-center grow py-8">
-    <ul
-      id="gallery"
-      class={[
-        "h-full text-lg sm:text-2xl justify-center",
-        "flex items-stretch flex-col flex-nowrap"
-      ]}
-    >
-      <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="reenactment"
-        >
-          {gettext("Re-enactment")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("reenactment")}
-          alt={
-            gettext(
-              "Thibault San Photography for AMVCC Seigneurie de Coucy - Re-enactment photography used as background."
-            )
-          }
-        />
-      </li>
-      <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="amvcc"
-        >
-          {gettext("AMVCC")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("amvcc")}
-          alt={
-            gettext(
-              "Thibault San Photography for AMVCC Chantier with REMPART - Assiociation photography used as background."
-            )
-          }
-        />
-      </li>
-      <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="landscape"
-        >
-          {gettext("Landscape")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("landscape")}
-          alt={gettext("Thibault San Photography - Landscape photography used as background.")}
-        />
-      </li>
-      <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="street"
-        >
-          {gettext("Street photo")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("street")}
-          alt={gettext("Thibault San Photography - Street photography used as background")}
-        />
-      </li>
-      <li class="pl-4">
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="china"
-        >
-          {gettext("China")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("china")}
-          alt={
-            gettext("Thibault San Photography - Artistic photography in China used as background")
-          }
-        />
-      </li>
-      <li class="pl-4">
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="japan"
-        >
-          {gettext("Japan")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("japan")}
-          alt={
-            gettext("Thibault San Photography - Artistic photography in Japan used as background")
-          }
-        />
-      </li>
-      <li class="pl-4">
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="taiwan"
-        >
-          {gettext("Taiwan")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("taiwan")}
-          alt={
-            gettext(
-              "Thibault San Photography - Artistic photography in Taiwan used as background"
-            )
-          }
-        />
-      </li>
-      <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="music"
-        >
-          {gettext("Music")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("music")}
-          alt={
-            gettext(
-              "Thibault San Photography for L'Imperatrice @ Minuit avant la Nuit Amiens 2024 - Music photography used as background"
-            )
-          }
-        />
-      </li>
-      <%!-- <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="events"
-        >
-          {gettext("Events")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("events")}
-          alt={gettext("Thibault San Photography - Event photography used as background")}
-        />
-      </li> --%>
-      <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="couples"
-        >
-          {gettext("Couples")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("couples")}
-          alt={gettext("Thibault San Photography - Couple photography used as background")}
-        />
-      </li>
-      <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="motherhood"
-        >
-          {gettext("Motherhood")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("motherhood")}
-          alt={gettext("Thibault San Photography - Motherhood photography used as background")}
-        />
-      </li>
-      <li>
-        <button
-          class="font-black hover:uppercase h-full"
-          phx-click="open_modal"
-          phx-value-section="wedding"
-        >
-          {gettext("Weeding")}
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen object-cover"
-          src={section_image("wedding")}
-          alt={gettext("Thibault San Photography - Wedding photography used as background")}
-        />
-      </li>
-    </ul>
+    <.photography_list>
+      <.photography_list_element
+        chapter="reenactment"
+        chapter_string={format_chapter_title("reenactment")}
+        image_source_string={
+          gettext(
+            "Thibault San Photography for AMVCC Seigneurie de Coucy - Re-enactment photography used as background."
+          )
+        }
+      />
+      <.photography_list_element
+        chapter="amvcc"
+        chapter_string={format_chapter_title("amvcc")}
+        image_source_string={
+          gettext(
+            "Thibault San Photography for AMVCC Chantier with REMPART - Assiociation photography used as background."
+          )
+        }
+      />
+      <.photography_list_element
+        chapter="landscape"
+        chapter_string={format_chapter_title("landscape")}
+        image_source_string={
+          gettext("Thibault San Photography - Landscape photography used as background.")
+        }
+      />
+      <.photography_list_element
+        chapter="street"
+        chapter_string={format_chapter_title("street")}
+        image_source_string={
+          gettext("Thibault San Photography - Street photography used as background")
+        }
+      />
+      <.photography_list_element
+        class="pl-8"
+        chapter="china"
+        chapter_string={format_chapter_title("china")}
+        image_source_string={
+          gettext("Thibault San Photography - Artistic photography in China used as background")
+        }
+      />
+      <.photography_list_element
+        class="pl-8"
+        chapter="japan"
+        chapter_string={format_chapter_title("japan")}
+        image_source_string={
+          gettext("Thibault San Photography - Artistic photography in Japan used as background")
+        }
+      />
+      <.photography_list_element
+        class="pl-8"
+        chapter="taiwan"
+        chapter_string={format_chapter_title("taiwan")}
+        image_source_string={
+          gettext("Thibault San Photography - Artistic photography in Taiwan used as background")
+        }
+      />
+      <.photography_list_element
+        chapter="music"
+        chapter_string={format_chapter_title("music")}
+        image_source_string={
+          gettext(
+            "Thibault San Photography for L'Imperatrice @ Minuit avant la Nuit Amiens 2024 - Music photography used as background"
+          )
+        }
+      />
+      <%!-- <.photography_list_element
+        chapter="events"
+        chapter_string={format_chapter_title("events")}
+        image_source_string={
+        gettext("Thibault San Photography - Event photography used as background")
+        }
+      /> --%>
+      <.photography_list_element
+        chapter="couples"
+        chapter_string={format_chapter_title("couples")}
+        image_source_string={
+          gettext("Thibault San Photography - Couple photography used as background")
+        }
+      />
+      <.photography_list_element
+        chapter="motherhood"
+        chapter_string={format_chapter_title("motherhood")}
+        image_source_string={
+          gettext("Thibault San Photography - Motherhood photography used as background")
+        }
+      />
+      <.photography_list_element
+        chapter="wedding"
+        chapter_string={format_chapter_title("wedding")}
+        image_source_string={
+          gettext("Thibault San Photography - Wedding photography used as background")
+        }
+      />
+      <.photography_list_element
+        class="pt-8"
+        chapter="timeline"
+        open_modal={false}
+        image_source="/images/photography/gallery/2024-07-26_amvcc.webp"
+        image_source_string={
+          gettext("Thibault San Photography - Event photography used as background")
+        }
+      >
+        <a href={~p"/timeline"}>{gettext("Gallery")}</a>
+      </.photography_list_element>
+    </.photography_list>
   </nav>
 
   <footer class="space-x-4 flex">
@@ -274,19 +172,19 @@
   id="photo-modal"
   class={[
     "fixed top-0 right-0 z-50 min-h-screen h-full w-screen",
-    @modal_section && @modal_section != "" && "backdrop-blur-sm",
+    @modal_chapter && @modal_chapter != "" && "backdrop-blur-sm",
     "transform transition-transform duration-500 ease-in-out overflow-auto",
     "grid grid-cols-5",
-    if @modal_section do
+    if @modal_chapter do
       "translate-x-0 opacity-100"
     else
       "translate-x-full opacity-0 pointer-events-none"
     end
   ]}
-  key={@modal_section}
+  key={@modal_chapter}
 >
   <button class={["h-full opacity-80 bg-black", "close-modal"]} phx-click="close_modal" />
-  <article class="col-span-4 bg-black text-white h-full">
+  <article class="col-span-4 text-white h-full">
     <img
       loading="lazy"
       class={[
@@ -294,7 +192,7 @@
         "w-4/5 h-full min-h-screen",
         "mask-cover aspect-auto object-cover"
       ]}
-      src={section_image(@modal_section)}
+      src={chapter_image(@modal_chapter)}
       alt={gettext("Thibault San Photography")}
       title={gettext("Thibault San Photography")}
     />

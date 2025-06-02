@@ -1,15 +1,107 @@
-/* --- For photography menu --- */
+/* Animations */
+@keyframes scanlinesopacity {
+    0% {
+        opacity: calc(0.6 * var(--scanlines-opacity));
+    }
+    20% {
+        opacity: calc(0.3 * var(--scanlines-opacity));
+    }
+    35% {
+        opacity: calc(0.5 * var(--scanlines-opacity));
+    }
+    50% {
+        opacity: calc(0.8 * var(--scanlines-opacity));
+    }
+    60% {
+        opacity: calc(0.4 * var(--scanlines-opacity));
+    }
+    80% {
+        opacity: calc(0.7 * var(--scanlines-opacity));
+    }
+    100% {
+        opacity: calc(0.6 * var(--scanlines-opacity));
+    }
+}
+
+@keyframes scanlines {
+    from {
+        background: linear-gradient(
+            to bottom,
+            transparent 50%,
+            rgba(0, 0, 0, 0.5) 51%
+        );
+        background-size: 100% var(--scanlines-size);
+    }
+    to {
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.5) 50%,
+            transparent 51%
+        );
+        background-size: 100% var(--scanlines-size);
+    }
+}
+
 #photography {
-    /* Display image only when related link is hovered */
-    #gallery img {
-        /* display: none; */
-        opacity: 0;
+    --scanlines-opacity: 0.1;
+    --scanlines-size: 4px;
+    --scanlines-background-color: oklch(
+        0.5 0.1 260 / 80%
+    ); /*  oklch(0.5359 0.2572 266.5)*/
+
+    .scanlines {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 100;
+        opacity: calc(0.6 * var(--scanlines-opacity));
+        will-change: scanlinesopacity;
+        animation: scanlinesopacity 3s linear infinite;
+
+        &:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.5) 51%
+            );
+            background-size: 100% var(--scanlines-size);
+            will-change: background, background-size;
+            animation: scanlines 0.2s linear infinite;
+        }
     }
 
-    #gallery button:hover + img,
-    #gallery img:hover,
-    #gallery button:active + img,
-    #gallery img:active {
+    .scanlines-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: var(--scanlines-background-color);
+    }
+
+    /* Display image only when related link is hovered */
+    #gallery aside {
+        /* display: none; */
+        opacity: 0;
+        transition:
+            opacity,
+            cubic-bezier(0.25, 1, 0.5, 1) 0.3s;
+    }
+
+    #gallery button:hover + aside,
+    #gallery aside:hover,
+    #gallery button:active + aside,
+    #gallery aside:active {
         /* display: block; */
         opacity: 1;
         transition:
@@ -40,18 +132,18 @@
     }
 
     #gallery li:hover + li + li {
-        font-size: 1.625rem;
-        line-height: calc(2.25 / 1.625);
+        font-size: 1.62rem;
+        line-height: calc(2.25 / 1.62);
     }
 
     #gallery li:hover + li + li + li {
-        font-size: 1.5375rem;
-        line-height: calc(2.25 / 1.5375);
+        font-size: 1.545rem;
+        line-height: calc(2.25 / 1.545);
     }
 
     #gallery li:hover + li + li + li {
-        font-size: 1.5125rem;
-        line-height: calc(2.25 / 1.5125);
+        font-size: 1.515rem;
+        line-height: calc(2.25 / 1.515);
     }
 
     /* Left side */
@@ -61,18 +153,18 @@
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: 1.625rem;
-        line-height: calc(2.25 / 1.625);
+        font-size: 1.62rem;
+        line-height: calc(2.25 / 1.62);
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: 1.5375rem;
-        line-height: calc(2.25 / 1.5375);
+        font-size: 1.545rem;
+        line-height: calc(2.25 / 1.545);
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: 1.5125rem;
-        line-height: calc(2.25 / 1.5125);
+        font-size: 1.515rem;
+        line-height: calc(2.25 / 1.515);
     }
 
     #gallery li {
@@ -80,5 +172,26 @@
             font-size,
             line-height,
             cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
+    }
+    /*
+    --------------------------------------------
+    ---------------------------------------------
+    --------------- TIMELINE PAGE ---------------
+    --------------------------------------------
+    ---------------------------------------------
+    */
+    #timeline-year {
+        transition: transform 0.7s ease-out;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+    }
+
+    #timeline-year.flip {
+        transform: translate(-50%, -50%) rotateX(180deg);
+    }
+
+    .digit > div {
+        line-height: 1em;
+        font-size: inherit;
     }
 }
