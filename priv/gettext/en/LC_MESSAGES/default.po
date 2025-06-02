@@ -226,74 +226,47 @@ msgstr ""
 msgid "Shoes XIVc in western Europe"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:53
-#: lib/portfolio_web/live/photography_live/index.html.heex:298
-#: lib/portfolio_web/live/photography_live/index.html.heex:299
+#: lib/portfolio_web/live/photography_live/index.ex:57
+#: lib/portfolio_web/live/photography_live/index.html.heex:196
+#: lib/portfolio_web/live/photography_live/index.html.heex:197
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:56
-#: lib/portfolio_web/live/photography_live/index.html.heex:39
+#: lib/portfolio_web/live/photography_live/index.ex:60
 #, elixir-autogen, elixir-format
 msgid "AMVCC"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:57
-#: lib/portfolio_web/live/photography_live/index.html.heex:88
+#: lib/portfolio_web/live/photography_live/index.ex:61
 #, elixir-autogen, elixir-format
 msgid "China"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:58
-#: lib/portfolio_web/live/photography_live/index.html.heex:175
+#: lib/portfolio_web/live/photography_live/index.ex:62
 #, elixir-autogen, elixir-format
 msgid "Couples"
 msgstr ""
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:110
-#: lib/portfolio_web/live/photography_live/index.ex:59
+#: lib/portfolio_web/live/photography_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Events"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:60
-#: lib/portfolio_web/live/photography_live/index.html.heex:105
+#: lib/portfolio_web/live/photography_live/index.ex:64
 #, elixir-autogen, elixir-format
 msgid "Japan"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:62
-#: lib/portfolio_web/live/photography_live/index.html.heex:190
-#, elixir-autogen, elixir-format
-msgid "Motherhood"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.html.heex:141
-#, elixir-autogen, elixir-format
-msgid "Music"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:64
-#: lib/portfolio_web/live/photography_live/index.html.heex:20
+#: lib/portfolio_web/live/photography_live/index.ex:68
 #, elixir-autogen, elixir-format
 msgid "Re-enactment"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:73
-#, elixir-autogen, elixir-format
-msgid "Street photo"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:66
-#: lib/portfolio_web/live/photography_live/index.html.heex:122
+#: lib/portfolio_web/live/photography_live/index.ex:70
 #, elixir-autogen, elixir-format
 msgid "Taiwan"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.html.heex:205
-#, elixir-autogen, elixir-format
-msgid "Weeding"
 msgstr ""
 
 #: lib/portfolio_web/live/tech_live/blog/ci.ex:21
@@ -1409,7 +1382,8 @@ msgid "Laws restricted the use of certain materials and colours to prevent osten
 msgstr ""
 
 #: lib/portfolio_web/components/layouts/amvcc.html.heex:115
-#: lib/portfolio_web/live/photography_live/index.ex:68
+#: lib/portfolio_web/live/photography_live/index.ex:72
+#: lib/portfolio_web/live/photography_live/index.html.heex:110
 #, elixir-autogen, elixir-format
 msgid "Gallery"
 msgstr ""
@@ -1729,17 +1703,17 @@ msgstr ""
 msgid "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:95
+#: lib/portfolio_web/live/photography_live/index.html.heex:45
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Artistic photography in China used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:112
+#: lib/portfolio_web/live/photography_live/index.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Artistic photography in Japan used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:129
+#: lib/portfolio_web/live/photography_live/index.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Artistic photography in Taiwan used as background"
 msgstr ""
@@ -1749,37 +1723,37 @@ msgstr ""
 msgid "Thibault San Photography - Artistic photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:181
+#: lib/portfolio_web/live/photography_live/index.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Couple photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:196
+#: lib/portfolio_web/live/photography_live/index.html.heex:91
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Motherhood photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:79
+#: lib/portfolio_web/live/photography_live/index.html.heex:37
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Street photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:211
+#: lib/portfolio_web/live/photography_live/index.html.heex:98
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography - Wedding photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:46
+#: lib/portfolio_web/live/photography_live/index.html.heex:21
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography for AMVCC Chantier with REMPART - Assiociation photography used as background."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:27
+#: lib/portfolio_web/live/photography_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography for AMVCC Seigneurie de Coucy - Re-enactment photography used as background."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:148
+#: lib/portfolio_web/live/photography_live/index.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography for L'Imperatrice @ Minuit avant la Nuit Amiens 2024 - Music photography used as background"
 msgstr ""
@@ -1897,7 +1871,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:63
+#: lib/portfolio_web/live/photography_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "Concerts & Music"
 msgstr ""
@@ -1932,8 +1906,7 @@ msgstr ""
 msgid "I often find beauty in the layered textures of urban history — an old house patched and repurposed over time, tangled cables tracing decades of adaptation, or a passerby moving through it all, unaware of the silent stories in the walls around them."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:61
-#: lib/portfolio_web/live/photography_live/index.html.heex:58
+#: lib/portfolio_web/live/photography_live/index.ex:65
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr ""
@@ -1968,7 +1941,7 @@ msgstr ""
 msgid "My visual work aims to support AMVCC’s mission by creating a lasting record of its cultural initiatives. These images are not just archives — they are storytelling tools that celebrate the dedication of volunteers, artisans, and performers, and help share the living heritage of Coucy with a wider audience."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:65
+#: lib/portfolio_web/live/photography_live/index.ex:69
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Street Photography"
 msgstr ""
@@ -1983,7 +1956,7 @@ msgstr ""
 msgid "There is a deep humanity in the way people inhabit cities. I aim to capture this — not just the dramatic or spectacular, but the subtle poetry of a glance, a posture, a window left open. These details reveal the soul of a place and the quiet resilience of life."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.html.heex:64
+#: lib/portfolio_web/live/photography_live/index.html.heex:30
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Thibault San Photography - Landscape photography used as background."
 msgstr ""
@@ -2003,7 +1976,7 @@ msgstr ""
 msgid "We often think of humanity as separate from nature, but we are part of it. I try to explore this tension — how we inhabit the land, how we shape it, and how, in return, it shapes us. Even in the most remote places, there are traces of our passage — paths, fences, forgotten ruins. My photography seeks to make these echoes visible."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:67
+#: lib/portfolio_web/live/photography_live/index.ex:71
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Wedding"
 msgstr ""
@@ -2372,11 +2345,6 @@ msgstr ""
 msgid "A warm winter wedding, an intimate celebration where every glance felt like a promise."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:55
-#, elixir-autogen, elixir-format
-msgid "A wedding filled with grace, joy, and depth. Glances met and smiled; the gentle spring breeze only made hearts warmer."
-msgstr ""
-
 #: lib/portfolio_web/live/photography_live/timeline.ex:176
 #, elixir-autogen, elixir-format
 msgid "A wedding in China, filled with elegance, grace, and affection. Chinese traditions intertwined with tender family glances, gentle gestures, and shy yet heartfelt smiles. XiaoYang and WenTian lit up the day with their quiet warmth and deep bond. I wholeheartedly wish them joy and love in their life together!"
@@ -2458,7 +2426,17 @@ msgstr ""
 msgid "The Seigneuriales of Coucy (AMVCC) bring the medieval city to life for a weekend. I joined as a reenactor with the Seigneurie de Coucy. Dancing, feasting, lively exchanges between groups from all over France, and quiet moments by the fire — a timeless escape."
 msgstr ""
 
+#: lib/portfolio_web/live/photography_live/index.ex:66
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Motherhood & Families"
+msgstr ""
+
 #: lib/portfolio_web/live/photography_live/timeline.ex:132
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "New edition of Coucy à la Merveille — a grand historical show blending theatre, light, and emotion to bring Coucy’s history to life. This year leaned less into fantasy, but remained breathtaking thanks to a passionate team: from performers to costume designers, technicians to writers."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.html.heex:107
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Thibault San Photography - Event photography used as background"
 msgstr ""

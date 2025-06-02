@@ -130,7 +130,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
         title: "Coucy à la Merveille 2024",
         description:
           gettext(
-            "The final edition of Coucy à la Merveille — a grand historical show blending theatre, light, and emotion to bring Coucy’s history to life. This year leaned less into fantasy, but remained breathtaking thanks to a passionate team: from performers to costume designers, technicians to writers."
+            "New edition of Coucy à la Merveille — a grand historical show blending theatre, light, and emotion to bring Coucy’s history to life. This year leaned less into fantasy, but remained breathtaking thanks to a passionate team: from performers to costume designers, technicians to writers."
           ),
         photography: "/images/photography/gallery/2024-07-26_amvcc.webp",
         url: "/"
