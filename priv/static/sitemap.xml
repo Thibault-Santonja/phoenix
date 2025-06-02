@@ -55,6 +55,30 @@
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
+  <url>
+    <loc>https://photo.thibaultsan.com/timeline</loc>
+    <lastmod>2025-05-29</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://photo.thibaultsan.com/timeline/amvcc</loc>
+    <lastmod>2025-05-29</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://photo.thibaultsan.com/timeline/reenactment</loc>
+    <lastmod>2025-05-29</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://photo.thibaultsan.com/timeline/music</loc>
+    <lastmod>2025-05-29</lastmod>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
 
   <url>
     <loc>https://amvcc.thibaultsan.com/</loc>
