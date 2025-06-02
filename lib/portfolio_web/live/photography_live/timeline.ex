@@ -1,4 +1,20 @@
 defmodule PortfolioWeb.PhotographyLive.Timeline do
+  @moduledoc """
+  LiveView module rendering the photography timeline page.
+
+  This component displays a chronological archive of photo albums grouped by year,
+  with a smooth scroll-based interaction that highlights the current year in the
+  background as users navigate through the content.
+
+  Key features:
+  - Dynamic display of albums by year.
+  - Year highlight transitions on scroll using IntersectionObserver.
+  - Translated album titles and descriptions using Gettext.
+  - Responsive design with Tailwind CSS grid layout.
+  - Enhanced visual experience with custom CSS and animations.
+  - Lightweight JavaScript hook (`YearTrigger`) for animated year switching.
+  """
+
   use PortfolioWeb, :live_view
 
   @data %{
