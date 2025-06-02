@@ -1,7 +1,56 @@
+/* Animations */
+@keyframes scanlinesopacity {
+    0% {
+        opacity: calc(0.6 * var(--scanlines-opacity));
+    }
+    20% {
+        opacity: calc(0.3 * var(--scanlines-opacity));
+    }
+    35% {
+        opacity: calc(0.5 * var(--scanlines-opacity));
+    }
+    50% {
+        opacity: calc(0.8 * var(--scanlines-opacity));
+    }
+    60% {
+        opacity: calc(0.4 * var(--scanlines-opacity));
+    }
+    80% {
+        opacity: calc(0.7 * var(--scanlines-opacity));
+    }
+    100% {
+        opacity: calc(0.6 * var(--scanlines-opacity));
+    }
+}
+
+@keyframes scanlines {
+    from {
+        background: linear-gradient(
+            to bottom,
+            transparent 50%,
+            rgba(0, 0, 0, 0.5) 51%
+        );
+        background-size: 100% var(--scanlines-size);
+    }
+    to {
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.5) 50%,
+            transparent 51%
+        );
+        background-size: 100% var(--scanlines-size);
+    }
+}
+
 #photography {
+    --scanlines-opacity: 0.1;
+    --scanlines-size: 4px;
+    --scanlines-background-color: oklch(
+        0.5 0.1 260 / 80%
+    ); /*  oklch(0.5359 0.2572 266.5)*/
+    --list-element-font-size: 1.5;
+
     .scanlines {
-        --scanlines-opacity: 0.4;
-        --scanlines-size: 4px;
         position: fixed;
         left: 0;
         top: 0;
@@ -10,8 +59,8 @@
         pointer-events: none;
         z-index: 100;
         opacity: calc(0.6 * var(--scanlines-opacity));
-        will-change: opacity;
-        animation: opacity 3s linear infinite;
+        will-change: scanlinesopacity;
+        animation: scanlinesopacity 3s linear infinite;
 
         &:before {
             content: "";
@@ -38,51 +87,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: oklch(0.5 0.1 260 / 90%); /*  oklch(0.5359 0.2572 266.5)*/
-    }
-
-    /* Animations */
-    @keyframes opacity {
-        0% {
-            opacity: calc(0.6 * var(--scanlines-opacity));
-        }
-        20% {
-            opacity: calc(0.3 * var(--scanlines-opacity));
-        }
-        35% {
-            opacity: calc(0.5 * var(--scanlines-opacity));
-        }
-        50% {
-            opacity: calc(0.8 * var(--scanlines-opacity));
-        }
-        60% {
-            opacity: calc(0.4 * var(--scanlines-opacity));
-        }
-        80% {
-            opacity: calc(0.7 * var(--scanlines-opacity));
-        }
-        100% {
-            opacity: calc(0.6 * var(--scanlines-opacity));
-        }
-    }
-
-    @keyframes scanlines {
-        from {
-            background: linear-gradient(
-                to bottom,
-                transparent 50%,
-                rgba(0, 0, 0, 0.5) 51%
-            );
-            background-size: 100% var(--scanlines-size);
-        }
-        to {
-            background: linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 0.5) 50%,
-                transparent 51%
-            );
-            background-size: 100% var(--scanlines-size);
-        }
+        background: var(--scanlines-background-color);
     }
 
     /*
@@ -91,7 +96,7 @@
     --------------------------------------------
     */
     /* Display image only when related link is hovered */
-    #gallery img {
+    #gallery aside {
         /* display: none; */
         opacity: 0;
         transition:
@@ -99,10 +104,10 @@
             cubic-bezier(0.25, 1, 0.5, 1) 0.3s;
     }
 
-    #gallery button:hover + img,
-    #gallery img:hover,
-    #gallery button:active + img,
-    #gallery img:active {
+    #gallery button:hover + aside,
+    #gallery aside:hover,
+    #gallery button:active + aside,
+    #gallery aside:active {
         /* display: block; */
         opacity: 1;
         transition:
@@ -113,8 +118,8 @@
     /* Display animation on link hover (only small or bigger screens)) */
     /* @media only screen and (min-width: 40rem) { */
     #gallery li {
-        font-size: 1.5rem (24px);
-        line-height: calc(2 / 1.5);
+        font-size: calc(var(--list-element-font-size) * 1rem);
+        line-height: calc(2 / var(--list-element-font-size));
     }
 
     #gallery li:not(:first-child) button {
@@ -122,50 +127,50 @@
     }
 
     #gallery li:hover {
-        font-size: 1.875rem;
-        line-height: calc(2.25 / 1.875);
+        font-size: calc(var(--list-element-font-size) * 1.25rem);
+        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.25));
     }
 
     /* Right side */
     #gallery li:hover + li {
-        font-size: 1.75rem;
-        line-height: calc(2.25 / 1.75);
+        font-size: calc(var(--list-element-font-size) * 1.15rem);
+        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.15));
     }
 
     #gallery li:hover + li + li {
-        font-size: 1.625rem;
-        line-height: calc(2.25 / 1.625);
+        font-size: calc(var(--list-element-font-size) * 1.08rem);
+        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.08));
     }
 
     #gallery li:hover + li + li + li {
-        font-size: 1.5375rem;
-        line-height: calc(2.25 / 1.5375);
+        font-size: calc(var(--list-element-font-size) * 1.03rem);
+        line-height: calc(2.25 / var(--list-element-font-size) * 1.03);
     }
 
     #gallery li:hover + li + li + li {
-        font-size: 1.5125rem;
-        line-height: calc(2.25 / 1.5125);
+        font-size: calc(var(--list-element-font-size) * 1.01rem);
+        line-height: calc(2.25 / var(--list-element-font-size) * 1.01);
     }
 
     /* Left side */
     #gallery li:has(+ li:hover) {
-        font-size: 1.75rem;
-        line-height: calc(2.25 / 1.75);
+        font-size: calc(var(--list-element-font-size) * 1.15rem);
+        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.15));
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: 1.625rem;
-        line-height: calc(2.25 / 1.625);
+        font-size: calc(var(--list-element-font-size) * 1.08rem);
+        line-height: calc(2.25 / calc(var(--list-element-font-size) * 1.08));
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: 1.5375rem;
-        line-height: calc(2.25 / 1.5375);
+        font-size: calc(var(--list-element-font-size) * 1.03rem);
+        line-height: calc(2.25 / var(--list-element-font-size) * 1.03);
     }
 
     #gallery li:has(+ li + li:hover) {
-        font-size: 1.5125rem;
-        line-height: calc(2.25 / 1.5125);
+        font-size: calc(var(--list-element-font-size) * 1.01rem);
+        line-height: calc(2.25 / var(--list-element-font-size) * 1.01);
     }
 
     #gallery li {
