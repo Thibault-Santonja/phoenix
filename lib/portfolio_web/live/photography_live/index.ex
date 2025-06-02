@@ -45,7 +45,10 @@ defmodule PortfolioWeb.PhotographyLive.Index do
   def handle_event("change_locale", %{"locale" => locale}, socket) do
     {
       :noreply,
-      push_event(socket, "change_locale", %{"locale" => locale})
+      socket
+      |> push_event("change_locale", %{"locale" => locale})
+      |> assign(language: locale)
+      |> push_patch(to: ~p"/?hl=#{locale}")
     }
   end
 
