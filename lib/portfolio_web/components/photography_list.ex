@@ -75,28 +75,37 @@ defmodule PortfolioWeb.Components.PhotographyList do
   attr :chapter_string, :string, doc: "Chapter of reference for printing"
   attr :image_source, :string, default: nil, doc: "Chapter image"
   attr :image_source_string, :string, doc: "Chapter image alternative text"
+  attr :open_modal, :boolean, default: true, doc: "Does it open a modal"
   attr :class, :string, default: nil, doc: "Custom CSS class for additional styling"
+  slot :inner_block, required: false, doc: "Inner block that renders HEEx content"
 
   def photography_list_element(assigns) do
     ~H"""
-    <li id={"gallery-#{@chapter}"} class={@class}>
+    <li id={"gallery-#{@chapter}"} class={[@class]}>
       <button
+        :if={@open_modal}
         class="font-black hover:uppercase h-full"
         phx-click="open_modal"
         phx-value-chapter={@chapter}
       >
         {@chapter_string}
       </button>
-      <img
-        loading="lazy"
-        class={[
-          "absolute top-0 left-0 -z-10",
-          "aspect-auto object-cover",
-          "min-w-screen min-h-screen"
-        ]}
-        src={@image_source || chapter_image(@chapter)}
-        alt={@image_source_string}
-      />
+
+      <button :if={not @open_modal} class="font-black hover:uppercase h-full">
+        {render_slot(@inner_block)}
+      </button>
+
+      <aside class={[
+        "fixed top-0 left-0 -z-10",
+        "w-screen h-screen"
+      ]}>
+        <img
+          loading="lazy"
+          src={@image_source || chapter_image(@chapter)}
+          alt={@image_source_string}
+          class={["w-full h-full object-cover"]}
+        />
+      </aside>
     </li>
     """
   end

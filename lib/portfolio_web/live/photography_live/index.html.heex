@@ -98,17 +98,17 @@
           gettext("Thibault San Photography - Wedding photography used as background")
         }
       />
-      <li class="mt-8">
-        <button class="font-black hover:uppercase h-full">
-          <a href={~p"/timeline"}>{gettext("Gallery")}</a>
-        </button>
-        <img
-          loading="lazy"
-          class="mask-cover min-w-screen aspect-auto absolute top-0 left-0 -z-10 min-h-screen max-h-full object-cover"
-          src="/images/photography/gallery/2024-05-04_reenactment.webp"
-          alt={gettext("Thibault San Photography - Wedding photography used as background")}
-        />
-      </li>
+      <.photography_list_element
+        class="pt-8"
+        chapter="timeline"
+        open_modal={false}
+        image_source="/images/photography/gallery/2024-07-26_amvcc.webp"
+        image_source_string={
+          gettext("Thibault San Photography - Event photography used as background")
+        }
+      >
+        <a href={~p"/timeline"}>{gettext("Gallery")}</a>
+      </.photography_list_element>
     </.photography_list>
   </nav>
 
