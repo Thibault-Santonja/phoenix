@@ -36,7 +36,7 @@
 <ul class="py-8 relative z-0">
   <%= for year <- @years do %>
     <li id={"year-#{year}"} phx-hook="YearTrigger" data-year={year}>
-      <div class="h-[60vh] flex items-center justify-center" />
+      <div class="h-[67vh] flex items-center justify-center" />
 
       <ul class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         <%= for album <- @data |> Map.get(year) |> Enum.sort(&(&1.date > &2.date)) do %>
