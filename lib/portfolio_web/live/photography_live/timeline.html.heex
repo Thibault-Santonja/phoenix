@@ -5,8 +5,10 @@
   "px-4 py-2 text-sm text-white"
 ]}>
   <h1 class="flex flex-col items-end group">
-    <a href={~p"/"}>{gettext("Thibault Santonja")}</a>
-    <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
+    <a href={~p"/"}>
+      {gettext("Thibault Santonja")}
+      <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
+    </a>
   </h1>
   <div class="grow flex justify-end gap-4">
     <%= for year <- Enum.sort(@years) do %>
