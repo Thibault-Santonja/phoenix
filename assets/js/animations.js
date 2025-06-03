@@ -354,3 +354,58 @@ export const YearTrigger = {
     sections.forEach((section) => observer.observe(section));
   },
 };
+
+export const HorizontalScrollFadeIn = {
+  animateItems(duration) {
+    const items = this.el.querySelectorAll("li");
+
+    items.forEach((el, i) => {
+      if (duration) {
+        setTimeout(() => {
+          el.classList.add("opacity-100");
+        }, i * duration); // duration increasing between each appearing
+      } else {
+        el.classList.add("opacity-100");
+      }
+    });
+  },
+
+  mounted() {
+    window.addEventListener(
+      "wheel",
+      (e) => {
+        if (e.deltaY === 0) return;
+
+        // prevent the page from scrolling vertically
+        e.preventDefault();
+
+        // Scroll horizontally
+        this.el.scrollBy({
+          left: e.deltaY,
+          // behavior: "smooth",
+        });
+      },
+      { passive: false },
+    ); // passive must be false to call preventDefault()
+    this.animateItems(100);
+  },
+
+  updated() {
+    this.animateItems(0);
+  },
+};
+
+export const AnimatePhotographyGallery = {
+  mounted() {
+    [header] = document.getElementsByClassName("project-title");
+
+    setTimeout(() => {
+      header.classList.replace("opacity-0", "opacity-100");
+    }, 300);
+
+    setTimeout(() => {
+      this.el.classList.replace("opacity-0", "opacity-100");
+      this.el.classList.replace("translate-y-8", "translate-y-0");
+    }, 275);
+  },
+};
