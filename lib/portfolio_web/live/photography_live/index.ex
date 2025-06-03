@@ -132,6 +132,27 @@ defmodule PortfolioWeb.PhotographyLive.Index do
             ]}
           />
         </a>
+
+        <a
+          :if={@modal_chapter in ~w(china)}
+          href={~p"/gallery/#{@modal_chapter}"}
+          class={[
+            "grow-0",
+            "block mt-8 mx-auto",
+            "group hover:scale-110 duration-300",
+            "py-2 px-4",
+            "border-amvcc-base-300 rounded-lg border-2"
+          ]}
+        >
+          {gettext("Show more")}
+          <.icon
+            name="hero-arrow-right-circle-solid"
+            class={[
+              "ml-2 h-5 w-5",
+              "group-hover:rotate-[6.283rad] duration-500 ease-out"
+            ]}
+          />
+        </a>
       </nav>
     </div>
     """
