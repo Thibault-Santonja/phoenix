@@ -85,6 +85,26 @@
                   </p>
                   <nav class="flex justify-end mt-4">
                     <a
+                      :if={album.reference_link}
+                      href="#"
+                      class={[
+                        "grow-0",
+                        "inline-flex items-center gap-2",
+                        "group hover:scale-105 duration-300",
+                        "py-2 px-4 mt-8",
+                        "text-sm"
+                      ]}
+                    >
+                      {gettext("Website")}
+                      <.icon
+                        name="hero-arrow-right-circle-solid"
+                        class={[
+                          "h-4 w-4",
+                          "group-hover:rotate-[6.283rad] duration-500 ease-out"
+                        ]}
+                      />
+                    </a>
+                    <a
                       :if={album.url}
                       href="#"
                       class={[

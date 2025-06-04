@@ -26,7 +26,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
         description:
           gettext("A soft winter light, a strong bond, and shared laughter among ancient stones."),
         photography: "/images/photography/gallery/2023-12-09_couples.webp",
-        url: nil
+        url: nil,
+        reference_link: nil
       },
       %{
         type: "amvcc",
@@ -37,7 +38,9 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "A moment suspended in the workshop: ancient gestures, taut threads, concentrated silence, interspersed with bursts of laughter"
           ),
         photography: "/images/photography/gallery/2023-12-17_amvcc.webp",
-        url: nil
+        url: nil,
+        reference_link:
+          "https://www.amvcc.com/spectacles-animations/la-troupe-medievale-la-seigneurie-de-coucy/"
       },
       %{
         type: "wedding",
@@ -48,7 +51,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "A warm winter wedding, an intimate celebration where every glance felt like a promise."
           ),
         photography: "/images/photography/gallery/2023-12-23_wedding.webp",
-        url: nil
+        url: nil,
+        reference_link: nil
       }
     ],
     2024 => [
@@ -61,7 +65,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "A tender kiss under Geneva’s night lights, glowing softly beneath an artful play of illumination."
           ),
         photography: "/images/photography/gallery/2024-01-27_couples.webp",
-        url: nil
+        url: nil,
+        reference_link: nil
       },
       # %{
       #   type: "wedding",
@@ -83,7 +88,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "Beneath ancient vaults, the orchestra brought the walls to life. Strings, woodwinds, and brass in conversation — emotion hanging in the air."
           ),
         photography: "/images/photography/gallery/2024-03-24_music.webp",
-        url: nil
+        url: nil,
+        reference_link: nil
       },
       %{
         type: "music",
@@ -94,7 +100,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "A vibrant university troupe: imaginary battles, sung epics, and bursts of humor. A breath of fresh theatrical air."
           ),
         photography: "/images/photography/gallery/2024-03-26_music.webp",
-        url: nil
+        url: nil,
+        reference_link: nil
       },
       %{
         type: "amvcc",
@@ -105,7 +112,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "Stone restoration by calloused hands, shared effort under Coucy’s skies. Evenings filled with laughter and the scent of warm meals — unforgettable days of work and kinship."
           ),
         photography: "/images/photography/gallery/2024-04-26_amvcc.webp",
-        url: nil
+        url: nil,
+        reference_link: "https://www.amvcc.com/chantiers-benevoles/"
       },
       %{
         type: "reenactment",
@@ -116,7 +124,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "The Seigneuriales of Coucy (AMVCC) bring the medieval city to life for a weekend. I joined as a reenactor with the Seigneurie de Coucy. Dancing, feasting, lively exchanges between groups from all over France, and quiet moments by the fire — a timeless escape."
           ),
         photography: "/images/photography/gallery/2024-05-04_reenactment.webp",
-        url: nil
+        url: nil,
+        reference_link: "https://www.amvcc.com/spectacles-animations/les-seigneuriales-de-coucy/"
       },
       %{
         type: "wedding",
@@ -127,7 +136,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "A heartfelt wedding in Coucy, from the intimate charm of the local church to a joyful priest and a family filled with warmth. Anaïs and Jean-Michel’s love, their radiant son, and the tender presence of loved ones made for a day full of life and grace — and perfect moments to photograph."
           ),
         photography: "/images/photography/gallery/2024-05-18_wedding.webp",
-        url: nil
+        url: nil,
+        reference_link: nil
       },
       %{
         type: "music",
@@ -138,7 +148,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "The Minuit avant la Nuit festival in Amiens, set in the lush Saint-Pierre park, offered a warm and laid-back atmosphere. 2024’s edition was a true joy — especially photographing L’Impératrice, a French pop band I truly love."
           ),
         photography: "/images/photography/music.webp",
-        url: nil
+        url: nil,
+        reference_link: "https://minuitavantlanuit.fr/"
       },
       %{
         type: "amvcc",
@@ -149,7 +160,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "New edition of Coucy à la Merveille — a grand historical show blending theatre, light, and emotion to bring Coucy’s history to life. This year leaned less into fantasy, but remained breathtaking thanks to a passionate team: from performers to costume designers, technicians to writers."
           ),
         photography: "/images/photography/gallery/2024-07-26_amvcc.webp",
-        url: nil
+        url: nil,
+        reference_link: "https://www.amvcc.com/spectacles-animations/coucy-a-la-merveille/"
       },
       %{
         type: "reenactment",
@@ -160,7 +172,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "At the museum of the Battle of Crécy (1346), run by passionate enthusiasts, hosted our reenactment of life and combat in that era — especially honoring the Sir of Coucy who fell in the battle. A vibrant, human, and meaningful day of history brought to life."
           ),
         photography: "/images/photography/gallery/2024-08-02_reenactment.webp",
-        url: nil
+        url: nil,
+        reference_link: "https://www.crecylabataille.com/"
       },
       %{
         type: "reenactment",
@@ -171,7 +184,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "Pont-Croix 1358 is a medieval reenactment project in Brittany, recreating a 14th-century village. Over two weekends, we contributed to building the site and bringing it to life. One of the weekends brought together many reenactment groups, sharing knowledge and passion in a vibrant atmosphere. During the Perseid meteor shower — unusually enhanced by a solar storm — the night sky glowed with purple hues. A magical blend of history and the stars."
           ),
         photography: "/images/photography/gallery/2024-08-10_reenactment.webp",
-        url: nil
+        url: nil,
+        reference_link: "https://pont-croix1358.bzh/"
       },
       %{
         type: "reenactment",
@@ -182,7 +196,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "The Médiévales de Laon are a lively event celebrating the medieval heritage of Laon, in northern France, with musicians, craftsmen, living camps, and shows. We were there with the Seigneurie de Coucy, portraying 14th-century life. Despite moments of heavy rain, the atmosphere remained joyful, warm, and uplifted by the smiles of the public."
           ),
         photography: "/images/photography/gallery/2024-09-08_reenactment.webp",
-        url: nil
+        url: nil,
+        reference_link: nil
       },
       %{
         type: "wedding",
@@ -193,7 +208,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "A wedding in China, filled with elegance, grace, and affection. Chinese traditions intertwined with tender family glances, gentle gestures, and shy yet heartfelt smiles. XiaoYang and WenTian lit up the day with their quiet warmth and deep bond. I wholeheartedly wish them joy and love in their life together!"
           ),
         photography: "/images/photography/wedding.webp",
-        url: nil
+        url: nil,
+        reference_link: nil
       }
     ],
     2025 => [
@@ -206,7 +222,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "The Seigneuriales of Coucy (AMVCC) are held each year at the fortress of Coucy-le-Château, organized by the AMVCC. They gather reenactors and visitors around shows, crafts, and medieval life. The 2025 edition was blessed with sunny weather and record attendance. Birds of prey added a spectacular aerial touch to this immersive historical weekend."
           ),
         photography: "/images/photography/reenactment.webp",
-        url: nil
+        url: nil,
+        reference_link: "https://www.amvcc.com/spectacles-animations/les-seigneuriales-de-coucy/"
       },
       %{
         type: "music",
@@ -217,7 +234,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "Minuit avant la Nuit (La Lune des Pirates) returns to Amiens in the lush setting of Saint-Pierre park, with another promising lineup. 2025 will feature Hoshi, Philippe Katerine, or Kavinsky. I’m eager to revisit the unique vibe of this festival — blending greenery, electro-pop, and collective joy — just like in 2024!"
           ),
         photography: "/images/photography/music.webp",
-        url: nil
+        url: nil,
+        reference_link: "https://minuitavantlanuit.fr/"
       }
     ]
   }
