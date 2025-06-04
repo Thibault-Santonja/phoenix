@@ -74,14 +74,21 @@
     </script>
   </head>
 
-  <body class="font-sans h-screen w-screen bg-black text-justify text-white">
+  <body class={
+    [
+      "size-screen text-justify",
+      "font-sans text-justify",
+      "bg-black text-white"
+      # "text-black bg-white"
+    ]
+  }>
     <div class="follower w-sceen absolute inset-x-0 bottom-0 h-0 ">
       <%!-- For the scroll animation --%>
     </div>
 
-    <main id="photography" class="h-screen w-screen">
+    <main id="photography" class="size-screen">
       <article class={[
-        "h-full w-full",
+        "h-full w-full hidden",
         "fixed top-0 -z-30",
         "text-center opacity-40"
       ]}>

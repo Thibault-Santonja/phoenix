@@ -1,5 +1,15 @@
-<nav class="sticky top-0 z-10 bg-black/70 backdrop-blur-md px-4 py-2 text-sm text-white flex">
-  <a href={~p"/"}>{gettext("Home")}</a>
+<nav class={[
+  "sticky top-0 z-10",
+  "bg-black/70 backdrop-blur-md",
+  "flex items-center",
+  "px-4 py-2 text-sm text-white"
+]}>
+  <h1 class="flex flex-col items-end group">
+    <a href={~p"/"}>
+      {gettext("Thibault Santonja")}
+      <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
+    </a>
+  </h1>
   <div class="grow flex justify-end gap-4">
     <%= for year <- Enum.sort(@years) do %>
       <a
@@ -49,7 +59,7 @@
             <article>
               <header class="mb-4">
                 <h2 class="text-xl font-semibold">
-                  <span class="text-xs text-gray-400 mr-4">{album.date}</span>
+                  <span class="text-xs opacity-80 mr-4">{album.date}</span>
                   {album.title}
                 </h2>
               </header>

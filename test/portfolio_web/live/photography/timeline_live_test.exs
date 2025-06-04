@@ -2,8 +2,6 @@ defmodule PortfolioWeb.Photography.TimelineLiveTest do
   use PortfolioWeb.ConnCase
   import Phoenix.LiveViewTest
 
-  alias PortfolioWeb.PhotographyLive.Index
-
   defp open_subdomain(%{conn: conn}) do
     {:error, {:redirect, %{to: subdomain}}} = live(conn, ~p"/photo")
 

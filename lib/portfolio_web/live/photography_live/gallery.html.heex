@@ -1,0 +1,89 @@
+<div class="h-screen flex flex-col gap-4 py-2">
+  <nav class={[
+    "sticky top-0 px-4",
+    "flex-none flex items-center",
+    "text-sm"
+  ]}>
+    <h1 class="flex flex-col items-end group">
+      <a href={~p"/"}>
+        {gettext("Thibault Santonja")}
+        <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
+      </a>
+    </h1>
+  </nav>
+
+  <section class={[
+    "grow md:pl-4 max-h-full min-h-0",
+    "flex flex-col-reverse md:flex-row md:gap-16 overflow-hidden justify-end"
+  ]}>
+    <header
+      id={"project-title-#{@project_id}"}
+      class="px-4 md:px-0 md:py-8 project-title z-10 opacity-0 duration-300 ease-in md:max-w-[33%]"
+    >
+      <h2 class="uppercase mb-2 md:mb-4">{@project.title}</h2>
+      <p class="leading-relaxed text-sm opacity-80">{@project.description}</p>
+    </header>
+
+    <a
+      class={[
+        "group max-h-full min-h-0 min-w-1/2",
+        "md:grow"
+      ]}
+      href="#"
+    >
+      <img
+        id={"project-image-#{@project_id}"}
+        phx-hook="AnimatePhotographyGallery"
+        class={[
+          "max-h-full max-w-full",
+          "-z-10 ml-auto object-contain",
+          "opacity-0 duration-1000 ease-in-out translate-y-8"
+        ]}
+        alt={@project.title}
+        loading="lazy"
+        decoding="async"
+        data-nimg="1"
+        srcset={[
+          "#{@project.photo_url}?w=320&q=80 320w",
+          "#{@project.photo_url}?w=480&q=80 480w",
+          "#{@project.photo_url}?w=720&q=80 720w",
+          "#{@project.photo_url}?w=1080&q=80 1080w",
+          "#{@project.photo_url}?w=1620&q=80 1620w",
+          "#{@project.photo_url}?w=2430&q=80 2430w"
+        ]}
+        src={@project.photo_url}
+      />
+
+      <span class={[
+        "block w-full pr-4",
+        "text-right text-xs",
+        "opacity-60 group-hover:opacity-100 duration-300"
+      ]}>
+        {gettext("go to album")}
+        <%!-- Link to see the album / the project
+          Number of pictures, e.g. (01-10) --%>
+      </span>
+    </a>
+  </section>
+
+  <section class={[
+    "flex-none w-screen px-4 h-36 sm:h-48"
+  ]}>
+    <ul
+      id="project-list"
+      phx-hook="HorizontalScrollFadeIn"
+      class={[
+        "overflow-x-auto h-36 sm:h-48 overflow-y-hidden",
+        "grid grid-flow-col grid-rows-1 gap-2"
+      ]}
+    >
+      <%= for {project, index} <- Enum.with_index(@data) do %>
+        <li class="w-64 mx-auto opacity-0 transition-opacity duration-300 ease-in">
+          <button phx-click="show_project" phx-value-project={index} class="size-full">
+            <img class="size-full object-cover" alt={project.title} src={project.photo_url} />
+          </button>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+</div>
