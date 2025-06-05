@@ -10,6 +10,34 @@
         <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
       </a>
     </h1>
+    <div class="grow flex justify-end gap-4">
+      <.dropdown id="language" smart_position={true} clickable>
+        <:trigger>
+          <.icon
+            name="hero-language-solid"
+            class={[
+              "h-6 w-6",
+              "ml-2"
+            ]}
+          />
+        </:trigger>
+
+        <.dropdown_content rounded="large" padding="extra_small" class="z-50">
+          <.list size="small">
+            <:item>
+              <button class="hover:font-black" phx-click="change_locale" phx-value-locale="fr">
+                Français
+              </button>
+            </:item>
+            <:item>
+              <button class="hover:font-black" phx-click="change_locale" phx-value-locale="en">
+                English
+              </button>
+            </:item>
+          </.list>
+        </.dropdown_content>
+      </.dropdown>
+    </div>
   </nav>
 
   <section class={[
@@ -20,13 +48,13 @@
       id={"project-title-#{@project_id}"}
       class="px-4 md:px-0 md:py-8 project-title z-10 opacity-0 duration-300 ease-in md:max-w-[33%]"
     >
-      <h2 class="uppercase mb-2 md:mb-4">{@project.title}</h2>
-      <p class="leading-relaxed text-sm opacity-80">{@project.description}</p>
+      <h2 class="uppercase text-xl mb-2 md:mb-4 font-black">{@project.title}</h2>
+      <p class="leading-relaxed text-sm opacity-80 font-light">{@project.description}</p>
     </header>
 
     <a
       class={[
-        "group max-h-full min-h-0 min-w-1/2",
+        "group max-h-full min-h-0 min-w-1/2 px-4",
         "md:grow"
       ]}
       href="#"
@@ -55,9 +83,9 @@
       />
 
       <span class={[
-        "block w-full pr-4",
+        "block w-full pr-4 pt-1",
         "text-right text-xs",
-        "opacity-60 group-hover:opacity-100 duration-300"
+        "opacity-20 group-hover:opacity-100 duration-300"
       ]}>
         {gettext("go to album")}
         <%!-- Link to see the album / the project
