@@ -118,7 +118,6 @@
         <.icon
           name="hero-language-solid"
           class={[
-            "text-white",
             "h-7 w-7",
             "mr-2"
           ]}
@@ -141,6 +140,8 @@
       </.dropdown_content>
     </.dropdown>
 
+    <.switch_theme_button />
+
     <a
       class="text-xs sm:text-sm items-center group flex"
       href="https://www.instagram.com/thibault__san/"
@@ -151,7 +152,7 @@
         viewBox="0 0 420 420"
         xmlns="http://www.w3.org/2000/svg"
         class={[
-          "fill-white stroke-2",
+          "fill-gray-900 dark:fill-gray-100 stroke-2",
           "h-4 w-4 mr-1",
           "sm:h-6 sm:w-6 sm:mr-2",
           "flex-none",
@@ -183,7 +184,10 @@
   ]}
   key={@modal_chapter}
 >
-  <button class={["h-full opacity-80 bg-black", "close-modal"]} phx-click="close_modal" />
+  <button
+    class={["h-full opacity-50 dark:opacity-80 bg-white dark:bg-black", "close-modal"]}
+    phx-click="close_modal"
+  />
   <article class="col-span-4 text-white h-full">
     <img
       loading="lazy"

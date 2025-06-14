@@ -1,8 +1,8 @@
 <nav class={[
   "sticky top-0 z-10",
-  "bg-black/70 backdrop-blur-md",
+  "bg-white/70 dark:bg-black/70 backdrop-blur-md",
   "flex items-center",
-  "px-4 py-2 text-sm text-white"
+  "px-4 py-2 text-sm"
 ]}>
   <h1 class="flex flex-col items-end group">
     <a href={~p"/"}>
@@ -21,6 +21,33 @@
         {year}
       </a>
     <% end %>
+
+    <.dropdown id="language" smart_position={true} clickable>
+      <:trigger>
+        <.icon
+          name="hero-language-solid"
+          class={[
+            "h-6 w-6",
+            "mx-2"
+          ]}
+        />
+      </:trigger>
+
+      <.dropdown_content rounded="large" padding="extra_small" class="z-50">
+        <.list size="small">
+          <:item>
+            <button class="hover:font-black" phx-click="change_locale" phx-value-locale="fr">
+              Français
+            </button>
+          </:item>
+          <:item>
+            <button class="hover:font-black" phx-click="change_locale" phx-value-locale="en">
+              English
+            </button>
+          </:item>
+        </.list>
+      </.dropdown_content>
+    </.dropdown>
   </div>
 </nav>
 
@@ -32,7 +59,7 @@
     "-translate-x-1/2 -translate-y-1/2 z-[-30]",
     "opacity-20 select-none pointer-events-none",
     "transition-transform duration-700 ease-out rotate-x-0",
-    "text-9xl font-bold text-white",
+    "text-9xl font-bold",
     "flex w-full flex-nowrap px-8"
   ]}
 >
@@ -51,14 +78,14 @@
       <ul class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         <%= for album <- @data |> Map.get(year) |> Enum.sort(&(&1.date > &2.date)) do %>
           <li class={[
-            "bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl",
+            "bg-gray-300/20 dark:bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl",
             "col-span-2 lg:col-span-3",
             Enum.random(["sm:col-start-1", "sm:col-start-2"]),
             Enum.random(["lg:col-start-1", "lg:col-start-2"])
           ]}>
             <article>
               <header class="mb-4">
-                <h2 class="text-xl font-semibold">
+                <h2 class="text-xl font-semibold text-black dark:text-white">
                   <span class="text-xs opacity-80 mr-4">{album.date}</span>
                   {album.title}
                 </h2>
@@ -75,7 +102,7 @@
                   loading="lazy"
                 />
                 <div class={[
-                  "text-sm text-gray-300 leading-relaxed",
+                  "text-sm text-gray-600 dark:text-gray-300 leading-relaxed",
                   "lg:px-8",
                   "lg:col-span-2",
                   "flex flex-col"
@@ -113,7 +140,7 @@
                         "group hover:scale-105 duration-300",
                         "py-2 px-4 mt-8",
                         "text-sm",
-                        "border-amvcc-base-300 rounded-lg border-2"
+                        "border-gray-300 rounded-lg border-2"
                       ]}
                     >
                       {gettext("Show more")}
@@ -140,11 +167,11 @@
   <h2></h2>
   <p></p>
   <article class={[
-    "bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl"
+    "bg-gray-300/20 dark:bg-black/20 backdrop-blur-sm p-6 rounded-xl"
   ]}>
     <header class="mb-4">
       <h2 class="text-xl font-semibold">
-        <span class="text-xs text-gray-400 mr-4">{Date.utc_today()}</span>
+        <span class="text-xs mr-4 text-gray-500">{Date.utc_today()}</span>
         {gettext("Empty portfolio chapter")}
       </h2>
     </header>
@@ -160,7 +187,7 @@
         loading="lazy"
       />
       <div class={[
-        "text-sm text-gray-300 leading-relaxed",
+        "text-sm text-gray-700 dark:text-gray-300 leading-relaxed",
         "lg:px-8",
         "lg:col-span-2",
         "flex flex-col"
@@ -178,7 +205,7 @@
               "group hover:scale-105 duration-300",
               "py-2 px-4 mt-8",
               "text-sm",
-              "border-amvcc-base-300 rounded-lg border-2"
+              "border-gray-600 dark:border-gray-300 rounded-lg border-2"
             ]}
           >
             {gettext("Home")}

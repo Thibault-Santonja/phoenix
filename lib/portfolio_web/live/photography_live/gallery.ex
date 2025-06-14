@@ -1,5 +1,6 @@
 defmodule PortfolioWeb.PhotographyLive.Gallery do
   use PortfolioWeb, :live_view
+  import PortfolioWeb.Components.ThemeButton
 
   @data [
     %{
