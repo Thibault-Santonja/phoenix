@@ -1,5 +1,5 @@
 defmodule PortfolioWeb.PhotographyLive.Index do
-  import PortfolioWeb.Components.{PhotographyList, DarkModeButton}
+  import PortfolioWeb.Components.{PhotographyList, ThemeButton}
   use PortfolioWeb, :live_view
 
   @impl true

@@ -1,4 +1,4 @@
-defmodule PortfolioWeb.Components.DarkModeButton do
+defmodule PortfolioWeb.Components.ThemeButton do
   @moduledoc """
   A reusable component for toggling between light and dark themes.
 
@@ -17,7 +17,7 @@ defmodule PortfolioWeb.Components.DarkModeButton do
 
   ## Example usage
 
-      <.dark_mode_button id="theme-toggle" />
+      <.switch_theme_button id="theme-toggle" />
 
   Make sure your app loads the theme early in `app.js`:
 
@@ -59,14 +59,14 @@ defmodule PortfolioWeb.Components.DarkModeButton do
 
   ## Example
 
-      <.dark_mode_button id="theme-toggle" />
+      <.switch_theme_button id="theme-toggle" />
   """
   @doc type: :component
   attr :id, :string,
     default: nil,
     doc: "A unique identifier is used to manage state and interaction"
 
-  def dark_mode_button(assigns) do
+  def switch_theme_button(assigns) do
     ~H"""
     <button phx-hook="DarkModeSwitch" id="theme-toggle" aria-label="Switch theme">
       <svg class="dark:hidden" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
