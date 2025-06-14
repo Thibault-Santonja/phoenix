@@ -31,7 +31,23 @@ import {
   YearTrigger,
   HorizontalScrollFadeIn,
   AnimatePhotographyGallery,
-} from "./animations";
+  DarkModeSwitch,
+} from "./hooks";
+
+function getSystemTheme() {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+function setTheme() {
+  const html = document.documentElement;
+  const stored = localStorage.getItem("theme");
+  const theme = stored || getSystemTheme();
+  html.classList.toggle("dark", theme === "dark");
+}
+
+setTheme();
 
 // Hook animate this
 const Hooks = {};
@@ -46,6 +62,7 @@ Hooks.GalleryModal = GalleryModal;
 Hooks.YearTrigger = YearTrigger;
 Hooks.HorizontalScrollFadeIn = HorizontalScrollFadeIn;
 Hooks.AnimatePhotographyGallery = AnimatePhotographyGallery;
+Hooks.DarkModeSwitch = DarkModeSwitch;
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
