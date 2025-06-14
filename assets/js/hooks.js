@@ -409,3 +409,16 @@ export const AnimatePhotographyGallery = {
     }, 275);
   },
 };
+
+export const DarkModeSwitch = {
+  mounted() {
+    const html = document.documentElement;
+    this.el.addEventListener("click", () => {
+      const isDark = html.classList.contains("dark");
+      const newTheme = isDark ? "light" : "dark";
+
+      html.classList.toggle("dark", newTheme === "dark");
+      localStorage.setItem("theme", newTheme);
+    });
+  },
+};
