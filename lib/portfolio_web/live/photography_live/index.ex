@@ -1,5 +1,5 @@
 defmodule PortfolioWeb.PhotographyLive.Index do
-  import PortfolioWeb.Components.PhotographyList
+  import PortfolioWeb.Components.{PhotographyList, DarkModeButton}
   use PortfolioWeb, :live_view
 
   @impl true
@@ -120,7 +120,7 @@ defmodule PortfolioWeb.PhotographyLive.Index do
             "block mt-8 mx-auto",
             "group hover:scale-110 duration-300",
             "py-2 px-4",
-            "border-amvcc-base-300 rounded-lg border-2"
+            "rounded-lg border-2"
           ]}
         >
           {gettext("Show more")}
@@ -141,7 +141,7 @@ defmodule PortfolioWeb.PhotographyLive.Index do
             "block mt-8 mx-auto",
             "group hover:scale-110 duration-300",
             "py-2 px-4",
-            "border-amvcc-base-300 rounded-lg border-2"
+            " rounded-lg border-2"
           ]}
         >
           {gettext("Show more")}

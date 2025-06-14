@@ -11,13 +11,15 @@
       </a>
     </h1>
     <div class="grow flex justify-end gap-4">
+      <.dark_mode_button />
+
       <.dropdown id="language" smart_position={true} clickable>
         <:trigger>
           <.icon
             name="hero-language-solid"
             class={[
               "h-6 w-6",
-              "ml-2"
+              "mx-2"
             ]}
           />
         </:trigger>
@@ -95,18 +97,18 @@
   </section>
 
   <section class={[
-    "flex-none w-screen px-4 h-36 sm:h-48"
+    "flex-none w-screen px-4 h-24 sm:h-36 md:h-48 "
   ]}>
     <ul
       id="project-list"
       phx-hook="HorizontalScrollFadeIn"
       class={[
-        "overflow-x-auto h-36 sm:h-48 overflow-y-hidden",
+        "overflow-x-auto h-24 sm:h-36 md:h-48 overflow-y-hidden",
         "grid grid-flow-col grid-rows-1 gap-2"
       ]}
     >
       <%= for {project, index} <- Enum.with_index(@data) do %>
-        <li class="w-64 mx-auto opacity-0 transition-opacity duration-300 ease-in">
+        <li class="w-36 sm:w-48 md:w-64 mx-auto opacity-0 transition-opacity duration-300 ease-in">
           <button phx-click="show_project" phx-value-project={index} class="size-full">
             <img class="size-full object-cover" alt={project.title} src={project.photo_url} />
           </button>
