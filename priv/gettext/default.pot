@@ -226,12 +226,12 @@ msgstr ""
 msgid "Shoes XIVc in western Europe"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:54
-#: lib/portfolio_web/live/photography_live/gallery.ex:67
-#: lib/portfolio_web/live/photography_live/gallery.ex:77
+#: lib/portfolio_web/live/photography_live/gallery.ex:55
+#: lib/portfolio_web/live/photography_live/gallery.ex:68
+#: lib/portfolio_web/live/photography_live/gallery.ex:78
 #: lib/portfolio_web/live/photography_live/index.ex:57
-#: lib/portfolio_web/live/photography_live/index.html.heex:196
-#: lib/portfolio_web/live/photography_live/index.html.heex:197
+#: lib/portfolio_web/live/photography_live/index.html.heex:200
+#: lib/portfolio_web/live/photography_live/index.html.heex:201
 #, elixir-autogen, elixir-format
 msgid "Thibault San Photography"
 msgstr ""
@@ -1819,7 +1819,7 @@ msgstr ""
 #: lib/portfolio_web/live/amvcc_live/blog.html.heex:188
 #: lib/portfolio_web/live/photography_live/index.ex:126
 #: lib/portfolio_web/live/photography_live/index.ex:147
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:119
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:146
 #, elixir-autogen, elixir-format
 msgid "Show more"
 msgstr ""
@@ -2369,19 +2369,19 @@ msgstr ""
 msgid "Beneath ancient vaults, the orchestra brought the walls to life. Strings, woodwinds, and brass in conversation — emotion hanging in the air."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:148
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "Empty portfolio chapter"
 msgstr ""
 
 #: lib/portfolio_web/live/photography_live/gallery.html.heex:10
 #: lib/portfolio_web/live/photography_live/timeline.html.heex:10
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:184
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:211
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:169
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:196
 #, elixir-autogen, elixir-format
 msgid "I am so sorry but at the moment, this portfolio gallery is empty"
 msgstr ""
@@ -2446,17 +2446,17 @@ msgstr ""
 msgid "Thibault San Photography - Event photography used as background"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:18
+#: lib/portfolio_web/live/photography_live/gallery.ex:19
 #, elixir-autogen, elixir-format
 msgid "A Taiwan title"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:6
+#: lib/portfolio_web/live/photography_live/gallery.ex:7
 #, elixir-autogen, elixir-format
 msgid "A title in China"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:98
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "Website"
 msgstr ""
@@ -2467,12 +2467,12 @@ msgstr ""
 msgid "Thibault Santonja"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:12
+#: lib/portfolio_web/live/photography_live/gallery.ex:13
 #, elixir-autogen, elixir-format
 msgid "This title Japan"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:62
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:92
 #, elixir-autogen, elixir-format
 msgid "go to album"
 msgstr ""
