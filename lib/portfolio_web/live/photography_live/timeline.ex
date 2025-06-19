@@ -233,7 +233,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
           gettext(
             "Minuit avant la Nuit (La Lune des Pirates) returns to Amiens in the lush setting of Saint-Pierre park, with another promising lineup. 2025 will feature Hoshi, Philippe Katerine, or Kavinsky. I’m eager to revisit the unique vibe of this festival — blending greenery, electro-pop, and collective joy — just like in 2024!"
           ),
-        photography: "/images/photography/music.webp",
+        photography: "/images/photography/gallery/2025-06-14_Minuit_avant_la_Nuit.webp",
         url: nil,
         reference_link: "https://minuitavantlanuit.fr/"
       }
