@@ -231,9 +231,9 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
         title: "Minuit avant la Nuit 2025",
         description:
           gettext(
-            "Minuit avant la Nuit (La Lune des Pirates) returns to Amiens in the lush setting of Saint-Pierre park, with another promising lineup. 2025 will feature Hoshi, Philippe Katerine, or Kavinsky. I’m eager to revisit the unique vibe of this festival — blending greenery, electro-pop, and collective joy — just like in 2024!"
+            "Beneath the old trees of Saint-Pierre park, time slowed down. Soft light drifted over faces, carried by the voices of Miki, Philippe Katerine, Kompromat, and Kavinsky. For this 2025 edition, I rediscovered what makes Minuit avant la Nuit so special — that rare blend of warmth, collective energy, and music that transcends genres to reach something deeper.Photographing this moment meant chasing the fleeting — the smiles in the crowd, an artist’s silhouette in the stage lights, the birth of a memory still taking shape."
           ),
-        photography: "/images/photography/music.webp",
+        photography: "/images/photography/gallery/2025-06-14_Minuit_avant_la_Nuit.webp",
         url: nil,
         reference_link: "https://minuitavantlanuit.fr/"
       }
