@@ -89,9 +89,7 @@
         "text-right text-xs",
         "opacity-20 group-hover:opacity-100 duration-300"
       ]}>
-        {gettext("go to album")}
-        <%!-- Link to see the album / the project
-          Number of pictures, e.g. (01-10) --%>
+        {gettext("go to album")} ({String.to_integer(@project_id) + 1} - {@pictures})
       </span>
     </a>
   </section>

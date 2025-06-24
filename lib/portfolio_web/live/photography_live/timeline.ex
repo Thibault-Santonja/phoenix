@@ -234,7 +234,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
             "Beneath the old trees of Saint-Pierre park, time slowed down. Soft light drifted over faces, carried by the voices of Miki, Philippe Katerine, Kompromat, and Kavinsky. For this 2025 edition, I rediscovered what makes Minuit avant la Nuit so special — that rare blend of warmth, collective energy, and music that transcends genres to reach something deeper.Photographing this moment meant chasing the fleeting — the smiles in the crowd, an artist’s silhouette in the stage lights, the birth of a memory still taking shape."
           ),
         photography: "/images/photography/gallery/2025-06-14_Minuit_avant_la_Nuit.webp",
-        url: nil,
+        url: "/gallery/20250614_MALN",
         reference_link: "https://minuitavantlanuit.fr/"
       }
     ]

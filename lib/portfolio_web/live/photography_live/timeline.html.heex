@@ -113,7 +113,8 @@
                   <nav class="flex justify-end mt-4">
                     <a
                       :if={album.reference_link}
-                      href="#"
+                      href={album.reference_link}
+                      target="_blank"
                       class={[
                         "grow-0",
                         "inline-flex items-center gap-2",
@@ -133,7 +134,7 @@
                     </a>
                     <a
                       :if={album.url}
-                      href="#"
+                      href={album.url}
                       class={[
                         "grow-0",
                         "inline-flex items-center gap-2",
