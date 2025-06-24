@@ -226,12 +226,12 @@ msgstr "Vetements XIVᵉ en Europe de l'ouest"
 msgid "Shoes XIVc in western Europe"
 msgstr "Chaussures XIVᵉ en Europe de l'ouest"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:55
-#: lib/portfolio_web/live/photography_live/gallery.ex:68
-#: lib/portfolio_web/live/photography_live/gallery.ex:78
+#: lib/portfolio_web/live/photography_live/gallery.ex:76
+#: lib/portfolio_web/live/photography_live/gallery.ex:89
+#: lib/portfolio_web/live/photography_live/gallery.ex:99
 #: lib/portfolio_web/live/photography_live/index.ex:57
+#: lib/portfolio_web/live/photography_live/index.html.heex:199
 #: lib/portfolio_web/live/photography_live/index.html.heex:200
-#: lib/portfolio_web/live/photography_live/index.html.heex:201
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Thibault San Photography"
 msgstr "Thibault San Photographie"
@@ -1819,7 +1819,7 @@ msgstr "Vie de camp"
 #: lib/portfolio_web/live/amvcc_live/blog.html.heex:188
 #: lib/portfolio_web/live/photography_live/index.ex:126
 #: lib/portfolio_web/live/photography_live/index.ex:147
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:146
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "Show more"
 msgstr "Voir plus"
@@ -2369,19 +2369,19 @@ msgstr "Atelier de couture"
 msgid "Beneath ancient vaults, the orchestra brought the walls to life. Strings, woodwinds, and brass in conversation — emotion hanging in the air."
 msgstr "Sous les voûtes anciennes, l’orchestre a fait vibrer les murs. Cordes, bois et cuivres en dialogue, émotion suspendue dans l’air."
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:175
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:176
 #, elixir-autogen, elixir-format
 msgid "Empty portfolio chapter"
 msgstr "Chapitre du portfolio vide"
 
 #: lib/portfolio_web/live/photography_live/gallery.html.heex:10
 #: lib/portfolio_web/live/photography_live/timeline.html.heex:10
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:211
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:212
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:196
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:197
 #, elixir-autogen, elixir-format
 msgid "I am so sorry but at the moment, this portfolio gallery is empty"
 msgstr "Je suis désolée, mais pour le moment, cette galerie de portfolio est vide."
@@ -2391,12 +2391,12 @@ msgstr "Je suis désolée, mais pour le moment, cette galerie de portfolio est v
 msgid "Beneath the old trees of Saint-Pierre park, time slowed down. Soft light drifted over faces, carried by the voices of Miki, Philippe Katerine, Kompromat, and Kavinsky. For this 2025 edition, I rediscovered what makes Minuit avant la Nuit so special — that rare blend of warmth, collective energy, and music that transcends genres to reach something deeper.Photographing this moment meant chasing the fleeting — the smiles in the crowd, an artist’s silhouette in the stage lights, the birth of a memory still taking shape."
 msgstr "Sous les arbres centenaires du parc Saint-Pierre, le temps semblait suspendu. Une lumière douce glissait sur les visages, portée par les voix de Miki, Philippe Katerine, Kompromat ou encore Kavinsky. J’ai retrouvé, pour cette édition 2025, cette alchimie rare qui fait la beauté de Minuit avant la Nuit : une vibration collective, une chaleur simple, une fête qui traverse les genres pour mieux toucher à l’essentiel.Photographier ce moment, c’était chercher à capter l’éphémère — les sourires dans la foule, la silhouette d’un artiste dans l’éclat des projecteurs, l’écho d’un souvenir déjà en train de s’écrire."
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:279
+#: lib/portfolio_web/live/photography_live/timeline.ex:293
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Photographies gallery - "
 msgstr "Galerie de photographie - "
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:275
+#: lib/portfolio_web/live/photography_live/timeline.ex:289
 #, elixir-autogen, elixir-format
 msgid "Photographies timeline gallery"
 msgstr "Galerie chronologique de photographie"
@@ -2456,7 +2456,7 @@ msgstr ""
 msgid "A title in China"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:125
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:126
 #, elixir-autogen, elixir-format
 msgid "Website"
 msgstr "Site"
@@ -2476,3 +2476,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "go to album"
 msgstr "aller à l'album"
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:243
+#, elixir-autogen, elixir-format
+msgid "Bringing the Donjon de Bours to life"
+msgstr "Mise en vie du Donjon de Bours"
+
+#: lib/portfolio_web/live/photography_live/timeline.ex:245
+#, elixir-autogen, elixir-format
+msgid "There are places that seem to carry with them the breath of time. The Donjon de Bours is one such place. During a weekend of historical re-enactment, the stones took on a new voice. The costumes, the ancient gestures, the smells of fire, cooking and wool recreated a bygone world, both familiar and distant. Photographing this moment is more than simply bearing witness: it's accompanying a place as it comes to life, capturing the echo of the past in the eyes of today. Each image is a fragile memory, a door ajar on what we once were, on what, perhaps, still resonates within us."
+msgstr "Il y a des lieux qui semblent porter en eux le souffle du temps. Le Donjon de Bours est de ceux-là. Lors d’un week-end de reconstitution historique, les pierres ont repris voix. Les costumes, les gestes anciens, les odeurs de feu, de cuisine et de laine ont recréé un monde révolu, à la fois familier et lointain. Photographier cet instant, c'est plus qu’un simple témoignage : c'est accompagner un lieu dans sa mise en vie, capter l'écho du passé dans les regards d'aujourd’hui. Chaque image est une mémoire fragile, une porte entrouverte sur ce que nous avons été, sur ce qui, peut-être, résonne encore en nous."

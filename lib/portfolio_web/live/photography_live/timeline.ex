@@ -236,6 +236,20 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
         photography: "/images/photography/gallery/2025-06-14_Minuit_avant_la_Nuit.webp",
         url: "/gallery/20250614_MALN",
         reference_link: "https://minuitavantlanuit.fr/"
+      },
+      %{
+        type: "reenactment",
+        date: "2025-06-21",
+        title: gettext("Bringing the Donjon de Bours to life"),
+        description:
+          gettext(
+            "There are places that seem to carry with them the breath of time. The Donjon de Bours is one such place. During a weekend of historical re-enactment, the stones took on a new voice. The costumes, the ancient gestures, the smells of fire, cooking and wool recreated a bygone world, both familiar and distant. Photographing this moment is more than simply bearing witness: it's accompanying a place as it comes to life, capturing the echo of the past in the eyes of today. Each image is a fragile memory, a door ajar on what we once were, on what, perhaps, still resonates within us."
+          ),
+        photography:
+          "/images/photography/gallery/20250621_Bours/2025-06-21_Donjon_de_Bours_4753_250621115330.webp",
+        url: "/gallery/20250621_Bours",
+        reference_link:
+          "https://www.arraspaysdartois.com/le-donjon-de-bours-joyau-architectural-medieval-en-hauts-de-france/"
       }
     ]
   }

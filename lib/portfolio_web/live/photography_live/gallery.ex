@@ -22,7 +22,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       photo_url: "/images/photography/taiwan.webp"
     }
   ]
-  @supported_album ["20250614_MALN"]
+  @supported_album ["20250614_MALN", "20250621_Bours"]
 
   defp get_folder_pictures(chapter) when chapter in @supported_album do
     "./priv/static/images/photography/#{chapter}/*.webp"
