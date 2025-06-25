@@ -28,19 +28,34 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
     :code.priv_dir(:portfolio)
     |> Path.join("./static/images/photography/#{chapter}/*.webp")
     |> Path.wildcard()
-    |> Stream.map(&String.split(&1, "/static/", trim: true))
-    |> Stream.map(fn [_priv_path, url] ->
-      %{
-        title: "Minuit avant la nuit 2025",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        photo_url: "/" <> url
-      }
-    end)
+    |> Stream.map(&get_url/1)
+    |> Stream.reject(&skip_file_in_prod?/1)
+    |> Stream.map(&build_photo_data/1)
     |> Enum.to_list()
   end
 
   defp get_folder_pictures(_), do: @default_data
+
+  defp build_photo_data(url) do
+    %{
+      title: "No title",
+      description: "No description",
+      photo_url: "/" <> url
+    }
+  end
+
+  defp skip_file_in_prod?(url) do
+    if System.get_env("MIX_ENV") == "prod" do
+      not Regex.match?(~r/-[a-f0-9]{8,}\.webp$/, url)
+    else
+      false
+    end
+  end
+
+  defp get_url(path) do
+    [_priv_path, url] = String.split(path, "/static/", trim: true)
+    url
+  end
 
   @impl true
   def mount(params, session, socket) do
