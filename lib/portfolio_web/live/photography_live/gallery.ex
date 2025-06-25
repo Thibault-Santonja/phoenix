@@ -45,7 +45,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   end
 
   defp skip_file_in_prod?(url) do
-    if System.get_env("MIX_ENV") == "prod" do
+    if System.get_env("MIX_ENV") == :prod do
       not Regex.match?(~r/-[a-f0-9]{8,}\.webp$/, url)
     else
       false

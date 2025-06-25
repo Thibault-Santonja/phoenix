@@ -43,6 +43,7 @@ config :spark,
   ]
 
 config :portfolio,
+  env: config_env(),
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
