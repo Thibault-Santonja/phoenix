@@ -25,15 +25,16 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   @supported_album ["20250614_MALN", "20250621_Bours"]
 
   defp get_folder_pictures(chapter) when chapter in @supported_album do
-    "./priv/static/images/photography/#{chapter}/*.webp"
+    :code.priv_dir(:portfolio)
+    |> Path.join("./static/images/photography/#{chapter}/*.webp")
     |> Path.wildcard()
-    |> Stream.map(&String.split(&1, "priv/static", trim: true))
-    |> Stream.map(fn url ->
+    |> Stream.map(&String.split(&1, "/static/", trim: true))
+    |> Stream.map(fn [_priv_path, url] ->
       %{
         title: "Minuit avant la nuit 2025",
         description:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        photo_url: url
+        photo_url: "/" <> url
       }
     end)
     |> Enum.to_list()
