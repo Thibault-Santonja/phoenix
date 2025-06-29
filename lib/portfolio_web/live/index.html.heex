@@ -48,25 +48,27 @@
           "text-white text-sm",
           "my-2"
         ]}>
-          <li class={[
-            "p-4 group",
-            "bg-white/20 backdrop-blur-md rounded-lg"
-          ]}>
-            <a href={~p"/photo"} class="group-hover:font-medium duration-500">
-              <h2 class="text-base font-black mb-2">
-                <.icon
-                  name="hero-photo-solid"
-                  class={[
-                    "text-white",
-                    "h-6 w-6",
-                    "mr-2"
-                  ]}
-                />
-                {gettext("Photography")}
-              </h2>
-              <p>{gettext("Fragments of light, stories without words and emotional journey")}</p>
-            </a>
-          </li>
+          <a
+            href={~p"/photo"}
+            class={[
+              "p-4",
+              "bg-white/20 backdrop-blur-md rounded-lg",
+              "hover:font-medium duration-500"
+            ]}
+          >
+            <h2 class="text-base font-black mb-2">
+              <.icon
+                name="hero-photo-solid"
+                class={[
+                  "text-white",
+                  "h-6 w-6",
+                  "mr-2"
+                ]}
+              />
+              {gettext("Photography")}
+            </h2>
+            <p>{gettext("Fragments of light, stories without words and emotional journey")}</p>
+          </a>
 
           <li class={[
             "p-4",
@@ -103,46 +105,51 @@
             </a>
           </li>
 
-          <li class={[
-            "p-4 group",
-            "bg-white/20 backdrop-blur-md rounded-lg"
-          ]}>
-            <a href={~p"/tech"} class="group-hover:font-medium duration-500">
-              <h2 class="text-base font-black mb-2">
-                <.icon
-                  name="hero-command-line-solid"
-                  class={[
-                    "text-white",
-                    "h-6 w-6",
-                    "mr-2"
-                  ]}
-                />
-                {gettext("Software crafter")}
-              </h2>
-              <p>{gettext("Thoughtful crafted code, shaped with care for people and planet")}</p>
-            </a>
-          </li>
+          <a
+            href={~p"/tech"}
+            class={[
+              "p-4",
+              "bg-white/20 backdrop-blur-md rounded-lg",
+              "hover:font-medium duration-500"
+            ]}
+          >
+            <h2 class="text-base font-black mb-2">
+              <.icon
+                name="hero-command-line-solid"
+                class={[
+                  "text-white",
+                  "h-6 w-6",
+                  "mr-2"
+                ]}
+              />
+              {gettext("Software crafter")}
+            </h2>
+            <p>{gettext("Thoughtful crafted code, shaped with care for people and planet")}</p>
+          </a>
 
-          <li class={[
-            "p-4 group",
-            "bg-white/20 backdrop-blur-md rounded-lg"
-          ]}>
-            <a href={~p"/"} class="cursor-not-allowed" aria-disabled>
-              <h2 class="text-base font-black mb-2">
-                <.icon
-                  name="hero-book-open-solid"
-                  class={[
-                    "text-white",
-                    "h-6 w-6",
-                    "mr-2"
-                  ]}
-                />
-                {gettext("The bookshelf")}
-              </h2>
-              <p>{gettext("A curated digital bookshelf")}</p>
-              <p>~ <strong>{gettext("Coming soon")}</strong> ~</p>
-            </a>
-          </li>
+          <a
+            href={~p"/"}
+            aria-disabled
+            class={[
+              "p-4",
+              "bg-white/20 backdrop-blur-md rounded-lg",
+              "cursor-not-allowed"
+            ]}
+          >
+            <h2 class="text-base font-black mb-2">
+              <.icon
+                name="hero-book-open-solid"
+                class={[
+                  "text-white",
+                  "h-6 w-6",
+                  "mr-2"
+                ]}
+              />
+              {gettext("The bookshelf")}
+            </h2>
+            <p>{gettext("A curated digital bookshelf")}</p>
+            <p>~ <strong>{gettext("Coming soon")}</strong> ~</p>
+          </a>
         </ul>
 
         <p>{gettext("Take your time, each path tells a part of the story.")}</p>
