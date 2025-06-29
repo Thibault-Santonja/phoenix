@@ -1,4 +1,11 @@
 defmodule Portfolio.Accounts.User do
+  @moduledoc """
+  User resource for the Portfolio application.
+
+  This resource handles user authentication, registration, and identity management.
+  It implements magic link authentication strategy, allowing users to sign in
+  without passwords by receiving authentication links via email.
+  """
   use Ash.Resource,
     otp_app: :portfolio,
     domain: Portfolio.Accounts,

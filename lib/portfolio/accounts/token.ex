@@ -1,4 +1,11 @@
 defmodule Portfolio.Accounts.Token do
+  @moduledoc """
+  Token resource for the Portfolio application's authentication system.
+
+  This resource handles the creation, storage, retrieval, and revocation of authentication
+  tokens. It manages JWT tokens for user sessions, including token expiration and revocation
+  functionality to maintain secure authentication across the application.
+  """
   use Ash.Resource,
     otp_app: :portfolio,
     domain: Portfolio.Accounts,

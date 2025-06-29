@@ -1,4 +1,11 @@
 defmodule PortfolioWeb.AuthOverrides do
+  @moduledoc """
+  Customization module for AshAuthentication's Phoenix components.
+
+  This module allows for overriding the default appearance and behavior of 
+  authentication UI components, such as sign-in forms, banners, and other
+  authentication-related UI elements.
+  """
   use AshAuthentication.Phoenix.Overrides
 
   # configure your UI overrides here

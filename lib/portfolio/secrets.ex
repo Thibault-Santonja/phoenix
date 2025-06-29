@@ -1,4 +1,11 @@
 defmodule Portfolio.Secrets do
+  @moduledoc """
+  Manages authentication secrets for the Portfolio application.
+
+  This module provides functions to retrieve secure signing secrets
+  for authentication tokens, implementing the AshAuthentication.Secret
+  behavior for secure credential management.
+  """
   use AshAuthentication.Secret
 
   def secret_for(
