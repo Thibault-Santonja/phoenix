@@ -1,5 +1,10 @@
 import Config
 
+config :portfolio, Portfolio.Repo,
+  database: "../path/to/your.db",
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -53,7 +58,7 @@ config :portfolio, PortfolioWeb.Endpoint,
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :portfolio, dev_routes: true
+config :portfolio, dev_routes: true, token_signing_secret: "cP8fWH4Xsv3Fh4FF4oV7nCrdnnRYEa0C"
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

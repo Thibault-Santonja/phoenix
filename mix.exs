@@ -54,6 +54,14 @@ defmodule Portfolio.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:picosat_elixir, "~> 0.2"},
+      {:oban, "~> 2.0"},
+      {:ash_paper_trail, "~> 0.5"},
+      {:oban_web, "~> 2.0"},
+      {:ash_oban, "~> 0.4"},
+      {:ash_authentication_phoenix, "~> 2.0"},
+      {:ash_authentication, "~> 4.0"},
+      {:ash_sqlite, "~> 0.2"},
       {:sourceror, "~> 1.8", only: [:dev, :test]},
       {:tidewave, "~> 0.1", only: [:dev]},
       {:mishka_chelekom, "~> 0.0", only: [:dev]},
@@ -106,7 +114,9 @@ defmodule Portfolio.MixProject do
         "tailwind portfolio --minify",
         "esbuild portfolio --minify",
         "phx.digest"
-      ]
+      ],
+      test: ["ash.setup --quiet", "test"],
+      "phx.routes": ["phx.routes", "ash_authentication.phoenix.routes"]
     ]
   end
 end
