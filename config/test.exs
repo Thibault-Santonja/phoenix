@@ -1,5 +1,15 @@
 import Config
 
+config :portfolio, Oban, testing: :manual
+config :portfolio, token_signing_secret: "+bOeD9HNeBckalkgg5hZxmJOxMIN95mm"
+config :bcrypt_elixir, log_rounds: 1
+config :ash, disable_async?: true
+
+config :portfolio, Portfolio.Repo,
+  database: Path.join(__DIR__, "../path/to/your#{System.get_env("MIX_TEST_PARTITION")}.db"),
+  pool: Ecto.Adapters.SQL.Sandbox,
+  pool_size: 10
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :portfolio, PortfolioWeb.Endpoint,

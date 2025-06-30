@@ -7,6 +7,15 @@
 # General application configuration
 import Config
 
+config :ash_oban, pro?: false
+
+config :portfolio, Oban,
+  engine: Oban.Engines.Lite,
+  notifier: Oban.Notifiers.PG,
+  queues: [default: 10],
+  repo: Portfolio.Repo,
+  plugins: [{Oban.Plugins.Cron, []}]
+
 config :ash,
   allow_forbidden_field_for_relationships_by_default?: true,
   include_embedded_source_by_default?: false,
@@ -23,6 +32,8 @@ config :spark,
     remove_parens?: true,
     "Ash.Resource": [
       section_order: [
+        :authentication,
+        :tokens,
         :resource,
         :code_interface,
         :actions,
@@ -44,7 +55,9 @@ config :spark,
 
 config :portfolio,
   env: config_env(),
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  ecto_repos: [Portfolio.Repo],
+  ash_domains: [Portfolio.Accounts]
 
 # Configures the endpoint
 config :portfolio, PortfolioWeb.Endpoint,

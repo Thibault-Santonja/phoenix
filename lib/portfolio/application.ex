@@ -8,15 +8,22 @@ defmodule Portfolio.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      Portfolio.Repo,
       PortfolioWeb.Telemetry,
-      {DNSCluster, query: Application.get_env(:portfolio, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Portfolio.PubSub},
+      {Oban,
+       AshOban.config(
+         Application.fetch_env!(:portfolio, :ash_domains),
+         Application.fetch_env!(:portfolio, Oban)
+       )},
       # Start the Finch HTTP client for sending emails
-      {Finch, name: Portfolio.Finch},
       # Start a worker by calling: Portfolio.Worker.start_link(arg)
       # {Portfolio.Worker, arg},
       # Start to serve requests, typically the last entry
-      PortfolioWeb.Endpoint
+      {DNSCluster, query: Application.get_env(:portfolio, :dns_cluster_query) || :ignore},
+      {Phoenix.PubSub, name: Portfolio.PubSub},
+      {Finch, name: Portfolio.Finch},
+      PortfolioWeb.Endpoint,
+      {AshAuthentication.Supervisor, [otp_app: :portfolio]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
