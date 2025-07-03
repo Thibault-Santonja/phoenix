@@ -59,8 +59,7 @@ defmodule Portfolio.Photography.Album do
   use Ecto.Schema
   import Ecto.Changeset
 
-  # Note: Photo associations will be added in Issue #6
-  # alias Portfolio.Photography.Photo
+  alias Portfolio.Photography.Photo
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -76,6 +75,7 @@ defmodule Portfolio.Photography.Album do
           published: boolean(),
           reference_link: String.t() | nil,
           cover_photo_id: Ecto.UUID.t() | nil,
+          photos: [Photo.t()] | Ecto.Association.NotLoaded.t(),
           exif_data: map(),
           inserted_at: DateTime.t() | nil,
           updated_at: DateTime.t() | nil
@@ -95,9 +95,7 @@ defmodule Portfolio.Photography.Album do
     field :cover_photo_id, :binary_id
     field :exif_data, :map, default: %{}
 
-    # Note: Photo associations will be added in Issue #6
-    # belongs_to :cover_photo, Photo
-    # has_many :photos, Photo
+    has_many :photos, Photo
 
     timestamps(type: :utc_datetime)
   end
