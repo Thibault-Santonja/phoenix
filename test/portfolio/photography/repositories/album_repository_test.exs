@@ -1,0 +1,369 @@
+defmodule Portfolio.Photography.Repositories.AlbumRepositoryTest do
+  use Portfolio.DataCase, async: true
+
+  alias Portfolio.Photography.{Album, Photo}
+  alias Portfolio.Photography.Repositories.AlbumRepository
+
+  describe "list/0" do
+    test "returns all albums" do
+      album1 = insert_album(%{title: "Album 1", type: :wedding})
+      album2 = insert_album(%{title: "Album 2", type: :couples})
+
+      albums = AlbumRepository.list()
+
+      assert length(albums) == 2
+      assert Enum.find(albums, &(&1.id == album1.id))
+      assert Enum.find(albums, &(&1.id == album2.id))
+    end
+
+    test "returns empty list when no albums" do
+      assert AlbumRepository.list() == []
+    end
+  end
+
+  describe "list/1 with filters" do
+    setup do
+      wedding1 = insert_album(%{title: "Wedding 1", type: :wedding, published: true})
+      wedding2 = insert_album(%{title: "Wedding 2", type: :wedding, published: false})
+      couples = insert_album(%{title: "Couples 1", type: :couples, published: true})
+
+      %{wedding1: wedding1, wedding2: wedding2, couples: couples}
+    end
+
+    test "filters by type", %{wedding1: wedding1, wedding2: wedding2} do
+      albums = AlbumRepository.list(type: :wedding)
+
+      assert length(albums) == 2
+      album_ids = Enum.map(albums, & &1.id)
+      assert wedding1.id in album_ids
+      assert wedding2.id in album_ids
+    end
+
+    test "filters by published", %{wedding1: wedding1, couples: couples} do
+      albums = AlbumRepository.list(published: true)
+
+      assert length(albums) == 2
+      album_ids = Enum.map(albums, & &1.id)
+      assert wedding1.id in album_ids
+      assert couples.id in album_ids
+    end
+
+    test "filters by type and published", %{wedding1: wedding1} do
+      albums = AlbumRepository.list(type: :wedding, published: true)
+
+      assert length(albums) == 1
+      assert hd(albums).id == wedding1.id
+    end
+
+    test "returns empty list when no match" do
+      albums = AlbumRepository.list(type: :landscape)
+
+      assert albums == []
+    end
+  end
+
+  describe "list/1 with preload" do
+    test "preloads photos association" do
+      album = insert_album(%{title: "Album with photos", type: :wedding})
+      insert_photo(album, %{title: "Photo 1"})
+      insert_photo(album, %{title: "Photo 2"})
+
+      [loaded_album] = AlbumRepository.list(preload: [:photos])
+
+      assert loaded_album.id == album.id
+      assert length(loaded_album.photos) == 2
+      refute match?(%Ecto.Association.NotLoaded{}, loaded_album.photos)
+    end
+
+    test "preloads multiple associations" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      insert_photo(album, %{title: "Photo 1"})
+
+      [loaded_album] = AlbumRepository.list(preload: [:photos])
+
+      refute match?(%Ecto.Association.NotLoaded{}, loaded_album.photos)
+    end
+  end
+
+  describe "get/1" do
+    test "returns {:ok, album} when album exists" do
+      album = insert_album(%{title: "Test Album", type: :wedding})
+
+      assert {:ok, found_album} = AlbumRepository.get(album.id)
+      assert found_album.id == album.id
+      assert found_album.title == "Test Album"
+    end
+
+    test "returns {:error, :not_found} when album does not exist" do
+      fake_id = Ecto.UUID.generate()
+
+      assert {:error, :not_found} = AlbumRepository.get(fake_id)
+    end
+
+    test "preloads associations when specified" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      insert_photo(album, %{title: "Photo 1"})
+
+      assert {:ok, loaded_album} = AlbumRepository.get(album.id, preload: [:photos])
+
+      assert length(loaded_album.photos) == 1
+      refute match?(%Ecto.Association.NotLoaded{}, loaded_album.photos)
+    end
+  end
+
+  describe "get!/1" do
+    test "returns album when exists" do
+      album = insert_album(%{title: "Test Album", type: :wedding})
+
+      found_album = AlbumRepository.get!(album.id)
+
+      assert found_album.id == album.id
+      assert found_album.title == "Test Album"
+    end
+
+    test "raises Ecto.NoResultsError when album does not exist" do
+      fake_id = Ecto.UUID.generate()
+
+      assert_raise Ecto.NoResultsError, fn ->
+        AlbumRepository.get!(fake_id)
+      end
+    end
+
+    test "preloads associations when specified" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      insert_photo(album, %{title: "Photo 1"})
+
+      loaded_album = AlbumRepository.get!(album.id, preload: [:photos])
+
+      assert length(loaded_album.photos) == 1
+    end
+  end
+
+  describe "insert/1" do
+    test "creates album with valid attributes" do
+      attrs = %{
+        title: "New Album",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        description: "A beautiful wedding",
+        location: "Paris"
+      }
+
+      assert {:ok, album} = AlbumRepository.insert(attrs)
+      assert album.title == "New Album"
+      assert album.type == :wedding
+      assert album.slug == "new-album"
+      assert album.published == false
+    end
+
+    test "returns error with invalid attributes" do
+      attrs = %{title: ""}
+
+      assert {:error, changeset} = AlbumRepository.insert(attrs)
+      refute changeset.valid?
+    end
+
+    test "generates slug automatically" do
+      attrs = %{
+        title: "Mon Album 2024",
+        type: :couples,
+        date_prise_vue: ~D[2024-01-01]
+      }
+
+      assert {:ok, album} = AlbumRepository.insert(attrs)
+      assert album.slug == "mon-album-2024"
+    end
+  end
+
+  describe "update/2" do
+    test "updates album with valid attributes" do
+      album = insert_album(%{title: "Original", type: :wedding})
+
+      assert {:ok, updated} = AlbumRepository.update(album, %{title: "Updated"})
+      assert updated.title == "Updated"
+      assert updated.slug == "updated"
+    end
+
+    test "returns error with invalid attributes" do
+      album = insert_album(%{title: "Original", type: :wedding})
+
+      assert {:error, changeset} = AlbumRepository.update(album, %{title: ""})
+      refute changeset.valid?
+    end
+
+    test "updates published status" do
+      album = insert_album(%{title: "Album", type: :wedding, published: false})
+
+      assert {:ok, updated} = AlbumRepository.update(album, %{published: true})
+      assert updated.published == true
+    end
+  end
+
+  describe "delete/1" do
+    test "deletes album" do
+      album = insert_album(%{title: "To Delete", type: :wedding})
+
+      assert {:ok, deleted} = AlbumRepository.delete(album)
+      assert deleted.id == album.id
+      assert {:error, :not_found} = AlbumRepository.get(album.id)
+    end
+
+    test "deletes album with photos (CASCADE)" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      photo = insert_photo(album, %{title: "Photo"})
+
+      assert {:ok, _deleted} = AlbumRepository.delete(album)
+
+      # Verify photo is also deleted
+      assert is_nil(Repo.get(Photo, photo.id))
+    end
+  end
+
+  describe "list_published_by_year/0" do
+    test "groups published albums by year" do
+      insert_album(%{
+        title: "Album 2024-1",
+        type: :wedding,
+        date_prise_vue: ~D[2024-12-25],
+        published: true
+      })
+
+      insert_album(%{
+        title: "Album 2024-2",
+        type: :couples,
+        date_prise_vue: ~D[2024-06-15],
+        published: true
+      })
+
+      insert_album(%{
+        title: "Album 2023",
+        type: :events,
+        date_prise_vue: ~D[2023-09-10],
+        published: true
+      })
+
+      result = AlbumRepository.list_published_by_year()
+
+      assert Map.has_key?(result, 2024)
+      assert Map.has_key?(result, 2023)
+      assert length(result[2024]) == 2
+      assert length(result[2023]) == 1
+    end
+
+    test "excludes unpublished albums" do
+      insert_album(%{
+        title: "Published",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: true
+      })
+
+      insert_album(%{
+        title: "Draft",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: false
+      })
+
+      result = AlbumRepository.list_published_by_year()
+
+      assert length(result[2024]) == 1
+      assert hd(result[2024]).title == "Published"
+    end
+
+    test "sorts albums by date descending within year" do
+      insert_album(%{
+        title: "June",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: true
+      })
+
+      insert_album(%{
+        title: "December",
+        type: :wedding,
+        date_prise_vue: ~D[2024-12-25],
+        published: true
+      })
+
+      insert_album(%{
+        title: "March",
+        type: :wedding,
+        date_prise_vue: ~D[2024-03-10],
+        published: true
+      })
+
+      result = AlbumRepository.list_published_by_year()
+
+      albums_2024 = result[2024]
+      assert length(albums_2024) == 3
+      assert Enum.at(albums_2024, 0).title == "December"
+      assert Enum.at(albums_2024, 1).title == "June"
+      assert Enum.at(albums_2024, 2).title == "March"
+    end
+
+    test "returns empty map when no published albums" do
+      insert_album(%{
+        title: "Draft",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: false
+      })
+
+      result = AlbumRepository.list_published_by_year()
+
+      assert result == %{}
+    end
+
+    test "preloads associations when specified" do
+      album =
+        insert_album(%{
+          title: "Album",
+          type: :wedding,
+          date_prise_vue: ~D[2024-06-15],
+          published: true
+        })
+
+      insert_photo(album, %{title: "Photo 1"})
+
+      result = AlbumRepository.list_published_by_year(preload: [:photos])
+
+      albums_2024 = result[2024]
+      loaded_album = hd(albums_2024)
+      assert length(loaded_album.photos) == 1
+      refute match?(%Ecto.Association.NotLoaded{}, loaded_album.photos)
+    end
+  end
+
+  # Helper functions
+
+  defp insert_album(attrs) do
+    default_attrs = %{
+      title: "Test Album",
+      type: :wedding,
+      date_prise_vue: ~D[2024-01-15],
+      published: false
+    }
+
+    merged_attrs = Map.merge(default_attrs, attrs)
+
+    %Album{}
+    |> Album.changeset(merged_attrs)
+    |> Repo.insert!()
+  end
+
+  defp insert_photo(album, attrs) do
+    default_attrs = %{
+      album_id: album.id,
+      original_filename: "test.jpg",
+      file_path: "/test.jpg",
+      title: "Test Photo"
+    }
+
+    merged_attrs = Map.merge(default_attrs, attrs)
+
+    %Photo{}
+    |> Photo.changeset(merged_attrs)
+    |> Repo.insert!()
+  end
+end
