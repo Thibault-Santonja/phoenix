@@ -45,6 +45,18 @@ defmodule PortfolioWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # Pipeline pour l'interface admin
+  # Note: L'authentification sera ajoutée dans la Phase 4 (Issues #36-49)
+  pipeline :require_authenticated_admin do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    # TODO Phase 4: Ajouter plug :require_authenticated_user
+  end
+
   scope "/", PortfolioWeb, host: "amvcc." do
     pipe_through :amvcc
 
@@ -72,6 +84,20 @@ defmodule PortfolioWeb.Router do
     live "/blog/ci", TechLive.Blog.Ci, :index
     live "/blog/kamal", TechLive.Blog.Kamal, :index
     live "/blog/elixir", TechLive.Blog.Elixir, :index
+  end
+
+  # Interface Admin
+  # Accessible via /login (magic link auth sera ajouté Phase 4)
+  scope "/admin", PortfolioWeb.Admin, as: :admin do
+    pipe_through :require_authenticated_admin
+
+    live_session :require_authenticated_admin,
+      on_mount: [] do
+      # Gestion des albums
+      live "/albums", AlbumLive.Index, :index
+      live "/albums/new", AlbumLive.New, :new
+      live "/albums/:id/edit", AlbumLive.Edit, :edit
+    end
   end
 
   scope "/", PortfolioWeb do
