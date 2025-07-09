@@ -26,6 +26,11 @@ defmodule PortfolioWeb.AuthLive.Login do
          |> assign(:email, email)
          |> put_flash(:info, "Un lien de connexion a été envoyé à #{email}")}
 
+      {:error, :user_not_found} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Accès non autorisé. Cet email n'est pas enregistré.")}
+
       {:error, _changeset} ->
         {:noreply,
          socket

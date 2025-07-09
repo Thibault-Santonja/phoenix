@@ -9,7 +9,7 @@ defmodule Portfolio.Auth do
   import Ecto.Query, warn: false
 
   alias Portfolio.Repo
-  alias Portfolio.Auth.{User, MagicLink}
+  alias Portfolio.Auth.{User, MagicLink, Mailer}
 
   # =============================================================================
   # User Functions
@@ -37,23 +37,34 @@ defmodule Portfolio.Auth do
   @doc """
   Récupère ou crée un utilisateur par email.
 
-  Si l'utilisateur n'existe pas, il est créé automatiquement.
+  En développement, l'utilisateur est créé automatiquement s'il n'existe pas.
+  En production, seuls les utilisateurs existants peuvent se connecter.
 
   ## Exemples
 
       iex> get_or_create_user("admin@example.com")
       {:ok, %User{}}
+
+      iex> get_or_create_user("unknown@example.com")  # En production
+      {:error, :user_not_found}
   """
-  @spec get_or_create_user(String.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  @spec get_or_create_user(String.t()) ::
+          {:ok, User.t()} | {:error, Ecto.Changeset.t() | :user_not_found}
   def get_or_create_user(email) when is_binary(email) do
     case get_user_by_email(email) do
       {:ok, user} ->
         {:ok, user}
 
       {:error, :not_found} ->
-        %User{}
-        |> User.registration_changeset(%{email: email})
-        |> Repo.insert()
+        # En développement, créer automatiquement l'utilisateur
+        # En production, refuser la connexion
+        if Mix.env() == :dev do
+          %User{}
+          |> User.registration_changeset(%{email: email})
+          |> Repo.insert()
+        else
+          {:error, :user_not_found}
+        end
     end
   end
 
@@ -82,8 +93,8 @@ defmodule Portfolio.Auth do
   def request_magic_link(email) when is_binary(email) do
     with {:ok, user} <- get_or_create_user(email),
          {:ok, magic_link} <- create_magic_link(user) do
-      # TODO Phase 4: Envoyer l'email avec le magic link
-      # Auth.Mailer.send_magic_link_email(user, magic_link)
+      # Envoyer l'email avec le magic link
+      Mailer.send_magic_link_email(user, magic_link)
 
       {:ok, magic_link}
     end
@@ -130,7 +141,7 @@ defmodule Portfolio.Auth do
           true ->
             # Marquer comme utilisé
             ml
-            |> Ecto.Changeset.change(%{used_at: DateTime.utc_now()})
+            |> Ecto.Changeset.change(%{used_at: DateTime.utc_now() |> DateTime.truncate(:second)})
             |> Repo.update()
 
             {:ok, ml.user}
@@ -165,7 +176,11 @@ defmodule Portfolio.Auth do
   @spec create_magic_link(User.t()) :: {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t()}
   defp create_magic_link(user) do
     token = generate_token()
-    expires_at = DateTime.add(DateTime.utc_now(), 15, :minute)
+
+    expires_at =
+      DateTime.utc_now()
+      |> DateTime.add(15, :minute)
+      |> DateTime.truncate(:second)
 
     %MagicLink{}
     |> MagicLink.changeset(%{
