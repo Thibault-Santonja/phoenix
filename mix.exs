@@ -13,7 +13,9 @@ defmodule Portfolio.MixProject do
       start_permanent: Mix.env() == :prod,
       consolidate_protocols: Mix.env() != :dev,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      compilers: Mix.compilers(),
+      listeners: [Phoenix.CodeReloader]
     ]
   end
 
