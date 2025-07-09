@@ -39,14 +39,14 @@ defmodule PortfolioWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug PortfolioWeb.Plugs.SetLocale
+    plug PortfolioWeb.Plugs.RequireAuth, :fetch_current_user
   end
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  # Pipeline pour l'interface admin
-  # Note: L'authentification sera ajoutée dans la Phase 4 (Issues #36-49)
+  # Pipeline pour l'interface admin avec authentification
   pipeline :require_authenticated_admin do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -54,7 +54,9 @@ defmodule PortfolioWeb.Router do
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    # TODO Phase 4: Ajouter plug :require_authenticated_user
+    plug PortfolioWeb.Plugs.RequireAuth, :fetch_current_user
+    plug PortfolioWeb.Plugs.RequireAuth, :require_authenticated_user
+    plug PortfolioWeb.Plugs.RequireAuth, :require_admin_role
   end
 
   scope "/", PortfolioWeb, host: "amvcc." do
@@ -86,8 +88,16 @@ defmodule PortfolioWeb.Router do
     live "/blog/elixir", TechLive.Blog.Elixir, :index
   end
 
-  # Interface Admin
-  # Accessible via /login (magic link auth sera ajouté Phase 4)
+  # Routes d'authentification
+  scope "/", PortfolioWeb do
+    pipe_through :browser
+
+    live "/login", AuthLive.Login, :index
+    get "/auth/magic/:token", AuthController, :verify_magic_link
+    get "/logout", AuthController, :logout
+  end
+
+  # Interface Admin (protégée par authentification)
   scope "/admin", PortfolioWeb.Admin, as: :admin do
     pipe_through :require_authenticated_admin
 

@@ -1,0 +1,83 @@
+<div class="flex min-h-screen items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+  <div class="w-full max-w-md space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+        Connexion Admin
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Entrez votre email pour recevoir un lien de connexion
+      </p>
+    </div>
+
+    <%= if @link_sent do %>
+      <div class="rounded-md bg-green-50 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-green-800">Email envoyé !</h3>
+            <div class="mt-2 text-sm text-green-700">
+              <p>
+                Un lien de connexion a été envoyé à <strong><%= @email %></strong>.
+                Le lien est valide pendant 15 minutes.
+              </p>
+              <p class="mt-2">
+                Vérifiez votre boîte email et cliquez sur le lien pour vous connecter.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button
+          type="button"
+          phx-click={JS.push("request_link", value: %{email: @email})}
+          class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+        >
+          Renvoyer le lien
+        </button>
+      </div>
+    <% else %>
+      <form phx-submit="request_link" class="mt-8 space-y-6">
+        <div class="-space-y-px rounded-md shadow-sm">
+          <div>
+            <label for="email" class="sr-only">Adresse email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              value={@email}
+              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              placeholder="admin@example.com"
+            />
+          </div>
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Envoyer le lien de connexion
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center text-sm text-gray-600">
+        <p>
+          Vous recevrez un email avec un lien de connexion valide 15 minutes.
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

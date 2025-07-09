@@ -1,0 +1,185 @@
+defmodule Portfolio.Auth do
+  @moduledoc """
+  Context Auth pour l'authentification via Magic Links.
+
+  Implémente un système d'authentification passwordless où les utilisateurs
+  reçoivent un lien unique par email pour se connecter.
+  """
+
+  import Ecto.Query, warn: false
+
+  alias Portfolio.Repo
+  alias Portfolio.Auth.{User, MagicLink}
+
+  # =============================================================================
+  # User Functions
+  # =============================================================================
+
+  @doc """
+  Récupère un utilisateur par son email.
+
+  ## Exemples
+
+      iex> get_user_by_email("admin@example.com")
+      {:ok, %User{}}
+
+      iex> get_user_by_email("unknown@example.com")
+      {:error, :not_found}
+  """
+  @spec get_user_by_email(String.t()) :: {:ok, User.t()} | {:error, :not_found}
+  def get_user_by_email(email) when is_binary(email) do
+    case Repo.get_by(User, email: email) do
+      nil -> {:error, :not_found}
+      user -> {:ok, user}
+    end
+  end
+
+  @doc """
+  Récupère ou crée un utilisateur par email.
+
+  Si l'utilisateur n'existe pas, il est créé automatiquement.
+
+  ## Exemples
+
+      iex> get_or_create_user("admin@example.com")
+      {:ok, %User{}}
+  """
+  @spec get_or_create_user(String.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def get_or_create_user(email) when is_binary(email) do
+    case get_user_by_email(email) do
+      {:ok, user} ->
+        {:ok, user}
+
+      {:error, :not_found} ->
+        %User{}
+        |> User.registration_changeset(%{email: email})
+        |> Repo.insert()
+    end
+  end
+
+  @doc """
+  Récupère un utilisateur par son ID.
+  """
+  @spec get_user(Ecto.UUID.t()) :: User.t() | nil
+  def get_user(id), do: Repo.get(User, id)
+
+  # =============================================================================
+  # Magic Link Functions
+  # =============================================================================
+
+  @doc """
+  Demande un magic link pour un email donné.
+
+  Crée un utilisateur s'il n'existe pas, génère un token unique,
+  et crée un magic link valide 15 minutes.
+
+  ## Exemples
+
+      iex> request_magic_link("admin@example.com")
+      {:ok, %MagicLink{token: "abc123..."}}
+  """
+  @spec request_magic_link(String.t()) :: {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t()}
+  def request_magic_link(email) when is_binary(email) do
+    with {:ok, user} <- get_or_create_user(email),
+         {:ok, magic_link} <- create_magic_link(user) do
+      # TODO Phase 4: Envoyer l'email avec le magic link
+      # Auth.Mailer.send_magic_link_email(user, magic_link)
+
+      {:ok, magic_link}
+    end
+  end
+
+  @doc """
+  Vérifie un magic link par son token.
+
+  Retourne l'utilisateur si le token est valide (non expiré, non utilisé).
+  Marque le magic link comme utilisé si valide.
+
+  ## Exemples
+
+      iex> verify_magic_link("valid_token")
+      {:ok, %User{}}
+
+      iex> verify_magic_link("invalid_token")
+      {:error, :invalid_token}
+
+      iex> verify_magic_link("expired_token")
+      {:error, :expired}
+  """
+  @spec verify_magic_link(String.t()) ::
+          {:ok, User.t()} | {:error, :invalid_token | :expired | :already_used}
+  def verify_magic_link(token) when is_binary(token) do
+    magic_link =
+      MagicLink
+      |> where([ml], ml.token == ^token)
+      |> preload(:user)
+      |> Repo.one()
+
+    case magic_link do
+      nil ->
+        {:error, :invalid_token}
+
+      %MagicLink{} = ml ->
+        cond do
+          MagicLink.used?(ml) ->
+            {:error, :already_used}
+
+          MagicLink.expired?(ml) ->
+            {:error, :expired}
+
+          true ->
+            # Marquer comme utilisé
+            ml
+            |> Ecto.Changeset.change(%{used_at: DateTime.utc_now()})
+            |> Repo.update()
+
+            {:ok, ml.user}
+        end
+    end
+  end
+
+  @doc """
+  Supprime tous les magic links expirés.
+
+  Utile pour un job de nettoyage périodique.
+
+  ## Exemples
+
+      iex> delete_expired_magic_links()
+      {5, nil}  # 5 magic links supprimés
+  """
+  @spec delete_expired_magic_links() :: {integer(), nil}
+  def delete_expired_magic_links do
+    now = DateTime.utc_now()
+
+    MagicLink
+    |> where([ml], ml.expires_at < ^now)
+    |> Repo.delete_all()
+  end
+
+  # =============================================================================
+  # Private Functions
+  # =============================================================================
+
+  # Crée un magic link pour un utilisateur
+  @spec create_magic_link(User.t()) :: {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t()}
+  defp create_magic_link(user) do
+    token = generate_token()
+    expires_at = DateTime.add(DateTime.utc_now(), 15, :minute)
+
+    %MagicLink{}
+    |> MagicLink.changeset(%{
+      user_id: user.id,
+      token: token,
+      expires_at: expires_at
+    })
+    |> Repo.insert()
+  end
+
+  # Génère un token sécurisé de 32 bytes
+  @spec generate_token() :: String.t()
+  defp generate_token do
+    :crypto.strong_rand_bytes(32)
+    |> Base.url_encode64(padding: false)
+  end
+end
