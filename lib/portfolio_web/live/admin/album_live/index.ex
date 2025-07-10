@@ -14,6 +14,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   alias Portfolio.Photography
 
+  on_mount PortfolioWeb.LiveAuth
+
   @impl true
   def mount(_params, _session, socket) do
     albums = Photography.list_albums(preload: [:photos])

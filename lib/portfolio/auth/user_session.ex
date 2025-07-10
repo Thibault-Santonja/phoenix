@@ -16,9 +16,6 @@ defmodule Portfolio.Auth.UserSession do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  # Session expire après 30 jours d'inactivité
-  @session_validity_days 30
-
   @type t :: %__MODULE__{
           id: Ecto.UUID.t() | nil,
           user_id: Ecto.UUID.t(),
@@ -47,17 +44,27 @@ defmodule Portfolio.Auth.UserSession do
   end
 
   @doc """
-  Vérifie si la session a expiré (30 jours d'inactivité).
+  Vérifie si la session a expiré selon la configuration.
+
+  La durée d'expiration est configurable via :portfolio, :auth, :session_expiration_seconds
+  Par défaut: 1 heure (3600 secondes)
   """
   @spec expired?(t()) :: boolean()
   def expired?(%__MODULE__{last_activity_at: last_activity_at}) do
-    expiry_date = DateTime.add(last_activity_at, @session_validity_days, :day)
+    expiry_seconds = session_expiration_seconds()
+    expiry_date = DateTime.add(last_activity_at, expiry_seconds, :second)
     DateTime.compare(DateTime.utc_now(), expiry_date) == :gt
   end
 
   @doc """
-  Retourne le nombre de jours de validité d'une session.
+  Retourne la durée d'expiration en secondes depuis la configuration.
+
+  Peut être surchargée via la variable d'environnement SESSION_EXPIRATION_SECONDS
   """
-  @spec validity_days() :: integer()
-  def validity_days, do: @session_validity_days
+  @spec session_expiration_seconds() :: integer()
+  def session_expiration_seconds do
+    Application.get_env(:portfolio, :auth, [])
+    # 1h par défaut
+    |> Keyword.get(:session_expiration_seconds, 3600)
+  end
 end

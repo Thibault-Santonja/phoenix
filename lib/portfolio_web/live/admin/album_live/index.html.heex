@@ -1,12 +1,24 @@
 <div class="px-4 sm:px-6 lg:px-8 py-8">
-  <div class="sm:flex sm:items-center">
+  <div class="sm:flex sm:items-center sm:justify-between">
     <div class="sm:flex-auto">
       <h1 class="text-2xl font-semibold text-gray-900">Albums</h1>
       <p class="mt-2 text-sm text-gray-700">
         Liste de tous les albums photo du portfolio
       </p>
     </div>
-    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+    <div class="mt-4 sm:mt-0 sm:ml-16 flex items-center gap-4">
+      <%= if @current_user do %>
+        <span class="text-sm text-gray-600">
+          Connecté en tant que <span class="font-medium text-gray-900"><%= @current_user.name || @current_user.email %></span>
+        </span>
+        <span class="text-gray-300">|</span>
+        <.link
+          href={~p"/logout"}
+          class="text-sm text-gray-600 hover:text-gray-900"
+        >
+          Déconnexion
+        </.link>
+      <% end %>
       <.link
         navigate={~p"/admin/albums/new"}
         class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"

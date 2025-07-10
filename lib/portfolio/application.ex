@@ -14,8 +14,8 @@ defmodule Portfolio.Application do
       {Phoenix.PubSub, name: Portfolio.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Portfolio.Finch},
-      # Start a worker by calling: Portfolio.Worker.start_link(arg)
-      # {Portfolio.Worker, arg},
+      # Start the session cleaner worker for periodic cleanup
+      Portfolio.Auth.SessionCleaner,
       # Start to serve requests, typically the last entry
       PortfolioWeb.Endpoint
     ]

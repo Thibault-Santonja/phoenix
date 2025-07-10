@@ -312,9 +312,11 @@ defmodule Portfolio.Auth do
   """
   @spec delete_expired_sessions() :: {integer(), nil}
   def delete_expired_sessions do
+    expiry_seconds = UserSession.session_expiration_seconds()
+
     expiry_date =
       DateTime.utc_now()
-      |> DateTime.add(-UserSession.validity_days(), :day)
+      |> DateTime.add(-expiry_seconds, :second)
       |> DateTime.truncate(:second)
 
     UserSession
