@@ -9,7 +9,7 @@ defmodule Portfolio.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Portfolio.Auth.MagicLink
+  alias Portfolio.Auth.{MagicLink, UserSession}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -20,6 +20,7 @@ defmodule Portfolio.Auth.User do
           name: String.t() | nil,
           role: String.t(),
           magic_links: [MagicLink.t()] | Ecto.Association.NotLoaded.t(),
+          user_sessions: [UserSession.t()] | Ecto.Association.NotLoaded.t(),
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil
         }
@@ -30,6 +31,7 @@ defmodule Portfolio.Auth.User do
     field :role, :string, default: "admin"
 
     has_many :magic_links, MagicLink
+    has_many :user_sessions, UserSession
 
     timestamps(type: :utc_datetime)
   end

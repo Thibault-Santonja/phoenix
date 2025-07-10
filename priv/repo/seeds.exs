@@ -14,8 +14,7 @@ alias Portfolio.Repo
 alias Portfolio.Auth.User
 
 # Créer l'utilisateur admin initial (vous !)
-# IMPORTANT: Remplacez cette adresse email par la vôtre
-admin_email = System.get_env("ADMIN_EMAIL") || "votre-email@example.com"
+admin_email = System.get_env("ADMIN_EMAIL") || "thibault.santonja@pm.me"
 
 case Repo.get_by(User, email: admin_email) do
   nil ->

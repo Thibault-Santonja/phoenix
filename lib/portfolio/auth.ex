@@ -9,7 +9,7 @@ defmodule Portfolio.Auth do
   import Ecto.Query, warn: false
 
   alias Portfolio.Repo
-  alias Portfolio.Auth.{User, MagicLink, Mailer}
+  alias Portfolio.Auth.{User, MagicLink, UserSession, Mailer}
 
   # =============================================================================
   # User Functions
@@ -196,5 +196,129 @@ defmodule Portfolio.Auth do
   defp generate_token do
     :crypto.strong_rand_bytes(32)
     |> Base.url_encode64(padding: false)
+  end
+
+  # =============================================================================
+  # Session Functions
+  # =============================================================================
+
+  @doc """
+  Crée une nouvelle session pour un utilisateur après connexion réussie.
+
+  ## Exemples
+
+      iex> create_session(user)
+      {:ok, %UserSession{token: "abc123..."}}
+  """
+  @spec create_session(User.t()) :: {:ok, UserSession.t()} | {:error, Ecto.Changeset.t()}
+  def create_session(%User{} = user) do
+    token = generate_token()
+
+    %UserSession{}
+    |> UserSession.changeset(%{
+      user_id: user.id,
+      token: token,
+      last_activity_at: DateTime.utc_now() |> DateTime.truncate(:second)
+    })
+    |> Repo.insert()
+  end
+
+  @doc """
+  Récupère une session par son token.
+
+  Retourne nil si le token n'existe pas ou si la session a expiré.
+
+  ## Exemples
+
+      iex> get_session_by_token("valid_token")
+      %UserSession{user: %User{}}
+
+      iex> get_session_by_token("invalid_token")
+      nil
+  """
+  @spec get_session_by_token(String.t()) :: UserSession.t() | nil
+  def get_session_by_token(token) when is_binary(token) do
+    UserSession
+    |> where([s], s.token == ^token)
+    |> preload(:user)
+    |> Repo.one()
+    |> case do
+      nil ->
+        nil
+
+      session ->
+        if UserSession.expired?(session) do
+          delete_session(session)
+          nil
+        else
+          session
+        end
+    end
+  end
+
+  @doc """
+  Met à jour l'activité d'une session (pour prolonger sa durée de vie).
+
+  ## Exemples
+
+      iex> update_session_activity(session)
+      {:ok, %UserSession{}}
+  """
+  @spec update_session_activity(UserSession.t()) ::
+          {:ok, UserSession.t()} | {:error, Ecto.Changeset.t()}
+  def update_session_activity(%UserSession{} = session) do
+    session
+    |> Ecto.Changeset.change(%{
+      last_activity_at: DateTime.utc_now() |> DateTime.truncate(:second)
+    })
+    |> Repo.update()
+  end
+
+  @doc """
+  Supprime une session (logout).
+
+  ## Exemples
+
+      iex> delete_session(session)
+      {:ok, %UserSession{}}
+  """
+  @spec delete_session(UserSession.t()) :: {:ok, UserSession.t()} | {:error, Ecto.Changeset.t()}
+  def delete_session(%UserSession{} = session) do
+    Repo.delete(session)
+  end
+
+  @doc """
+  Supprime toutes les sessions d'un utilisateur (logout de tous les appareils).
+
+  ## Exemples
+
+      iex> delete_all_user_sessions(user)
+      {3, nil}  # 3 sessions supprimées
+  """
+  @spec delete_all_user_sessions(User.t()) :: {integer(), nil}
+  def delete_all_user_sessions(%User{id: user_id}) do
+    UserSession
+    |> where([s], s.user_id == ^user_id)
+    |> Repo.delete_all()
+  end
+
+  @doc """
+  Supprime toutes les sessions expirées (job de nettoyage).
+
+  ## Exemples
+
+      iex> delete_expired_sessions()
+      {10, nil}  # 10 sessions expirées supprimées
+  """
+  @spec delete_expired_sessions() :: {integer(), nil}
+  def delete_expired_sessions do
+    expiry_date =
+      DateTime.utc_now()
+      |> DateTime.add(-UserSession.validity_days(), :day)
+      |> DateTime.truncate(:second)
+
+    UserSession
+    |> where([s], s.last_activity_at < ^expiry_date)
+    |> Repo.delete_all()
   end
 end

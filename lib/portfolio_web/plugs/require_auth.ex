@@ -19,22 +19,33 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   def call(conn, :require_admin_role), do: require_admin_role(conn, [])
 
   @doc """
-  Récupère l'utilisateur courant depuis la session.
+  Récupère l'utilisateur courant depuis le token de session.
+
+  Vérifie que:
+  - Le token de session existe en base de données
+  - La session n'a pas expiré (30 jours d'inactivité)
+  - Met à jour l'activité de la session pour prolonger sa durée
 
   Assigne `conn.assigns.current_user` si un utilisateur est connecté.
   """
   def fetch_current_user(conn, _opts) do
-    user_id = get_session(conn, :user_id)
+    session_token = get_session(conn, :session_token)
 
-    if user_id do
-      case Auth.get_user(user_id) do
+    if session_token do
+      case Auth.get_session_by_token(session_token) do
         nil ->
+          # Session invalide ou expirée
           conn
           |> clear_session()
           |> assign(:current_user, nil)
 
-        user ->
-          assign(conn, :current_user, user)
+        session ->
+          # Mettre à jour l'activité de la session
+          Auth.update_session_activity(session)
+
+          conn
+          |> assign(:current_user, session.user)
+          |> assign(:current_session, session)
       end
     else
       assign(conn, :current_user, nil)
