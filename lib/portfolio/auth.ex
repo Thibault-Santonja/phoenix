@@ -56,9 +56,9 @@ defmodule Portfolio.Auth do
         {:ok, user}
 
       {:error, :not_found} ->
-        # En développement, créer automatiquement l'utilisateur
+        # En développement et test, créer automatiquement l'utilisateur
         # En production, refuser la connexion
-        if Mix.env() == :dev do
+        if Mix.env() in [:dev, :test] do
           %User{}
           |> User.registration_changeset(%{email: email})
           |> Repo.insert()
