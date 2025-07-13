@@ -20,11 +20,25 @@ defmodule PortfolioWeb.LiveAuth do
 
   import Phoenix.Component
 
-  def on_mount(:default, _params, _session, socket) do
-    # Le current_user a déjà été assigné par le plug RequireAuth
-    # Il est disponible dans socket.assigns depuis le Endpoint
-    current_user = socket.assigns[:current_user]
+  alias Portfolio.Auth
+
+  def on_mount(:default, _params, session, socket) do
+    # Le current_user peut venir de deux sources:
+    # 1. Déjà assigné par le plug RequireAuth (production)
+    # 2. Depuis le token de session (fallback pour tests et LiveView)
+    current_user =
+      socket.assigns[:current_user] ||
+        find_current_user(session)
 
     {:cont, assign(socket, current_user: current_user)}
+  end
+
+  defp find_current_user(session) do
+    with token when is_binary(token) <- session["session_token"],
+         %Auth.UserSession{} = user_session <- Auth.get_session_by_token(token) do
+      user_session.user
+    else
+      _ -> nil
+    end
   end
 end

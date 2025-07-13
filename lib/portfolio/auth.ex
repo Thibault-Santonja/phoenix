@@ -323,4 +323,82 @@ defmodule Portfolio.Auth do
     |> where([s], s.last_activity_at < ^expiry_date)
     |> Repo.delete_all()
   end
+
+  @doc """
+  Liste toutes les sessions d'un utilisateur triées par dernière activité.
+
+  ## Exemples
+
+      iex> list_user_sessions(user.id)
+      [%UserSession{}, ...]
+  """
+  @spec list_user_sessions(Ecto.UUID.t()) :: [UserSession.t()]
+  def list_user_sessions(user_id) do
+    UserSession
+    |> where([s], s.user_id == ^user_id)
+    |> order_by([s], desc: s.last_activity_at)
+    |> Repo.all()
+  end
+
+  @doc """
+  Récupère une session par son ID.
+
+  ## Exemples
+
+      iex> get_session!(session_id)
+      %UserSession{}
+  """
+  @spec get_session!(Ecto.UUID.t()) :: UserSession.t()
+  def get_session!(id), do: Repo.get!(UserSession, id)
+
+  @doc """
+  Supprime toutes les sessions d'un utilisateur sauf celle spécifiée.
+
+  Utile pour déconnecter tous les autres appareils en gardant la session actuelle.
+
+  ## Exemples
+
+      iex> delete_all_user_sessions_except(user, current_session.id)
+      {2, nil}  # 2 autres sessions supprimées
+  """
+  @spec delete_all_user_sessions_except(User.t(), Ecto.UUID.t()) :: {integer(), nil}
+  def delete_all_user_sessions_except(%User{id: user_id}, current_session_id) do
+    UserSession
+    |> where([s], s.user_id == ^user_id and s.id != ^current_session_id)
+    |> Repo.delete_all()
+  end
+
+  # =============================================================================
+  # User Profile Functions
+  # =============================================================================
+
+  @doc """
+  Retourne un changeset pour modification du profil utilisateur.
+
+  ## Exemples
+
+      iex> change_user(user)
+      %Ecto.Changeset{}
+  """
+  @spec change_user(User.t(), map()) :: Ecto.Changeset.t()
+  def change_user(user, attrs \\ %{}) do
+    User.profile_changeset(user, attrs)
+  end
+
+  @doc """
+  Met à jour le profil d'un utilisateur.
+
+  Seul le champ name peut être modifié.
+
+  ## Exemples
+
+      iex> update_user(user, %{name: "New Name"})
+      {:ok, %User{}}
+  """
+  @spec update_user(User.t(), map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def update_user(user, attrs) do
+    user
+    |> User.profile_changeset(attrs)
+    |> Repo.update()
+  end
 end

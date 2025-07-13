@@ -62,6 +62,19 @@ defmodule Portfolio.Auth.User do
     |> unique_constraint(:email)
   end
 
+  @doc """
+  Changeset pour la modification du profil utilisateur.
+
+  Seul le champ name est modifiable. Les champs email et role
+  ne peuvent pas être modifiés via le profil.
+  """
+  @spec profile_changeset(t(), map()) :: Ecto.Changeset.t()
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:name])
+    |> validate_length(:name, min: 2, max: 100)
+  end
+
   # Validation de l'email
   defp validate_email(changeset) do
     changeset
