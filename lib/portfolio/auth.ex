@@ -8,8 +8,12 @@ defmodule Portfolio.Auth do
 
   import Ecto.Query, warn: false
 
+  alias Portfolio.Auth.MagicLink
+  alias Portfolio.Auth.Mailer
+  alias Portfolio.Auth.User
+  alias Portfolio.Auth.UserSession
+
   alias Portfolio.Repo
-  alias Portfolio.Auth.{User, MagicLink, UserSession, Mailer}
 
   # =============================================================================
   # User Functions

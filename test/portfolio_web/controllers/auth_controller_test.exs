@@ -2,7 +2,7 @@ defmodule PortfolioWeb.AuthControllerTest do
   use PortfolioWeb.ConnCase
 
   alias Portfolio.Auth
-  alias Portfolio.Auth.{User, MagicLink}
+  alias Portfolio.Auth.{MagicLink, User}
   alias Portfolio.Repo
 
   describe "verify_magic_link/2" do

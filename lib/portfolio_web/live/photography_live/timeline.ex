@@ -74,7 +74,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
       #   title: "Claire & Damien",
       #   description:
       #     gettext(
-      #       "A wedding filled with grace, joy, and depth. Glances met and smiled; the gentle spring breeze only made hearts warmer."
+      #       "A wedding filled with grace, joy, and depth. Glances met and smiled; " <>
+      #         "the gentle spring breeze only made hearts warmer."
       #     ),
       #   photography: "/images/photography/gallery/2024-03-23_wedding.webp",
       #   url: nil

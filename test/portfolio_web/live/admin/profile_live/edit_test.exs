@@ -94,7 +94,7 @@ defmodule PortfolioWeb.Admin.ProfileLive.EditTest do
       # Révoquer la deuxième session
       html =
         view
-        |> element("button[phx-click=\"revoke_session\"][phx-value-id=\"#{other_session.id}\"]")
+        |> element(~s(button[phx-click="revoke_session"][phx-value-id="#{other_session.id}"]))
         |> render_click()
 
       assert html =~ "Session révoquée avec succès"

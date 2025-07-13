@@ -2,7 +2,7 @@ defmodule Portfolio.AuthTest do
   use Portfolio.DataCase
 
   alias Portfolio.Auth
-  alias Portfolio.Auth.{User, MagicLink, UserSession}
+  alias Portfolio.Auth.{MagicLink, User, UserSession}
 
   describe "get_user_by_email/1" do
     test "returns {:ok, user} when user exists" do

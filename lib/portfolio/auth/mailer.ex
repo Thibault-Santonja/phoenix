@@ -4,7 +4,7 @@ defmodule Portfolio.Auth.Mailer do
   """
 
   import Swoosh.Email
-  alias Portfolio.Auth.{User, MagicLink}
+  alias Portfolio.Auth.{MagicLink, User}
 
   @doc """
   Envoie un email contenant le magic link à l'utilisateur.

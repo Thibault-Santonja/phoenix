@@ -27,8 +27,8 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
 
   import Ecto.Query, warn: false
 
-  alias Portfolio.Repo
   alias Portfolio.Photography.Album
+  alias Portfolio.Repo
 
   @doc """
   Liste tous les albums avec filtres optionnels.

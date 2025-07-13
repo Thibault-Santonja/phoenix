@@ -28,8 +28,8 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   import Ecto.Query, warn: false
 
-  alias Portfolio.Repo
   alias Portfolio.Photography.Photo
+  alias Portfolio.Repo
 
   @doc """
   Liste toutes les photos d'un album, triées par display_order croissant.
