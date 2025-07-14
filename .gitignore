@@ -42,3 +42,7 @@ npm-debug.log
 **/**/.DS_Store
 
 notes.md
+
+.gitignore
+AGENTS.md
+docs/

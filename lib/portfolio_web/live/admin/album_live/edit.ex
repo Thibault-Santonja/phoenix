@@ -72,17 +72,18 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
         File.mkdir_p!(Path.dirname(dest))
         File.cp!(path, dest)
 
-        url = "/uploads/#{entry.uuid}.#{ext(entry)}"
-        {:ok, url}
+        file_path = "/uploads/#{entry.uuid}.#{ext(entry)}"
+        {:ok, {file_path, entry.client_name}}
       end)
 
     # Créer les photos dans la DB
     album = socket.assigns.album
 
-    Enum.each(uploaded_files, fn url ->
+    Enum.each(uploaded_files, fn {file_path, original_filename} ->
       Photography.create_photo(%{
         album_id: album.id,
-        file_url: url,
+        file_path: file_path,
+        original_filename: original_filename,
         display_order: length(album.photos)
       })
     end)
