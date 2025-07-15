@@ -181,7 +181,7 @@
                 <%= for photo <- @album.photos do %>
                   <div class="relative group">
                     <img
-                      src={photo.file_url}
+                      src={photo.file_path}
                       alt={photo.title || "Photo"}
                       class="h-32 w-full object-cover rounded-lg"
                     />
