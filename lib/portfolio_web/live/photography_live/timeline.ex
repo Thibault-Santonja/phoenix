@@ -17,6 +17,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
 
   use PortfolioWeb, :live_view
 
+  alias Portfolio.Photography
+
   @data %{
     2023 => [
       %{
@@ -259,7 +261,16 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
   def mount(_, session, socket) do
     Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])
 
-    {:ok, socket}
+    # Charger les albums depuis la DB
+    db_albums = Photography.list_published_albums_by_year(preload: [:photos])
+
+    # Convertir les albums DB au format attendu par le template
+    db_data = convert_albums_to_timeline_format(db_albums)
+
+    # Merger avec les données hardcodées (pour garder les anciens albums)
+    merged_data = Map.merge(@data, db_data)
+
+    {:ok, assign(socket, :db_data, merged_data)}
   end
 
   @impl true
@@ -273,7 +284,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
   end
 
   defp apply_action(socket, :index, %{"chapter" => chapter}) do
-    data = filter_data(@data, chapter)
+    merged_data = socket.assigns[:db_data] || @data
+    data = filter_data(merged_data, chapter)
 
     socket
     |> assign(:chapter, chapter)
@@ -283,10 +295,12 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
   end
 
   defp apply_action(socket, :index, _params) do
+    merged_data = socket.assigns[:db_data] || @data
+
     socket
     |> assign(:chapter, nil)
-    |> assign(:data, @data)
-    |> assign(years: @data |> Map.keys() |> Enum.sort(:desc))
+    |> assign(:data, merged_data)
+    |> assign(years: merged_data |> Map.keys() |> Enum.sort(:desc))
     |> assign(:page_title, gettext("Photographies timeline gallery"))
   end
 
@@ -299,5 +313,30 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     |> Enum.map(fn {k, v} -> {k, Enum.filter(v, &(&1.type == chapter))} end)
     |> Enum.filter(fn {_k, v} -> not Enum.empty?(v) end)
     |> Map.new()
+  end
+
+  # Convertit les albums de la DB au format attendu par le template
+  defp convert_albums_to_timeline_format(albums_by_year) do
+    albums_by_year
+    |> Enum.map(fn {year, albums} ->
+      timeline_albums = Enum.map(albums, &album_to_timeline_item/1)
+      {year, timeline_albums}
+    end)
+    |> Map.new()
+  end
+
+  defp album_to_timeline_item(album) do
+    # Utiliser la première photo comme cover photo
+    cover_photo = List.first(album.photos)
+
+    %{
+      type: to_string(album.type),
+      date: Date.to_iso8601(album.date_prise_vue),
+      title: album.title,
+      description: album.description || "",
+      photography: if(cover_photo, do: cover_photo.file_path, else: nil),
+      url: "/gallery/#{album.slug}",
+      reference_link: album.reference_link
+    }
   end
 end
