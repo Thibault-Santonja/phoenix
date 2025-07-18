@@ -67,7 +67,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
     end
 
     test "updates date range", %{conn: conn} do
-      album = create_album(%{date_prise_vue: ~D[2024-01-15]})
+      album = create_album(date_prise_vue: ~D[2024-01-15])
 
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
@@ -100,7 +100,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
     end
 
     test "validates date range - end date must be after start date", %{conn: conn} do
-      album = create_album(%{date_prise_vue: ~D[2024-01-20]})
+      album = create_album(date_prise_vue: ~D[2024-01-20])
 
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
@@ -397,7 +397,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
     test "displays photo title when present", %{conn: conn} do
       album = create_album()
-      create_photo(%{album_id: album.id, title: "Beautiful Sunset"})
+      create_photo(album_id: album.id, title: "Beautiful Sunset")
 
       {:ok, _view, html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
@@ -406,7 +406,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
     test "handles nil photo title correctly", %{conn: conn} do
       album = create_album()
-      create_photo(%{album_id: album.id, title: nil})
+      create_photo(album_id: album.id, title: nil)
 
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
@@ -416,7 +416,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
     test "hides photo title in reordering mode", %{conn: conn} do
       album = create_album()
-      create_photo(%{album_id: album.id, title: "Test Title"})
+      create_photo(album_id: album.id, title: "Test Title")
 
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 

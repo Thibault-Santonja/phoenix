@@ -184,10 +184,86 @@ defmodule Portfolio.Photography do
   def update_photo(photo, attrs), do: PhotoRepository.update(photo, attrs)
 
   @doc """
-  Supprime une photo.
+  Supprime une photo ainsi que son fichier sur le disque.
+
+  Cette opération supprime à la fois :
+  - L'enregistrement en base de données
+  - Le fichier physique via le FileStorage service
+
+  ## Exemples
+
+      iex> delete_photo(photo)
+      {:ok, %Photo{}}
+
+      iex> delete_photo(photo_with_invalid_file)
+      {:error, :file_not_found}
   """
-  @spec delete_photo(Photo.t()) :: {:ok, Photo.t()} | {:error, Ecto.Changeset.t()}
-  def delete_photo(photo), do: PhotoRepository.delete(photo)
+  @spec delete_photo(Photo.t()) :: {:ok, Photo.t()} | {:error, term()}
+  def delete_photo(%Photo{} = photo) do
+    # Supprimer le fichier via FileStorage
+    case storage().delete_photo(photo.file_path) do
+      :ok ->
+        # Si le fichier est supprimé, supprimer l'enregistrement DB
+        PhotoRepository.delete(photo)
+
+      {:error, :not_found} ->
+        # Si le fichier n'existe pas, supprimer quand même l'enregistrement DB
+        # (cas de données orphelines)
+        PhotoRepository.delete(photo)
+
+      {:error, reason} ->
+        # Autre erreur de suppression fichier
+        {:error, reason}
+    end
+  end
+
+  @doc """
+  Upload des photos dans un album.
+
+  Stocke les fichiers via FileStorage et crée les enregistrements en base.
+
+  ## Paramètres
+
+  - `album_slug` - Le slug de l'album (pour l'organisation des fichiers)
+  - `uploads` - Liste d'uploads avec :path, :client_name, :client_type
+
+  ## Retour
+
+  - `{:ok, [%Photo{}]}` - Liste des photos créées
+  - `{:error, reason}` - Erreur lors du stockage ou création
+
+  ## Exemples
+
+      iex> upload_photos("mariage-2024", uploads)
+      {:ok, [%Photo{}, %Photo{}]}
+  """
+  @spec upload_photos(String.t(), [map()]) :: {:ok, [map()]} | {:error, term()}
+  def upload_photos(album_slug, uploads) when is_list(uploads) do
+    # Pour chaque upload, stocker le fichier
+    results =
+      Enum.map(uploads, fn upload ->
+        storage().store_photo(album_slug, upload)
+      end)
+
+    # Vérifier si toutes les opérations ont réussi
+    if Enum.all?(results, &match?({:ok, _}, &1)) do
+      photos_metadata = Enum.map(results, fn {:ok, meta} -> meta end)
+      {:ok, photos_metadata}
+    else
+      # Récupérer la première erreur
+      error = Enum.find(results, &match?({:error, _}, &1))
+      error
+    end
+  end
+
+  # =============================================================================
+  # Private Functions
+  # =============================================================================
+
+  defp storage do
+    Application.get_env(:portfolio, :file_storage)[:backend] ||
+      Portfolio.Photography.Storage.LocalStorage
+  end
 
   @doc """
   Réorganise l'ordre d'affichage des photos d'un album.
@@ -195,9 +271,10 @@ defmodule Portfolio.Photography do
   ## Exemples
 
       iex> reorder_photos(album_id, [photo1_id, photo2_id, photo3_id])
-      :ok
+      {:ok, 3}
   """
-  @spec reorder_photos(Ecto.UUID.t(), [Ecto.UUID.t()]) :: :ok | {:error, :invalid_photos}
+  @spec reorder_photos(Ecto.UUID.t(), [Ecto.UUID.t()]) ::
+          {:ok, integer()} | {:error, :invalid_photos}
   def reorder_photos(album_id, photo_ids), do: PhotoRepository.reorder(album_id, photo_ids)
 
   # =============================================================================

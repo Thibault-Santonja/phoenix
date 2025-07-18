@@ -9,13 +9,13 @@
     <div class="mt-4 sm:mt-0 sm:ml-16 flex items-center gap-4">
       <%= if @current_user do %>
         <span class="text-sm text-gray-600">
-          Connecté en tant que <span class="font-medium text-gray-900"><%= @current_user.name || @current_user.email %></span>
+          Connecté en tant que
+          <span class="font-medium text-gray-900">
+            {@current_user.name || @current_user.email}
+          </span>
         </span>
         <span class="text-gray-300">|</span>
-        <.link
-          href={~p"/logout"}
-          class="text-sm text-gray-600 hover:text-gray-900"
-        >
+        <.link href={~p"/logout"} class="text-sm text-gray-600 hover:text-gray-900">
           Déconnexion
         </.link>
       <% end %>
@@ -71,16 +71,28 @@
                   >
                     Titre
                   </th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Type
                   </th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Date
                   </th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Photos
                   </th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Publié
                   </th>
                   <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -92,21 +104,21 @@
                 <%= for album <- @albums do %>
                   <tr>
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                      <div class="font-medium text-gray-900"><%= album.title %></div>
+                      <div class="font-medium text-gray-900">{album.title}</div>
                       <%= if album.location do %>
-                        <div class="text-gray-500"><%= album.location %></div>
+                        <div class="text-gray-500">{album.location}</div>
                       <% end %>
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       <span class={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 #{type_badge_class(album.type)}"}>
-                        <%= format_type(album.type) %>
+                        {format_type(album.type)}
                       </span>
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <%= Calendar.strftime(album.date_prise_vue, "%d/%m/%Y") %>
+                      {Calendar.strftime(album.date_prise_vue, "%d/%m/%Y")}
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <%= length(album.photos) %>
+                      {length(album.photos)}
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       <button

@@ -19,7 +19,6 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
      |> assign(:album, album)
      |> assign(:form, to_form(changeset))
      |> assign(:album_types, album_type_options())
-     |> assign(:uploaded_files, [])
      |> assign(:editing_photo, nil)
      |> assign(:photo_form, nil)
      |> assign(:reordering_mode, false)
@@ -68,51 +67,66 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
 
   @impl true
   def handle_event("upload", _params, socket) do
-    uploaded_files =
-      consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
-        # Pour l'instant, on stocke juste le nom de fichier
-        # On implémentera le storage réel dans Issue #12-14
-        dest = Path.join(["priv", "static", "uploads", "#{entry.uuid}.#{ext(entry)}"])
-        File.mkdir_p!(Path.dirname(dest))
-        File.cp!(path, dest)
-
-        file_path = "/uploads/#{entry.uuid}.#{ext(entry)}"
-        {:ok, {file_path, entry.client_name}}
-      end)
-
-    # Créer les photos dans la DB
     album = socket.assigns.album
 
-    Enum.each(uploaded_files, fn {file_path, original_filename} ->
-      Photography.create_photo(%{
-        album_id: album.id,
-        file_path: file_path,
-        original_filename: original_filename,
-        display_order: length(album.photos)
-      })
-    end)
+    # Consommer les uploads et construire la structure attendue par Photography.upload_photos
+    uploads =
+      consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
+        {:ok,
+         %{
+           path: path,
+           client_name: entry.client_name,
+           client_type: entry.client_type
+         }}
+      end)
 
-    # Recharger l'album avec les nouvelles photos
-    updated_album = Photography.get_album!(album.id, preload: [:photos])
+    # Utiliser le Photography context pour stocker les fichiers
+    case Photography.upload_photos(album.slug, uploads) do
+      {:ok, photos_metadata} ->
+        # Créer les photos dans la DB avec les métadonnées retournées
+        Enum.each(photos_metadata, fn metadata ->
+          Photography.create_photo(%{
+            album_id: album.id,
+            file_path: metadata.file_path,
+            hash: metadata.hash,
+            original_filename: metadata.original_filename,
+            display_order: length(album.photos)
+          })
+        end)
 
-    {:noreply,
-     socket
-     |> assign(:album, updated_album)
-     |> assign(:uploaded_files, uploaded_files)
-     |> put_flash(:info, "#{length(uploaded_files)} photo(s) ajoutée(s)")}
+        # Recharger l'album avec les nouvelles photos
+        updated_album = Photography.get_album!(album.id, preload: [:photos])
+
+        {:noreply,
+         socket
+         |> assign(:album, updated_album)
+         |> put_flash(:info, "#{length(photos_metadata)} photo(s) ajoutée(s)")}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Erreur lors de l'upload : #{inspect(reason)}")}
+    end
   end
 
   @impl true
   def handle_event("delete_photo", %{"id" => id}, socket) do
     photo = Photography.get_photo!(id)
-    {:ok, _} = Photography.delete_photo(photo)
 
-    updated_album = Photography.get_album!(socket.assigns.album.id, preload: [:photos])
+    case Photography.delete_photo(photo) do
+      {:ok, _} ->
+        updated_album = Photography.get_album!(socket.assigns.album.id, preload: [:photos])
 
-    {:noreply,
-     socket
-     |> assign(:album, updated_album)
-     |> put_flash(:info, "Photo supprimée")}
+        {:noreply,
+         socket
+         |> assign(:album, updated_album)
+         |> put_flash(:info, "Photo supprimée")}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Erreur lors de la suppression : #{inspect(reason)}")}
+    end
   end
 
   @impl true
@@ -189,28 +203,26 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
 
   @impl true
   def handle_event("save_photo_order", _params, socket) do
-    # Mettre à jour display_order de chaque photo
-    socket.assigns.temp_photo_order
-    |> Enum.with_index()
-    |> Enum.each(fn {photo_id, index} ->
-      photo = Photography.get_photo!(photo_id)
-      Photography.update_photo(photo, %{display_order: index})
-    end)
+    album_id = socket.assigns.album.id
 
-    # Recharger l'album avec le nouvel ordre
-    updated_album = Photography.get_album!(socket.assigns.album.id, preload: [:photos])
+    # Utiliser reorder_photos qui fait tout en une transaction
+    case Photography.reorder_photos(album_id, socket.assigns.temp_photo_order) do
+      {:ok, count} ->
+        # Recharger l'album avec le nouvel ordre
+        updated_album = Photography.get_album!(album_id, preload: [:photos])
 
-    {:noreply,
-     socket
-     |> assign(:album, updated_album)
-     |> assign(:reordering_mode, false)
-     |> assign(:temp_photo_order, [])
-     |> put_flash(:info, "Ordre des photos enregistré")}
-  end
+        {:noreply,
+         socket
+         |> assign(:album, updated_album)
+         |> assign(:reordering_mode, false)
+         |> assign(:temp_photo_order, [])
+         |> put_flash(:info, "Ordre de #{count} photo(s) enregistré")}
 
-  defp ext(entry) do
-    [ext | _] = MIME.extensions(entry.client_type)
-    ext
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Erreur lors de la réorganisation : #{inspect(reason)}")}
+    end
   end
 
   defp album_type_options do

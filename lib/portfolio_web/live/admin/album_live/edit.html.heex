@@ -5,7 +5,7 @@
         Éditer l'album
       </h2>
       <p class="mt-1 text-sm text-gray-500">
-        <%= @album.title %>
+        {@album.title}
       </p>
     </div>
   </div>
@@ -49,17 +49,33 @@
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <.input field={@form[:date_prise_vue]} type="date" label="Date de début de prise de vue" required />
+                <.input
+                  field={@form[:date_prise_vue]}
+                  type="date"
+                  label="Date de début de prise de vue"
+                  required
+                />
               </div>
 
               <div>
-                <.input field={@form[:date_fin_prise_vue]} type="date" label="Date de fin (optionnel)" />
-                <p class="mt-1 text-sm text-gray-500">Laissez vide si l'album couvre une seule journée</p>
+                <.input
+                  field={@form[:date_fin_prise_vue]}
+                  type="date"
+                  label="Date de fin (optionnel)"
+                />
+                <p class="mt-1 text-sm text-gray-500">
+                  Laissez vide si l'album couvre une seule journée
+                </p>
               </div>
             </div>
 
             <div>
-              <.input field={@form[:reference_link]} type="url" label="Lien de référence" placeholder="https://..." />
+              <.input
+                field={@form[:reference_link]}
+                type="url"
+                label="Lien de référence"
+                placeholder="https://..."
+              />
             </div>
 
             <div class="flex items-center">
@@ -85,8 +101,8 @@
       </.form>
     </div>
   </div>
-
-  <!-- Section Photos -->
+  
+<!-- Section Photos -->
   <div class="md:grid md:grid-cols-3 md:gap-6 mt-10">
     <div class="md:col-span-1">
       <div class="px-4 sm:px-0">
@@ -132,7 +148,11 @@
                       class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                     >
                       <span>Choisir des fichiers</span>
-                      <.live_file_input upload={@uploads.photos} class="sr-only" id="photos-upload" />
+                      <.live_file_input
+                        upload={@uploads.photos}
+                        class="sr-only"
+                        id="photos-upload"
+                      />
                     </label>
                     <p class="pl-1">ou glisser-déposer</p>
                   </div>
@@ -147,8 +167,8 @@
                   <div class="flex items-center space-x-3">
                     <.live_img_preview entry={entry} class="h-16 w-16 object-cover rounded" />
                     <div>
-                      <p class="text-sm font-medium text-gray-900"><%= entry.client_name %></p>
-                      <p class="text-xs text-gray-500"><%= div(entry.client_size, 1024) %> KB</p>
+                      <p class="text-sm font-medium text-gray-900">{entry.client_name}</p>
+                      <p class="text-xs text-gray-500">{div(entry.client_size, 1024)} KB</p>
                     </div>
                   </div>
                   <button
@@ -168,19 +188,19 @@
                     type="submit"
                     class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Uploader <%= length(@uploads.photos.entries) %> photo(s)
+                    Uploader {length(@uploads.photos.entries)} photo(s)
                   </button>
                 </div>
               <% end %>
             </form>
           </div>
-
-          <!-- Liste des photos existantes -->
+          
+<!-- Liste des photos existantes -->
           <%= if @album.photos != [] do %>
             <div class="mt-6 border-t border-gray-200 pt-6">
               <div class="flex items-center justify-between mb-4">
                 <h4 class="text-sm font-medium text-gray-900">
-                  Photos de l'album (<%= length(@album.photos) %>)
+                  Photos de l'album ({length(@album.photos)})
                 </h4>
 
                 <%= if !@reordering_mode do %>
@@ -189,8 +209,18 @@
                     phx-click="start_reordering"
                     class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <svg
+                      class="h-4 w-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
                     </svg>
                     Réorganiser
                   </button>
@@ -218,7 +248,11 @@
                 <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <p class="text-sm text-blue-800">
                     <svg class="inline h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                      <path
+                        fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clip-rule="evenodd"
+                      />
                     </svg>
                     Glissez-déposez les photos pour les réorganiser. La première photo sera utilisée comme image de couverture.
                   </p>
@@ -238,7 +272,7 @@
                   >
                     <%= if @reordering_mode do %>
                       <div class="absolute top-2 left-2 z-10 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                        <%= Enum.find_index(@album.photos, &(&1.id == photo.id)) + 1 %>
+                        {Enum.find_index(@album.photos, &(&1.id == photo.id)) + 1}
                       </div>
                     <% end %>
 
@@ -251,7 +285,7 @@
                     />
                     <%= if photo.title && !@reordering_mode do %>
                       <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-2 rounded-b-lg">
-                        <%= photo.title %>
+                        {photo.title}
                       </div>
                     <% end %>
 
@@ -291,13 +325,25 @@
 
 <!-- Photo Edit Modal -->
 <%= if @editing_photo do %>
-  <div class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div
+    class="fixed z-10 inset-0 overflow-y-auto"
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
       <!-- Background overlay -->
-      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" phx-click="close_photo_modal"></div>
-
-      <!-- Center modal -->
-      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+      <div
+        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        aria-hidden="true"
+        phx-click="close_photo_modal"
+      >
+      </div>
+      
+<!-- Center modal -->
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+        &#8203;
+      </span>
 
       <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
         <.form for={@photo_form} phx-change="validate_photo" phx-submit="save_photo">
@@ -307,8 +353,8 @@
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
                   Éditer la photo
                 </h3>
-
-                <!-- Photo preview -->
+                
+<!-- Photo preview -->
                 <div class="mb-4">
                   <img
                     src={@editing_photo.file_path}
@@ -316,22 +362,37 @@
                     class="w-full h-48 object-cover rounded-lg"
                   />
                   <p class="text-xs text-gray-500 mt-1">
-                    <%= @editing_photo.original_filename %>
+                    {@editing_photo.original_filename}
                   </p>
                 </div>
-
-                <!-- Form fields -->
+                
+<!-- Form fields -->
                 <div class="space-y-4">
                   <div>
-                    <.input field={@photo_form[:title]} type="text" label="Titre" placeholder="Titre de la photo" />
+                    <.input
+                      field={@photo_form[:title]}
+                      type="text"
+                      label="Titre"
+                      placeholder="Titre de la photo"
+                    />
                   </div>
 
                   <div>
-                    <.input field={@photo_form[:description]} type="textarea" label="Description" rows="3" placeholder="Description de la photo" />
+                    <.input
+                      field={@photo_form[:description]}
+                      type="textarea"
+                      label="Description"
+                      rows="3"
+                      placeholder="Description de la photo"
+                    />
                   </div>
 
                   <div>
-                    <.input field={@photo_form[:taken_at]} type="date" label="Date de prise de vue" />
+                    <.input
+                      field={@photo_form[:taken_at]}
+                      type="date"
+                      label="Date de prise de vue"
+                    />
                   </div>
 
                   <div class="flex items-center">

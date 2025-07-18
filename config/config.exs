@@ -33,6 +33,15 @@ config :portfolio, PortfolioWeb.Endpoint,
 config :portfolio, Portfolio.Mailer, adapter: Swoosh.Adapters.Local
 config :portfolio, PortfolioWeb.Gettext, locales: ~w(en fr)
 
+# Configure file uploads
+config :portfolio, :uploads,
+  base_path: "priv/static/uploads",
+  max_file_size: 10 * 1024 * 1024,
+  allowed_mime_types: ["image/webp", "image/jpeg", "image/jpg", "image/png"]
+
+# Configure file storage backend
+config :portfolio, :file_storage, backend: Portfolio.Photography.Storage.LocalStorage
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",

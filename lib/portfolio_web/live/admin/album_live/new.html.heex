@@ -46,17 +46,33 @@
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <.input field={@form[:date_prise_vue]} type="date" label="Date de début de prise de vue" required />
+                <.input
+                  field={@form[:date_prise_vue]}
+                  type="date"
+                  label="Date de début de prise de vue"
+                  required
+                />
               </div>
 
               <div>
-                <.input field={@form[:date_fin_prise_vue]} type="date" label="Date de fin (optionnel)" />
-                <p class="mt-1 text-sm text-gray-500">Laissez vide si l'album couvre une seule journée</p>
+                <.input
+                  field={@form[:date_fin_prise_vue]}
+                  type="date"
+                  label="Date de fin (optionnel)"
+                />
+                <p class="mt-1 text-sm text-gray-500">
+                  Laissez vide si l'album couvre une seule journée
+                </p>
               </div>
             </div>
 
             <div>
-              <.input field={@form[:reference_link]} type="url" label="Lien de référence" placeholder="https://..." />
+              <.input
+                field={@form[:reference_link]}
+                type="url"
+                label="Lien de référence"
+                placeholder="https://..."
+              />
             </div>
 
             <div class="flex items-center">

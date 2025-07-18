@@ -28,6 +28,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   import Ecto.Query, warn: false
 
+  alias Ecto.Multi
   alias Portfolio.Photography.Photo
   alias Portfolio.Repo
 
@@ -179,24 +180,43 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   - Un ID de photo n'existe pas
 
   """
-  @spec reorder(Ecto.UUID.t(), [Ecto.UUID.t()]) :: :ok | {:error, :invalid_photos}
+  @spec reorder(Ecto.UUID.t(), [Ecto.UUID.t()]) :: {:ok, integer()} | {:error, :invalid_photos}
   def reorder(album_id, photo_ids) when is_list(photo_ids) do
-    # Vérifier que toutes les photos appartiennent à l'album
-    photos = list_by_album(album_id)
-    photo_ids_set = MapSet.new(photo_ids)
-    existing_ids_set = MapSet.new(Enum.map(photos, & &1.id))
+    # Build a transaction with all updates using Ecto.Multi
+    multi =
+      Multi.new()
+      |> Multi.run(:validate_photos, fn _repo, _changes ->
+        # Vérifier que toutes les photos appartiennent à l'album
+        photos = list_by_album(album_id)
+        photo_ids_set = MapSet.new(photo_ids)
+        existing_ids_set = MapSet.new(Enum.map(photos, & &1.id))
 
-    if MapSet.subset?(photo_ids_set, existing_ids_set) do
-      # Mettre à jour le display_order de chaque photo
-      Enum.with_index(photo_ids)
-      |> Enum.each(fn {photo_id, index} ->
-        from(p in Photo, where: p.id == ^photo_id)
-        |> Repo.update_all(set: [display_order: index, updated_at: DateTime.utc_now()])
+        if MapSet.subset?(photo_ids_set, existing_ids_set) do
+          {:ok, photos}
+        else
+          {:error, :invalid_photos}
+        end
+      end)
+      |> Multi.run(:reorder_photos, fn repo, %{validate_photos: _photos} ->
+        # Mettre à jour le display_order de chaque photo en une seule transaction
+        # Utiliser update_all pour chaque photo
+        updated_count =
+          Enum.with_index(photo_ids)
+          |> Enum.reduce(0, fn {photo_id, index}, acc ->
+            {count, _} =
+              from(p in Photo, where: p.id == ^photo_id)
+              |> repo.update_all(set: [display_order: index, updated_at: DateTime.utc_now()])
+
+            acc + count
+          end)
+
+        {:ok, updated_count}
       end)
 
-      :ok
-    else
-      {:error, :invalid_photos}
+    case Repo.transaction(multi) do
+      {:ok, %{reorder_photos: count}} -> {:ok, count}
+      {:error, :validate_photos, :invalid_photos, _changes} -> {:error, :invalid_photos}
+      {:error, _failed_operation, reason, _changes} -> {:error, reason}
     end
   end
 
