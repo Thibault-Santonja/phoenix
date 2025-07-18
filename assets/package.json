@@ -6,7 +6,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "animejs": "^4.0.2"
+    "animejs": "^4.0.2",
+    "sortablejs": "^1.15.6"
   },
   "devDependencies": {
     "tailwindcss": "^4.1.6"

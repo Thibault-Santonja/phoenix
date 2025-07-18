@@ -20,6 +20,10 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
      |> assign(:form, to_form(changeset))
      |> assign(:album_types, album_type_options())
      |> assign(:uploaded_files, [])
+     |> assign(:editing_photo, nil)
+     |> assign(:photo_form, nil)
+     |> assign(:reordering_mode, false)
+     |> assign(:temp_photo_order, [])
      |> allow_upload(:photos,
        accept: ~w(.jpg .jpeg .png .webp),
        max_entries: 20,
@@ -109,6 +113,99 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
      socket
      |> assign(:album, updated_album)
      |> put_flash(:info, "Photo supprimée")}
+  end
+
+  @impl true
+  def handle_event("edit_photo", %{"id" => id}, socket) do
+    photo = Photography.get_photo!(id)
+    changeset = Portfolio.Photography.Photo.changeset(photo, %{})
+
+    {:noreply,
+     socket
+     |> assign(:editing_photo, photo)
+     |> assign(:photo_form, to_form(changeset))}
+  end
+
+  @impl true
+  def handle_event("close_photo_modal", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:editing_photo, nil)
+     |> assign(:photo_form, nil)}
+  end
+
+  @impl true
+  def handle_event("validate_photo", %{"photo" => photo_params}, socket) do
+    changeset =
+      socket.assigns.editing_photo
+      |> Portfolio.Photography.Photo.changeset(photo_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :photo_form, to_form(changeset))}
+  end
+
+  @impl true
+  def handle_event("save_photo", %{"photo" => photo_params}, socket) do
+    case Photography.update_photo(socket.assigns.editing_photo, photo_params) do
+      {:ok, _photo} ->
+        updated_album = Photography.get_album!(socket.assigns.album.id, preload: [:photos])
+
+        {:noreply,
+         socket
+         |> assign(:album, updated_album)
+         |> assign(:editing_photo, nil)
+         |> assign(:photo_form, nil)
+         |> put_flash(:info, "Photo mise à jour avec succès")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, :photo_form, to_form(changeset))}
+    end
+  end
+
+  @impl true
+  def handle_event("start_reordering", _params, socket) do
+    # Sauvegarder l'ordre actuel des photos (IDs)
+    photo_ids = Enum.map(socket.assigns.album.photos, & &1.id)
+
+    {:noreply,
+     socket
+     |> assign(:reordering_mode, true)
+     |> assign(:temp_photo_order, photo_ids)}
+  end
+
+  @impl true
+  def handle_event("cancel_reordering", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:reordering_mode, false)
+     |> assign(:temp_photo_order, [])}
+  end
+
+  @impl true
+  def handle_event("reorder_photos", %{"photo_ids" => photo_ids}, socket) do
+    # Mettre à jour l'ordre temporaire
+    {:noreply, assign(socket, :temp_photo_order, photo_ids)}
+  end
+
+  @impl true
+  def handle_event("save_photo_order", _params, socket) do
+    # Mettre à jour display_order de chaque photo
+    socket.assigns.temp_photo_order
+    |> Enum.with_index()
+    |> Enum.each(fn {photo_id, index} ->
+      photo = Photography.get_photo!(photo_id)
+      Photography.update_photo(photo, %{display_order: index})
+    end)
+
+    # Recharger l'album avec le nouvel ordre
+    updated_album = Photography.get_album!(socket.assigns.album.id, preload: [:photos])
+
+    {:noreply,
+     socket
+     |> assign(:album, updated_album)
+     |> assign(:reordering_mode, false)
+     |> assign(:temp_photo_order, [])
+     |> put_flash(:info, "Ordre des photos enregistré")}
   end
 
   defp ext(entry) do

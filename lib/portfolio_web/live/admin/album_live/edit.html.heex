@@ -43,13 +43,18 @@
               <.input field={@form[:description]} type="textarea" label="Description" rows="4" />
             </div>
 
+            <div>
+              <.input field={@form[:location]} type="text" label="Lieu" />
+            </div>
+
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <.input field={@form[:location]} type="text" label="Lieu" />
+                <.input field={@form[:date_prise_vue]} type="date" label="Date de début de prise de vue" required />
               </div>
 
               <div>
-                <.input field={@form[:date_prise_vue]} type="date" label="Date de prise de vue" required />
+                <.input field={@form[:date_fin_prise_vue]} type="date" label="Date de fin (optionnel)" />
+                <p class="mt-1 text-sm text-gray-500">Laissez vide si l'album couvre une seule journée</p>
               </div>
             </div>
 
@@ -173,28 +178,106 @@
           <!-- Liste des photos existantes -->
           <%= if @album.photos != [] do %>
             <div class="mt-6 border-t border-gray-200 pt-6">
-              <h4 class="text-sm font-medium text-gray-900 mb-4">
-                Photos de l'album (<%= length(@album.photos) %>)
-              </h4>
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-medium text-gray-900">
+                  Photos de l'album (<%= length(@album.photos) %>)
+                </h4>
 
-              <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                <%= if !@reordering_mode do %>
+                  <button
+                    type="button"
+                    phx-click="start_reordering"
+                    class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    Réorganiser
+                  </button>
+                <% else %>
+                  <div class="space-x-2">
+                    <button
+                      type="button"
+                      phx-click="cancel_reordering"
+                      class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="button"
+                      phx-click="save_photo_order"
+                      class="inline-flex items-center px-3 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                    >
+                      Enregistrer l'ordre
+                    </button>
+                  </div>
+                <% end %>
+              </div>
+
+              <%= if @reordering_mode do %>
+                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p class="text-sm text-blue-800">
+                    <svg class="inline h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    Glissez-déposez les photos pour les réorganiser. La première photo sera utilisée comme image de couverture.
+                  </p>
+                </div>
+              <% end %>
+
+              <div
+                id="photos-grid"
+                phx-hook="PhotoSortable"
+                data-reordering={to_string(@reordering_mode)}
+                class={"grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 #{if @reordering_mode, do: "sortable-active"}"}
+              >
                 <%= for photo <- @album.photos do %>
-                  <div class="relative group">
+                  <div
+                    class={"relative group #{if @reordering_mode, do: "sortable-item cursor-move"}"}
+                    data-photo-id={photo.id}
+                  >
+                    <%= if @reordering_mode do %>
+                      <div class="absolute top-2 left-2 z-10 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                        <%= Enum.find_index(@album.photos, &(&1.id == photo.id)) + 1 %>
+                      </div>
+                    <% end %>
+
                     <img
                       src={photo.file_path}
                       alt={photo.title || "Photo"}
-                      class="h-32 w-full object-cover rounded-lg"
+                      class={"h-32 w-full object-cover rounded-lg #{if !@reordering_mode, do: "cursor-pointer"}"}
+                      phx-click={if !@reordering_mode, do: "edit_photo"}
+                      phx-value-id={photo.id}
                     />
-                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center rounded-lg">
-                      <button
-                        phx-click="delete_photo"
-                        phx-value-id={photo.id}
-                        data-confirm="Êtes-vous sûr de vouloir supprimer cette photo ?"
-                        class="opacity-0 group-hover:opacity-100 transition bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
-                      >
-                        Supprimer
-                      </button>
-                    </div>
+                    <%= if photo.title && !@reordering_mode do %>
+                      <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-2 rounded-b-lg">
+                        <%= photo.title %>
+                      </div>
+                    <% end %>
+
+                    <%= if !@reordering_mode do %>
+                      <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center rounded-lg">
+                        <div class="opacity-0 group-hover:opacity-100 transition space-x-2">
+                          <button
+                            type="button"
+                            phx-click="edit_photo"
+                            phx-value-id={photo.id}
+                            class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700"
+                          >
+                            Éditer
+                          </button>
+                          <button
+                            type="button"
+                            phx-click="delete_photo"
+                            phx-value-id={photo.id}
+                            data-confirm="Êtes-vous sûr de vouloir supprimer cette photo ?"
+                            class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                          >
+                            Supprimer
+                          </button>
+                        </div>
+                      </div>
+                    <% end %>
                   </div>
                 <% end %>
               </div>
@@ -205,3 +288,77 @@
     </div>
   </div>
 </div>
+
+<!-- Photo Edit Modal -->
+<%= if @editing_photo do %>
+  <div class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <!-- Background overlay -->
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" phx-click="close_photo_modal"></div>
+
+      <!-- Center modal -->
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <.form for={@photo_form} phx-change="validate_photo" phx-submit="save_photo">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                  Éditer la photo
+                </h3>
+
+                <!-- Photo preview -->
+                <div class="mb-4">
+                  <img
+                    src={@editing_photo.file_path}
+                    alt={@editing_photo.title || "Photo"}
+                    class="w-full h-48 object-cover rounded-lg"
+                  />
+                  <p class="text-xs text-gray-500 mt-1">
+                    <%= @editing_photo.original_filename %>
+                  </p>
+                </div>
+
+                <!-- Form fields -->
+                <div class="space-y-4">
+                  <div>
+                    <.input field={@photo_form[:title]} type="text" label="Titre" placeholder="Titre de la photo" />
+                  </div>
+
+                  <div>
+                    <.input field={@photo_form[:description]} type="textarea" label="Description" rows="3" placeholder="Description de la photo" />
+                  </div>
+
+                  <div>
+                    <.input field={@photo_form[:taken_at]} type="date" label="Date de prise de vue" />
+                  </div>
+
+                  <div class="flex items-center">
+                    <.input field={@photo_form[:published]} type="checkbox" label="Publié" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              type="submit"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Enregistrer
+            </button>
+            <button
+              type="button"
+              phx-click="close_photo_modal"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Annuler
+            </button>
+          </div>
+        </.form>
+      </div>
+    </div>
+  </div>
+<% end %>

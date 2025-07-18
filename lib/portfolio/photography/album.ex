@@ -10,9 +10,10 @@ defmodule Portfolio.Photography.Album do
 
   - Un album DOIT avoir un titre (3-200 caractères)
   - Un album DOIT avoir un type valide parmi les types définis
-  - Un album DOIT avoir une date de prise de vue (≤ aujourd'hui)
+  - Un album DOIT avoir une date de début de prise de vue (≤ aujourd'hui)
+  - Un album PEUT avoir une date de fin de prise de vue (optionnel, doit être ≥ date de début et ≤ aujourd'hui)
   - Le slug DOIT être unique globalement
-  - La cover_photo (si définie) DOIT appartenir à l'album
+  - La photo de couverture est toujours la première photo triée par display_order
 
   ## Types Valides
 
@@ -72,9 +73,9 @@ defmodule Portfolio.Photography.Album do
           description: String.t() | nil,
           location: String.t() | nil,
           date_prise_vue: Date.t(),
+          date_fin_prise_vue: Date.t() | nil,
           published: boolean(),
           reference_link: String.t() | nil,
-          cover_photo_id: Ecto.UUID.t() | nil,
           photos: [Photo.t()] | Ecto.Association.NotLoaded.t(),
           exif_data: map(),
           inserted_at: DateTime.t() | nil,
@@ -90,9 +91,9 @@ defmodule Portfolio.Photography.Album do
     field :description, :string
     field :location, :string
     field :date_prise_vue, :date
+    field :date_fin_prise_vue, :date
     field :published, :boolean, default: false
     field :reference_link, :string
-    field :cover_photo_id, :binary_id
     field :exif_data, :map, default: %{}
 
     has_many :photos, Photo
@@ -108,6 +109,7 @@ defmodule Portfolio.Photography.Album do
   - `title` : requis, longueur entre 3 et 200 caractères
   - `type` : requis, doit être un type valide
   - `date_prise_vue` : requis, ne peut pas être dans le futur
+  - `date_fin_prise_vue` : optionnel, ne peut pas être dans le futur, doit être ≥ date_prise_vue
   - `description` : optionnel, max 5000 caractères
   - `slug` : généré automatiquement depuis le titre, unique
 
@@ -128,18 +130,19 @@ defmodule Portfolio.Photography.Album do
       :description,
       :location,
       :date_prise_vue,
+      :date_fin_prise_vue,
       :published,
       :reference_link,
-      :cover_photo_id,
       :exif_data
     ])
     |> validate_required([:title, :type, :date_prise_vue])
     |> validate_length(:title, min: 3, max: 200)
     |> validate_length(:description, max: 5000)
     |> validate_date_not_future(:date_prise_vue)
+    |> validate_date_not_future(:date_fin_prise_vue)
+    |> validate_date_range()
     |> generate_slug()
     |> unique_constraint(:slug)
-    |> foreign_key_constraint(:cover_photo_id)
   end
 
   # Génère un slug URL-friendly depuis le titre
@@ -173,5 +176,18 @@ defmodule Portfolio.Photography.Album do
         []
       end
     end)
+  end
+
+  # Valide que la date de fin est après la date de début
+  @spec validate_date_range(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp validate_date_range(changeset) do
+    date_debut = get_field(changeset, :date_prise_vue)
+    date_fin = get_field(changeset, :date_fin_prise_vue)
+
+    if date_debut && date_fin && Date.compare(date_fin, date_debut) == :lt do
+      add_error(changeset, :date_fin_prise_vue, "doit être après ou égale à la date de début")
+    else
+      changeset
+    end
   end
 end

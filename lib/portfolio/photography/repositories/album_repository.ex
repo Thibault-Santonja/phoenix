@@ -220,10 +220,20 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   defp apply_preload(query, []), do: query
 
   defp apply_preload(query, preloads) when is_list(preloads) do
-    preload(query, ^preloads)
+    # Si :photos est dans les preloads, on le remplace par une query ordonnée
+    if :photos in preloads do
+      preloads_without_photos = Enum.reject(preloads, &(&1 == :photos))
+      photos_query = from p in Portfolio.Photography.Photo, order_by: [asc: p.display_order]
+
+      query
+      |> preload(^preloads_without_photos)
+      |> preload(photos: ^photos_query)
+    else
+      preload(query, ^preloads)
+    end
   end
 
   defp apply_preload(query, preload) when is_atom(preload) do
-    preload(query, ^preload)
+    apply_preload(query, [preload])
   end
 end

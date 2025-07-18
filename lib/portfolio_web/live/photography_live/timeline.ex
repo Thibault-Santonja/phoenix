@@ -329,14 +329,26 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     # Utiliser la première photo comme cover photo
     cover_photo = List.first(album.photos)
 
+    # Construire la chaîne de date avec plage si date_fin existe
+    date_str = format_date_range(album.date_prise_vue, album.date_fin_prise_vue)
+
     %{
       type: to_string(album.type),
-      date: Date.to_iso8601(album.date_prise_vue),
+      date: date_str,
       title: album.title,
       description: album.description || "",
       photography: if(cover_photo, do: cover_photo.file_path, else: nil),
       url: "/gallery/#{album.slug}",
       reference_link: album.reference_link
     }
+  end
+
+  # Formate une plage de dates pour l'affichage
+  # Si date_fin est nulle, affiche seulement date_debut
+  # Sinon, affiche "date_debut - date_fin"
+  defp format_date_range(date_debut, nil), do: Date.to_iso8601(date_debut)
+
+  defp format_date_range(date_debut, date_fin) do
+    "#{Date.to_iso8601(date_debut)} - #{Date.to_iso8601(date_fin)}"
   end
 end

@@ -6,6 +6,7 @@ import {
   onScroll,
   stagger,
 } from "animejs";
+import Sortable from "sortablejs";
 
 export const AnimateThis = {
   mounted() {
@@ -420,5 +421,82 @@ export const DarkModeSwitch = {
       html.classList.toggle("dark", newTheme === "dark");
       localStorage.setItem("theme", newTheme);
     });
+  },
+};
+
+export const PhotoSortable = {
+  mounted() {
+    console.log("PhotoSortable mounted", this.el);
+    this.sortable = null;
+    this.initializeSortable();
+  },
+
+  updated() {
+    console.log("PhotoSortable updated", {
+      reordering: this.el.dataset.reordering,
+    });
+    // Re-initialize sortable when reordering mode changes
+    this.initializeSortable();
+  },
+
+  destroyed() {
+    console.log("PhotoSortable destroyed");
+    if (this.sortable) {
+      this.sortable.destroy();
+    }
+  },
+
+  initializeSortable() {
+    const isReordering = this.el.dataset.reordering === "true";
+    console.log("Initializing sortable, reordering:", isReordering);
+
+    // Destroy existing sortable instance
+    if (this.sortable) {
+      console.log("Destroying existing sortable");
+      this.sortable.destroy();
+      this.sortable = null;
+    }
+
+    // Only create sortable if in reordering mode
+    if (isReordering) {
+      console.log("Creating sortable instance");
+
+      const items = this.el.querySelectorAll(".sortable-item");
+      console.log("Found sortable items:", items.length);
+
+      this.sortable = Sortable.create(this.el, {
+        animation: 150,
+        draggable: ".sortable-item",
+        handle: ".sortable-item",
+        ghostClass: "sortable-ghost",
+        chosenClass: "sortable-chosen",
+        dragClass: "sortable-drag",
+        forceFallback: false, // Changed to false to try native drag
+        fallbackClass: "sortable-fallback",
+        fallbackOnBody: true,
+        swapThreshold: 0.65,
+        direction: "horizontal", // Added for grid support
+
+        onStart: (evt) => {
+          console.log("Drag started", evt.oldIndex);
+        },
+
+        onEnd: (evt) => {
+          console.log("Drag ended", evt.oldIndex, "->", evt.newIndex);
+
+          // Get all photo IDs in the new order
+          const photoIds = Array.from(
+            this.el.querySelectorAll("[data-photo-id]"),
+          ).map((el) => el.dataset.photoId);
+
+          console.log("New order:", photoIds);
+
+          // Send the new order to the server
+          this.pushEvent("reorder_photos", { photo_ids: photoIds });
+        },
+      });
+
+      console.log("Sortable instance created:", this.sortable);
+    }
   },
 };

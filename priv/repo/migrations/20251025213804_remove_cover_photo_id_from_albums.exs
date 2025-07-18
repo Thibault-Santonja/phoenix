@@ -1,0 +1,9 @@
+defmodule Portfolio.Repo.Migrations.RemoveCoverPhotoIdFromAlbums do
+  use Ecto.Migration
+
+  def change do
+    alter table(:albums) do
+      remove :cover_photo_id
+    end
+  end
+end
