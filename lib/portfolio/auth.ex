@@ -12,6 +12,8 @@ defmodule Portfolio.Auth do
   alias Portfolio.Auth.Mailer
   alias Portfolio.Auth.User
   alias Portfolio.Auth.UserSession
+  alias Portfolio.DomainEvents
+  alias Portfolio.Auth.Events.{MagicLinkRequested, MagicLinkVerified}
 
   alias Portfolio.Repo
 
@@ -88,6 +90,9 @@ defmodule Portfolio.Auth do
   Crée un utilisateur s'il n'existe pas, génère un token unique,
   et crée un magic link valide 15 minutes.
 
+  Émet un événement `MagicLinkRequested` pour permettre à d'autres contextes
+  de réagir (envoi email, tracking, rate limiting, etc.).
+
   ## Exemples
 
       iex> request_magic_link("admin@example.com")
@@ -97,6 +102,15 @@ defmodule Portfolio.Auth do
   def request_magic_link(email) when is_binary(email) do
     with {:ok, user} <- get_or_create_user(email),
          {:ok, magic_link} <- create_magic_link(user) do
+      # Émettre l'événement de domaine
+      DomainEvents.publish(:magic_link_requested, %MagicLinkRequested{
+        magic_link_id: magic_link.id,
+        email: user.email,
+        token: magic_link.token,
+        requested_at: magic_link.inserted_at,
+        expires_at: magic_link.expires_at
+      })
+
       # Envoyer l'email avec le magic link
       Mailer.send_magic_link_email(user, magic_link)
 
@@ -109,6 +123,8 @@ defmodule Portfolio.Auth do
 
   Retourne l'utilisateur si le token est valide (non expiré, non utilisé).
   Marque le magic link comme utilisé si valide.
+
+  Émet un événement `MagicLinkVerified` après vérification réussie.
 
   ## Exemples
 
@@ -147,6 +163,14 @@ defmodule Portfolio.Auth do
             ml
             |> Ecto.Changeset.change(%{used_at: DateTime.utc_now() |> DateTime.truncate(:second)})
             |> Repo.update()
+
+            # Émettre l'événement de domaine
+            DomainEvents.publish(:magic_link_verified, %MagicLinkVerified{
+              magic_link_id: ml.id,
+              user_id: ml.user.id,
+              email: ml.user.email,
+              verified_at: DateTime.utc_now()
+            })
 
             {:ok, ml.user}
         end

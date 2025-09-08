@@ -16,6 +16,10 @@ defmodule Portfolio.Application do
       {Finch, name: Portfolio.Finch},
       # Start the session cleaner worker for periodic cleanup
       Portfolio.Auth.SessionCleaner,
+      # Start domain event handlers
+      Portfolio.Photography.EventHandlers.AlbumPublishedHandler,
+      Portfolio.Photography.EventHandlers.PhotoUploadedHandler,
+      Portfolio.Auth.EventHandlers.MagicLinkHandler,
       # Start to serve requests, typically the last entry
       PortfolioWeb.Endpoint
     ]

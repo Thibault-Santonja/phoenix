@@ -45,7 +45,9 @@ defmodule Portfolio.Photography do
       {:ok, published_album} = Photography.publish_album(album)
   """
 
+  alias Portfolio.DomainEvents
   alias Portfolio.Photography.{Album, Photo}
+  alias Portfolio.Photography.Events.{AlbumPublished, PhotoUploaded}
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
 
   # =============================================================================
@@ -138,6 +140,42 @@ defmodule Portfolio.Photography do
   @spec list_published_albums_by_year(keyword()) :: %{integer() => [Album.t()]}
   def list_published_albums_by_year(opts \\ []), do: AlbumRepository.list_published_by_year(opts)
 
+  @doc """
+  Publie un album en le rendant visible publiquement.
+
+  Émet un événement `AlbumPublished` pour permettre à d'autres contextes
+  de réagir à la publication (notifications, indexation, etc.).
+
+  ## Paramètres
+
+  - `album` - L'album à publier
+  - `user_id` - L'ID de l'utilisateur qui publie l'album (optionnel)
+
+  ## Exemples
+
+      iex> publish_album(album)
+      {:ok, %Album{published: true}}
+
+      iex> publish_album(album, user_id)
+      {:ok, %Album{published: true}}
+  """
+  @spec publish_album(Album.t(), Ecto.UUID.t() | nil) ::
+          {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
+  def publish_album(%Album{} = album, user_id \\ nil) do
+    with {:ok, album} <- AlbumRepository.update(album, %{published: true}) do
+      # Émettre l'événement de domaine
+      DomainEvents.publish(:album_published, %AlbumPublished{
+        album_id: album.id,
+        title: album.title,
+        slug: album.slug,
+        published_at: DateTime.utc_now(),
+        user_id: user_id
+      })
+
+      {:ok, album}
+    end
+  end
+
   # =============================================================================
   # Photo API
   # =============================================================================
@@ -169,13 +207,28 @@ defmodule Portfolio.Photography do
   @doc """
   Crée une nouvelle photo dans un album.
 
+  Émet un événement `PhotoUploaded` après la création réussie de la photo.
+
   ## Exemples
 
       iex> create_photo(%{album_id: album_id, original_filename: "test.jpg", file_path: "/test.jpg"})
       {:ok, %Photo{}}
   """
   @spec create_photo(map()) :: {:ok, Photo.t()} | {:error, Ecto.Changeset.t()}
-  def create_photo(attrs), do: PhotoRepository.insert(attrs)
+  def create_photo(attrs) do
+    with {:ok, photo} <- PhotoRepository.insert(attrs) do
+      # Émettre l'événement de domaine
+      DomainEvents.publish(:photo_uploaded, %PhotoUploaded{
+        photo_id: photo.id,
+        album_id: photo.album_id,
+        file_path: photo.file_path,
+        hash: photo.hash,
+        uploaded_at: photo.inserted_at
+      })
+
+      {:ok, photo}
+    end
+  end
 
   @doc """
   Met à jour une photo existante.
