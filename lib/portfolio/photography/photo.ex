@@ -48,6 +48,7 @@ defmodule Portfolio.Photography.Photo do
   import Ecto.Changeset
 
   alias Portfolio.Photography.Album
+  alias Portfolio.Photography.ValueObjects.Slug
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -146,7 +147,7 @@ defmodule Portfolio.Photography.Photo do
     |> unique_constraint([:album_id, :slug], name: :photos_album_id_slug_index)
   end
 
-  # Génère un slug URL-friendly depuis le titre s'il est présent
+  # Génère un slug URL-friendly depuis le titre s'il est présent en utilisant le Value Object Slug
   @spec generate_slug(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp generate_slug(changeset) do
     case get_change(changeset, :title) do
@@ -154,16 +155,13 @@ defmodule Portfolio.Photography.Photo do
         changeset
 
       title ->
-        slug =
-          title
-          |> String.downcase()
-          |> String.normalize(:nfd)
-          |> String.replace(~r/[^a-z0-9\s-]/u, "")
-          |> String.replace(~r/\s+/, "-")
-          |> String.replace(~r/-+/, "-")
-          |> String.trim("-")
+        case Slug.new(title) do
+          {:ok, slug} ->
+            put_change(changeset, :slug, to_string(slug))
 
-        put_change(changeset, :slug, slug)
+          {:error, _} ->
+            add_error(changeset, :title, "ne peut pas être converti en slug valide")
+        end
     end
   end
 
