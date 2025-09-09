@@ -8,6 +8,8 @@ defmodule PortfolioWeb.Telemetry do
 
   @impl true
   def init(_arg) do
+    attach_handlers()
+
     children = [
       # Telemetry poller will execute the given period measurements
       # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
@@ -21,6 +23,29 @@ defmodule PortfolioWeb.Telemetry do
 
   def metrics do
     [
+      # Photography Metrics
+      counter("portfolio.photography.album.created.count"),
+      distribution("portfolio.photography.album.created.duration",
+        unit: {:native, :millisecond}
+      ),
+      counter("portfolio.photography.photos.uploaded.count"),
+      sum("portfolio.photography.photos.uploaded.total",
+        measurement: :count
+      ),
+      distribution("portfolio.photography.photos.uploaded.duration",
+        unit: {:native, :millisecond}
+      ),
+
+      # Auth Metrics
+      counter("portfolio.auth.magic_link.requested.count"),
+      distribution("portfolio.auth.magic_link.requested.duration",
+        unit: {:native, :millisecond}
+      ),
+      counter("portfolio.auth.magic_link.verified.count"),
+      distribution("portfolio.auth.magic_link.verified.duration",
+        unit: {:native, :millisecond}
+      ),
+
       # Phoenix Metrics
       summary("phoenix.endpoint.start.system_time",
         unit: {:native, :millisecond}
@@ -66,5 +91,82 @@ defmodule PortfolioWeb.Telemetry do
       # This function must call :telemetry.execute/3 and a metric must be added above.
       # {PortfolioWeb, :count_users, []}
     ]
+  end
+
+  defp attach_handlers do
+    :telemetry.attach(
+      "portfolio-photography-album-created",
+      [:portfolio, :photography, :album, :created],
+      &handle_album_created/4,
+      nil
+    )
+
+    :telemetry.attach(
+      "portfolio-photography-photos-uploaded",
+      [:portfolio, :photography, :photos, :uploaded],
+      &handle_photos_uploaded/4,
+      nil
+    )
+
+    :telemetry.attach(
+      "portfolio-auth-magic-link-requested",
+      [:portfolio, :auth, :magic_link, :requested],
+      &handle_magic_link_requested/4,
+      nil
+    )
+
+    :telemetry.attach(
+      "portfolio-auth-magic-link-verified",
+      [:portfolio, :auth, :magic_link, :verified],
+      &handle_magic_link_verified/4,
+      nil
+    )
+  end
+
+  defp handle_album_created(_event, %{duration: duration}, %{result: result}, _config) do
+    require Logger
+
+    duration_ms = System.convert_time_unit(duration, :native, :millisecond)
+
+    Logger.info("Album created",
+      result: result,
+      duration_ms: duration_ms
+    )
+  end
+
+  defp handle_photos_uploaded(_event, %{duration: duration, count: count}, metadata, _config) do
+    require Logger
+
+    duration_ms = System.convert_time_unit(duration, :native, :millisecond)
+
+    Logger.info("Photos uploaded",
+      album_slug: metadata.album_slug,
+      count: count,
+      result: metadata.result,
+      duration_ms: duration_ms
+    )
+  end
+
+  defp handle_magic_link_requested(_event, %{duration: duration}, metadata, _config) do
+    require Logger
+
+    duration_ms = System.convert_time_unit(duration, :native, :millisecond)
+
+    Logger.info("Magic link requested",
+      email: metadata.email,
+      result: metadata.result,
+      duration_ms: duration_ms
+    )
+  end
+
+  defp handle_magic_link_verified(_event, %{duration: duration}, %{result: result}, _config) do
+    require Logger
+
+    duration_ms = System.convert_time_unit(duration, :native, :millisecond)
+
+    Logger.info("Magic link verified",
+      result: result,
+      duration_ms: duration_ms
+    )
   end
 end

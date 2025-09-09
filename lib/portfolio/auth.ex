@@ -93,6 +93,9 @@ defmodule Portfolio.Auth do
   Émet un événement `MagicLinkRequested` pour permettre à d'autres contextes
   de réagir (envoi email, tracking, rate limiting, etc.).
 
+  Émet également un événement telemetry `[:portfolio, :auth, :magic_link, :requested]`
+  avec la durée et le résultat de l'opération.
+
   ## Exemples
 
       iex> request_magic_link("admin@example.com")
@@ -100,22 +103,35 @@ defmodule Portfolio.Auth do
   """
   @spec request_magic_link(String.t()) :: {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t()}
   def request_magic_link(email) when is_binary(email) do
-    with {:ok, user} <- get_or_create_user(email),
-         {:ok, magic_link} <- create_magic_link(user) do
-      # Émettre l'événement de domaine
-      DomainEvents.publish(:magic_link_requested, %MagicLinkRequested{
-        magic_link_id: magic_link.id,
-        email: user.email,
-        token: magic_link.token,
-        requested_at: magic_link.inserted_at,
-        expires_at: magic_link.expires_at
-      })
+    start_time = System.monotonic_time()
 
-      # Envoyer l'email avec le magic link
-      Mailer.send_magic_link_email(user, magic_link)
+    result =
+      with {:ok, user} <- get_or_create_user(email),
+           {:ok, magic_link} <- create_magic_link(user) do
+        # Émettre l'événement de domaine
+        DomainEvents.publish(:magic_link_requested, %MagicLinkRequested{
+          magic_link_id: magic_link.id,
+          email: user.email,
+          token: magic_link.token,
+          requested_at: magic_link.inserted_at,
+          expires_at: magic_link.expires_at
+        })
 
-      {:ok, magic_link}
-    end
+        # Envoyer l'email avec le magic link
+        Mailer.send_magic_link_email(user, magic_link)
+
+        {:ok, magic_link}
+      end
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :auth, :magic_link, :requested],
+      %{duration: duration},
+      %{email: email, result: elem(result, 0)}
+    )
+
+    result
   end
 
   @doc """
@@ -125,6 +141,9 @@ defmodule Portfolio.Auth do
   Marque le magic link comme utilisé si valide.
 
   Émet un événement `MagicLinkVerified` après vérification réussie.
+
+  Émet également un événement telemetry `[:portfolio, :auth, :magic_link, :verified]`
+  avec la durée et le résultat de l'opération.
 
   ## Exemples
 
@@ -140,41 +159,56 @@ defmodule Portfolio.Auth do
   @spec verify_magic_link(String.t()) ::
           {:ok, User.t()} | {:error, :invalid_token | :expired | :already_used}
   def verify_magic_link(token) when is_binary(token) do
+    start_time = System.monotonic_time()
+
     magic_link =
       MagicLink
       |> where([ml], ml.token == ^token)
       |> preload(:user)
       |> Repo.one()
 
-    case magic_link do
-      nil ->
-        {:error, :invalid_token}
+    result =
+      case magic_link do
+        nil ->
+          {:error, :invalid_token}
 
-      %MagicLink{} = ml ->
-        cond do
-          MagicLink.used?(ml) ->
-            {:error, :already_used}
+        %MagicLink{} = ml ->
+          cond do
+            MagicLink.used?(ml) ->
+              {:error, :already_used}
 
-          MagicLink.expired?(ml) ->
-            {:error, :expired}
+            MagicLink.expired?(ml) ->
+              {:error, :expired}
 
-          true ->
-            # Marquer comme utilisé
-            ml
-            |> Ecto.Changeset.change(%{used_at: DateTime.utc_now() |> DateTime.truncate(:second)})
-            |> Repo.update()
+            true ->
+              # Marquer comme utilisé
+              ml
+              |> Ecto.Changeset.change(%{
+                used_at: DateTime.utc_now() |> DateTime.truncate(:second)
+              })
+              |> Repo.update()
 
-            # Émettre l'événement de domaine
-            DomainEvents.publish(:magic_link_verified, %MagicLinkVerified{
-              magic_link_id: ml.id,
-              user_id: ml.user.id,
-              email: ml.user.email,
-              verified_at: DateTime.utc_now()
-            })
+              # Émettre l'événement de domaine
+              DomainEvents.publish(:magic_link_verified, %MagicLinkVerified{
+                magic_link_id: ml.id,
+                user_id: ml.user.id,
+                email: ml.user.email,
+                verified_at: DateTime.utc_now()
+              })
 
-            {:ok, ml.user}
-        end
-    end
+              {:ok, ml.user}
+          end
+      end
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :auth, :magic_link, :verified],
+      %{duration: duration},
+      %{result: elem(result, 0)}
+    )
+
+    result
   end
 
   @doc """

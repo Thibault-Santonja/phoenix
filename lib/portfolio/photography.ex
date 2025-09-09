@@ -97,13 +97,30 @@ defmodule Portfolio.Photography do
   @doc """
   Crée un nouvel album.
 
+  Émet un événement telemetry `[:portfolio, :photography, :album, :created]` avec
+  la durée et le résultat de l'opération.
+
   ## Exemples
 
       iex> create_album(%{title: "Mon Album", type: :wedding, date_prise_vue: ~D[2024-01-01]})
       {:ok, %Album{}}
   """
   @spec create_album(map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
-  def create_album(attrs), do: AlbumRepository.insert(attrs)
+  def create_album(attrs) do
+    start_time = System.monotonic_time()
+
+    result = AlbumRepository.insert(attrs)
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :photography, :album, :created],
+      %{duration: duration},
+      %{result: elem(result, 0)}
+    )
+
+    result
+  end
 
   @doc """
   Met à jour un album existant.
@@ -275,6 +292,9 @@ defmodule Portfolio.Photography do
 
   Stocke les fichiers via FileStorage et crée les enregistrements en base.
 
+  Émet un événement telemetry `[:portfolio, :photography, :photos, :uploaded]` avec
+  la durée, le nombre de photos, et le résultat de l'opération.
+
   ## Paramètres
 
   - `album_slug` - Le slug de l'album (pour l'organisation des fichiers)
@@ -292,6 +312,9 @@ defmodule Portfolio.Photography do
   """
   @spec upload_photos(String.t(), [map()]) :: {:ok, [map()]} | {:error, term()}
   def upload_photos(album_slug, uploads) when is_list(uploads) do
+    start_time = System.monotonic_time()
+    count = length(uploads)
+
     # Pour chaque upload, stocker le fichier
     results =
       Enum.map(uploads, fn upload ->
@@ -299,14 +322,25 @@ defmodule Portfolio.Photography do
       end)
 
     # Vérifier si toutes les opérations ont réussi
-    if Enum.all?(results, &match?({:ok, _}, &1)) do
-      photos_metadata = Enum.map(results, fn {:ok, meta} -> meta end)
-      {:ok, photos_metadata}
-    else
-      # Récupérer la première erreur
-      error = Enum.find(results, &match?({:error, _}, &1))
-      error
-    end
+    result =
+      if Enum.all?(results, &match?({:ok, _}, &1)) do
+        photos_metadata = Enum.map(results, fn {:ok, meta} -> meta end)
+        {:ok, photos_metadata}
+      else
+        # Récupérer la première erreur
+        error = Enum.find(results, &match?({:error, _}, &1))
+        error
+      end
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :photography, :photos, :uploaded],
+      %{duration: duration, count: count},
+      %{album_slug: album_slug, result: elem(result, 0)}
+    )
+
+    result
   end
 
   # =============================================================================
