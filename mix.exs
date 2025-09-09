@@ -15,7 +15,17 @@ defmodule Portfolio.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      dialyzer: [
+        plt_add_apps: [:ex_unit, :mix],
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+        flags: [
+          :error_handling,
+          :underspecs,
+          :unmatched_returns
+        ],
+        ignore_warnings: ".dialyzer_ignore.exs"
+      ]
     ]
   end
 

@@ -101,7 +101,8 @@ defmodule Portfolio.Auth do
       iex> request_magic_link("admin@example.com")
       {:ok, %MagicLink{token: "abc123..."}}
   """
-  @spec request_magic_link(String.t()) :: {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t()}
+  @spec request_magic_link(String.t()) ::
+          {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t() | :user_not_found}
   def request_magic_link(email) when is_binary(email) do
     start_time = System.monotonic_time()
 
