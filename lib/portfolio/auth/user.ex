@@ -14,6 +14,10 @@ defmodule Portfolio.Auth.User do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
+  # RFC 5322 compliant email regex
+  # Allows most valid email formats while being strict enough to catch common errors
+  @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+
   @type t :: %__MODULE__{
           id: Ecto.UUID.t() | nil,
           email: String.t(),
@@ -75,11 +79,12 @@ defmodule Portfolio.Auth.User do
     |> validate_length(:name, min: 2, max: 100)
   end
 
-  # Validation de l'email
+  # Validation de l'email avec RFC 5322
   defp validate_email(changeset) do
     changeset
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "doit être une adresse email valide")
+    |> validate_format(:email, @email_regex, message: "doit être une adresse email valide")
     |> validate_length(:email, max: 160)
+    |> update_change(:email, &String.downcase/1)
     |> unsafe_validate_unique(:email, Portfolio.Repo)
     |> unique_constraint(:email)
   end

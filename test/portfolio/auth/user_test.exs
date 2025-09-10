@@ -24,20 +24,57 @@ defmodule Portfolio.Auth.UserTest do
       assert "can't be blank" in errors_on(changeset_nil).role
     end
 
-    test "validates email format" do
+    test "validates email format - accepts valid emails" do
+      valid_emails = [
+        "user@example.com",
+        "user.name@example.com",
+        "user+tag@example.com",
+        "user_name@example.com",
+        "user-name@example.com",
+        "user123@example.com",
+        "user@subdomain.example.com",
+        "user@example.co.uk",
+        "user@example-domain.com",
+        "first.last@example.com",
+        "user+filter@gmail.com",
+        "user!test@example.com",
+        "user#test@example.com",
+        "user$test@example.com"
+      ]
+
+      for valid_email <- valid_emails do
+        changeset = User.changeset(%User{}, %{email: valid_email, role: "admin"})
+        assert changeset.valid?, "#{valid_email} should be valid"
+      end
+    end
+
+    test "validates email format - rejects invalid emails" do
       invalid_emails = [
         "notanemail",
         "@example.com",
         "test@",
         "test @example.com",
-        "test@example .com"
+        "test@example .com",
+        "test@.example.com",
+        "test@example..com",
+        "test@@example.com",
+        " test@example.com",
+        "test@example.com ",
+        "test@-example.com",
+        "test@example-.com"
       ]
 
       for invalid_email <- invalid_emails do
         changeset = User.changeset(%User{}, %{email: invalid_email, role: "admin"})
-        refute changeset.valid?
+        refute changeset.valid?, "#{invalid_email} should be invalid"
         assert "doit être une adresse email valide" in errors_on(changeset).email
       end
+    end
+
+    test "normalizes email to lowercase" do
+      changeset = User.changeset(%User{}, %{email: "Test.User@EXAMPLE.COM", role: "admin"})
+      assert changeset.valid?
+      assert Ecto.Changeset.get_change(changeset, :email) == "test.user@example.com"
     end
 
     test "validates email max length" do
