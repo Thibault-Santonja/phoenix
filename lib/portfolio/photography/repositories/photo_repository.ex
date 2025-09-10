@@ -5,10 +5,13 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   Implémente le pattern Repository pour abstraire l'accès aux données des Photos.
   Les Photos sont des entités appartenant à l'agrégat Album.
 
+  La logique de construction des requêtes est déléguée aux Query Objects,
+  ce repository se concentre uniquement sur l'accès aux données.
+
   ## Responsabilités
 
   - CRUD complet sur les Photos
-  - Requêtes par album
+  - Exécution des requêtes construites par PhotoQuery
   - Réorganisation de l'ordre d'affichage
   - Gestion des erreurs de persistence
   - Isolation de la couche domaine vis-à-vis d'Ecto
@@ -30,6 +33,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   alias Ecto.Multi
   alias Portfolio.Photography.Photo
+  alias Portfolio.Photography.Queries.PhotoQuery
   alias Portfolio.Repo
 
   @doc """
@@ -46,11 +50,19 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   """
   @spec list_by_album(Ecto.UUID.t(), keyword()) :: [Photo.t()]
   def list_by_album(album_id, opts \\ []) do
-    Photo
-    |> where([p], p.album_id == ^album_id)
-    |> order_by([p], asc: p.display_order)
-    |> apply_preload(opts[:preload])
-    |> Repo.all()
+    query =
+      PhotoQuery.base()
+      |> PhotoQuery.by_album(album_id)
+      |> PhotoQuery.order_by_display_order()
+
+    query =
+      if opts[:preload] do
+        apply_preload(query, opts[:preload])
+      else
+        query
+      end
+
+    Repo.all(query)
   end
 
   @doc """
@@ -220,16 +232,12 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
     end
   end
 
-  # Applique les preloads à la query
+  # Applique les preloads à la query en utilisant PhotoQuery
   @spec apply_preload(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
   defp apply_preload(query, nil), do: query
   defp apply_preload(query, []), do: query
 
-  defp apply_preload(query, preloads) when is_list(preloads) do
-    preload(query, ^preloads)
-  end
-
-  defp apply_preload(query, preload) when is_atom(preload) do
-    preload(query, ^preload)
+  defp apply_preload(query, preloads) do
+    PhotoQuery.with_preload(query, preloads)
   end
 end

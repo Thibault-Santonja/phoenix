@@ -5,10 +5,13 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   Implémente le pattern Repository pour abstraire l'accès aux données des Albums.
   Toutes les opérations de base de données pour les Albums passent par ce module.
 
+  La logique de construction des requêtes est déléguée aux Query Objects,
+  ce repository se concentre uniquement sur l'accès aux données.
+
   ## Responsabilités
 
   - CRUD complet sur les Albums
-  - Requêtes métier (filtres, groupements)
+  - Exécution des requêtes construites par AlbumQuery
   - Gestion des erreurs de persistence
   - Isolation de la couche domaine vis-à-vis d'Ecto
 
@@ -28,6 +31,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   import Ecto.Query, warn: false
 
   alias Portfolio.Photography.Album
+  alias Portfolio.Photography.Queries.AlbumQuery
   alias Portfolio.Repo
 
   @doc """
@@ -56,9 +60,8 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   """
   @spec list(keyword()) :: [Album.t()]
   def list(filters \\ []) do
-    Album
+    AlbumQuery.base()
     |> apply_filters(filters)
-    |> apply_preload(filters[:preload])
     |> Repo.all()
   end
 
@@ -184,29 +187,50 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   """
   @spec list_published_by_year(keyword()) :: %{integer() => [Album.t()]}
   def list_published_by_year(opts \\ []) do
-    Album
-    |> where([a], a.published == true)
-    |> order_by([a], desc: a.date_prise_vue)
-    |> apply_preload(opts[:preload])
+    query =
+      AlbumQuery.base()
+      |> AlbumQuery.published()
+      |> AlbumQuery.order_by_date_desc()
+
+    query =
+      if opts[:preload] do
+        apply_preload(query, opts[:preload])
+      else
+        query
+      end
+
+    query
     |> Repo.all()
     |> Enum.group_by(fn album ->
       album.date_prise_vue.year
     end)
   end
 
-  # Applique les filtres à la query
+  # Applique les filtres à la query en utilisant AlbumQuery
   @spec apply_filters(Ecto.Query.t(), keyword()) :: Ecto.Query.t()
   defp apply_filters(query, []), do: query
 
   defp apply_filters(query, [{:type, type} | rest]) do
     query
-    |> where([a], a.type == ^type)
+    |> AlbumQuery.by_type(type)
     |> apply_filters(rest)
   end
 
-  defp apply_filters(query, [{:published, published} | rest]) do
+  defp apply_filters(query, [{:published, true} | rest]) do
     query
-    |> where([a], a.published == ^published)
+    |> AlbumQuery.published()
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:published, false} | rest]) do
+    query
+    |> AlbumQuery.unpublished()
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:preload, preloads} | rest]) do
+    query
+    |> apply_preload(preloads)
     |> apply_filters(rest)
   end
 
@@ -214,26 +238,12 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
     apply_filters(query, rest)
   end
 
-  # Applique les preloads à la query
+  # Applique les preloads à la query en utilisant AlbumQuery
   @spec apply_preload(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
   defp apply_preload(query, nil), do: query
   defp apply_preload(query, []), do: query
 
-  defp apply_preload(query, preloads) when is_list(preloads) do
-    # Si :photos est dans les preloads, on le remplace par une query ordonnée
-    if :photos in preloads do
-      preloads_without_photos = Enum.reject(preloads, &(&1 == :photos))
-      photos_query = from p in Portfolio.Photography.Photo, order_by: [asc: p.display_order]
-
-      query
-      |> preload(^preloads_without_photos)
-      |> preload(photos: ^photos_query)
-    else
-      preload(query, ^preloads)
-    end
-  end
-
-  defp apply_preload(query, preload) when is_atom(preload) do
-    apply_preload(query, [preload])
+  defp apply_preload(query, preloads) do
+    AlbumQuery.with_preload(query, preloads)
   end
 end

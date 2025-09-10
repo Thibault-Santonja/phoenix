@@ -242,7 +242,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepositoryTest do
 
       # Reorder: photo3, photo1, photo2
       new_order = [photo3.id, photo1.id, photo2.id]
-      assert :ok = PhotoRepository.reorder(album.id, new_order)
+      assert {:ok, 3} = PhotoRepository.reorder(album.id, new_order)
 
       # Verify new order
       photos = PhotoRepository.list_by_album(album.id)
@@ -259,7 +259,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepositoryTest do
       album = insert_album(%{title: "Album", type: :wedding})
       photo = insert_photo(album, %{title: "Photo", display_order: 5})
 
-      assert :ok = PhotoRepository.reorder(album.id, [photo.id])
+      assert {:ok, 1} = PhotoRepository.reorder(album.id, [photo.id])
 
       [reordered_photo] = PhotoRepository.list_by_album(album.id)
       assert reordered_photo.display_order == 0
@@ -269,7 +269,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepositoryTest do
       album = insert_album(%{title: "Album", type: :wedding})
       insert_photo(album, %{title: "Photo"})
 
-      assert :ok = PhotoRepository.reorder(album.id, [])
+      assert {:ok, 0} = PhotoRepository.reorder(album.id, [])
     end
 
     test "returns error when photo does not belong to album" do
@@ -315,7 +315,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepositoryTest do
       # Reverse the order
       reversed_ids = Enum.reverse(Enum.map(photos, & &1.id))
 
-      assert :ok = PhotoRepository.reorder(album.id, reversed_ids)
+      assert {:ok, 5} = PhotoRepository.reorder(album.id, reversed_ids)
 
       # Verify all photos were reordered
       reordered_photos = PhotoRepository.list_by_album(album.id)
