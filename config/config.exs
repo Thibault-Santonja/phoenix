@@ -73,7 +73,36 @@ config :tailwind,
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: [
+    :request_id,
+    # Photography context metadata
+    :album_id,
+    :album_slug,
+    :photo_id,
+    :file_path,
+    :hash,
+    :count,
+    :title,
+    :slug,
+    :published_at,
+    :uploaded_at,
+    # Auth context metadata
+    :user_id,
+    :email,
+    :magic_link_id,
+    :requested_at,
+    :expires_at,
+    :verified_at,
+    # Storage metadata
+    :source,
+    :destination,
+    :directory,
+    # Common metadata
+    :result,
+    :reason,
+    :error,
+    :duration_ms
+  ]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
