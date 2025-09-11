@@ -46,14 +46,14 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
       |> form("#album-form", form_data)
       |> render_submit()
 
-      # Verify redirect to albums list
-      assert_redirected(view, ~p"/admin/albums")
-
       # Verify album was created in database
       albums = Photography.list_albums()
       assert length(albums) == 1
 
       album = hd(albums)
+
+      # Verify redirect to edit page (to allow adding photos)
+      assert_redirected(view, ~p"/admin/albums/#{album.id}/edit")
       assert album.title == "My Wedding Album"
       assert album.type == :wedding
       assert album.location == "Paris"

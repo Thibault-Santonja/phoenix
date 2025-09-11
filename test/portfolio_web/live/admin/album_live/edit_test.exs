@@ -6,7 +6,6 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
   import PortfolioTest.Fixtures.PhotographyFixtures
 
   alias Portfolio.Photography
-  alias Portfolio.Repo
 
   describe "mount" do
     setup :register_and_log_in_user
@@ -49,17 +48,17 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
-      html =
-        view
-        |> form("form", %{
-          album: %{
-            title: "Updated Title",
-            description: "Updated description"
-          }
-        })
-        |> render_submit()
+      view
+      |> form("#album-form", %{
+        album: %{
+          title: "Updated Title",
+          description: "Updated description"
+        }
+      })
+      |> render_submit()
 
-      assert html =~ "Album mis à jour avec succès"
+      # FormComponent redirects to albums list after edit
+      assert_redirected(view, ~p"/admin/albums")
 
       updated_album = Photography.get_album!(album.id)
       assert updated_album.title == "Updated Title"
@@ -72,7 +71,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
       view
-      |> form("form", %{
+      |> form("#album-form", %{
         album: %{
           date_prise_vue: "2024-01-15",
           date_fin_prise_vue: "2024-01-20"
@@ -92,7 +91,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       html =
         view
-        |> form("form", %{album: %{title: "AB"}})
+        |> form("#album-form", %{album: %{title: "AB"}})
         |> render_submit()
 
       # Le titre doit faire au moins 3 caractères
@@ -106,7 +105,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       html =
         view
-        |> form("form", %{
+        |> form("#album-form", %{
           album: %{
             date_prise_vue: "2024-01-20",
             date_fin_prise_vue: "2024-01-15"
@@ -307,7 +306,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
         |> element("button[phx-click=\"save_photo_order\"]")
         |> render_click()
 
-      assert html =~ "Ordre des photos enregistré"
+      assert html =~ "Ordre de 3 photo(s) enregistré"
 
       # Vérifier que l'ordre a été mis à jour en base
       updated_album = Photography.get_album!(album.id, preload: [:photos])
@@ -359,9 +358,9 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
-      # En mode normal, les boutons doivent être présents
-      assert has_element?(view, "button", "Éditer")
-      assert has_element?(view, "button", "Supprimer")
+      # En mode normal, les boutons de photo doivent être présents
+      assert has_element?(view, "button[phx-click=\"edit_photo\"]", "Éditer")
+      assert has_element?(view, "button[phx-click=\"delete_photo\"]", "Supprimer")
 
       # Activer le mode réorganisation
       html =
@@ -369,9 +368,10 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
         |> element("button[phx-click=\"start_reordering\"]")
         |> render_click()
 
-      # Les boutons ne doivent plus être visibles
-      refute html =~ "Éditer"
-      refute html =~ "Supprimer"
+      # Les boutons de photo ne doivent plus être visibles
+      # (mais le formulaire d'album reste visible avec son bouton "Enregistrer")
+      refute html =~ "phx-click=\"edit_photo\""
+      refute html =~ "phx-click=\"delete_photo\""
     end
 
     test "displays position badges in reordering mode", %{conn: conn} do
@@ -386,9 +386,10 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
         |> render_click()
 
       # Les badges de position doivent être affichés (1, 2, 3)
-      assert html =~ ">1<"
-      assert html =~ ">2<"
-      assert html =~ ">3<"
+      # They're in div with class containing the position number
+      assert html =~ "1\n                      </div>"
+      assert html =~ "2\n                      </div>"
+      assert html =~ "3\n                      </div>"
     end
   end
 
@@ -397,7 +398,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
     test "displays photo title when present", %{conn: conn} do
       album = create_album()
-      create_photo(album_id: album.id, title: "Beautiful Sunset")
+      create_photo(album: album, title: "Beautiful Sunset")
 
       {:ok, _view, html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
@@ -406,7 +407,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
     test "handles nil photo title correctly", %{conn: conn} do
       album = create_album()
-      create_photo(album_id: album.id, title: nil)
+      create_photo(album: album, title: nil)
 
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
@@ -416,7 +417,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
     test "hides photo title in reordering mode", %{conn: conn} do
       album = create_album()
-      create_photo(album_id: album.id, title: "Test Title")
+      create_photo(album: album, title: "Test Title")
 
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
