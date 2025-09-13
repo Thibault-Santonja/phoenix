@@ -1,27 +1,28 @@
 defmodule Portfolio.Photography.Storage.LocalStorageTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   alias Portfolio.Photography.Storage.LocalStorage
 
-  @test_base_path "test/tmp/uploads"
-
   setup do
+    # Create unique test directory for each test to avoid race conditions in parallel execution
+    test_base_path = "test/tmp/uploads/test-#{System.unique_integer([:positive])}"
+
     # Configure test storage path
-    Application.put_env(:portfolio, :uploads, base_path: @test_base_path)
+    Application.put_env(:portfolio, :uploads, base_path: test_base_path)
 
     # Cleanup before and after each test
-    File.rm_rf!(@test_base_path)
-    File.mkdir_p!(@test_base_path)
+    File.rm_rf!(test_base_path)
+    File.mkdir_p!(test_base_path)
 
     on_exit(fn ->
-      File.rm_rf!(@test_base_path)
+      File.rm_rf!(test_base_path)
     end)
 
-    :ok
+    %{test_base_path: test_base_path}
   end
 
   describe "store_photo/2" do
-    test "stores a photo with correct filename format" do
+    test "stores a photo with correct filename format", %{test_base_path: test_base_path} do
       # Create a temporary test file
       test_content = "test image content"
       temp_path = create_temp_file(test_content)
@@ -41,13 +42,13 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
       assert metadata.original_filename == "Wedding Photo.jpg"
 
       # Verify file exists on disk
-      full_path = Path.join([@test_base_path, "albums", "mariage-2024", "original"])
+      full_path = Path.join([test_base_path, "albums", "mariage-2024", "original"])
       assert File.exists?(full_path)
       assert [filename] = File.ls!(full_path)
       assert filename =~ ~r/wedding-photo-[a-f0-9]{8}\.jpg/
     end
 
-    test "creates directory structure if it doesn't exist" do
+    test "creates directory structure if it doesn't exist", %{test_base_path: test_base_path} do
       temp_path = create_temp_file("content")
 
       upload = %{
@@ -58,7 +59,7 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
 
       assert {:ok, _metadata} = LocalStorage.store_photo("new-album", upload)
 
-      expected_dir = Path.join([@test_base_path, "albums", "new-album", "original"])
+      expected_dir = Path.join([test_base_path, "albums", "new-album", "original"])
       assert File.exists?(expected_dir)
       assert File.dir?(expected_dir)
     end
@@ -214,7 +215,7 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
   end
 
   describe "get_photo_path/1" do
-    test "returns full path for existing photo" do
+    test "returns full path for existing photo", %{test_base_path: test_base_path} do
       temp_path = create_temp_file("content")
 
       upload = %{
@@ -226,7 +227,7 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
       {:ok, metadata} = LocalStorage.store_photo("album", upload)
 
       assert {:ok, full_path} = LocalStorage.get_photo_path(metadata.file_path)
-      assert String.starts_with?(full_path, @test_base_path)
+      assert String.starts_with?(full_path, test_base_path)
       assert File.exists?(full_path)
     end
 

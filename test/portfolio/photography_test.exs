@@ -1,26 +1,27 @@
 defmodule Portfolio.PhotographyTest do
-  use Portfolio.DataCase, async: true
+  use Portfolio.DataCase, async: false
 
   alias Portfolio.Photography
   alias Portfolio.Photography.Photo
 
   import PortfolioTest.Fixtures.PhotographyFixtures
 
-  @test_base_path "test/tmp/uploads"
-
   setup do
+    # Create unique test directory for each test to avoid race conditions in parallel execution
+    test_base_path = "test/tmp/uploads/test-#{System.unique_integer([:positive])}"
+
     # Configure test storage path
-    Application.put_env(:portfolio, :uploads, base_path: @test_base_path)
+    Application.put_env(:portfolio, :uploads, base_path: test_base_path)
 
     # Cleanup before and after each test
-    File.rm_rf!(@test_base_path)
-    File.mkdir_p!(@test_base_path)
+    File.rm_rf!(test_base_path)
+    File.mkdir_p!(test_base_path)
 
     on_exit(fn ->
-      File.rm_rf!(@test_base_path)
+      File.rm_rf!(test_base_path)
     end)
 
-    :ok
+    %{test_base_path: test_base_path}
   end
 
   describe "module structure" do
@@ -39,14 +40,14 @@ defmodule Portfolio.PhotographyTest do
   end
 
   describe "delete_photo/1" do
-    test "deletes photo and its file when file exists" do
+    test "deletes photo and its file when file exists", %{test_base_path: test_base_path} do
       album = create_album(title: "Test Album", slug: "test-album")
 
       # Create a real file
       file_path = "/uploads/albums/test-album/original/photo-abc123.jpg"
 
       full_path =
-        Path.join([@test_base_path, "albums", "test-album", "original", "photo-abc123.jpg"])
+        Path.join([test_base_path, "albums", "test-album", "original", "photo-abc123.jpg"])
 
       File.mkdir_p!(Path.dirname(full_path))
       File.write!(full_path, "test content")
@@ -85,7 +86,7 @@ defmodule Portfolio.PhotographyTest do
   end
 
   describe "upload_photos/2" do
-    test "uploads multiple photos successfully" do
+    test "uploads multiple photos successfully", %{test_base_path: test_base_path} do
       # Create temporary test files
       uploads = [
         %{
@@ -111,7 +112,7 @@ defmodule Portfolio.PhotographyTest do
 
         # Verify file exists on disk
         full_path =
-          Path.join([@test_base_path, String.trim_leading(metadata.file_path, "/uploads/")])
+          Path.join([test_base_path, String.trim_leading(metadata.file_path, "/uploads/")])
 
         assert File.exists?(full_path)
       end
