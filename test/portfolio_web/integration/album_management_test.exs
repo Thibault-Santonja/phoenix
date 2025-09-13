@@ -170,7 +170,7 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
       assert updated_album.published == true
     end
 
-    test "published albums appear on timeline", %{conn: conn} do
+    test "published albums appear on timeline", %{conn: _conn} do
       # Create published album with photos
       album =
         create_published_album(3,
@@ -180,15 +180,15 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
         )
 
       # Navigate to timeline (public page, no auth needed)
-      # New conn without auth
-      conn = build_conn()
+      # New conn without auth on photo subdomain
+      conn = %{build_conn() | host: "photo.example.com"}
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       # Verify album appears on timeline
       assert html =~ "Wedding 2024"
     end
 
-    test "unpublished albums do not appear on timeline", %{conn: conn} do
+    test "unpublished albums do not appear on timeline", %{conn: _conn} do
       # Create unpublished album
       _album =
         create_album_with_photos(3,
@@ -196,8 +196,8 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
           published: false
         )
 
-      # Navigate to timeline
-      conn = build_conn()
+      # Navigate to timeline on photo subdomain
+      conn = %{build_conn() | host: "photo.example.com"}
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       # Verify album does not appear
@@ -267,7 +267,7 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
   end
 
   describe "timeline grouping" do
-    test "albums are grouped by year on timeline", %{conn: conn} do
+    test "albums are grouped by year on timeline", %{conn: _conn} do
       # Create albums in different years
       create_published_album(2,
         title: "Album 2023",
@@ -279,8 +279,8 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
         date_prise_vue: ~D[2024-06-15]
       )
 
-      # Navigate to timeline
-      conn = build_conn()
+      # Navigate to timeline on photo subdomain
+      conn = %{build_conn() | host: "photo.example.com"}
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       # Verify both years appear
@@ -292,12 +292,12 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
       assert html =~ "Album 2024"
     end
 
-    test "timeline shows albums with cover photos", %{conn: conn} do
+    test "timeline shows albums with cover photos", %{conn: _conn} do
       # Create published album with photos
       album = create_published_album(3, title: "Test Album")
 
-      # Navigate to timeline
-      conn = build_conn()
+      # Navigate to timeline on photo subdomain
+      conn = %{build_conn() | host: "photo.example.com"}
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       # Verify album appears
@@ -398,29 +398,24 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
       # Create multiple sessions
       sessions = for _i <- 1..3, do: create_authenticated_user()
 
-      # Concurrent album creation
+      # Concurrent album creation at context level
+      # (LiveView cannot be used in Task.async - must stay in test process)
       tasks =
-        for {session, i} <- Enum.with_index(sessions) do
+        for {_session, i} <- Enum.with_index(sessions) do
           Task.async(fn ->
-            conn = build_conn() |> init_test_session(%{session_token: session.token})
-            {:ok, view, _html} = live(conn, ~p"/admin/albums/new")
-
-            form_data = %{
-              "album" => %{
-                "title" => "Concurrent Album #{i}",
-                "type" => "wedding",
-                "date_prise_vue" => "2024-01-01"
-              }
-            }
-
-            view
-            |> form("#album-form", form_data)
-            |> render_submit()
+            Photography.create_album(%{
+              title: "Concurrent Album #{i}",
+              type: :wedding,
+              date_prise_vue: ~D[2024-01-01]
+            })
           end)
         end
 
       # Wait for all tasks to complete
-      Enum.each(tasks, &Task.await/1)
+      results = Enum.map(tasks, &Task.await/1)
+
+      # Verify all succeeded
+      assert Enum.all?(results, fn result -> match?({:ok, _}, result) end)
 
       # Verify all albums were created
       albums = Photography.list_albums()
