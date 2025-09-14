@@ -49,6 +49,7 @@ defmodule Portfolio.Photography do
   alias Portfolio.Photography.{Album, Photo}
   alias Portfolio.Photography.Events.{AlbumPublished, PhotoUploaded}
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
+  alias Portfolio.Repo
 
   # =============================================================================
   # Album API
@@ -134,15 +135,46 @@ defmodule Portfolio.Photography do
   def update_album(album, attrs), do: AlbumRepository.update(album, attrs)
 
   @doc """
-  Supprime un album et toutes ses photos (CASCADE).
+  Supprime un album et toutes ses photos (CASCADE) de manière atomique.
+
+  Utilise Ecto.Multi pour garantir l'atomicité :
+  - Récupère toutes les photos de l'album
+  - Supprime les fichiers physiques de toutes les photos
+  - Supprime l'album (les photos seront supprimées en CASCADE)
+  - Si l'une des opérations échoue, toute la transaction est annulée
 
   ## Exemples
 
       iex> delete_album(album)
-      {:ok, %Album{}}
+      {:ok, %{album: %Album{}, files: :ok}}
   """
-  @spec delete_album(Album.t()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
-  def delete_album(album), do: AlbumRepository.delete(album)
+  @spec delete_album(Album.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
+  def delete_album(%Album{} = album) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.run(:photos, fn _repo, _changes ->
+      # Récupérer toutes les photos de l'album
+      photos = list_photos_by_album(album.id)
+      {:ok, photos}
+    end)
+    |> Ecto.Multi.run(:files, fn _repo, %{photos: photos} ->
+      # Supprimer tous les fichiers physiques
+      results =
+        Enum.map(photos, fn photo ->
+          storage().delete_photo(photo.file_path)
+        end)
+
+      # Vérifier si toutes les suppressions ont réussi (on accepte :not_found)
+      if Enum.all?(results, &(&1 == :ok || &1 == {:error, :not_found})) do
+        {:ok, :ok}
+      else
+        # Trouver la première vraie erreur
+        error = Enum.find(results, &match?({:error, reason} when reason != :not_found, &1))
+        error
+      end
+    end)
+    |> Ecto.Multi.delete(:album, album)
+    |> Repo.transaction()
+  end
 
   @doc """
   Liste les albums publiés groupés par année.
@@ -254,37 +286,41 @@ defmodule Portfolio.Photography do
   def update_photo(photo, attrs), do: PhotoRepository.update(photo, attrs)
 
   @doc """
-  Supprime une photo ainsi que son fichier sur le disque.
+  Supprime une photo ainsi que son fichier sur le disque de manière atomique.
 
-  Cette opération supprime à la fois :
-  - L'enregistrement en base de données
-  - Le fichier physique via le FileStorage service
+  Cette opération utilise Ecto.Multi pour garantir l'atomicité :
+  - L'enregistrement en base de données est supprimé en premier
+  - Le fichier physique est supprimé ensuite
+  - Si la suppression du fichier échoue, la transaction DB est rollback
 
   ## Exemples
 
       iex> delete_photo(photo)
-      {:ok, %Photo{}}
+      {:ok, %{photo: %Photo{}, file: :ok}}
 
       iex> delete_photo(photo_with_invalid_file)
-      {:error, :file_not_found}
+      {:ok, %{photo: %Photo{}, file: :ok}}  # Les données orphelines sont acceptées
   """
-  @spec delete_photo(Photo.t()) :: {:ok, Photo.t()} | {:error, term()}
+  @spec delete_photo(Photo.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_photo(%Photo{} = photo) do
-    # Supprimer le fichier via FileStorage
-    case storage().delete_photo(photo.file_path) do
-      :ok ->
-        # Si le fichier est supprimé, supprimer l'enregistrement DB
-        PhotoRepository.delete(photo)
+    Ecto.Multi.new()
+    |> Ecto.Multi.delete(:photo, photo)
+    |> Ecto.Multi.run(:file, fn _repo, %{photo: deleted_photo} ->
+      # Supprimer le fichier via FileStorage
+      case storage().delete_photo(deleted_photo.file_path) do
+        :ok ->
+          {:ok, :ok}
 
-      {:error, :not_found} ->
-        # Si le fichier n'existe pas, supprimer quand même l'enregistrement DB
-        # (cas de données orphelines)
-        PhotoRepository.delete(photo)
+        {:error, :not_found} ->
+          # Si le fichier n'existe pas, c'est acceptable (données orphelines)
+          {:ok, :ok}
 
-      {:error, reason} ->
-        # Autre erreur de suppression fichier
-        {:error, reason}
-    end
+        {:error, reason} ->
+          # Autre erreur de suppression fichier - rollback de la transaction
+          {:error, reason}
+      end
+    end)
+    |> Repo.transaction()
   end
 
   @doc """

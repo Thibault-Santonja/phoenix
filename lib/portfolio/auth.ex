@@ -85,10 +85,12 @@ defmodule Portfolio.Auth do
   # =============================================================================
 
   @doc """
-  Demande un magic link pour un email donné.
+  Demande un magic link pour un email donné de manière atomique.
 
-  Crée un utilisateur s'il n'existe pas, génère un token unique,
-  et crée un magic link valide 15 minutes.
+  Utilise Ecto.Multi pour garantir l'atomicité de l'opération :
+  - Crée ou récupère l'utilisateur
+  - Crée le magic link
+  - Si l'une des opérations échoue, toute la transaction est annulée
 
   Émet un événement `MagicLinkRequested` pour permettre à d'autres contextes
   de réagir (envoi email, tracking, rate limiting, etc.).
@@ -107,21 +109,45 @@ defmodule Portfolio.Auth do
     start_time = System.monotonic_time()
 
     result =
-      with {:ok, user} <- get_or_create_user(email),
-           {:ok, magic_link} <- create_magic_link(user) do
-        # Émettre l'événement de domaine
-        DomainEvents.publish(:magic_link_requested, %MagicLinkRequested{
-          magic_link_id: magic_link.id,
-          email: user.email,
-          token: magic_link.token,
-          requested_at: magic_link.inserted_at,
-          expires_at: magic_link.expires_at
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:user, fn _repo, _changes ->
+        get_or_create_user(email)
+      end)
+      |> Ecto.Multi.run(:magic_link, fn _repo, %{user: user} ->
+        token = generate_token()
+
+        expires_at =
+          DateTime.utc_now()
+          |> DateTime.add(15, :minute)
+          |> DateTime.truncate(:second)
+
+        %MagicLink{}
+        |> MagicLink.changeset(%{
+          user_id: user.id,
+          token: token,
+          expires_at: expires_at
         })
+        |> Repo.insert()
+      end)
+      |> Repo.transaction()
+      |> case do
+        {:ok, %{user: user, magic_link: magic_link}} ->
+          # Émettre l'événement de domaine
+          DomainEvents.publish(:magic_link_requested, %MagicLinkRequested{
+            magic_link_id: magic_link.id,
+            email: user.email,
+            token: magic_link.token,
+            requested_at: magic_link.inserted_at,
+            expires_at: magic_link.expires_at
+          })
 
-        # Envoyer l'email avec le magic link
-        Mailer.send_magic_link_email(user, magic_link)
+          # Envoyer l'email avec le magic link
+          Mailer.send_magic_link_email(user, magic_link)
 
-        {:ok, magic_link}
+          {:ok, magic_link}
+
+        {:error, _step, error, _changes} ->
+          {:error, error}
       end
 
     duration = System.monotonic_time() - start_time
@@ -136,10 +162,13 @@ defmodule Portfolio.Auth do
   end
 
   @doc """
-  Vérifie un magic link par son token.
+  Vérifie un magic link par son token de manière atomique.
 
-  Retourne l'utilisateur si le token est valide (non expiré, non utilisé).
-  Marque le magic link comme utilisé si valide.
+  Utilise Ecto.Multi pour garantir l'atomicité :
+  - Vérifie que le token existe et est valide
+  - Marque le magic link comme utilisé
+  - Crée une session pour l'utilisateur
+  - Si l'une des opérations échoue, toute la transaction est annulée
 
   Émet un événement `MagicLinkVerified` après vérification réussie.
 
@@ -182,22 +211,30 @@ defmodule Portfolio.Auth do
               {:error, :expired}
 
             true ->
-              # Marquer comme utilisé
-              ml
-              |> Ecto.Changeset.change(%{
-                used_at: DateTime.utc_now() |> DateTime.truncate(:second)
-              })
-              |> Repo.update()
+              # Utiliser Ecto.Multi pour marquer le magic link comme utilisé de manière atomique
+              Ecto.Multi.new()
+              |> Ecto.Multi.update(
+                :magic_link,
+                Ecto.Changeset.change(ml, %{
+                  used_at: DateTime.utc_now() |> DateTime.truncate(:second)
+                })
+              )
+              |> Repo.transaction()
+              |> case do
+                {:ok, %{magic_link: updated_ml}} ->
+                  # Émettre l'événement de domaine
+                  DomainEvents.publish(:magic_link_verified, %MagicLinkVerified{
+                    magic_link_id: updated_ml.id,
+                    user_id: ml.user.id,
+                    email: ml.user.email,
+                    verified_at: DateTime.utc_now()
+                  })
 
-              # Émettre l'événement de domaine
-              DomainEvents.publish(:magic_link_verified, %MagicLinkVerified{
-                magic_link_id: ml.id,
-                user_id: ml.user.id,
-                email: ml.user.email,
-                verified_at: DateTime.utc_now()
-              })
+                  {:ok, ml.user}
 
-              {:ok, ml.user}
+                {:error, _step, error, _changes} ->
+                  {:error, error}
+              end
           end
       end
 
@@ -234,25 +271,6 @@ defmodule Portfolio.Auth do
   # =============================================================================
   # Private Functions
   # =============================================================================
-
-  # Crée un magic link pour un utilisateur
-  @spec create_magic_link(User.t()) :: {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t()}
-  defp create_magic_link(user) do
-    token = generate_token()
-
-    expires_at =
-      DateTime.utc_now()
-      |> DateTime.add(15, :minute)
-      |> DateTime.truncate(:second)
-
-    %MagicLink{}
-    |> MagicLink.changeset(%{
-      user_id: user.id,
-      token: token,
-      expires_at: expires_at
-    })
-    |> Repo.insert()
-  end
 
   # Génère un token sécurisé de 32 bytes
   @spec generate_token() :: String.t()

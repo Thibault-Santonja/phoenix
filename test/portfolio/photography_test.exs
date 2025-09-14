@@ -57,8 +57,8 @@ defmodule Portfolio.PhotographyTest do
       # Verify file exists
       assert File.exists?(full_path)
 
-      # Delete photo
-      assert {:ok, %Photo{}} = Photography.delete_photo(photo)
+      # Delete photo (now returns Ecto.Multi result)
+      assert {:ok, %{photo: %Photo{}, file: :ok}} = Photography.delete_photo(photo)
 
       # Verify file is deleted
       refute File.exists?(full_path)
@@ -71,8 +71,8 @@ defmodule Portfolio.PhotographyTest do
       album = create_album(title: "Test Album")
       photo = create_photo(album_id: album.id, file_path: "/uploads/nonexistent.jpg")
 
-      # File doesn't exist, but delete should still work
-      assert {:ok, %Photo{}} = Photography.delete_photo(photo)
+      # File doesn't exist, but delete should still work (Ecto.Multi result)
+      assert {:ok, %{photo: %Photo{}, file: :ok}} = Photography.delete_photo(photo)
 
       # Verify DB record is deleted
       assert {:error, :not_found} = Photography.get_photo(photo.id)
