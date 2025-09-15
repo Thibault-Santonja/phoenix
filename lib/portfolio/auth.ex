@@ -85,15 +85,16 @@ defmodule Portfolio.Auth do
   # =============================================================================
 
   @doc """
-  Demande un magic link pour un email donné de manière atomique.
+  Demande un magic link pour un email donné de manière atomique avec rate limiting.
 
+  Vérifie d'abord le rate limit (5 requêtes par heure par email).
   Utilise Ecto.Multi pour garantir l'atomicité de l'opération :
   - Crée ou récupère l'utilisateur
   - Crée le magic link
   - Si l'une des opérations échoue, toute la transaction est annulée
 
   Émet un événement `MagicLinkRequested` pour permettre à d'autres contextes
-  de réagir (envoi email, tracking, rate limiting, etc.).
+  de réagir (envoi email, tracking, etc.).
 
   Émet également un événement telemetry `[:portfolio, :auth, :magic_link, :requested]`
   avec la durée et le résultat de l'opération.
@@ -102,12 +103,40 @@ defmodule Portfolio.Auth do
 
       iex> request_magic_link("admin@example.com")
       {:ok, %MagicLink{token: "abc123..."}}
+
+      iex> request_magic_link("spammer@example.com")  # Après 5 requêtes
+      {:error, :rate_limit_exceeded}
   """
   @spec request_magic_link(String.t()) ::
-          {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t() | :user_not_found}
+          {:ok, MagicLink.t()}
+          | {:error, Ecto.Changeset.t() | :user_not_found | :rate_limit_exceeded}
   def request_magic_link(email) when is_binary(email) do
     start_time = System.monotonic_time()
 
+    # Vérifier le rate limit
+    case Portfolio.RateLimiter.check_rate(:magic_link_request, email) do
+      {:deny, _retry_after} ->
+        result = {:error, :rate_limit_exceeded}
+
+        duration = System.monotonic_time() - start_time
+
+        :telemetry.execute(
+          [:portfolio, :auth, :magic_link, :requested],
+          %{duration: duration},
+          %{email: email, result: :rate_limit_exceeded}
+        )
+
+        result
+
+      {:allow, _remaining} ->
+        do_request_magic_link(email, start_time)
+    end
+  end
+
+  # Implémentation interne de request_magic_link après vérification du rate limit
+  @spec do_request_magic_link(String.t(), integer()) ::
+          {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t() | :user_not_found}
+  defp do_request_magic_link(email, start_time) do
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.run(:user, fn _repo, _changes ->

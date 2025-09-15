@@ -14,6 +14,8 @@ defmodule Portfolio.Application do
       {Phoenix.PubSub, name: Portfolio.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Portfolio.Finch},
+      # Start Hammer for rate limiting
+      {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 2, cleanup_interval_ms: 60_000 * 10]},
       # Start the session cleaner worker for periodic cleanup
       Portfolio.Auth.SessionCleaner,
       # Start domain event handlers

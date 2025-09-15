@@ -4,6 +4,11 @@ defmodule Portfolio.AuthTest do
   alias Portfolio.Auth
   alias Portfolio.Auth.{MagicLink, User, UserSession}
 
+  setup do
+    # Reset rate limiting before each test to avoid cross-contamination
+    :ok
+  end
+
   describe "get_user_by_email/1" do
     test "returns {:ok, user} when user exists" do
       user = insert_user()
@@ -45,7 +50,8 @@ defmodule Portfolio.AuthTest do
 
   describe "request_magic_link/1" do
     test "creates magic link for existing user" do
-      user = insert_user()
+      email = "test-#{System.unique_integer([:positive])}@example.com"
+      user = insert_user(email: email)
       assert {:ok, magic_link} = Auth.request_magic_link(user.email)
 
       assert magic_link.user_id == user.id
@@ -55,7 +61,7 @@ defmodule Portfolio.AuthTest do
     end
 
     test "creates user and magic link for new email in dev" do
-      email = "newuser@example.com"
+      email = "newuser-#{System.unique_integer([:positive])}@example.com"
       assert {:ok, magic_link} = Auth.request_magic_link(email)
 
       assert magic_link.user_id != nil
@@ -63,7 +69,8 @@ defmodule Portfolio.AuthTest do
     end
 
     test "magic link expires in 15 minutes" do
-      user = insert_user()
+      email = "test-expiry-#{System.unique_integer([:positive])}@example.com"
+      user = insert_user(email: email)
       assert {:ok, magic_link} = Auth.request_magic_link(user.email)
 
       expected_expiry = DateTime.add(DateTime.utc_now(), 15, :minute)
@@ -72,11 +79,39 @@ defmodule Portfolio.AuthTest do
       # Allow 2 seconds tolerance
       assert abs(diff) <= 2
     end
+
+    test "enforces rate limit after 5 requests" do
+      email = "ratelimit-test-#{System.unique_integer([:positive])}@example.com"
+
+      # First 5 requests should succeed
+      for _ <- 1..5 do
+        assert {:ok, _magic_link} = Auth.request_magic_link(email)
+      end
+
+      # 6th request should be rate limited
+      assert {:error, :rate_limit_exceeded} = Auth.request_magic_link(email)
+    end
+
+    test "rate limit is per email address" do
+      email1 = "user1-#{System.unique_integer([:positive])}@example.com"
+      email2 = "user2-#{System.unique_integer([:positive])}@example.com"
+
+      # User 1 exhausts their limit
+      for _ <- 1..5 do
+        assert {:ok, _} = Auth.request_magic_link(email1)
+      end
+
+      assert {:error, :rate_limit_exceeded} = Auth.request_magic_link(email1)
+
+      # User 2 should still be able to request
+      assert {:ok, _magic_link} = Auth.request_magic_link(email2)
+    end
   end
 
   describe "verify_magic_link/1" do
     test "returns {:ok, user} for valid magic link" do
-      user = insert_user()
+      email = "verify-#{System.unique_integer([:positive])}@example.com"
+      user = insert_user(email: email)
       {:ok, magic_link} = Auth.request_magic_link(user.email)
 
       assert {:ok, verified_user} = Auth.verify_magic_link(magic_link.token)
@@ -84,7 +119,8 @@ defmodule Portfolio.AuthTest do
     end
 
     test "marks magic link as used after verification" do
-      user = insert_user()
+      email = "mark-used-#{System.unique_integer([:positive])}@example.com"
+      user = insert_user(email: email)
       {:ok, magic_link} = Auth.request_magic_link(user.email)
 
       Auth.verify_magic_link(magic_link.token)
@@ -94,7 +130,8 @@ defmodule Portfolio.AuthTest do
     end
 
     test "returns {:error, :already_used} for used magic link" do
-      user = insert_user()
+      email = "already-used-#{System.unique_integer([:positive])}@example.com"
+      user = insert_user(email: email)
       {:ok, magic_link} = Auth.request_magic_link(user.email)
 
       {:ok, _user} = Auth.verify_magic_link(magic_link.token)

@@ -26,6 +26,14 @@ defmodule PortfolioWeb.AuthLive.Login do
          |> assign(:email, email)
          |> put_flash(:info, "Un lien de connexion a été envoyé à #{email}")}
 
+      {:error, :rate_limit_exceeded} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           "Trop de tentatives. Veuillez patienter avant de réessayer."
+         )}
+
       {:error, :user_not_found} ->
         {:noreply,
          socket
