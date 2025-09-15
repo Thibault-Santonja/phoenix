@@ -324,8 +324,9 @@ defmodule Portfolio.Photography do
   end
 
   @doc """
-  Upload des photos dans un album.
+  Upload des photos dans un album en parallèle.
 
+  Utilise Task.async_stream pour paralléliser les uploads et optimiser les performances.
   Stocke les fichiers via FileStorage et crée les enregistrements en base.
 
   Émet un événement telemetry `[:portfolio, :photography, :photos, :uploaded]` avec
@@ -336,36 +337,58 @@ defmodule Portfolio.Photography do
   - `album_slug` - Le slug de l'album (pour l'organisation des fichiers)
   - `uploads` - Liste d'uploads avec :path, :client_name, :client_type
 
+  ## Options
+
+  - `:max_concurrency` - Nombre maximum d'uploads parallèles (défaut: 4)
+  - `:timeout` - Timeout par upload en ms (défaut: 30000)
+  - `:ordered` - Préserver l'ordre des résultats (défaut: false pour performance)
+
   ## Retour
 
-  - `{:ok, [%Photo{}]}` - Liste des photos créées
+  - `{:ok, [metadata]}` - Liste des métadonnées des photos créées
   - `{:error, reason}` - Erreur lors du stockage ou création
 
   ## Exemples
 
       iex> upload_photos("mariage-2024", uploads)
-      {:ok, [%Photo{}, %Photo{}]}
+      {:ok, [%{file_path: "...", hash: "..."}, ...]}
+
+      iex> upload_photos("mariage-2024", uploads, max_concurrency: 8)
+      {:ok, [%{file_path: "...", hash: "..."}, ...]}
   """
-  @spec upload_photos(String.t(), [map()]) :: {:ok, [map()]} | {:error, term()}
-  def upload_photos(album_slug, uploads) when is_list(uploads) do
+  @spec upload_photos(String.t(), [map()], keyword()) :: {:ok, [map()]} | {:error, term()}
+  def upload_photos(album_slug, uploads, opts \\ []) when is_list(uploads) do
     start_time = System.monotonic_time()
     count = length(uploads)
 
-    # Pour chaque upload, stocker le fichier
+    max_concurrency = Keyword.get(opts, :max_concurrency, 4)
+    timeout = Keyword.get(opts, :timeout, 30_000)
+    ordered = Keyword.get(opts, :ordered, false)
+
+    # Upload en parallèle avec Task.async_stream
     results =
-      Enum.map(uploads, fn upload ->
-        storage().store_photo(album_slug, upload)
-      end)
+      uploads
+      |> Task.async_stream(
+        fn upload -> storage().store_photo(album_slug, upload) end,
+        max_concurrency: max_concurrency,
+        timeout: timeout,
+        ordered: ordered,
+        on_timeout: :kill_task
+      )
+      |> Enum.to_list()
 
     # Vérifier si toutes les opérations ont réussi
     result =
-      if Enum.all?(results, &match?({:ok, _}, &1)) do
-        photos_metadata = Enum.map(results, fn {:ok, meta} -> meta end)
+      if Enum.all?(results, &match?({:ok, {:ok, _}}, &1)) do
+        photos_metadata = Enum.map(results, fn {:ok, {:ok, meta}} -> meta end)
         {:ok, photos_metadata}
       else
         # Récupérer la première erreur
-        error = Enum.find(results, &match?({:error, _}, &1))
-        error
+        case Enum.find(results, &match?({:ok, {:error, _}}, &1)) do
+          {:ok, {:error, reason}} -> {:error, reason}
+          {:exit, reason} -> {:error, {:task_exit, reason}}
+          nil -> {:error, :unknown_error}
+        end
       end
 
     duration = System.monotonic_time() - start_time
