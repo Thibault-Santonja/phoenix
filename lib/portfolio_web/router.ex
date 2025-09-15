@@ -94,7 +94,7 @@ defmodule PortfolioWeb.Router do
 
     live "/login", AuthLive.Login, :index
     get "/auth/magic/:token", AuthController, :verify_magic_link
-    get "/logout", AuthController, :logout
+    delete "/logout", AuthController, :logout
   end
 
   # Interface Admin (protégée par authentification)

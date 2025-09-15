@@ -105,7 +105,7 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       assert html_response(conn, 200) =~ "Albums"
 
       # Act: Logout
-      conn = get(conn, ~p"/logout")
+      conn = delete(conn, ~p"/logout")
       assert redirected_to(conn) == ~p"/"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Déconnexion"
 

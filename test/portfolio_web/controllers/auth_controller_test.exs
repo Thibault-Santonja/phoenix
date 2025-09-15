@@ -87,7 +87,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       conn =
         conn
         |> init_test_session(%{session_token: session.token})
-        |> get(~p"/logout")
+        |> delete(~p"/logout")
 
       assert redirected_to(conn) == ~p"/"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Déconnexion réussie"
@@ -103,7 +103,7 @@ defmodule PortfolioWeb.AuthControllerTest do
 
       conn
       |> init_test_session(%{session_token: session.token})
-      |> get(~p"/logout")
+      |> delete(~p"/logout")
 
       # Vérifier que la session n'existe plus en base de données
       assert Auth.get_session_by_token(session.token) == nil
@@ -113,7 +113,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       conn =
         conn
         |> init_test_session(%{})
-        |> get(~p"/logout")
+        |> delete(~p"/logout")
 
       assert redirected_to(conn) == ~p"/"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Déconnexion réussie"
@@ -123,7 +123,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       conn =
         conn
         |> init_test_session(%{session_token: "invalid_token"})
-        |> get(~p"/logout")
+        |> delete(~p"/logout")
 
       assert redirected_to(conn) == ~p"/"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Déconnexion réussie"
@@ -200,7 +200,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       conn =
         conn
         |> init_test_session(%{session_token: "some_token"})
-        |> get(~p"/logout")
+        |> delete(~p"/logout")
 
       assert redirected_to(conn) == ~p"/"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Déconnexion réussie"
@@ -216,7 +216,7 @@ defmodule PortfolioWeb.AuthControllerTest do
           session_token: session.token,
           some_other_data: "should_be_cleared"
         })
-        |> get(~p"/logout")
+        |> delete(~p"/logout")
 
       # Vérifier que toutes les données de session sont effacées
       assert get_session(conn, :session_token) == nil

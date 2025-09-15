@@ -15,7 +15,11 @@
           </span>
         </span>
         <span class="text-gray-300">|</span>
-        <.link href={~p"/logout"} class="text-sm text-gray-600 hover:text-gray-900">
+        <.link
+          href={~p"/logout"}
+          method="delete"
+          class="text-sm text-gray-600 hover:text-gray-900"
+        >
           Déconnexion
         </.link>
       <% end %>
