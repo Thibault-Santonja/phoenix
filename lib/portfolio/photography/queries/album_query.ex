@@ -183,4 +183,50 @@ defmodule Portfolio.Photography.Queries.AlbumQuery do
     |> select([album: a], {fragment("EXTRACT(YEAR FROM ?)", a.date_prise_vue), a})
     |> order_by([album: a], desc: fragment("EXTRACT(YEAR FROM ?)", a.date_prise_vue))
   end
+
+  @doc """
+  Ajoute le nombre de photos à chaque album avec une sous-requête optimisée.
+
+  Utilise une sous-requête LEFT JOIN + GROUP BY pour éviter le problème N+1.
+  Le count est ajouté comme champ virtuel `photo_count` sur chaque album.
+
+  ## Exemples
+
+      iex> AlbumQuery.base() |> AlbumQuery.with_photo_count()
+      #Ecto.Query<...>
+
+  """
+  @spec with_photo_count(Ecto.Query.t()) :: Ecto.Query.t()
+  def with_photo_count(query) do
+    from([album: a] in query,
+      left_join: p in assoc(a, :photos),
+      group_by: a.id,
+      select_merge: %{photo_count: count(p.id)}
+    )
+  end
+
+  @doc """
+  Ajoute seulement la première photo (cover photo) au lieu de toutes les photos.
+
+  Utilise un preload avec une sous-requête limitée pour charger uniquement
+  la première photo triée par display_order.
+
+  ## Exemples
+
+      iex> AlbumQuery.base() |> AlbumQuery.with_cover_photo_only()
+      #Ecto.Query<...>
+
+  """
+  @spec with_cover_photo_only(Ecto.Query.t()) :: Ecto.Query.t()
+  def with_cover_photo_only(query) do
+    cover_photo_query =
+      from(p in Photo,
+        order_by: [asc: p.display_order],
+        limit: 1
+      )
+
+    from(a in query,
+      preload: [photos: ^cover_photo_query]
+    )
+  end
 end

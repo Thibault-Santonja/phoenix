@@ -99,6 +99,9 @@ defmodule Portfolio.Photography.Album do
 
     has_many :photos, Photo
 
+    # Champs virtuels pour optimisations SQL
+    field :photo_count, :integer, virtual: true
+
     timestamps(type: :utc_datetime)
   end
 
