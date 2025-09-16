@@ -17,6 +17,9 @@ defmodule Portfolio.Auth do
 
   alias Portfolio.Repo
 
+  # Service Layer
+  alias Portfolio.Services.Auth.MagicLinkAuthService
+
   # =============================================================================
   # User Functions
   # =============================================================================
@@ -85,19 +88,11 @@ defmodule Portfolio.Auth do
   # =============================================================================
 
   @doc """
-  Demande un magic link pour un email donné de manière atomique avec rate limiting.
+  Demande un magic link pour un email donné.
 
-  Vérifie d'abord le rate limit (5 requêtes par heure par email).
-  Utilise Ecto.Multi pour garantir l'atomicité de l'opération :
-  - Crée ou récupère l'utilisateur
-  - Crée le magic link
-  - Si l'une des opérations échoue, toute la transaction est annulée
-
-  Émet un événement `MagicLinkRequested` pour permettre à d'autres contextes
-  de réagir (envoi email, tracking, etc.).
-
-  Émet également un événement telemetry `[:portfolio, :auth, :magic_link, :requested]`
-  avec la durée et le résultat de l'opération.
+  Délègue au MagicLinkAuthService pour orchestrer l'opération complète
+  incluant rate limiting, création utilisateur, génération token, envoi email,
+  et émission d'événements.
 
   ## Exemples
 
@@ -111,83 +106,7 @@ defmodule Portfolio.Auth do
           {:ok, MagicLink.t()}
           | {:error, Ecto.Changeset.t() | :user_not_found | :rate_limit_exceeded}
   def request_magic_link(email) when is_binary(email) do
-    start_time = System.monotonic_time()
-
-    # Vérifier le rate limit
-    case Portfolio.RateLimiter.check_rate(:magic_link_request, email) do
-      {:deny, _retry_after} ->
-        result = {:error, :rate_limit_exceeded}
-
-        duration = System.monotonic_time() - start_time
-
-        :telemetry.execute(
-          [:portfolio, :auth, :magic_link, :requested],
-          %{duration: duration},
-          %{email: email, result: :rate_limit_exceeded}
-        )
-
-        result
-
-      {:allow, _remaining} ->
-        do_request_magic_link(email, start_time)
-    end
-  end
-
-  # Implémentation interne de request_magic_link après vérification du rate limit
-  @spec do_request_magic_link(String.t(), integer()) ::
-          {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t() | :user_not_found}
-  defp do_request_magic_link(email, start_time) do
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.run(:user, fn _repo, _changes ->
-        get_or_create_user(email)
-      end)
-      |> Ecto.Multi.run(:magic_link, fn _repo, %{user: user} ->
-        token = generate_token()
-
-        expires_at =
-          DateTime.utc_now()
-          |> DateTime.add(15, :minute)
-          |> DateTime.truncate(:second)
-
-        %MagicLink{}
-        |> MagicLink.changeset(%{
-          user_id: user.id,
-          token: token,
-          expires_at: expires_at
-        })
-        |> Repo.insert()
-      end)
-      |> Repo.transaction()
-      |> case do
-        {:ok, %{user: user, magic_link: magic_link}} ->
-          # Émettre l'événement de domaine
-          DomainEvents.publish(:magic_link_requested, %MagicLinkRequested{
-            magic_link_id: magic_link.id,
-            email: user.email,
-            token: magic_link.token,
-            requested_at: magic_link.inserted_at,
-            expires_at: magic_link.expires_at
-          })
-
-          # Envoyer l'email avec le magic link
-          Mailer.send_magic_link_email(user, magic_link)
-
-          {:ok, magic_link}
-
-        {:error, _step, error, _changes} ->
-          {:error, error}
-      end
-
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
-      [:portfolio, :auth, :magic_link, :requested],
-      %{duration: duration},
-      %{email: email, result: elem(result, 0)}
-    )
-
-    result
+    MagicLinkAuthService.execute(email)
   end
 
   @doc """

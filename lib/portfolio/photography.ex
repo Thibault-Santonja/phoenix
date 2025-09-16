@@ -51,6 +51,13 @@ defmodule Portfolio.Photography do
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
   alias Portfolio.Repo
 
+  # Service Layer
+  alias Portfolio.Services.Photography.{
+    AlbumDeletionService,
+    AlbumPublicationService,
+    PhotoUploadService
+  }
+
   # =============================================================================
   # Album API
   # =============================================================================
@@ -150,43 +157,16 @@ defmodule Portfolio.Photography do
   @doc """
   Supprime un album et toutes ses photos (CASCADE) de manière atomique.
 
-  Utilise Ecto.Multi pour garantir l'atomicité :
-  - Récupère toutes les photos de l'album
-  - Supprime les fichiers physiques de toutes les photos
-  - Supprime l'album (les photos seront supprimées en CASCADE)
-  - Si l'une des opérations échoue, toute la transaction est annulée
+  Délègue au AlbumDeletionService pour orchestrer l'opération complète.
 
   ## Exemples
 
       iex> delete_album(album)
-      {:ok, %{album: %Album{}, files: :ok}}
+      {:ok, %{album: %Album{}, photos: [%Photo{}], files: :ok}}
   """
   @spec delete_album(Album.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_album(%Album{} = album) do
-    Ecto.Multi.new()
-    |> Ecto.Multi.run(:photos, fn _repo, _changes ->
-      # Récupérer toutes les photos de l'album
-      photos = list_photos_by_album(album.id)
-      {:ok, photos}
-    end)
-    |> Ecto.Multi.run(:files, fn _repo, %{photos: photos} ->
-      # Supprimer tous les fichiers physiques
-      results =
-        Enum.map(photos, fn photo ->
-          storage().delete_photo(photo.file_path)
-        end)
-
-      # Vérifier si toutes les suppressions ont réussi (on accepte :not_found)
-      if Enum.all?(results, &(&1 == :ok || &1 == {:error, :not_found})) do
-        {:ok, :ok}
-      else
-        # Trouver la première vraie erreur
-        error = Enum.find(results, &match?({:error, reason} when reason != :not_found, &1))
-        error
-      end
-    end)
-    |> Ecto.Multi.delete(:album, album)
-    |> Repo.transaction()
+    AlbumDeletionService.execute(album)
   end
 
   @doc """
@@ -234,10 +214,10 @@ defmodule Portfolio.Photography do
   end
 
   @doc """
-  Publie un album en le rendant visible publiquement et invalide le cache.
+  Publie un album en le rendant visible publiquement.
 
-  Émet un événement `AlbumPublished` pour permettre à d'autres contextes
-  de réagir à la publication (notifications, indexation, etc.).
+  Délègue au AlbumPublicationService pour orchestrer l'opération complète
+  incluant la mise à jour DB, l'invalidation du cache, et l'émission d'événements.
 
   ## Paramètres
 
@@ -255,21 +235,7 @@ defmodule Portfolio.Photography do
   @spec publish_album(Album.t(), Ecto.UUID.t() | nil) ::
           {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def publish_album(%Album{} = album, user_id \\ nil) do
-    with {:ok, album} <- AlbumRepository.update(album, %{published: true}) do
-      # Invalider le cache des albums publiés
-      invalidate_albums_cache()
-
-      # Émettre l'événement de domaine
-      DomainEvents.publish(:album_published, %AlbumPublished{
-        album_id: album.id,
-        title: album.title,
-        slug: album.slug,
-        published_at: DateTime.utc_now(),
-        user_id: user_id
-      })
-
-      {:ok, album}
-    end
+    AlbumPublicationService.execute(album, user_id: user_id)
   end
 
   # =============================================================================
@@ -405,48 +371,7 @@ defmodule Portfolio.Photography do
   """
   @spec upload_photos(String.t(), [map()], keyword()) :: {:ok, [map()]} | {:error, term()}
   def upload_photos(album_slug, uploads, opts \\ []) when is_list(uploads) do
-    start_time = System.monotonic_time()
-    count = length(uploads)
-
-    max_concurrency = Keyword.get(opts, :max_concurrency, 4)
-    timeout = Keyword.get(opts, :timeout, 30_000)
-    ordered = Keyword.get(opts, :ordered, false)
-
-    # Upload en parallèle avec Task.async_stream
-    results =
-      uploads
-      |> Task.async_stream(
-        fn upload -> storage().store_photo(album_slug, upload) end,
-        max_concurrency: max_concurrency,
-        timeout: timeout,
-        ordered: ordered,
-        on_timeout: :kill_task
-      )
-      |> Enum.to_list()
-
-    # Vérifier si toutes les opérations ont réussi
-    result =
-      if Enum.all?(results, &match?({:ok, {:ok, _}}, &1)) do
-        photos_metadata = Enum.map(results, fn {:ok, {:ok, meta}} -> meta end)
-        {:ok, photos_metadata}
-      else
-        # Récupérer la première erreur
-        case Enum.find(results, &match?({:ok, {:error, _}}, &1)) do
-          {:ok, {:error, reason}} -> {:error, reason}
-          {:exit, reason} -> {:error, {:task_exit, reason}}
-          nil -> {:error, :unknown_error}
-        end
-      end
-
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
-      [:portfolio, :photography, :photos, :uploaded],
-      %{duration: duration, count: count},
-      %{album_slug: album_slug, result: elem(result, 0)}
-    )
-
-    result
+    PhotoUploadService.execute(album_slug, uploads, opts)
   end
 
   # =============================================================================
@@ -458,9 +383,8 @@ defmodule Portfolio.Photography do
       Portfolio.Photography.Storage.LocalStorage
   end
 
-  # Invalide tous les caches liés aux albums publiés
+  # Invalidate all caches related to published albums
   defp invalidate_albums_cache do
-    # Supprimer toutes les clés du cache qui correspondent aux albums publiés
     Cachex.del(:portfolio_cache, {:published_albums_by_year, []})
     Cachex.del(:portfolio_cache, {:published_albums_by_year, [:photos]})
     :ok
