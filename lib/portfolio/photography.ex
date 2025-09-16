@@ -124,7 +124,7 @@ defmodule Portfolio.Photography do
   end
 
   @doc """
-  Met à jour un album existant.
+  Met à jour un album existant et invalide le cache.
 
   ## Exemples
 
@@ -132,7 +132,20 @@ defmodule Portfolio.Photography do
       {:ok, %Album{}}
   """
   @spec update_album(Album.t(), map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
-  def update_album(album, attrs), do: AlbumRepository.update(album, attrs)
+  def update_album(album, attrs) do
+    case AlbumRepository.update(album, attrs) do
+      {:ok, updated_album} = result ->
+        # Invalider le cache si l'album est publié
+        if updated_album.published do
+          invalidate_albums_cache()
+        end
+
+        result
+
+      error ->
+        error
+    end
+  end
 
   @doc """
   Supprime un album et toutes ses photos (CASCADE) de manière atomique.
@@ -177,20 +190,51 @@ defmodule Portfolio.Photography do
   end
 
   @doc """
-  Liste les albums publiés groupés par année.
+  Liste les albums publiés groupés par année avec cache.
+
+  Utilise Cachex pour mettre en cache les résultats et éviter les requêtes répétées.
+  Le cache expire après 1 heure ou est invalidé lors de la publication d'un album.
 
   Retourne une map avec les années comme clés et les albums comme valeurs.
+
+  ## Options
+
+  - `:preload` - Associations à précharger
+  - `:skip_cache` - Ignorer le cache et forcer une requête DB (défaut: false)
 
   ## Exemples
 
       iex> list_published_albums_by_year()
       %{2024 => [%Album{}], 2023 => [%Album{}]}
+
+      iex> list_published_albums_by_year(skip_cache: true)
+      %{2024 => [%Album{}], 2023 => [%Album{}]}
   """
   @spec list_published_albums_by_year(keyword()) :: %{integer() => [Album.t()]}
-  def list_published_albums_by_year(opts \\ []), do: AlbumRepository.list_published_by_year(opts)
+  def list_published_albums_by_year(opts \\ []) do
+    skip_cache = Keyword.get(opts, :skip_cache, false)
+    cache_key = {:published_albums_by_year, opts[:preload] || []}
+
+    # En test, toujours skip le cache pour éviter la pollution entre tests
+    skip_cache = skip_cache or Mix.env() == :test
+
+    if skip_cache do
+      AlbumRepository.list_published_by_year(opts)
+    else
+      case Cachex.fetch(:portfolio_cache, cache_key, fn ->
+             result = AlbumRepository.list_published_by_year(opts)
+             # Cache pendant 1 heure
+             {:commit, result, ttl: :timer.hours(1)}
+           end) do
+        {:ok, albums} -> albums
+        {:commit, albums} -> albums
+        {:error, _reason} -> AlbumRepository.list_published_by_year(opts)
+      end
+    end
+  end
 
   @doc """
-  Publie un album en le rendant visible publiquement.
+  Publie un album en le rendant visible publiquement et invalide le cache.
 
   Émet un événement `AlbumPublished` pour permettre à d'autres contextes
   de réagir à la publication (notifications, indexation, etc.).
@@ -212,6 +256,9 @@ defmodule Portfolio.Photography do
           {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def publish_album(%Album{} = album, user_id \\ nil) do
     with {:ok, album} <- AlbumRepository.update(album, %{published: true}) do
+      # Invalider le cache des albums publiés
+      invalidate_albums_cache()
+
       # Émettre l'événement de domaine
       DomainEvents.publish(:album_published, %AlbumPublished{
         album_id: album.id,
@@ -409,6 +456,14 @@ defmodule Portfolio.Photography do
   defp storage do
     Application.get_env(:portfolio, :file_storage)[:backend] ||
       Portfolio.Photography.Storage.LocalStorage
+  end
+
+  # Invalide tous les caches liés aux albums publiés
+  defp invalidate_albums_cache do
+    # Supprimer toutes les clés du cache qui correspondent aux albums publiés
+    Cachex.del(:portfolio_cache, {:published_albums_by_year, []})
+    Cachex.del(:portfolio_cache, {:published_albums_by_year, [:photos]})
+    :ok
   end
 
   @doc """

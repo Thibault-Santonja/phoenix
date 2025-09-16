@@ -101,6 +101,7 @@ defmodule Portfolio.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:hammer, "~> 6.2"},
+      {:cachex, "~> 3.6"},
       # For CI
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
