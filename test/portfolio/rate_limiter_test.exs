@@ -87,16 +87,16 @@ defmodule Portfolio.RateLimiterTest do
     end
   end
 
-  describe "get_limit/1" do
-    test "retourne la limite pour magic_link_request" do
-      {limit, period} = RateLimiter.get_limit(:magic_link_request)
+  describe "limit/1" do
+    test "returns configured limit for magic_link_request" do
+      {limit, period} = RateLimiter.limit(:magic_link_request)
 
       assert limit == 5
       assert period == :timer.hours(1)
     end
 
-    test "retourne la limite pour login_attempt" do
-      {limit, period} = RateLimiter.get_limit(:login_attempt)
+    test "returns configured limit for login_attempt" do
+      {limit, period} = RateLimiter.limit(:login_attempt)
 
       assert limit == 10
       assert period == :timer.hours(1)

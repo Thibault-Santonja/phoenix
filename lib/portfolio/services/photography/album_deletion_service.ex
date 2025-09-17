@@ -69,11 +69,11 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
 
     # Record telemetry
     duration = System.monotonic_time() - start_time
-    photo_count = get_photo_count(result)
+    count = photo_count(result)
 
     :telemetry.execute(
       [:portfolio, :services, :album_deletion, :executed],
-      %{duration: duration, photo_count: photo_count},
+      %{duration: duration, photo_count: count},
       %{album_id: album.id, result: elem(result, 0)}
     )
 
@@ -102,6 +102,6 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
       Portfolio.Photography.Storage.LocalStorage
   end
 
-  defp get_photo_count({:ok, %{photos: photos}}), do: length(photos)
-  defp get_photo_count(_), do: 0
+  defp photo_count({:ok, %{photos: photos}}), do: length(photos)
+  defp photo_count(_), do: 0
 end

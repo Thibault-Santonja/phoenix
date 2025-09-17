@@ -38,19 +38,19 @@ defmodule Portfolio.RateLimiter do
   }
 
   @doc """
-  Vérifie si une action est autorisée pour un identifiant donné.
+  Checks if an action is allowed for a given identifier.
 
-  ## Paramètres
+  ## Parameters
 
-  - `action` - Type d'action à limiter (atom)
-  - `identifier` - Identifiant unique (email, IP, user_id, etc.)
+  - `action` - Type of action to rate limit (atom)
+  - `identifier` - Unique identifier (email, IP, user_id, etc.)
 
-  ## Retour
+  ## Returns
 
-  - `{:allow, remaining}` - Action autorisée, nombre de requêtes restantes
-  - `{:deny, retry_after}` - Action refusée, temps d'attente en ms
+  - `{:allow, remaining}` - Action allowed, number of remaining requests
+  - `{:deny, retry_after}` - Action denied, retry time in milliseconds
 
-  ## Exemples
+  ## Examples
 
       iex> check_rate(:magic_link_request, "user@example.com")
       {:allow, 4}
@@ -90,11 +90,11 @@ defmodule Portfolio.RateLimiter do
   end
 
   @doc """
-  Réinitialise le compteur pour une action et un identifiant donnés.
+  Resets the counter for a given action and identifier.
 
-  Utile pour les tests ou pour réinitialiser manuellement un rate limit.
+  Useful for tests or for manually resetting a rate limit.
 
-  ## Exemples
+  ## Examples
 
       iex> reset(:magic_link_request, "user@example.com")
       :ok
@@ -107,19 +107,19 @@ defmodule Portfolio.RateLimiter do
   end
 
   @doc """
-  Retourne les limites configurées pour une action.
+  Returns the configured limits for an action.
 
-  ## Exemples
+  ## Examples
 
-      iex> get_limit(:magic_link_request)
+      iex> limit(:magic_link_request)
       {5, 3600000}  # 5 requests per hour
   """
-  @spec get_limit(action()) :: {integer(), integer()}
-  def get_limit(action) when is_atom(action) do
+  @spec limit(action()) :: {integer(), integer()}
+  def limit(action) when is_atom(action) do
     Map.fetch!(@rate_limits, action)
   end
 
-  # Construit une clé unique pour le bucket Hammer
+  # Build a unique key for the Hammer bucket
   @spec build_bucket_key(action(), rate_identifier()) :: String.t()
   defp build_bucket_key(action, identifier) do
     "rate_limit:#{action}:#{identifier}"

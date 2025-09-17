@@ -17,9 +17,9 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
 
   @behaviour Portfolio.Services.Service
 
-  alias Portfolio.Auth.{MagicLink, User}
   alias Portfolio.Auth.Events.MagicLinkRequested
   alias Portfolio.Auth.Mailer
+  alias Portfolio.Auth.{MagicLink, User}
   alias Portfolio.DomainEvents
   alias Portfolio.Repo
 
@@ -86,7 +86,7 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   defp do_request_magic_link(email) do
     Ecto.Multi.new()
     |> Ecto.Multi.run(:user, fn _repo, _changes ->
-      get_or_create_user(email)
+      fetch_or_create_user(email)
     end)
     |> Ecto.Multi.run(:magic_link, fn _repo, %{user: user} ->
       create_magic_link(user)
@@ -113,8 +113,8 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
     end
   end
 
-  # Get existing user or create new one
-  defp get_or_create_user(email) do
+  # Fetch existing user or create new one
+  defp fetch_or_create_user(email) do
     case Repo.get_by(User, email: email) do
       nil ->
         %User{}

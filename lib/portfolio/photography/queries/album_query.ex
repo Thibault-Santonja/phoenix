@@ -185,12 +185,12 @@ defmodule Portfolio.Photography.Queries.AlbumQuery do
   end
 
   @doc """
-  Ajoute le nombre de photos à chaque album avec une sous-requête optimisée.
+  Adds photo count to each album with an optimized subquery.
 
-  Utilise une sous-requête LEFT JOIN + GROUP BY pour éviter le problème N+1.
-  Le count est ajouté comme champ virtuel `photo_count` sur chaque album.
+  Uses LEFT JOIN + GROUP BY to avoid N+1 query problem.
+  The count is added as a virtual `photo_count` field on each album.
 
-  ## Exemples
+  ## Examples
 
       iex> AlbumQuery.base() |> AlbumQuery.with_photo_count()
       #Ecto.Query<...>
@@ -206,12 +206,12 @@ defmodule Portfolio.Photography.Queries.AlbumQuery do
   end
 
   @doc """
-  Ajoute seulement la première photo (cover photo) au lieu de toutes les photos.
+  Loads only the first photo (cover photo) instead of all photos.
 
-  Utilise un preload avec une sous-requête limitée pour charger uniquement
-  la première photo triée par display_order.
+  Uses a preload with a limited subquery to load only the first photo
+  sorted by display_order.
 
-  ## Exemples
+  ## Examples
 
       iex> AlbumQuery.base() |> AlbumQuery.with_cover_photo_only()
       #Ecto.Query<...>
