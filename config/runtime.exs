@@ -21,6 +21,10 @@ session_expiration_seconds =
 
 config :portfolio, :auth, session_expiration_seconds: session_expiration_seconds
 
+# Configure Hammer for rate limiting (all environments)
+config :hammer,
+  backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 2, cleanup_interval_ms: 60_000 * 10]}
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server
