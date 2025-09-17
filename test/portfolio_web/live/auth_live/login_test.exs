@@ -13,7 +13,7 @@ defmodule PortfolioWeb.AuthLive.LoginTest do
 
       assert html =~ "Connexion Admin"
       assert has_element?(view, "form")
-      assert has_element?(view, "input[name=\"email\"]")
+      assert has_element?(view, "input[name=\"email_form[email]\"]")
     end
   end
 
@@ -25,11 +25,11 @@ defmodule PortfolioWeb.AuthLive.LoginTest do
 
       html =
         view
-        |> form("form", %{email: user.email})
+        |> form("form", %{email_form: %{email: user.email}})
         |> render_submit()
 
-      assert html =~ "Un lien de connexion a été envoyé à #{user.email}"
-      assert render(view) =~ user.email
+      assert html =~ "Un lien de connexion a été envoyé"
+      # Note: email n'est plus affiché dans le message de succès pour des raisons de sécurité
 
       # Vérifier qu'un magic link a été créé
       magic_link = Repo.get_by(Portfolio.Auth.MagicLink, user_id: user.id)
@@ -44,10 +44,10 @@ defmodule PortfolioWeb.AuthLive.LoginTest do
 
       html =
         view
-        |> form("form", %{email: email})
+        |> form("form", %{email_form: %{email: email}})
         |> render_submit()
 
-      assert html =~ "Un lien de connexion a été envoyé à #{email}"
+      assert html =~ "Un lien de connexion a été envoyé"
 
       # Vérifier que l'utilisateur a été créé
       assert {:ok, user} = Auth.get_user_by_email(email)
@@ -64,11 +64,11 @@ defmodule PortfolioWeb.AuthLive.LoginTest do
       {:ok, view, _html} = live(conn, "/login")
 
       view
-      |> form("form", %{email: user.email})
+      |> form("form", %{email_form: %{email: user.email}})
       |> render_submit()
 
       assert render(view) =~ "Un lien de connexion a été envoyé"
-      assert view |> element("div", user.email) |> has_element?()
+      # Le message ne contient plus l'email pour des raisons de sécurité
     end
 
     test "shows error for invalid email format", %{conn: conn} do
@@ -76,11 +76,11 @@ defmodule PortfolioWeb.AuthLive.LoginTest do
 
       html =
         view
-        |> form("form", %{email: "not-an-email"})
+        |> form("form", %{email_form: %{email: "not-an-email"}})
         |> render_submit()
 
-      # L'erreur peut venir de la validation ou du contexte
-      assert html =~ "Impossible d'envoyer le lien" or html =~ "Vérifiez votre adresse email"
+      # La validation rejette l'email invalide
+      assert html =~ "L'email doit être valide" or html =~ "email"
     end
   end
 

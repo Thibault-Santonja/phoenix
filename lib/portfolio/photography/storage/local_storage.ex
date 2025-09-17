@@ -28,6 +28,12 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
 
   require Logger
 
+  # Maximum length for base filename to prevent filesystem issues
+  # Keeps total filename under 255 chars (max on most filesystems)
+  # Format: {base_name}-{hash}.{ext} where hash=8 chars, ext<=4 chars
+  # So: 50 + 1 + 8 + 1 + 4 = 64 chars total (well under 255)
+  @max_filename_length 50
+
   @impl true
   def store_photo(album_slug, upload) do
     with {:ok, hash} <- compute_hash(upload.path),
@@ -131,7 +137,7 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
       |> String.replace(~r/[^a-z0-9-]/, "-")
       |> String.replace(~r/-+/, "-")
       |> String.trim("-")
-      |> String.slice(0, 50)
+      |> String.slice(0, @max_filename_length)
 
     # Fallback to "photo" if name is empty after sanitization
     base_name = if base_name == "", do: "photo", else: base_name

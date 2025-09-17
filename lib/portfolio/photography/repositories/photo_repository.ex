@@ -210,8 +210,9 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
         end
       end)
       |> Multi.run(:reorder_photos, fn repo, %{validate_photos: _photos} ->
-        # Mettre à jour le display_order de chaque photo en une seule transaction
-        # Utiliser update_all pour chaque photo
+        # Update display_order for each photo
+        # Note: For better performance with large albums (>100 photos),
+        # this could be optimized with a single UPDATE query using CASE WHEN
         updated_count =
           Enum.with_index(photo_ids)
           |> Enum.reduce(0, fn {photo_id, index}, acc ->

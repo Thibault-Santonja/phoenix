@@ -13,7 +13,7 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
   the entire operation is rolled back.
   """
 
-  @behaviour Portfolio.Services.Service
+  use Portfolio.Services.Service
 
   alias Portfolio.Photography.Album
   alias Portfolio.Photography.Repositories.PhotoRepository
@@ -51,33 +51,36 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
   @spec execute(Album.t(), keyword()) ::
           {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def execute(%Album{} = album, _opts \\ []) do
-    start_time = System.monotonic_time()
-
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.run(:photos, fn _repo, _changes ->
-        # Fetch all album photos
-        photos = PhotoRepository.list_by_album(album.id)
-        {:ok, photos}
-      end)
-      |> Ecto.Multi.run(:files, fn _repo, %{photos: photos} ->
-        # Delete all physical files
-        delete_photo_files(photos)
-      end)
-      |> Ecto.Multi.delete(:album, album)
-      |> Repo.transaction()
-
-    # Record telemetry
-    duration = System.monotonic_time() - start_time
-    count = photo_count(result)
-
-    :telemetry.execute(
+    with_telemetry(
       [:portfolio, :services, :album_deletion, :executed],
-      %{duration: duration, photo_count: count},
-      %{album_id: album.id, result: elem(result, 0)}
-    )
+      %{album_id: album.id},
+      fn ->
+        result =
+          Ecto.Multi.new()
+          |> Ecto.Multi.run(:photos, fn _repo, _changes ->
+            # Fetch all album photos
+            photos = PhotoRepository.list_by_album(album.id)
+            {:ok, photos}
+          end)
+          |> Ecto.Multi.run(:files, fn _repo, %{photos: photos} ->
+            # Delete all physical files
+            delete_photo_files(photos)
+          end)
+          |> Ecto.Multi.delete(:album, album)
+          |> Repo.transaction()
 
-    result
+        # Emit additional measurement for photo count
+        count = photo_count(result)
+
+        :telemetry.execute(
+          [:portfolio, :services, :album_deletion, :photo_count],
+          %{photo_count: count},
+          %{album_id: album.id}
+        )
+
+        result
+      end
+    )
   end
 
   # Delete all photo files, accepting :not_found as success

@@ -25,8 +25,7 @@
             <h3 class="text-sm font-medium text-green-800">Email envoyé !</h3>
             <div class="mt-2 text-sm text-green-700">
               <p>
-                Un lien de connexion a été envoyé à <strong><%= @email %></strong>.
-                Le lien est valide pendant 15 minutes.
+                Un lien de connexion a été envoyé. Le lien est valide pendant 15 minutes.
               </p>
               <p class="mt-2">
                 Vérifiez votre boîte email et cliquez sur le lien pour vous connecter.
@@ -35,43 +34,27 @@
           </div>
         </div>
       </div>
-
-      <div class="text-center">
-        <button
-          type="button"
-          phx-click={JS.push("request_link", value: %{email: @email})}
-          class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-        >
-          Renvoyer le lien
-        </button>
-      </div>
     <% else %>
-      <form phx-submit="request_link" class="mt-8 space-y-6">
-        <div class="-space-y-px rounded-md shadow-sm">
-          <div>
-            <label for="email" class="sr-only">Adresse email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              value={@email}
-              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              placeholder="admin@example.com"
-            />
-          </div>
-        </div>
+      <.simple_form for={@form} phx-submit="request_link" phx-change="validate">
+        <.input
+          field={@form[:email]}
+          type="email"
+          label="Adresse email"
+          placeholder="admin@example.com"
+          autocomplete="email"
+          required
+        />
 
-        <div>
-          <button
+        <:actions>
+          <.button
             type="submit"
-            class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            class="w-full"
+            phx-disable-with="Envoi..."
           >
             Envoyer le lien de connexion
-          </button>
-        </div>
-      </form>
+          </.button>
+        </:actions>
+      </.simple_form>
 
       <div class="text-center text-sm text-gray-600">
         <p>

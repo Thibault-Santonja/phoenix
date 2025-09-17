@@ -27,7 +27,7 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       html =
         view
         |> element("form[phx-submit='request_link']")
-        |> render_submit(%{email: email})
+        |> render_submit(%{email_form: %{email: email}})
 
       # Verify confirmation message appears
       assert html =~ "lien" or has_element?(view, "button", "Renvoyer le lien")

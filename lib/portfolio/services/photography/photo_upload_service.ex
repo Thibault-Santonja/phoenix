@@ -12,7 +12,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   in parallel, handling errors, timeouts, and tracking performance metrics.
   """
 
-  @behaviour Portfolio.Services.Service
+  use Portfolio.Services.Service
 
   @impl true
   @doc """
@@ -42,49 +42,42 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   """
   @spec execute(String.t(), [map()], keyword()) :: {:ok, [map()]} | {:error, term()}
   def execute(album_slug, uploads, opts \\ []) when is_list(uploads) do
-    start_time = System.monotonic_time()
     count = length(uploads)
 
-    max_concurrency = Keyword.get(opts, :max_concurrency, 4)
-    timeout = Keyword.get(opts, :timeout, 30_000)
-    ordered = Keyword.get(opts, :ordered, false)
+    with_telemetry(
+      [:portfolio, :photography, :photos, :uploaded],
+      %{album_slug: album_slug, count: count},
+      fn ->
+        max_concurrency = Keyword.get(opts, :max_concurrency, 4)
+        timeout = Keyword.get(opts, :timeout, 30_000)
+        ordered = Keyword.get(opts, :ordered, false)
 
-    # Upload in parallel with Task.async_stream
-    results =
-      uploads
-      |> Task.async_stream(
-        fn upload -> storage().store_photo(album_slug, upload) end,
-        max_concurrency: max_concurrency,
-        timeout: timeout,
-        ordered: ordered,
-        on_timeout: :kill_task
-      )
-      |> Enum.to_list()
+        # Upload in parallel with Task.async_stream
+        results =
+          uploads
+          |> Task.async_stream(
+            fn upload -> storage().store_photo(album_slug, upload) end,
+            max_concurrency: max_concurrency,
+            timeout: timeout,
+            ordered: ordered,
+            on_timeout: :kill_task
+          )
+          |> Enum.to_list()
 
-    # Check if all operations succeeded
-    result =
-      if Enum.all?(results, &match?({:ok, {:ok, _}}, &1)) do
-        photos_metadata = Enum.map(results, fn {:ok, {:ok, meta}} -> meta end)
-        {:ok, photos_metadata}
-      else
-        # Get the first error
-        case Enum.find(results, &match?({:ok, {:error, _}}, &1)) do
-          {:ok, {:error, reason}} -> {:error, reason}
-          {:exit, reason} -> {:error, {:task_exit, reason}}
-          nil -> {:error, :unknown_error}
+        # Check if all operations succeeded
+        if Enum.all?(results, &match?({:ok, {:ok, _}}, &1)) do
+          photos_metadata = Enum.map(results, fn {:ok, {:ok, meta}} -> meta end)
+          {:ok, photos_metadata}
+        else
+          # Get the first error
+          case Enum.find(results, &match?({:ok, {:error, _}}, &1)) do
+            {:ok, {:error, reason}} -> {:error, reason}
+            {:exit, reason} -> {:error, {:task_exit, reason}}
+            nil -> {:error, :unknown_error}
+          end
         end
       end
-
-    # Record telemetry (using photography namespace for backward compatibility)
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
-      [:portfolio, :photography, :photos, :uploaded],
-      %{duration: duration, count: count},
-      %{album_slug: album_slug, result: elem(result, 0)}
     )
-
-    result
   end
 
   defp storage do

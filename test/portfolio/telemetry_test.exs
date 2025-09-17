@@ -63,8 +63,8 @@ defmodule Portfolio.TelemetryTest do
       assert_received {
         [:portfolio, :photography, :photos, :uploaded],
         _ref,
-        %{duration: duration, count: 1},
-        %{album_slug: "non-existent-slug", result: :error}
+        %{duration: duration},
+        %{album_slug: "non-existent-slug", count: 1, result: :error}
       }
 
       assert is_integer(duration)

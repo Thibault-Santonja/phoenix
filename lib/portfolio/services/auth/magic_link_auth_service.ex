@@ -15,7 +15,7 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   and event emission.
   """
 
-  @behaviour Portfolio.Services.Service
+  use Portfolio.Services.Service
 
   alias Portfolio.Auth.Events.MagicLinkRequested
   alias Portfolio.Auth.Mailer
@@ -58,28 +58,20 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
           {:ok, MagicLink.t()}
           | {:error, Ecto.Changeset.t() | :user_not_found | :rate_limit_exceeded}
   def execute(email, _opts \\ []) when is_binary(email) do
-    start_time = System.monotonic_time()
-
-    # Check rate limit
-    result =
-      case Portfolio.RateLimiter.check_rate(:magic_link_request, email) do
-        {:deny, _retry_after} ->
-          {:error, :rate_limit_exceeded}
-
-        {:allow, _remaining} ->
-          do_request_magic_link(email)
-      end
-
-    # Record telemetry (using auth namespace for backward compatibility)
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
+    with_telemetry(
       [:portfolio, :auth, :magic_link, :requested],
-      %{duration: duration},
-      %{email: email, result: elem(result, 0)}
-    )
+      %{email: email},
+      fn ->
+        # Check rate limit
+        case Portfolio.RateLimiter.check_rate(:magic_link_request, email) do
+          {:deny, _retry_after} ->
+            {:error, :rate_limit_exceeded}
 
-    result
+          {:allow, _remaining} ->
+            do_request_magic_link(email)
+        end
+      end
+    )
   end
 
   # Internal implementation after rate limit check

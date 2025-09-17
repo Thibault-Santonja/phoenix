@@ -13,7 +13,7 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
   and telemetry tracking.
   """
 
-  @behaviour Portfolio.Services.Service
+  use Portfolio.Services.Service
 
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.Album
@@ -46,35 +46,28 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
   @spec execute(Album.t(), keyword()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def execute(%Album{} = album, opts \\ []) do
     user_id = Keyword.get(opts, :user_id)
-    start_time = System.monotonic_time()
 
-    result =
-      with {:ok, album} <- AlbumRepository.update(album, %{published: true}) do
-        # Invalidate cache
-        invalidate_albums_cache()
-
-        # Emit domain event
-        DomainEvents.publish(:album_published, %AlbumPublished{
-          album_id: album.id,
-          title: album.title,
-          slug: album.slug,
-          published_at: DateTime.utc_now(),
-          user_id: user_id
-        })
-
-        {:ok, album}
-      end
-
-    # Record telemetry
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
+    with_telemetry(
       [:portfolio, :services, :album_publication, :executed],
-      %{duration: duration},
-      %{album_id: album.id, result: elem(result, 0), user_id: user_id}
-    )
+      %{album_id: album.id, user_id: user_id},
+      fn ->
+        with {:ok, album} <- AlbumRepository.update(album, %{published: true}) do
+          # Invalidate cache
+          invalidate_albums_cache()
 
-    result
+          # Emit domain event
+          DomainEvents.publish(:album_published, %AlbumPublished{
+            album_id: album.id,
+            title: album.title,
+            slug: album.slug,
+            published_at: DateTime.utc_now(),
+            user_id: user_id
+          })
+
+          {:ok, album}
+        end
+      end
+    )
   end
 
   # Invalidate all caches related to published albums
