@@ -9,11 +9,10 @@ defmodule Portfolio.Auth do
   import Ecto.Query, warn: false
 
   alias Portfolio.Auth.MagicLink
-  alias Portfolio.Auth.Mailer
   alias Portfolio.Auth.User
   alias Portfolio.Auth.UserSession
   alias Portfolio.DomainEvents
-  alias Portfolio.Auth.Events.{MagicLinkRequested, MagicLinkVerified}
+  alias Portfolio.Auth.Events.MagicLinkVerified
 
   alias Portfolio.Repo
 

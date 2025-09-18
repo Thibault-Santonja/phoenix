@@ -47,7 +47,7 @@ defmodule Portfolio.Photography do
 
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.{Album, Photo}
-  alias Portfolio.Photography.Events.{AlbumPublished, PhotoUploaded}
+  alias Portfolio.Photography.Events.PhotoUploaded
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
   alias Portfolio.Repo
 

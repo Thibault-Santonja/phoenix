@@ -80,37 +80,35 @@ defmodule Portfolio.Services.Service do
     quote do
       @behaviour Portfolio.Services.Service
 
-      @doc """
-      Wraps a function with telemetry instrumentation.
-
-      Measures execution time and emits a telemetry event with the result.
-
-      ## Parameters
-
-      - `event_name` - List representing the telemetry event name
-      - `metadata` - Map of additional metadata to include in the event
-      - `fun` - Zero-arity function to execute and measure
-
-      ## Returns
-
-      The result of executing `fun`, unchanged.
-
-      ## Telemetry Event
-
-      Emits `event_name` with:
-      - Measurements: `%{duration: integer()}` - Time in native units
-      - Metadata: `%{result: :ok | :error, ...}` - Result status + provided metadata
-
-      ## Example
-
-          with_telemetry(
-            [:portfolio, :photography, :album, :published],
-            %{user_id: user_id},
-            fn ->
-              AlbumRepository.update(album, %{published: true})
-            end
-          )
-      """
+      # Wraps a function with telemetry instrumentation.
+      #
+      # Measures execution time and emits a telemetry event with the result.
+      #
+      # ## Parameters
+      #
+      # - `event_name` - List representing the telemetry event name
+      # - `metadata` - Map of additional metadata to include in the event
+      # - `fun` - Zero-arity function to execute and measure
+      #
+      # ## Returns
+      #
+      # The result of executing `fun`, unchanged.
+      #
+      # ## Telemetry Event
+      #
+      # Emits `event_name` with:
+      # - Measurements: `%{duration: integer()}` - Time in native units
+      # - Metadata: `%{result: :ok | :error, ...}` - Result status + provided metadata
+      #
+      # ## Example
+      #
+      #     with_telemetry(
+      #       [:portfolio, :photography, :album, :published],
+      #       %{user_id: user_id},
+      #       fn ->
+      #         AlbumRepository.update(album, %{published: true})
+      #       end
+      #     )
       @spec with_telemetry(list(), map(), (-> term())) :: term()
       defp with_telemetry(event_name, metadata, fun)
            when is_list(event_name) and is_map(metadata) and is_function(fun, 0) do
