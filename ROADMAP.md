@@ -1198,9 +1198,646 @@ end
 11. #102 - Optimiser AdminAlbumLive
 12. Issues restantes selon besoin
 
+---
+
+## 🔴 HIGH PRIORITY (Suite - Issues Frontend post Code Review)
+
+### Issue #106 - Retirer scripts inline et migrer vers hooks JS (2-3h)
+**Status**: Todo  
+**Category**: Frontend / Best Practices  
+**Impact**: URGENT - Violation des guidelines Phoenix, risque sécurité CSP
+
+**Problem**:
+- ❌ **Scripts `<script>` inline dans templates HEEx**
+- Violation des best practices Phoenix/LiveView
+- Incompatible avec Content Security Policy (CSP)
+- Code JavaScript non réutilisable
+- Difficile à tester
+
+**Files affected**:
+- `lib/portfolio_web/live/amvcc_live/blog.html.heex` (lignes 13-52)
+- `lib/portfolio_web/live/amvcc_live/index.html.heex` (lignes 13-52)
+
+**Current Implementation (INCORRECT)**:
+```heex
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Parallax effect for background image
+    window.addEventListener('scroll', function() {
+      const scrolled = window.pageYOffset;
+      const parallax = document.querySelector('#hero img');
+      const speed = scrolled * 0.5;
+
+      if (parallax) {
+        parallax.style.transform = `translateY(${speed}px)`;
+      }
+    });
+  });
+</script>
+```
+
+**Solution - Migrer vers Phoenix Hooks**:
+
+1. Créer le hook dans `assets/js/hooks.js`:
+```javascript
+export const ParallaxHero = {
+  mounted() {
+    this.handleScroll = () => {
+      const scrolled = window.pageYOffset;
+      const img = this.el.querySelector('img');
+      if (img) {
+        img.style.transform = `translateY(${scrolled * 0.5}px)`;
+      }
+    };
+    
+    window.addEventListener('scroll', this.handleScroll, { passive: true });
+  },
+  
+  destroyed() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+};
+```
+
+2. Enregistrer dans `assets/js/app.js`:
+```javascript
+import { ParallaxHero } from "./hooks"
+
+let Hooks = {
+  // ... existing hooks
+  ParallaxHero
+}
+```
+
+3. Utiliser dans le template:
+```heex
+<article id="hero" phx-hook="ParallaxHero" phx-update="ignore" class="...">
+  <img src="..." alt="..." />
+</article>
+```
+
+**Acceptance Criteria**:
+- [ ] ✅ Tous les `<script>` inline retirés
+- [ ] ✅ Hooks JavaScript créés dans `assets/js/hooks.js`
+- [ ] ✅ Templates utilisent `phx-hook`
+- [ ] ✅ Fonctionnalité identique (parallax fonctionne)
+- [ ] ✅ Pas de warnings CSP
+- [ ] ✅ Code JavaScript testable
+
+**Priority**: 🔴 URGENT - Violation best practices
+
+---
+
+### Issue #107 - Retirer console.log() de production (30min)
+**Status**: Todo  
+**Category**: Frontend / Code Quality  
+**Impact**: URGENT - Pollution logs navigateur, fuite d'informations
+
+**Problem**:
+- ❌ **6+ `console.log()` dans `hooks.js`**
+- Logs visibles en production
+- Pollution de la console navigateur
+- Potentielle fuite d'informations sensibles
+
+**File affected**:
+- `assets/js/hooks.js` (lignes 372, 376, 378, 382, 400, 410)
+
+**Current Implementation**:
+```javascript
+export const PhotoSortable = {
+  mounted() {
+    console.log("PhotoSortable mounted", this.el);  // ❌
+    // ...
+  },
+  
+  updated() {
+    console.log("PhotoSortable updated", {  // ❌
+      reordering: this.el.dataset.reordering,
+    });
+  }
+}
+```
+
+**Solution - Logging conditionnel**:
+
+```javascript
+// En haut de hooks.js
+const isDev = process.env.NODE_ENV === 'development';
+const log = isDev ? console.log.bind(console) : () => {};
+const warn = isDev ? console.warn.bind(console) : () => {};
+const error = console.error.bind(console); // Toujours logger les erreurs
+
+export const PhotoSortable = {
+  mounted() {
+    log("PhotoSortable mounted", this.el);
+    // ...
+  },
+  
+  updated() {
+    log("PhotoSortable updated", {
+      reordering: this.el.dataset.reordering,
+    });
+  },
+  
+  handleError(err) {
+    error("PhotoSortable error:", err); // ✅ Toujours logger
+  }
+}
+```
+
+**Acceptance Criteria**:
+- [ ] ✅ Tous les `console.log()` remplacés par `log()`
+- [ ] ✅ Logger conditionnel implémenté
+- [ ] ✅ Aucun log en production (vérifier build)
+- [ ] ✅ Logs visibles en développement
+- [ ] ✅ Erreurs toujours loggées
+
+**Priority**: 🔴 URGENT - Qualité code
+
+---
+
+## 🟡 MEDIUM PRIORITY (Suite - Issues Frontend)
+
+### Issue #108 - Ajouter attributs alt sur images (1-2h)
+**Status**: Todo  
+**Category**: Frontend / Accessibilité  
+**Impact**: IMPORTANT - A11y, SEO, conformité WCAG
+
+**Problem**:
+- ⚠️ **30+ images sans attribut `alt` ou avec `alt=""` vide**
+- Non-conformité WCAG 2.1 niveau A
+- Mauvais pour SEO
+- Utilisateurs de screen readers ne peuvent pas comprendre le contenu
+
+**Files affected**:
+- `lib/portfolio_web/live/amvcc_live/index.html.heex` (lignes 20, 288, etc.)
+- `lib/portfolio_web/live/photography_live/timeline.html.heex`
+- `lib/portfolio_web/live/photography_live/gallery.html.heex`
+- Tous les templates avec images
+
+**Current Implementation (INCORRECT)**:
+```heex
+<img
+  src="https://www.amvcc.com/wp-content/uploads/2024/09/IMG_0697-1536x1024.jpg"
+  loading="lazy"
+/>
+```
+
+**Solution**:
+```heex
+<img
+  src="https://www.amvcc.com/wp-content/uploads/2024/09/IMG_0697-1536x1024.jpg"
+  alt={gettext("AMVCC Seigneuriales de Coucy 2024 - Medieval reenactment event with knights in armor")}
+  loading="lazy"
+/>
+```
+
+**Guidelines pour alt text**:
+- Décrire le contenu de l'image de façon concise
+- Inclure le contexte si pertinent
+- Utiliser gettext pour internationalisation
+- Images décoratives: `alt=""` (explicite)
+- Portraits: `alt={gettext("Portrait of %{name}", name: @album.title)}`
+
+**Acceptance Criteria**:
+- [ ] ✅ Toutes les images ont un attribut `alt`
+- [ ] ✅ Descriptions pertinentes et contextuelles
+- [ ] ✅ Utilisation de gettext pour i18n
+- [ ] ✅ Images décoratives avec `alt=""` explicite
+- [ ] ✅ Validation avec axe DevTools
+- [ ] ✅ Score Lighthouse Accessibility > 90
+
+**Priority**: 🟡 IMPORTANT - Accessibilité critique
+
+---
+
+### Issue #109 - Traduire interface admin avec gettext (2-3h)
+**Status**: Todo  
+**Category**: Frontend / i18n  
+**Impact**: IMPORTANT - Cohérence linguistique, i18n complète
+
+**Problem**:
+- ⚠️ **Interface admin entièrement en français hardcodé**
+- Inconsistant avec le reste de l'app (gettext partout)
+- Impossible de passer en anglais
+- Strings non réutilisables
+
+**Files affected**:
+- `lib/portfolio_web/live/admin/album_live/edit.html.heex`
+- `lib/portfolio_web/live/admin/album_live/index.html.heex`
+- `lib/portfolio_web/live/admin/album_live/form_component.ex`
+- `lib/portfolio_web/live/admin/profile_live/edit.html.heex`
+
+**Current Implementation (INCORRECT)**:
+```heex
+<h2 class="text-xl font-semibold mb-4">Informations du compte</h2>
+<p class="text-gray-600 mb-6">Gérez vos informations personnelles</p>
+<button type="submit">Enregistrer les modifications</button>
+```
+
+**Solution**:
+```heex
+<h2 class="text-xl font-semibold mb-4">{gettext("Account information")}</h2>
+<p class="text-gray-600 mb-6">{gettext("Manage your personal information")}</p>
+<button type="submit">{gettext("Save changes")}</button>
+```
+
+**Étapes**:
+1. Identifier tous les strings hardcodés
+2. Remplacer par `gettext/1` ou `dgettext/2`
+3. Ajouter traductions dans `priv/gettext/fr/LC_MESSAGES/default.po`
+4. Ajouter traductions dans `priv/gettext/en/LC_MESSAGES/default.po`
+5. Tester switch langue
+
+**Acceptance Criteria**:
+- [ ] ✅ Aucun string français hardcodé dans admin
+- [ ] ✅ Tous les textes utilisent gettext
+- [ ] ✅ Traductions FR complètes
+- [ ] ✅ Traductions EN complètes
+- [ ] ✅ Switch langue fonctionne
+- [ ] ✅ Cohérence avec reste de l'app
+
+**Priority**: 🟡 IMPORTANT - Cohérence i18n
+
+---
+
+### Issue #110 - Créer LocaleHook pour éviter duplication (1h)
+**Status**: Todo  
+**Category**: Frontend / Code Quality  
+**Impact**: IMPORTANT - DRY, maintenabilité
+
+**Problem**:
+- ⚠️ **Code dupliqué dans tous les LiveViews**
+- Pattern `Gettext.put_locale` répété 20+ fois
+- Violation du principe DRY
+- Difficile à maintenir
+
+**Files affected**:
+- Tous les LiveViews (20+ fichiers)
+
+**Current Implementation (DUPLICATED)**:
+```elixir
+defmodule PortfolioWeb.TechLive.Index do
+  use PortfolioWeb, :live_view
+  
+  def mount(_, session, socket) do
+    Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])  # ❌ Dupliqué
+    {:ok, socket}
+  end
+end
+```
+
+**Solution - Créer hook réutilisable**:
+
+1. Créer `lib/portfolio_web/live/locale_hook.ex`:
+```elixir
+defmodule PortfolioWeb.LocaleHook do
+  @moduledoc """
+  Hook LiveView pour gérer la locale automatiquement.
+  
+  Configure la locale Gettext basée sur la session utilisateur.
+  Fallback sur "fr" si locale non définie.
+  
+  ## Usage
+  
+      defmodule MyLiveView do
+        use PortfolioWeb, :live_view
+        
+        on_mount PortfolioWeb.LocaleHook
+      end
+  """
+  
+  import Phoenix.LiveView
+  
+  def on_mount(:default, _params, session, socket) do
+    locale = session["locale"] || "fr"
+    Gettext.put_locale(PortfolioWeb.Gettext, locale)
+    {:cont, assign(socket, :locale, locale)}
+  end
+end
+```
+
+2. Utiliser dans les LiveViews:
+```elixir
+defmodule PortfolioWeb.TechLive.Index do
+  use PortfolioWeb, :live_view
+  
+  on_mount PortfolioWeb.LocaleHook  # ✅ Une seule ligne
+  
+  def mount(_, _, socket) do
+    # Locale déjà configurée
+    {:ok, socket}
+  end
+end
+```
+
+3. Optionnel - Ajouter au `live_view` helpers dans `portfolio_web.ex`:
+```elixir
+def live_view do
+  quote do
+    use Phoenix.LiveView
+    on_mount PortfolioWeb.LocaleHook  # ✅ Automatique pour tous
+    # ...
+  end
+end
+```
+
+**Acceptance Criteria**:
+- [ ] ✅ `LocaleHook` module créé
+- [ ] ✅ Tous les LiveViews refactorés pour utiliser le hook
+- [ ] ✅ Code dupliqué éliminé
+- [ ] ✅ Locale correctement configurée partout
+- [ ] ✅ Tests passent
+- [ ] ✅ Documentation moduledoc complète
+
+**Priority**: 🟡 IMPORTANT - Refactoring DRY
+
+---
+
+## 🟢 LOW PRIORITY (Suite - Issues Frontend)
+
+### Issue #111 - Améliorer loading states sur formulaires (2-3h)
+**Status**: Todo  
+**Category**: Frontend / UX  
+**Impact**: FAIBLE - Améliore UX, feedback utilisateur
+
+**Problem**:
+- Pas d'indicateurs de chargement visuels
+- Utilisateur ne sait pas si action en cours
+- Boutons cliquables pendant soumission
+- Peut causer double-soumission
+
+**Files affected**:
+- `lib/portfolio_web/live/admin/album_live/edit.html.heex`
+- `lib/portfolio_web/live/admin/album_live/form_component.ex`
+- `lib/portfolio_web/live/auth_live/login.html.heex`
+- Tous les formulaires
+
+**Current Implementation**:
+```heex
+<.button type="submit">
+  Enregistrer
+</.button>
+```
+
+**Solution - Loading states**:
+```heex
+<.button 
+  type="submit"
+  phx-disable-with={gettext("Saving...")}
+  class="relative group"
+>
+  <span class="phx-submit-loading:opacity-0 transition-opacity">
+    {gettext("Save")}
+  </span>
+  <.icon 
+    name="hero-arrow-path" 
+    class="absolute inset-0 m-auto hidden phx-submit-loading:block h-5 w-5 animate-spin" 
+  />
+</.button>
+```
+
+**Améliorations supplémentaires**:
+- Désactiver inputs pendant soumission
+- Griser le formulaire
+- Afficher progress bar pour uploads
+- Toast notifications après succès
+
+**Acceptance Criteria**:
+- [ ] ✅ Tous les boutons submit ont `phx-disable-with`
+- [ ] ✅ Spinner visible pendant soumission
+- [ ] ✅ Bouton désactivé pendant traitement
+- [ ] ✅ Feedback visuel clair
+- [ ] ✅ Pas de double-soumission possible
+
+**Priority**: 🟢 FAIBLE - Nice to have UX
+
+---
+
+### Issue #112 - Optimiser images hero (eager loading) (1h)
+**Status**: Todo  
+**Category**: Frontend / Performance  
+**Impact**: FAIBLE - Améliore LCP, Core Web Vitals
+
+**Problem**:
+- Images hero/critiques en `loading="lazy"`
+- Retarde affichage première vue
+- Mauvais score LCP (Largest Contentful Paint)
+- Impact négatif SEO
+
+**Files affected**:
+- `lib/portfolio_web/live/index.html.heex`
+- `lib/portfolio_web/live/photography_live/index.html.heex`
+- Toutes les pages avec images au-dessus du fold
+
+**Current Implementation (INCORRECT)**:
+```heex
+<img
+  srcset="/images/photography/street_640.webp 320w, ..."
+  src="/images/photography/street_960.webp"
+  loading="lazy"  <!-- ❌ Mauvais pour hero image -->
+  alt="Street photography"
+/>
+```
+
+**Solution**:
+```heex
+<img
+  srcset="/images/photography/street_640.webp 320w, ..."
+  src="/images/photography/street_960.webp"
+  loading="eager"
+  fetchpriority="high"
+  alt="Street photography"
+/>
+```
+
+**Bonus - Preload dans layout**:
+```heex
+<!-- lib/portfolio_web/components/layouts/root.html.heex -->
+<link 
+  rel="preload" 
+  as="image" 
+  href="/images/photography/street_960.webp"
+  imagesrcset="/images/photography/street_640.webp 320w, ..."
+/>
+```
+
+**Acceptance Criteria**:
+- [ ] ✅ Images hero utilisent `loading="eager"`
+- [ ] ✅ Attribut `fetchpriority="high"` ajouté
+- [ ] ✅ Preload des images critiques (optionnel)
+- [ ] ✅ Score LCP < 2.5s (Google PageSpeed)
+- [ ] ✅ Pas de régression sur autres images
+
+**Priority**: 🟢 FAIBLE - Optimisation performance
+
+---
+
+### Issue #113 - Ajouter tests frontend LiveView (4-6h)
+**Status**: Todo  
+**Category**: Frontend / Testing  
+**Impact**: FAIBLE - Prévention régressions, confiance refactoring
+
+**Problem**:
+- ❌ **Aucun test frontend LiveView**
+- Impossible de détecter régressions UI
+- Refactoring risqué
+- Pas de garantie que features fonctionnent
+
+**Phase 1 - Tests Navigation (2h)**:
+
+Files to create:
+- `test/portfolio_web/live/photography_live/timeline_test.exs`
+- `test/portfolio_web/live/photography_live/gallery_test.exs`
+
+Test coverage:
+- Navigation entre pages
+- Affichage albums par année
+- Ouverture modal photos
+- Filtres par type
+
+**Phase 2 - Tests Interaction (2h)**:
+
+Files to create:
+- `test/portfolio_web/live/admin/album_live/edit_test.exs`
+- `test/portfolio_web/live/admin/album_live/index_test.exs`
+
+Test coverage:
+- Upload photos
+- Réorganisation drag & drop
+- Édition métadonnées
+- Suppression album
+
+**Phase 3 - Tests Accessibilité (1-2h)**:
+
+Test coverage:
+- Présence attributs ARIA
+- Navigation clavier
+- Labels formulaires
+- Semantic HTML
+
+**Exemple de test**:
+```elixir
+defmodule PortfolioWeb.PhotographyLive.TimelineTest do
+  use PortfolioWeb.ConnCase, async: true
+  
+  import Phoenix.LiveViewTest
+  
+  test "displays published albums by year", %{conn: conn} do
+    album_2024 = insert(:album, published: true, date_prise_vue: ~D[2024-06-15])
+    album_2023 = insert(:album, published: true, date_prise_vue: ~D[2023-08-20])
+    
+    {:ok, view, html} = live(conn, ~p"/photography")
+    
+    assert html =~ "2024"
+    assert html =~ "2023"
+    assert has_element?(view, "#album-#{album_2024.id}")
+    assert has_element?(view, "#album-#{album_2023.id}")
+  end
+  
+  test "opens photo modal on click", %{conn: conn} do
+    album = insert(:album, :with_photos, published: true)
+    photo = List.first(album.photos)
+    
+    {:ok, view, _html} = live(conn, ~p"/photography")
+    
+    view
+    |> element("#photo-#{photo.id}")
+    |> render_click()
+    
+    assert has_element?(view, "#photo-modal")
+    assert has_element?(view, "img[src*='#{photo.file_path}']")
+  end
+end
+```
+
+**Acceptance Criteria**:
+- [ ] ✅ Tests navigation principales routes
+- [ ] ✅ Tests interactions utilisateur
+- [ ] ✅ Tests formulaires admin
+- [ ] ✅ Tests accessibilité basiques
+- [ ] ✅ Couverture > 60% sur LiveViews
+- [ ] ✅ Tous les tests passent
+
+**Priority**: 🟢 FAIBLE - Amélioration qualité
+
+---
+
+## 📊 Summary (Updated avec Frontend)
+
+### Par Priorité
+- **🔴 High Priority**: 8 issues (32-43h total)
+  - #86-88: Issues originales (8-10h)
+  - #97-99: Issues backend URGENT (19-25h)
+  - #106-107: Issues frontend URGENT (2.5-3.5h)
+
+- **🟡 Medium Priority**: 9 issues (21-29h total)
+  - #89-91: Issues originales (5-6h)
+  - #100-102: Issues backend IMPORTANT (10-14h)
+  - #108-110: Issues frontend IMPORTANT (4-6h)
+
+- **🟢 Low Priority**: 11 issues (15-22h total)
+  - #92-96: Issues originales (3-4h)
+  - #103-105: Issues backend (5-9h)
+  - #111-113: Issues frontend (7-10h)
+
+### Par Catégorie
+- **Testing**: 3 issues (#91, #97, #113) - 22-29h - 🔴 CRITIQUE
+- **Performance**: 5 issues (#90, #98, #99, #102, #112) - 7-10h - 🔴 URGENT
+- **Architecture**: 3 issues (#87, #100, #101) - 12-16h - 🟡 IMPORTANT
+- **Frontend/Best Practices**: 2 issues (#106, #107) - 2.5-3.5h - 🔴 URGENT
+- **Accessibilité**: 1 issue (#108) - 1-2h - 🟡 IMPORTANT
+- **i18n**: 3 issues (#88, #92, #109) - 4-6h - 🟡 IMPORTANT
+- **Code Quality**: 4 issues (#89, #95, #96, #110) - 2.5-3h - 🟡 MOYEN
+- **UX**: 2 issues (#94, #111) - 2.5-3.5h - 🟢 FAIBLE
+- **Scalability**: 2 issues (#103, #104) - 3-5h - 🟢 FAIBLE
+- **Data**: 1 issue (#86) - 3-4h - 🔴 IMPORTANT
+- **Maintainability**: 1 issue (#93) - 1h - 🟢 FAIBLE
+- **Observability**: 1 issue (#105) - 2-3h - 🟢 FAIBLE
+
+**Total Estimated Effort**: 68-94 heures (3-4 semaines à temps plein)
+
+### Roadmap Recommandé (Updated)
+
+**Sprint 1 (1 semaine) - CRITIQUE** :
+1. #97 - Tests backend complets (priorité absolue) - 16-20h
+2. #106 - Retirer scripts inline (frontend) - 2-3h
+3. #107 - Retirer console.log() (frontend) - 30min
+4. #98 - Fix N+1 PhotoRepository - 2-3h
+5. #99 - Index DB - 1-2h
+
+**Sprint 2 (1 semaine) - IMPORTANT** :
+6. #100 - Event handlers réels - 6-8h
+7. #101 - Gestion d'erreurs services - 3-4h
+8. #108 - Attributs alt images (a11y) - 1-2h
+9. #109 - Traduire admin (i18n) - 2-3h
+10. #110 - LocaleHook refactoring - 1h
+
+**Sprint 3 (3-4 jours) - AMÉLIORATIONS** :
+11. #86 - Migration hardcoded albums - 3-4h
+12. #87 - Extract LiveComponents - 3-4h
+13. #102 - Optimiser AdminAlbumLive - 1-2h
+14. #88 - i18n admin (si pas fait) - 1-2h
+
+**Sprint 4 (2-3 jours) - POLISH** :
+15. #111 - Loading states - 2-3h
+16. #112 - Optimiser images hero - 1h
+17. #113 - Tests frontend - 4-6h
+18. Issues restantes selon priorité
+
 **Next Steps**:
-1. **COMMENCER PAR #97** (tests) - Blocage pour tout le reste
-2. Créer feature branches: `issue/97-comprehensive-tests`, etc.
-3. Run `mix test` après chaque change
-4. Run `mix precommit` avant merge
-5. Mettre à jour ce roadmap au fur et à mesure
+1. **COMMENCER PAR #97** (tests backend) - Blocage pour tout le reste
+2. **PUIS #106 et #107** (scripts inline + console.log) - Quick wins frontend
+3. Créer feature branches: `issue/97-comprehensive-tests`, `issue/106-remove-inline-scripts`, etc.
+4. Run `mix test` après chaque change
+5. Run `mix precommit` avant merge
+6. Mettre à jour ce roadmap au fur et à mesure
+
+### Scores Actuels (Post Review Complète)
+
+**Backend** : 8.5/10 (architecture) → 6.4/10 (réel avec tests à 0%)  
+**Frontend** : 7.5/10 (global)
+
+**Score Global Projet** : **7.0/10**
+
+**Potentiel avec tous les fixes** : **8.8/10** ⭐⭐⭐⭐⭐
