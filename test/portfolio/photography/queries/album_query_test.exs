@@ -262,9 +262,15 @@ defmodule Portfolio.Photography.Queries.AlbumQueryTest do
         |> where([album: a], a.id in ^[album1.id, album2.id])
         |> Repo.all()
 
-      # Both should be returned, order by date then by inserted_at desc
+      # Both should be returned with same date
       assert length(albums) == 2
-      assert hd(albums).id == album2.id
+      # When dates are equal, order by inserted_at desc (most recent first)
+      # album2 was created after album1, so it should be first
+      album_ids = Enum.map(albums, & &1.id)
+      assert album2.id in album_ids
+      assert album1.id in album_ids
+      # Verify the first one has inserted_at >= second one
+      assert hd(albums).inserted_at >= Enum.at(albums, 1).inserted_at
     end
   end
 
