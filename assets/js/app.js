@@ -33,6 +33,8 @@ import {
   AnimatePhotographyGallery,
   DarkModeSwitch,
   PhotoSortable,
+  ParallaxHero,
+  SmoothScroll,
 } from "./hooks";
 
 function getSystemTheme() {
@@ -65,6 +67,8 @@ Hooks.HorizontalScrollFadeIn = HorizontalScrollFadeIn;
 Hooks.AnimatePhotographyGallery = AnimatePhotographyGallery;
 Hooks.DarkModeSwitch = DarkModeSwitch;
 Hooks.PhotoSortable = PhotoSortable;
+Hooks.ParallaxHero = ParallaxHero;
+Hooks.SmoothScroll = SmoothScroll;
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

@@ -424,6 +424,59 @@ export const DarkModeSwitch = {
   },
 };
 
+export const ParallaxHero = {
+  mounted() {
+    this.handleScroll = () => {
+      const scrolled = window.pageYOffset;
+      const img = this.el.querySelector("img");
+      if (img) {
+        const speed = scrolled * 0.5;
+        img.style.transform = `translateY(${speed}px)`;
+      }
+    };
+
+    window.addEventListener("scroll", this.handleScroll, { passive: true });
+  },
+
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+};
+
+export const SmoothScroll = {
+  mounted() {
+    // Handle smooth scroll for all anchor links within this element
+    const anchors = this.el.querySelectorAll('a[href^="#"]');
+
+    this.handleClick = (e) => {
+      e.preventDefault();
+      const href = e.currentTarget.getAttribute("href");
+      const target = document.querySelector(href);
+
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    };
+
+    anchors.forEach((anchor) => {
+      anchor.addEventListener("click", this.handleClick);
+    });
+
+    this.anchors = anchors;
+  },
+
+  destroyed() {
+    if (this.anchors) {
+      this.anchors.forEach((anchor) => {
+        anchor.removeEventListener("click", this.handleClick);
+      });
+    }
+  },
+};
+
 export const PhotoSortable = {
   mounted() {
     console.log("PhotoSortable mounted", this.el);
