@@ -210,20 +210,42 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
         end
       end)
       |> Multi.run(:reorder_photos, fn repo, %{validate_photos: _photos} ->
-        # Update display_order for each photo
-        # Note: For better performance with large albums (>100 photos),
-        # this could be optimized with a single UPDATE query using CASE WHEN
-        updated_count =
-          Enum.with_index(photo_ids)
-          |> Enum.reduce(0, fn {photo_id, index}, acc ->
-            {count, _} =
-              from(p in Photo, where: p.id == ^photo_id)
-              |> repo.update_all(set: [display_order: index, updated_at: DateTime.utc_now()])
+        # Handle empty list edge case
+        if Enum.empty?(photo_ids) do
+          {:ok, 0}
+        else
+          # Optimized: Single UPDATE query using CASE WHEN instead of N queries
+          # 100 photos: 100 UPDATE queries → 1 UPDATE query
+          now = DateTime.utc_now()
 
-            acc + count
-          end)
+          # Convert UUIDs to binary format for Postgrex
+          binary_photo_ids = Enum.map(photo_ids, &Ecto.UUID.dump!/1)
 
-        {:ok, updated_count}
+          # Build CASE WHEN clauses for display_order
+          case_whens =
+            photo_ids
+            |> Enum.with_index()
+            |> Enum.map_join(" ", fn {_id, idx} ->
+              "WHEN id = $#{idx + 2}::uuid THEN #{idx}"
+            end)
+
+          # Build parameterized query
+          query = """
+          UPDATE photos
+          SET
+            display_order = CASE #{case_whens} END,
+            updated_at = $1
+          WHERE id = ANY($#{length(photo_ids) + 2}::uuid[])
+          """
+
+          # Parameters: [updated_at, photo_id1_binary, ..., photo_idN_binary, array_of_photo_ids_binary]
+          params = [now] ++ binary_photo_ids ++ [binary_photo_ids]
+
+          case repo.query(query, params) do
+            {:ok, %{num_rows: count}} -> {:ok, count}
+            {:error, reason} -> {:error, reason}
+          end
+        end
       end)
 
     case Repo.transaction(multi) do
