@@ -429,4 +429,17 @@ defmodule Portfolio.Auth do
     |> User.profile_changeset(attrs)
     |> Repo.update()
   end
+
+  @doc """
+  Compte le nombre total d'utilisateurs dans le système.
+
+  ## Exemples
+
+      iex> count_users()
+      5
+  """
+  @spec count_users() :: non_neg_integer()
+  def count_users do
+    Repo.aggregate(User, :count)
+  end
 end

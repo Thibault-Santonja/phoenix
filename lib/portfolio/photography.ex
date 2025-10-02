@@ -431,4 +431,17 @@ defmodule Portfolio.Photography do
       :taiwan
     ]
   end
+
+  @doc """
+  Compte le nombre de photos dans un album.
+
+  ## Exemples
+
+      iex> count_photos_in_album(album_id)
+      42
+  """
+  @spec count_photos_in_album(Ecto.UUID.t()) :: non_neg_integer()
+  def count_photos_in_album(album_id) do
+    PhotoRepository.count_by_album(album_id)
+  end
 end

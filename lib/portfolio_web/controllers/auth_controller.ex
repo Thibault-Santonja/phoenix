@@ -24,7 +24,7 @@ defmodule PortfolioWeb.AuthController do
             conn
             |> put_session(:session_token, session.token)
             |> put_flash(:info, "Connexion réussie ! Bienvenue #{user.email}")
-            |> redirect(to: ~p"/admin/albums")
+            |> redirect(to: ~p"/admin")
 
           {:error, _changeset} ->
             conn

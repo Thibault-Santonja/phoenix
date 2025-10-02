@@ -255,6 +255,20 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
     end
   end
 
+  @doc """
+  Compte le nombre de photos dans un album.
+
+  ## Exemples
+
+      iex> count_by_album(album_id)
+      42
+  """
+  @spec count_by_album(Ecto.UUID.t()) :: non_neg_integer()
+  def count_by_album(album_id) do
+    from(p in Photo, where: p.album_id == ^album_id)
+    |> Repo.aggregate(:count)
+  end
+
   # Applique les preloads à la query en utilisant PhotoQuery
   @spec apply_preload(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
   defp apply_preload(query, nil), do: query

@@ -103,6 +103,9 @@ defmodule PortfolioWeb.Router do
 
     live_session :require_authenticated_admin,
       on_mount: [] do
+      # Tableau de bord
+      live "/", DashboardLive.Index, :index
+
       # Gestion des albums
       live "/albums", AlbumLive.Index, :index
       live "/albums/new", AlbumLive.New, :new
