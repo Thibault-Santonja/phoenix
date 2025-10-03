@@ -442,4 +442,17 @@ defmodule Portfolio.Auth do
   def count_users do
     Repo.aggregate(User, :count)
   end
+
+  @doc """
+  Liste tous les utilisateurs du système.
+
+  ## Exemples
+
+      iex> list_users()
+      [%User{}, %User{}]
+  """
+  @spec list_users() :: [User.t()]
+  def list_users do
+    Repo.all(User)
+  end
 end

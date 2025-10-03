@@ -80,7 +80,10 @@
       </div>
 
       <!-- Utilisateurs -->
-      <div class="bg-white rounded-lg shadow p-6 border-l-4 border-orange-500">
+      <.link
+        navigate={~p"/admin/users"}
+        class="bg-white rounded-lg shadow p-6 border-l-4 border-orange-500 hover:shadow-lg hover:border-orange-600 transition-all cursor-pointer block"
+      >
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-gray-600">Utilisateurs</p>
@@ -94,7 +97,13 @@
             </svg>
           </div>
         </div>
-      </div>
+        <div class="mt-4 flex items-center text-sm text-orange-600 font-medium">
+          <span>Voir la liste</span>
+          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </.link>
     </div>
   </section>
 
