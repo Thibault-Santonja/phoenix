@@ -32,6 +32,59 @@
     </div>
   </div>
 
+  <!-- Filtres -->
+  <div class="mt-6 flex items-center gap-2">
+    <span class="text-sm font-medium text-gray-700">Filtrer :</span>
+    <.link
+      navigate={~p"/admin/albums"}
+      class={[
+        "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors",
+        if @filter == nil do
+          "bg-indigo-100 text-indigo-800"
+        else
+          "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        end
+      ]}
+    >
+      Tous
+      <span class="ml-1.5 text-xs">
+        (<%= length(Photography.list_albums()) %>)
+      </span>
+    </.link>
+    <.link
+      navigate={~p"/admin/albums?filter=published"}
+      class={[
+        "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors",
+        if @filter == "published" do
+          "bg-green-100 text-green-800"
+        else
+          "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        end
+      ]}
+    >
+      Publiés
+      <span class="ml-1.5 text-xs">
+        (<%= length(Photography.list_albums(published: true)) %>)
+      </span>
+    </.link>
+    <.link
+      navigate={~p"/admin/albums?filter=draft"}
+      class={[
+        "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors",
+        if @filter == "draft" do
+          "bg-orange-100 text-orange-800"
+        else
+          "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        end
+      ]}
+    >
+      Brouillons
+      <span class="ml-1.5 text-xs">
+        (<%= length(Photography.list_albums(published: false)) %>)
+      </span>
+    </.link>
+  </div>
+
   <%= if @albums == [] do %>
     <div class="mt-8 text-center">
       <svg

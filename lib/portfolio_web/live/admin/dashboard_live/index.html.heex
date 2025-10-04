@@ -15,7 +15,10 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <!-- Total Albums -->
-      <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+      <.link
+        navigate={~p"/admin/albums"}
+        class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500 hover:shadow-lg hover:border-blue-600 transition-all cursor-pointer block"
+      >
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-gray-600">Total Albums</p>
@@ -29,14 +32,24 @@
             </svg>
           </div>
         </div>
-        <div class="mt-4 flex items-center text-sm">
-          <span class="text-green-600 font-medium"><%= @stats.published_albums %></span>
-          <span class="text-gray-600 ml-1">publiés</span>
-          <span class="text-gray-400 mx-2">•</span>
-          <span class="text-gray-600"><%= @stats.draft_albums %></span>
-          <span class="text-gray-600 ml-1">brouillons</span>
+        <div class="mt-4 flex items-center text-sm gap-2 flex-wrap">
+          <.link
+            navigate={~p"/admin/albums?filter=published"}
+            class="text-green-600 font-medium hover:text-green-700 hover:underline"
+            onclick="event.stopPropagation()"
+          >
+            <%= @stats.published_albums %> publiés
+          </.link>
+          <span class="text-gray-400">•</span>
+          <.link
+            navigate={~p"/admin/albums?filter=draft"}
+            class="text-orange-600 font-medium hover:text-orange-700 hover:underline"
+            onclick="event.stopPropagation()"
+          >
+            <%= @stats.draft_albums %> brouillons
+          </.link>
         </div>
-      </div>
+      </.link>
 
       <!-- Total Photos -->
       <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">

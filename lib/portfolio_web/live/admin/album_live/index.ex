@@ -18,17 +18,22 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    albums = Photography.list_albums(preload: [:photos])
-
     {:ok,
      socket
-     |> assign(:albums, albums)
-     |> assign(:page_title, "Albums")}
+     |> assign(:page_title, "Albums")
+     |> assign(:filter, nil)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    filter = params["filter"]
+    albums = load_albums(filter)
+
+    {:noreply,
+     socket
+     |> assign(:filter, filter)
+     |> assign(:albums, albums)
+     |> apply_action(socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :index, _params) do
@@ -36,13 +41,27 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     |> assign(:page_title, "Albums")
   end
 
+  defp load_albums(nil) do
+    Photography.list_albums(preload: [:photos])
+  end
+
+  defp load_albums("draft") do
+    Photography.list_albums(published: false, preload: [:photos])
+  end
+
+  defp load_albums("published") do
+    Photography.list_albums(published: true, preload: [:photos])
+  end
+
+  defp load_albums(_), do: Photography.list_albums(preload: [:photos])
+
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     album = Photography.get_album!(id)
 
     case Photography.delete_album(album) do
       {:ok, _album} ->
-        albums = Photography.list_albums(preload: [:photos])
+        albums = load_albums(socket.assigns.filter)
 
         {:noreply,
          socket
@@ -62,7 +81,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
     case Photography.update_album(album, %{published: !album.published}) do
       {:ok, _album} ->
-        albums = Photography.list_albums(preload: [:photos])
+        albums = load_albums(socket.assigns.filter)
 
         {:noreply,
          socket
