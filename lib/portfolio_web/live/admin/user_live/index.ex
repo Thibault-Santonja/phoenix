@@ -16,16 +16,34 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    users = Auth.list_users()
-
     {:ok,
      socket
      |> assign(:page_title, "Utilisateurs")
-     |> assign(:users, users)}
+     |> assign(:filter, nil)}
   end
 
   @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
+  def handle_params(params, _url, socket) do
+    filter = params["filter"]
+    users = load_users(filter)
+
+    {:noreply,
+     socket
+     |> assign(:filter, filter)
+     |> assign(:users, users)}
   end
+
+  defp load_users(nil), do: Auth.list_users()
+
+  defp load_users("admin") do
+    Auth.list_users()
+    |> Enum.filter(&(&1.role == "admin"))
+  end
+
+  defp load_users("user") do
+    Auth.list_users()
+    |> Enum.filter(&(&1.role == "user"))
+  end
+
+  defp load_users(_), do: Auth.list_users()
 end

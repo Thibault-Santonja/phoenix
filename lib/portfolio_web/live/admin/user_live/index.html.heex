@@ -68,13 +68,13 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <span class={[
                 "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                if user.role == :admin do
+                if user.role == "admin" do
                   "bg-purple-100 text-purple-800"
                 else
                   "bg-gray-100 text-gray-800"
                 end
               ]}>
-                <%= String.capitalize(to_string(user.role)) %>
+                <%= String.capitalize(user.role) %>
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -115,23 +115,55 @@
 
   <!-- Statistiques en bas -->
   <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+    <.link
+      navigate={~p"/admin/users"}
+      class={[
+        "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
+        if @filter == nil do
+          "border-l-4 border-l-blue-500"
+        else
+          "hover:shadow-lg hover:border-blue-300"
+        end
+      ]}
+    >
       <div class="text-sm font-medium text-gray-600">Total utilisateurs</div>
-      <div class="mt-1 text-2xl font-bold text-gray-900"><%= length(@users) %></div>
-    </div>
+      <div class="mt-1 text-2xl font-bold text-gray-900">
+        <%= length(Auth.list_users()) %>
+      </div>
+    </.link>
 
-    <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+    <.link
+      navigate={if @filter == "admin", do: ~p"/admin/users", else: ~p"/admin/users?filter=admin"}
+      class={[
+        "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
+        if @filter == "admin" do
+          "border-l-4 border-l-purple-500"
+        else
+          "hover:shadow-lg hover:border-purple-300"
+        end
+      ]}
+    >
       <div class="text-sm font-medium text-gray-600">Administrateurs</div>
       <div class="mt-1 text-2xl font-bold text-purple-600">
-        <%= Enum.count(@users, &(&1.role == :admin)) %>
+        <%= Enum.count(Auth.list_users(), &(&1.role == "admin")) %>
       </div>
-    </div>
+    </.link>
 
-    <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+    <.link
+      navigate={if @filter == "user", do: ~p"/admin/users", else: ~p"/admin/users?filter=user"}
+      class={[
+        "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
+        if @filter == "user" do
+          "border-l-4 border-l-gray-500"
+        else
+          "hover:shadow-lg hover:border-gray-300"
+        end
+      ]}
+    >
       <div class="text-sm font-medium text-gray-600">Utilisateurs</div>
       <div class="mt-1 text-2xl font-bold text-gray-600">
-        <%= Enum.count(@users, &(&1.role == :user)) %>
+        <%= Enum.count(Auth.list_users(), &(&1.role == "user")) %>
       </div>
-    </div>
+    </.link>
   </div>
 </div>
