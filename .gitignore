@@ -44,7 +44,6 @@ npm-debug.log
 notes.md
 
 .gitignore
-AGENTS.md
 docs/
 docs/**/**.md
 priv/static/uploads/*
