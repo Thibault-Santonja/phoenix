@@ -90,7 +90,7 @@ defmodule PortfolioWeb.AuthLive.LoginTest do
 
     default_attrs = %{
       email: "test#{System.unique_integer([:positive])}@example.com",
-      role: "admin"
+      role: :admin
     }
 
     %User{}

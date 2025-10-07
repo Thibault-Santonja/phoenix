@@ -1,16 +1,6 @@
 <div class="px-4 sm:px-6 lg:px-8 py-8">
   <!-- Bouton retour -->
-  <div class="mb-6">
-    <.link
-      navigate={~p"/admin"}
-      class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
-    >
-      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-      Retour au tableau de bord
-    </.link>
-  </div>
+  <.back_to_dashboard />
 
   <div class="sm:flex sm:items-center sm:justify-between">
     <div class="sm:flex-auto">
@@ -44,8 +34,8 @@
       </.link>
     </div>
   </div>
-
-  <!-- Filtres -->
+  
+<!-- Filtres -->
   <div class="mt-6 flex items-center gap-2">
     <span class="text-sm font-medium text-gray-700">Filtrer :</span>
     <.link
@@ -61,7 +51,7 @@
     >
       Tous
       <span class="ml-1.5 text-xs">
-        (<%= length(Photography.list_albums()) %>)
+        ({length(Photography.list_albums())})
       </span>
     </.link>
     <.link
@@ -77,7 +67,7 @@
     >
       Publiés
       <span class="ml-1.5 text-xs">
-        (<%= length(Photography.list_albums(published: true)) %>)
+        ({length(Photography.list_albums(published: true))})
       </span>
     </.link>
     <.link
@@ -93,7 +83,7 @@
     >
       Brouillons
       <span class="ml-1.5 text-xs">
-        (<%= length(Photography.list_albums(published: false)) %>)
+        ({length(Photography.list_albums(published: false))})
       </span>
     </.link>
   </div>

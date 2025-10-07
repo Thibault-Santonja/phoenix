@@ -5,12 +5,12 @@ defmodule Portfolio.Auth.UserTest do
 
   describe "changeset/2" do
     test "valid changeset with required fields" do
-      changeset = User.changeset(%User{}, %{email: "test@example.com", role: "admin"})
+      changeset = User.changeset(%User{}, %{email: "test@example.com", role: :admin})
       assert changeset.valid?
     end
 
     test "requires email" do
-      changeset = User.changeset(%User{}, %{role: "admin"})
+      changeset = User.changeset(%User{}, %{role: :admin})
       refute changeset.valid?
       assert "can't be blank" in errors_on(changeset).email
     end
@@ -43,7 +43,7 @@ defmodule Portfolio.Auth.UserTest do
       ]
 
       for valid_email <- valid_emails do
-        changeset = User.changeset(%User{}, %{email: valid_email, role: "admin"})
+        changeset = User.changeset(%User{}, %{email: valid_email, role: :admin})
         assert changeset.valid?, "#{valid_email} should be valid"
       end
     end
@@ -65,52 +65,52 @@ defmodule Portfolio.Auth.UserTest do
       ]
 
       for invalid_email <- invalid_emails do
-        changeset = User.changeset(%User{}, %{email: invalid_email, role: "admin"})
+        changeset = User.changeset(%User{}, %{email: invalid_email, role: :admin})
         refute changeset.valid?, "#{invalid_email} should be invalid"
         assert "doit être une adresse email valide" in errors_on(changeset).email
       end
     end
 
     test "normalizes email to lowercase" do
-      changeset = User.changeset(%User{}, %{email: "Test.User@EXAMPLE.COM", role: "admin"})
+      changeset = User.changeset(%User{}, %{email: "Test.User@EXAMPLE.COM", role: :admin})
       assert changeset.valid?
       assert Ecto.Changeset.get_change(changeset, :email) == "test.user@example.com"
     end
 
     test "validates email max length" do
       long_email = String.duplicate("a", 150) <> "@example.com"
-      changeset = User.changeset(%User{}, %{email: long_email, role: "admin"})
+      changeset = User.changeset(%User{}, %{email: long_email, role: :admin})
       refute changeset.valid?
       assert "should be at most 160 character(s)" in errors_on(changeset).email
     end
 
     test "validates role inclusion" do
-      changeset = User.changeset(%User{}, %{email: "test@example.com", role: "user"})
+      changeset = User.changeset(%User{}, %{email: "test@example.com", role: :invalid_role})
       refute changeset.valid?
       assert "is invalid" in errors_on(changeset).role
     end
 
     test "accepts admin role" do
-      changeset = User.changeset(%User{}, %{email: "test@example.com", role: "admin"})
+      changeset = User.changeset(%User{}, %{email: "test@example.com", role: :admin})
       assert changeset.valid?
     end
 
     test "accepts superadmin role" do
-      changeset = User.changeset(%User{}, %{email: "test@example.com", role: "superadmin"})
+      changeset = User.changeset(%User{}, %{email: "test@example.com", role: :superadmin})
       assert changeset.valid?
     end
 
     test "checks email uniqueness constraint" do
       _user = insert_user(email: "test@example.com")
 
-      changeset = User.changeset(%User{}, %{email: "test@example.com", role: "admin"})
+      changeset = User.changeset(%User{}, %{email: "test@example.com", role: :admin})
       assert {:error, changeset} = Repo.insert(changeset)
       assert "has already been taken" in errors_on(changeset).email
     end
 
     test "accepts optional name field" do
       changeset =
-        User.changeset(%User{}, %{email: "test@example.com", role: "admin", name: "Test User"})
+        User.changeset(%User{}, %{email: "test@example.com", role: :admin, name: "Test User"})
 
       assert changeset.valid?
       assert Ecto.Changeset.get_change(changeset, :name) == "Test User"
@@ -123,7 +123,7 @@ defmodule Portfolio.Auth.UserTest do
       assert changeset.valid?
       # put_change force la valeur, donc on doit vérifier avec apply_changes
       user = Ecto.Changeset.apply_changes(changeset)
-      assert user.role == "admin"
+      assert user.role == :admin
     end
 
     test "requires email for registration" do
@@ -141,7 +141,7 @@ defmodule Portfolio.Auth.UserTest do
     test "automatically sets role to admin" do
       changeset = User.registration_changeset(%User{}, %{email: "test@example.com"})
       user = Ecto.Changeset.apply_changes(changeset)
-      assert user.role == "admin"
+      assert user.role == :admin
     end
 
     test "accepts optional name on registration" do
@@ -217,8 +217,8 @@ defmodule Portfolio.Auth.UserTest do
     end
 
     test "ignores role changes" do
-      user = insert_user(role: "admin")
-      changeset = User.profile_changeset(user, %{role: "superadmin", name: "Test"})
+      user = insert_user(role: :admin)
+      changeset = User.profile_changeset(user, %{role: :superadmin, name: "Test"})
 
       # Role should not be in changes
       refute Map.has_key?(changeset.changes, :role)
@@ -231,7 +231,7 @@ defmodule Portfolio.Auth.UserTest do
 
     default_attrs = %{
       email: "test#{System.unique_integer([:positive])}@example.com",
-      role: "admin"
+      role: :admin
     }
 
     %User{}

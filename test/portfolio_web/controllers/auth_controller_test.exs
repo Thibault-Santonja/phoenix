@@ -12,7 +12,7 @@ defmodule PortfolioWeb.AuthControllerTest do
 
       conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
 
-      assert redirected_to(conn) == ~p"/admin/albums"
+      assert redirected_to(conn) == ~p"/admin"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Connexion réussie"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ user.email
 
@@ -144,7 +144,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
 
       # Le cas normal devrait toujours fonctionner
-      assert redirected_to(conn) == ~p"/admin/albums"
+      assert redirected_to(conn) == ~p"/admin"
     end
 
     test "handles concurrent magic link usage correctly", %{conn: conn} do
@@ -153,7 +153,7 @@ defmodule PortfolioWeb.AuthControllerTest do
 
       # Première utilisation
       conn1 = get(conn, ~p"/auth/magic/#{magic_link.token}")
-      assert redirected_to(conn1) == ~p"/admin/albums"
+      assert redirected_to(conn1) == ~p"/admin"
 
       # Deuxième utilisation (devrait échouer car déjà utilisé)
       conn2 = build_conn() |> get(~p"/auth/magic/#{magic_link.token}")
@@ -230,7 +230,7 @@ defmodule PortfolioWeb.AuthControllerTest do
 
     default_attrs = %{
       email: "test#{System.unique_integer([:positive])}@example.com",
-      role: "admin"
+      role: :admin
     }
 
     %User{}

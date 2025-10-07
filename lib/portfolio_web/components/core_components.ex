@@ -19,6 +19,12 @@ defmodule PortfolioWeb.CoreComponents do
 
   alias Phoenix.LiveView.JS
 
+  # Import verified routes for ~p sigil
+  use Phoenix.VerifiedRoutes,
+    endpoint: PortfolioWeb.Endpoint,
+    router: PortfolioWeb.Router,
+    statics: PortfolioWeb.static_paths()
+
   @doc """
   Renders a modal.
 
@@ -672,5 +678,216 @@ defmodule PortfolioWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  @doc """
+  Renders a dashboard statistic card.
+
+  ## Examples
+
+      <.stat_card
+        title="Total Albums"
+        value={@stats.total_albums}
+        icon="hero-folder"
+        color="blue"
+        navigate={~p"/admin/albums"}
+      />
+
+      <.stat_card
+        title="Total Photos"
+        value={@stats.total_photos}
+        icon="hero-photo"
+        color="green"
+      >
+        <:footer>
+          Optional footer content
+        </:footer>
+      </.stat_card>
+  """
+  attr :title, :string, required: true
+  attr :value, :any, required: true
+  attr :icon, :string, required: true
+  attr :color, :string, default: "blue", values: ["blue", "green", "purple", "orange", "red"]
+  attr :navigate, :string, default: nil
+  attr :class, :string, default: nil
+  slot :footer, doc: "optional footer content"
+
+  def stat_card(assigns) do
+    # Color mappings for border, background, and text
+    color_classes = %{
+      "blue" => %{
+        border: "border-blue-500 hover:border-blue-600",
+        icon_bg: "bg-blue-100",
+        icon_text: "text-blue-600"
+      },
+      "green" => %{
+        border: "border-green-500",
+        icon_bg: "bg-green-100",
+        icon_text: "text-green-600"
+      },
+      "purple" => %{
+        border: "border-purple-500",
+        icon_bg: "bg-purple-100",
+        icon_text: "text-purple-600"
+      },
+      "orange" => %{
+        border: "border-orange-500 hover:border-orange-600",
+        icon_bg: "bg-orange-100",
+        icon_text: "text-orange-600"
+      },
+      "red" => %{
+        border: "border-red-500",
+        icon_bg: "bg-red-100",
+        icon_text: "text-red-600"
+      }
+    }
+
+    assigns = assign(assigns, :color_classes, color_classes[assigns.color])
+
+    ~H"""
+    <div
+      :if={@navigate == nil}
+      class={[
+        "bg-white rounded-lg shadow p-6 border-l-4",
+        @color_classes.border,
+        @class
+      ]}
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">{@title}</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">
+            {@value}
+          </p>
+        </div>
+        <div class={["rounded-full p-3", @color_classes.icon_bg]}>
+          <.icon name={@icon} class={"w-8 h-8 #{@color_classes.icon_text}"} />
+        </div>
+      </div>
+      <div :if={@footer != []} class="mt-4">
+        {render_slot(@footer)}
+      </div>
+    </div>
+
+    <.link
+      :if={@navigate != nil}
+      navigate={@navigate}
+      class={[
+        "bg-white rounded-lg shadow p-6 border-l-4 hover:shadow-lg transition-all cursor-pointer block",
+        @color_classes.border,
+        @class
+      ]}
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">{@title}</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">
+            {@value}
+          </p>
+        </div>
+        <div class={["rounded-full p-3", @color_classes.icon_bg]}>
+          <.icon name={@icon} class={"w-8 h-8 #{@color_classes.icon_text}"} />
+        </div>
+      </div>
+      <div :if={@footer != []} class="mt-4">
+        {render_slot(@footer)}
+      </div>
+    </.link>
+    """
+  end
+
+  @doc """
+  Renders a back to dashboard link.
+
+  ## Examples
+
+      <.back_to_dashboard />
+  """
+  def back_to_dashboard(assigns) do
+    ~H"""
+    <div class="mb-4">
+      <.link
+        navigate={~p"/admin"}
+        class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+      >
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Retour au tableau de bord
+      </.link>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders an action card for quick navigation.
+
+  ## Examples
+
+      <.action_card
+        title="Gérer les albums"
+        description="Créer, modifier et organiser vos albums photo"
+        icon="hero-folder"
+        color="blue"
+        navigate={~p"/admin/albums"}
+      />
+  """
+  attr :title, :string, required: true
+  attr :description, :string, required: true
+  attr :icon, :string, required: true
+  attr :color, :string, default: "blue", values: ["blue", "green", "purple", "orange"]
+  attr :navigate, :string, required: true
+  attr :class, :string, default: nil
+
+  def action_card(assigns) do
+    # Color mappings
+    color_classes = %{
+      "blue" => %{
+        hover: "hover:border-blue-400",
+        icon_bg: "bg-blue-100",
+        icon_text: "text-blue-600"
+      },
+      "green" => %{
+        hover: "hover:border-green-400",
+        icon_bg: "bg-green-100",
+        icon_text: "text-green-600"
+      },
+      "purple" => %{
+        hover: "hover:border-purple-400",
+        icon_bg: "bg-purple-100",
+        icon_text: "text-purple-600"
+      },
+      "orange" => %{
+        hover: "hover:border-orange-400",
+        icon_bg: "bg-orange-100",
+        icon_text: "text-orange-600"
+      }
+    }
+
+    assigns = assign(assigns, :color_classes, color_classes[assigns.color])
+
+    ~H"""
+    <.link
+      navigate={@navigate}
+      class={[
+        "bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 border border-gray-200",
+        @color_classes.hover,
+        @class
+      ]}
+    >
+      <div class="flex items-start">
+        <div class={["rounded-lg p-3", @color_classes.icon_bg]}>
+          <.icon name={@icon} class={"w-6 h-6 #{@color_classes.icon_text}"} />
+        </div>
+        <div class="ml-4 flex-1">
+          <h3 class="text-lg font-semibold text-gray-900">{@title}</h3>
+          <p class="mt-1 text-sm text-gray-600">
+            {@description}
+          </p>
+        </div>
+        <.icon name="hero-chevron-right" class="w-5 h-5 text-gray-400" />
+      </div>
+    </.link>
+    """
   end
 end

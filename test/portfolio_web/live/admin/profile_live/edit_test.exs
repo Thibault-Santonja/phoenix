@@ -15,7 +15,7 @@ defmodule PortfolioWeb.Admin.ProfileLive.EditTest do
 
       assert html =~ "Mon profil"
       assert html =~ user.email
-      assert html =~ user.role
+      assert html =~ String.capitalize(to_string(user.role))
       assert has_element?(view, "form")
       assert has_element?(view, "input[name=\"user[name]\"]")
     end
@@ -177,11 +177,28 @@ defmodule PortfolioWeb.Admin.ProfileLive.EditTest do
 
     default_attrs = %{
       email: "test#{System.unique_integer([:positive])}@example.com",
-      role: "admin"
+      role: :admin
     }
 
     %User{}
     |> User.registration_changeset(Map.merge(default_attrs, attrs))
     |> Repo.insert!()
+  end
+
+  describe "navigation" do
+    setup :register_and_log_in_user
+
+    test "has back button to dashboard", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/admin/profile")
+
+      assert html =~ "Retour au tableau de bord"
+      assert html =~ ~s(href="/admin")
+    end
+
+    test "back button navigates to dashboard", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/profile")
+
+      assert has_element?(view, "a[href=\"/admin\"]")
+    end
   end
 end

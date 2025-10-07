@@ -10,8 +10,8 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
 
   use PortfolioWeb, :live_view
 
-  alias Portfolio.Photography
   alias Portfolio.Auth
+  alias Portfolio.Photography
 
   on_mount PortfolioWeb.LiveAuth
 

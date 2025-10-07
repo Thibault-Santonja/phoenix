@@ -76,7 +76,7 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   def require_admin_role(conn, _opts) do
     user = conn.assigns[:current_user]
 
-    if user && user.role in ["admin", "superadmin"] do
+    if user && user.role in [:admin, :superadmin] do
       conn
     else
       conn

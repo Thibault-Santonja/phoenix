@@ -88,6 +88,9 @@ defmodule PortfolioWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
+      import PortfolioWeb.CoreComponents,
+        only: [stat_card: 1, action_card: 1, back_to_dashboard: 1]
+
       use PortfolioWeb.Components.MishkaComponents
 
       # Shortcut for generating JS commands

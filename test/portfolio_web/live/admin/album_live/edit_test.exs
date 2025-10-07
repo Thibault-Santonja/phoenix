@@ -437,7 +437,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
   # Helper pour créer et authentifier un utilisateur admin
   defp register_and_log_in_user(%{conn: conn}) do
-    user = create_user(role: "admin")
+    user = create_user(role: :admin)
     session = create_session(user_id: user.id)
 
     conn = init_test_session(conn, %{session_token: session.token})

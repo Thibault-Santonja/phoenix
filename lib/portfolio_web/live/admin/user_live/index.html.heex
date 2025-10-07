@@ -1,39 +1,43 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- En-tête avec bouton retour -->
-  <div class="mb-8">
-    <.link
-      navigate={~p"/admin"}
-      class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
-    >
-      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-      Retour au tableau de bord
-    </.link>
+  <.back_to_dashboard />
 
+  <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900">
       Gestion des utilisateurs
     </h1>
     <p class="mt-2 text-gray-600">
-      <%= length(@users) %> utilisateur(s) au total
+      {length(@users)} utilisateur(s) au total
     </p>
   </div>
-
-  <!-- Liste des utilisateurs -->
+  
+<!-- Liste des utilisateurs -->
   <div class="bg-white shadow-md rounded-lg overflow-hidden">
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
-          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
             Utilisateur
           </th>
-          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
             Rôle
           </th>
-          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
             Créé le
           </th>
-          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
             Dernière activité
           </th>
           <th scope="col" class="relative px-6 py-3">
@@ -49,17 +53,17 @@
                 <div class="flex-shrink-0 h-10 w-10">
                   <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                     <span class="text-blue-600 font-semibold text-sm">
-                      <%= String.first(user.email) |> String.upcase() %>
+                      {String.first(user.email) |> String.upcase()}
                     </span>
                   </div>
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
-                    <%= user.email %>
+                    {user.email}
                   </div>
                   <%= if user.name do %>
                     <div class="text-sm text-gray-500">
-                      <%= user.name %>
+                      {user.name}
                     </div>
                   <% end %>
                 </div>
@@ -68,20 +72,20 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <span class={[
                 "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                if user.role == "admin" do
+                if user.role == :admin do
                   "bg-purple-100 text-purple-800"
                 else
                   "bg-gray-100 text-gray-800"
                 end
               ]}>
-                <%= String.capitalize(user.role) %>
+                {user.role |> Atom.to_string() |> String.capitalize()}
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <%= Calendar.strftime(user.inserted_at, "%d/%m/%Y") %>
+              {Calendar.strftime(user.inserted_at, "%d/%m/%Y")}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <%= Calendar.strftime(user.updated_at, "%d/%m/%Y à %H:%M") %>
+              {Calendar.strftime(user.updated_at, "%d/%m/%Y à %H:%M")}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <%= if user.id == @current_user.id do %>
@@ -89,7 +93,12 @@
               <% else %>
                 <button class="text-gray-400 hover:text-gray-600 disabled:opacity-50" disabled>
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                    />
                   </svg>
                 </button>
               <% end %>
@@ -99,12 +108,22 @@
       </tbody>
     </table>
   </div>
-
-  <!-- Message si aucun utilisateur -->
+  
+<!-- Message si aucun utilisateur -->
   <%= if Enum.empty?(@users) do %>
     <div class="text-center py-12">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+        />
       </svg>
       <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun utilisateur</h3>
       <p class="mt-1 text-sm text-gray-500">
@@ -112,11 +131,11 @@
       </p>
     </div>
   <% end %>
-
-  <!-- Statistiques en bas -->
+  
+<!-- Statistiques en bas -->
   <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
     <.link
-      navigate={~p"/admin/users"}
+      patch={~p"/admin/users"}
       class={[
         "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
         if @filter == nil do
@@ -128,12 +147,12 @@
     >
       <div class="text-sm font-medium text-gray-600">Total utilisateurs</div>
       <div class="mt-1 text-2xl font-bold text-gray-900">
-        <%= length(Auth.list_users()) %>
+        {length(Auth.list_users())}
       </div>
     </.link>
 
     <.link
-      navigate={if @filter == "admin", do: ~p"/admin/users", else: ~p"/admin/users?filter=admin"}
+      patch={if @filter == "admin", do: ~p"/admin/users", else: ~p"/admin/users?filter=admin"}
       class={[
         "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
         if @filter == "admin" do
@@ -145,12 +164,12 @@
     >
       <div class="text-sm font-medium text-gray-600">Administrateurs</div>
       <div class="mt-1 text-2xl font-bold text-purple-600">
-        <%= Enum.count(Auth.list_users(), &(&1.role == "admin")) %>
+        {Enum.count(Auth.list_users(), &(&1.role == :admin))}
       </div>
     </.link>
 
     <.link
-      navigate={if @filter == "user", do: ~p"/admin/users", else: ~p"/admin/users?filter=user"}
+      patch={if @filter == "user", do: ~p"/admin/users", else: ~p"/admin/users?filter=user"}
       class={[
         "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
         if @filter == "user" do
@@ -162,7 +181,7 @@
     >
       <div class="text-sm font-medium text-gray-600">Utilisateurs</div>
       <div class="mt-1 text-2xl font-bold text-gray-600">
-        <%= Enum.count(Auth.list_users(), &(&1.role == "user")) %>
+        {Enum.count(Auth.list_users(), &(&1.role == :user))}
       </div>
     </.link>
   </div>

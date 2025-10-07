@@ -13,7 +13,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
     end
 
     test "allows access when authenticated", %{conn: conn} do
-      user = create_user(role: "admin")
+      user = create_user(role: :admin)
       session = create_session(user: user)
       conn = init_test_session(conn, %{session_token: session.token})
 
@@ -22,7 +22,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
     end
 
     test "displays current user information", %{conn: conn} do
-      user = create_user(email: "admin@example.com", name: "Admin User", role: "admin")
+      user = create_user(email: "admin@example.com", name: "Admin User", role: :admin)
       session = create_session(user: user)
       conn = init_test_session(conn, %{session_token: session.token})
 
@@ -32,7 +32,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
     end
 
     test "displays user email when name is not set", %{conn: conn} do
-      user = create_user(email: "admin@example.com", role: "admin")
+      user = create_user(email: "admin@example.com", role: :admin)
       session = create_session(user: user)
       conn = init_test_session(conn, %{session_token: session.token})
 
@@ -41,7 +41,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
     end
 
     test "provides logout link", %{conn: conn} do
-      user = create_user(role: "admin")
+      user = create_user(role: :admin)
       session = create_session(user: user)
       conn = init_test_session(conn, %{session_token: session.token})
 
@@ -468,6 +468,19 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
 
       assert path == ~p"/admin/albums/new"
     end
+
+    test "has back button to dashboard", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/admin/albums")
+
+      assert html =~ "Retour au tableau de bord"
+      assert html =~ ~s(href="/admin")
+    end
+
+    test "back button navigates to dashboard", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/albums")
+
+      assert has_element?(view, "a[href=\"/admin\"]")
+    end
   end
 
   describe "Index - Edge Cases" do
@@ -584,11 +597,55 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
 
   # Test helper to authenticate a user for tests
   defp authenticate_user(%{conn: conn}) do
-    user = create_user(role: "admin")
+    user = create_user(role: :admin)
     session = create_session(user: user)
 
     conn = init_test_session(conn, %{session_token: session.token})
 
     %{conn: conn, user: user, session: session}
+  end
+
+  describe "Index - Filtering" do
+    setup [:authenticate_user]
+
+    test "filters albums by published status", %{conn: conn} do
+      _published = create_album(title: "Published Album", published: true)
+      _draft = create_album(title: "Draft Album", published: false)
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?filter=published")
+
+      assert html =~ "Published Album"
+      refute html =~ "Draft Album"
+    end
+
+    test "filters albums by draft status", %{conn: conn} do
+      _published = create_album(title: "Published Album", published: true)
+      _draft = create_album(title: "Draft Album", published: false)
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?filter=draft")
+
+      refute html =~ "Published Album"
+      assert html =~ "Draft Album"
+    end
+
+    test "shows all albums when no filter applied", %{conn: conn} do
+      _published = create_album(title: "Published Album", published: true)
+      _draft = create_album(title: "Draft Album", published: false)
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums")
+
+      assert html =~ "Published Album"
+      assert html =~ "Draft Album"
+    end
+
+    test "displays filter UI with active filter highlighted", %{conn: conn} do
+      create_album(published: true)
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?filter=published")
+
+      assert html =~ "Filtrer :"
+      # The published filter should be highlighted
+      assert html =~ "filter=published"
+    end
   end
 end

@@ -35,7 +35,7 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       # Step 2: Verify magic link was created
       {:ok, user} = Auth.get_user_by_email(email)
       assert user.email == email
-      assert user.role == "admin"
+      assert user.role == :admin
 
       # Step 3: Get the magic link token
       magic_link = Portfolio.Repo.get_by!(Portfolio.Auth.MagicLink, user_id: user.id)
@@ -44,7 +44,7 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       # Step 4: Click magic link (simulates email link click)
       conn = build_conn()
       conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
-      assert redirected_to(conn) == ~p"/admin/albums"
+      assert redirected_to(conn) == ~p"/admin"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Connexion réussie"
 
       # Step 5: Verify session was created
@@ -71,7 +71,7 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
 
       # Act: Use magic link once
       conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
-      assert redirected_to(conn) == ~p"/admin/albums"
+      assert redirected_to(conn) == ~p"/admin"
 
       # Act: Try to use it again
       conn = build_conn()
@@ -150,7 +150,7 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       conn2 = Task.await(task2)
 
       # Assert: First request succeeds
-      assert redirected_to(conn1) == ~p"/admin/albums"
+      assert redirected_to(conn1) == ~p"/admin"
 
       # Assert: Second request should fail (already used)
       # Currently both succeed due to race condition

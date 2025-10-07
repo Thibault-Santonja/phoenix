@@ -37,12 +37,12 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
 
   defp load_users("admin") do
     Auth.list_users()
-    |> Enum.filter(&(&1.role == "admin"))
+    |> Enum.filter(&(&1.role == :admin))
   end
 
   defp load_users("user") do
     Auth.list_users()
-    |> Enum.filter(&(&1.role == "user"))
+    |> Enum.filter(&(&1.role == :user))
   end
 
   defp load_users(_), do: Auth.list_users()

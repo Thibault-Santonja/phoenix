@@ -120,10 +120,12 @@ defmodule PortfolioWeb.Plugs.RequireAuthTest do
 
   describe "require_admin_role/2" do
     test "allows request when user has admin role", %{conn: conn} do
-      user = insert_user(%{role: "admin"})
+      user = insert_user(%{role: :admin})
 
       conn =
         conn
+        |> init_test_session(%{})
+        |> fetch_flash()
         |> assign(:current_user, user)
         |> RequireAuth.call(:require_admin_role)
 
@@ -131,10 +133,12 @@ defmodule PortfolioWeb.Plugs.RequireAuthTest do
     end
 
     test "allows request when user has superadmin role", %{conn: conn} do
-      user = insert_user(%{role: "superadmin"})
+      user = insert_user(%{role: :superadmin})
 
       conn =
         conn
+        |> init_test_session(%{})
+        |> fetch_flash()
         |> assign(:current_user, user)
         |> RequireAuth.call(:require_admin_role)
 
@@ -172,7 +176,7 @@ defmodule PortfolioWeb.Plugs.RequireAuthTest do
 
     default_attrs = %{
       email: "test#{System.unique_integer([:positive])}@example.com",
-      role: "admin"
+      role: :admin
     }
 
     %User{}

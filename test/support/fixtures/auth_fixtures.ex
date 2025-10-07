@@ -21,7 +21,7 @@ defmodule PortfolioTest.Fixtures.AuthFixtures do
 
     * `:email` - User email (generates unique email if not provided)
     * `:name` - User name (optional)
-    * `:role` - User role (defaults to "admin")
+    * `:role` - User role (defaults to :admin)
 
   ## Examples
 
@@ -40,16 +40,16 @@ defmodule PortfolioTest.Fixtures.AuthFixtures do
       end)
 
     name = Keyword.get(attrs, :name)
-    role = Keyword.get(attrs, :role, "admin")
+    role = Keyword.get(attrs, :role, :admin)
 
     params =
       %{email: email, role: role}
       |> maybe_add(:name, name)
 
-    # Use registration changeset to respect business rules
+    # Use changeset (not registration_changeset) to allow setting role in tests
     user =
       %Auth.User{}
-      |> Auth.User.registration_changeset(params)
+      |> Auth.User.changeset(params)
       |> Repo.insert!()
 
     user

@@ -22,7 +22,7 @@ defmodule Portfolio.Auth.User do
           id: Ecto.UUID.t() | nil,
           email: String.t(),
           name: String.t() | nil,
-          role: String.t(),
+          role: atom(),
           magic_links: [MagicLink.t()] | Ecto.Association.NotLoaded.t(),
           user_sessions: [UserSession.t()] | Ecto.Association.NotLoaded.t(),
           inserted_at: NaiveDateTime.t() | nil,
@@ -32,7 +32,7 @@ defmodule Portfolio.Auth.User do
   schema "users" do
     field :email, :string
     field :name, :string
-    field :role, :string, default: "admin"
+    field :role, Ecto.Enum, values: [:admin, :superadmin, :user], default: :admin
 
     has_many :magic_links, MagicLink
     has_many :user_sessions, UserSession
@@ -49,7 +49,7 @@ defmodule Portfolio.Auth.User do
     |> cast(attrs, [:email, :name, :role])
     |> validate_required([:email, :role])
     |> validate_email()
-    |> validate_inclusion(:role, ["admin", "superadmin"])
+    |> validate_inclusion(:role, [:admin, :superadmin, :user])
     |> unique_constraint(:email)
   end
 
@@ -62,7 +62,7 @@ defmodule Portfolio.Auth.User do
     |> cast(attrs, [:email, :name])
     |> validate_required([:email])
     |> validate_email()
-    |> put_change(:role, "admin")
+    |> put_change(:role, :admin)
     |> unique_constraint(:email)
   end
 

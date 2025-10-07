@@ -8,7 +8,7 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
 
   setup do
     # Create and log in an admin user
-    user = create_user(email: "admin@example.com", role: "admin")
+    user = create_user(email: "admin@example.com", role: :admin)
     {:ok, session} = Auth.create_session(user)
 
     conn =
@@ -22,8 +22,8 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
   describe "Index page" do
     test "displays all users", %{conn: conn} do
       # Create additional users
-      _user1 = create_user(email: "user1@example.com", role: "user")
-      _user2 = create_user(email: "user2@example.com", role: "admin")
+      _user1 = create_user(email: "user1@example.com", role: :user)
+      _user2 = create_user(email: "user2@example.com", role: :admin)
 
       {:ok, _view, html} = live(conn, ~p"/admin/users")
 
@@ -37,9 +37,9 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
 
     test "displays correct user count statistics", %{conn: conn} do
       # Create users with different roles
-      _user1 = create_user(email: "user1@example.com", role: "user")
-      _user2 = create_user(email: "user2@example.com", role: "user")
-      _admin1 = create_user(email: "admin1@example.com", role: "admin")
+      _user1 = create_user(email: "user1@example.com", role: :user)
+      _user2 = create_user(email: "user2@example.com", role: :user)
+      _admin1 = create_user(email: "admin1@example.com", role: :admin)
 
       {:ok, _view, html} = live(conn, ~p"/admin/users")
 
@@ -51,8 +51,8 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
 
     test "filters users by admin role", %{conn: conn} do
       # Create users with different roles
-      _user1 = create_user(email: "user1@example.com", role: "user")
-      _admin1 = create_user(email: "admin1@example.com", role: "admin")
+      _user1 = create_user(email: "user1@example.com", role: :user)
+      _admin1 = create_user(email: "admin1@example.com", role: :admin)
 
       {:ok, _view, html} = live(conn, ~p"/admin/users?filter=admin")
 
@@ -65,8 +65,8 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
 
     test "filters users by user role", %{conn: conn} do
       # Create users with different roles
-      _user1 = create_user(email: "user1@example.com", role: "user")
-      _admin1 = create_user(email: "admin1@example.com", role: "admin")
+      _user1 = create_user(email: "user1@example.com", role: :user)
+      _admin1 = create_user(email: "admin1@example.com", role: :admin)
 
       {:ok, _view, html} = live(conn, ~p"/admin/users?filter=user")
 
@@ -90,8 +90,8 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
     end
 
     test "displays user role badges correctly", %{conn: conn} do
-      _user1 = create_user(email: "user1@example.com", role: "user")
-      _admin1 = create_user(email: "admin1@example.com", role: "admin")
+      _user1 = create_user(email: "user1@example.com", role: :user)
+      _admin1 = create_user(email: "admin1@example.com", role: :admin)
 
       {:ok, view, _html} = live(conn, ~p"/admin/users")
 
