@@ -134,14 +134,14 @@ defmodule PortfolioWeb.Telemetry do
     )
   end
 
-  defp handle_photos_uploaded(_event, %{duration: duration, count: count}, metadata, _config) do
+  defp handle_photos_uploaded(_event, %{duration: duration}, metadata, _config) do
     require Logger
 
     duration_ms = System.convert_time_unit(duration, :native, :millisecond)
 
     Logger.info("Photos uploaded",
       album_slug: metadata.album_slug,
-      count: count,
+      count: metadata.count,
       result: metadata.result,
       duration_ms: duration_ms
     )

@@ -97,6 +97,12 @@ defmodule Portfolio.Photography do
   def get_album(id, opts \\ []), do: AlbumRepository.get(id, opts)
 
   @doc """
+  Récupère un album par son slug.
+  """
+  @spec get_album_by_slug(String.t(), keyword()) :: {:ok, Album.t()} | {:error, :not_found}
+  def get_album_by_slug(slug, opts \\ []), do: AlbumRepository.get_by_slug(slug, opts)
+
+  @doc """
   Récupère un album par son ID, lève une exception si non trouvé.
   """
   @spec get_album!(Ecto.UUID.t(), keyword()) :: Album.t()

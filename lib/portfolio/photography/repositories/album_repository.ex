@@ -93,6 +93,31 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   end
 
   @doc """
+  Récupère un album par son slug.
+
+  ## Exemples
+
+      iex> get_by_slug("wedding-2024")
+      {:ok, %Album{slug: "wedding-2024"}}
+
+      iex> get_by_slug("nonexistent")
+      {:error, :not_found}
+
+  """
+  @spec get_by_slug(String.t(), keyword()) :: {:ok, Album.t()} | {:error, :not_found}
+  def get_by_slug(slug, opts \\ []) do
+    query = from a in Album, where: a.slug == ^slug
+
+    query
+    |> apply_preload(opts[:preload])
+    |> Repo.one()
+    |> case do
+      nil -> {:error, :not_found}
+      album -> {:ok, album}
+    end
+  end
+
+  @doc """
   Récupère un album par son ID, lève une exception si non trouvé.
 
   ## Exemples

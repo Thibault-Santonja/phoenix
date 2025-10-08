@@ -130,6 +130,7 @@ defmodule Portfolio.Photography.Album do
     album
     |> cast(attrs, [
       :title,
+      :slug,
       :type,
       :description,
       :location,
@@ -145,24 +146,33 @@ defmodule Portfolio.Photography.Album do
     |> validate_date_not_future(:date_prise_vue)
     |> validate_date_not_future(:date_fin_prise_vue)
     |> validate_date_range()
-    |> generate_slug()
+    |> generate_slug_if_needed()
     |> unique_constraint(:slug)
   end
 
   # Génère un slug URL-friendly depuis le titre en utilisant le Value Object Slug
-  @spec generate_slug(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  defp generate_slug(changeset) do
-    case get_change(changeset, :title) do
-      nil ->
+  # Si un slug est déjà fourni (par ex. dans les tests), il est conservé
+  @spec generate_slug_if_needed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp generate_slug_if_needed(changeset) do
+    # Si un slug est déjà fourni, on le garde
+    case get_change(changeset, :slug) do
+      slug when is_binary(slug) and slug != "" ->
         changeset
 
-      title ->
-        case Slug.new(title) do
-          {:ok, slug} ->
-            put_change(changeset, :slug, to_string(slug))
+      _ ->
+        # Sinon, on génère depuis le titre
+        case get_change(changeset, :title) do
+          nil ->
+            changeset
 
-          {:error, _} ->
-            add_error(changeset, :title, "ne peut pas être converti en slug valide")
+          title ->
+            case Slug.new(title) do
+              {:ok, slug} ->
+                put_change(changeset, :slug, to_string(slug))
+
+              {:error, _} ->
+                add_error(changeset, :title, "ne peut pas être converti en slug valide")
+            end
         end
     end
   end

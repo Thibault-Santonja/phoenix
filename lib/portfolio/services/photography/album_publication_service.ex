@@ -43,7 +43,8 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
       iex> execute(%Album{}, [])
       {:ok, %Album{published: true}}
   """
-  @spec execute(Album.t(), keyword()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
+  @spec execute(Album.t(), keyword()) ::
+          {:ok, Album.t()} | {:error, Ecto.Changeset.t() | atom()}
   def execute(%Album{} = album, opts \\ []) do
     user_id = Keyword.get(opts, :user_id)
 
@@ -51,23 +52,39 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
       [:portfolio, :services, :album_publication, :executed],
       %{album_id: album.id, user_id: user_id},
       fn ->
-        with {:ok, album} <- AlbumRepository.update(album, %{published: true}) do
-          # Invalidate cache
-          invalidate_albums_cache()
-
-          # Emit domain event
-          DomainEvents.publish(:album_published, %AlbumPublished{
-            album_id: album.id,
-            title: album.title,
-            slug: album.slug,
-            published_at: DateTime.utc_now(),
-            user_id: user_id
-          })
-
+        # Use Ecto.Multi for atomic database operations only
+        # Cache and events are handled after successful transaction
+        with {:ok, album} <- update_album_atomically(album),
+             :ok <- invalidate_albums_cache(),
+             :ok <- emit_publication_event(album, user_id) do
           {:ok, album}
+        else
+          {:error, changeset} when is_struct(changeset, Ecto.Changeset) ->
+            {:error, changeset}
+
+          {:error, reason} ->
+            {:error, reason}
         end
       end
     )
+  end
+
+  # Atomically update album published status in database
+  defp update_album_atomically(album) do
+    AlbumRepository.update(album, %{published: true})
+  end
+
+  # Emit domain event for album publication
+  defp emit_publication_event(album, user_id) do
+    DomainEvents.publish(:album_published, %AlbumPublished{
+      album_id: album.id,
+      title: album.title,
+      slug: album.slug,
+      published_at: DateTime.utc_now(),
+      user_id: user_id
+    })
+
+    :ok
   end
 
   # Invalidate all caches related to published albums

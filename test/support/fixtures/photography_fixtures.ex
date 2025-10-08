@@ -48,6 +48,7 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
     description = Keyword.get(attrs, :description)
     published = Keyword.get(attrs, :published, false)
     reference_link = Keyword.get(attrs, :reference_link)
+    slug = Keyword.get(attrs, :slug)
 
     params =
       %{
@@ -59,6 +60,7 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
       |> maybe_add(:location, location)
       |> maybe_add(:description, description)
       |> maybe_add(:reference_link, reference_link)
+      |> maybe_add(:slug, slug)
 
     {:ok, album} = Photography.create_album(params)
     album

@@ -36,16 +36,18 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
 
   @impl true
   def store_photo(album_slug, upload) do
-    with {:ok, hash} <- compute_hash(upload.path),
-         {:ok, dest_path} <- build_destination_path(album_slug, upload, hash),
+    with {:ok, source_hash} <- compute_hash(upload.path),
+         {:ok, dest_path} <- build_destination_path(album_slug, upload, source_hash),
          :ok <- ensure_directory_exists(dest_path),
-         :ok <- copy_file(upload.path, dest_path) do
-      public_path = build_public_path(album_slug, upload, hash)
+         :ok <- copy_file(upload.path, dest_path),
+         # Verify file integrity after copy
+         :ok <- verify_file_integrity(dest_path, source_hash) do
+      public_path = build_public_path(album_slug, upload, source_hash)
 
       {:ok,
        %{
          file_path: public_path,
-         hash: hash,
+         hash: source_hash,
          original_filename: upload.client_name
        }}
     end
@@ -192,6 +194,32 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
         )
 
         {:error, :file_copy_failed}
+    end
+  end
+
+  @spec verify_file_integrity(String.t(), String.t()) :: :ok | {:error, term()}
+  defp verify_file_integrity(file_path, expected_hash) do
+    case compute_hash(file_path) do
+      {:ok, actual_hash} ->
+        if actual_hash == expected_hash do
+          :ok
+        else
+          Logger.error("File integrity check failed",
+            file_path: file_path,
+            expected_hash: expected_hash,
+            actual_hash: actual_hash
+          )
+
+          # Delete corrupted file
+          File.rm(file_path)
+          {:error, :integrity_check_failed}
+        end
+
+      {:error, reason} ->
+        Logger.error("Failed to verify file integrity", file_path: file_path, reason: reason)
+        # Delete potentially corrupted file
+        File.rm(file_path)
+        {:error, :integrity_verification_failed}
     end
   end
 end
