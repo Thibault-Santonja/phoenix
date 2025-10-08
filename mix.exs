@@ -102,6 +102,7 @@ defmodule Portfolio.MixProject do
       {:bandit, "~> 1.5"},
       {:hammer, "~> 6.2"},
       {:cachex, "~> 3.6"},
+      {:exiftool, "~> 0.2"},
       # For CI
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.0", only: [:dev, :test], runtime: false},

@@ -84,6 +84,15 @@ config :phoenix_live_view,
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
+# Configure mailer for development (local adapter for testing)
+config :portfolio, Portfolio.Mailer, adapter: Swoosh.Adapters.Local
+
+# Configure base URL for magic links
+config :portfolio, :base_url, "http://localhost:4000"
+
+# Configure from email
+config :portfolio, :from_email, "noreply@portfolio.local"
+
 # Configure Hammer for rate limiting in dev
 config :hammer,
   backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 2, cleanup_interval_ms: 60_000 * 10]}

@@ -72,11 +72,8 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandler do
       expires_at: event.expires_at
     )
 
-    # Future enhancements:
-    # - Track authentication request metrics
-    # - Implement rate limiting per email
-    # - Detect suspicious login patterns
-    # - Log failed authentication attempts
+    # Send magic link email asynchronously
+    Task.start(fn -> send_magic_link_email(event) end)
 
     {:noreply, state}
   end
@@ -94,7 +91,6 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandler do
     # - Update user.last_login_at timestamp
     # - Send welcome email for new users
     # - Track successful authentication metrics
-    # - Log security events
 
     {:noreply, state}
   end
@@ -104,5 +100,40 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandler do
   def handle_info(msg, state) do
     Logger.warning("MagicLinkHandler received unexpected message: #{inspect(msg)}")
     {:noreply, state}
+  end
+
+  # =============================================================================
+  # Private Functions
+  # =============================================================================
+
+  @spec send_magic_link_email(MagicLinkRequested.t()) :: :ok | {:error, term()}
+  defp send_magic_link_email(event) do
+    magic_link_url = build_magic_link_url(event.token)
+
+    case Portfolio.Auth.Email.magic_link_email(event.email, magic_link_url)
+         |> Portfolio.Mailer.deliver() do
+      {:ok, _metadata} ->
+        Logger.info("Magic link email sent",
+          magic_link_id: event.magic_link_id,
+          email: event.email
+        )
+
+        :ok
+
+      {:error, reason} ->
+        Logger.error("Failed to send magic link email",
+          magic_link_id: event.magic_link_id,
+          email: event.email,
+          reason: inspect(reason)
+        )
+
+        {:error, reason}
+    end
+  end
+
+  @spec build_magic_link_url(String.t()) :: String.t()
+  defp build_magic_link_url(token) do
+    base_url = Application.get_env(:portfolio, :base_url, "http://localhost:4000")
+    "#{base_url}/auth/verify?token=#{token}"
   end
 end

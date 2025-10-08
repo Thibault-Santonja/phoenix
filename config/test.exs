@@ -26,6 +26,12 @@ config :portfolio, Portfolio.Mailer, adapter: Swoosh.Adapters.Test
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
 
+# Configure base URL for magic links in tests
+config :portfolio, :base_url, "http://localhost:4002"
+
+# Configure from email
+config :portfolio, :from_email, "noreply@portfolio.test"
+
 # Print only warnings and errors during test
 config :logger, level: :warning
 
