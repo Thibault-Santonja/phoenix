@@ -51,7 +51,7 @@
     >
       Tous
       <span class="ml-1.5 text-xs">
-        ({length(Photography.list_albums())})
+        ({@count_stats.all})
       </span>
     </.link>
     <.link
@@ -67,7 +67,7 @@
     >
       Publiés
       <span class="ml-1.5 text-xs">
-        ({length(Photography.list_albums(published: true))})
+        ({@count_stats.published})
       </span>
     </.link>
     <.link
@@ -83,7 +83,7 @@
     >
       Brouillons
       <span class="ml-1.5 text-xs">
-        ({length(Photography.list_albums(published: false))})
+        ({@count_stats.draft})
       </span>
     </.link>
   </div>

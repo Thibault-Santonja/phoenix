@@ -269,6 +269,21 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
     |> Repo.aggregate(:count)
   end
 
+  @doc """
+  Compte le nombre total de photos dans tous les albums.
+
+  Utilise une seule requête SQL optimisée au lieu de compter album par album.
+
+  ## Exemples
+
+      iex> count_all()
+      42
+  """
+  @spec count_all() :: non_neg_integer()
+  def count_all do
+    Repo.aggregate(Photo, :count)
+  end
+
   # Applique les preloads à la query en utilisant PhotoQuery
   @spec apply_preload(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
   defp apply_preload(query, nil), do: query

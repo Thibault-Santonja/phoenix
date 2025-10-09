@@ -83,6 +83,39 @@ defmodule Portfolio.Photography do
   def list_albums(opts \\ []), do: AlbumRepository.list(opts)
 
   @doc """
+  Compte le nombre total d'albums.
+
+  ## Exemples
+
+      iex> count_all_albums()
+      42
+  """
+  @spec count_all_albums() :: non_neg_integer()
+  def count_all_albums, do: AlbumRepository.count_all()
+
+  @doc """
+  Compte le nombre d'albums publiés.
+
+  ## Exemples
+
+      iex> count_published_albums()
+      25
+  """
+  @spec count_published_albums() :: non_neg_integer()
+  def count_published_albums, do: AlbumRepository.count_published()
+
+  @doc """
+  Compte le nombre d'albums non publiés (brouillons).
+
+  ## Exemples
+
+      iex> count_draft_albums()
+      17
+  """
+  @spec count_draft_albums() :: non_neg_integer()
+  def count_draft_albums, do: AlbumRepository.count_draft()
+
+  @doc """
   Récupère un album par son ID.
 
   ## Exemples
@@ -449,5 +482,20 @@ defmodule Portfolio.Photography do
   @spec count_photos_in_album(Ecto.UUID.t()) :: non_neg_integer()
   def count_photos_in_album(album_id) do
     PhotoRepository.count_by_album(album_id)
+  end
+
+  @doc """
+  Compte le nombre total de photos dans tous les albums.
+
+  Utilise une seule requête SQL optimisée.
+
+  ## Exemples
+
+      iex> count_all_photos()
+      150
+  """
+  @spec count_all_photos() :: non_neg_integer()
+  def count_all_photos do
+    PhotoRepository.count_all()
   end
 end

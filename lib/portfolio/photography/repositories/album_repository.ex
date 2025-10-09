@@ -263,6 +263,47 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
     apply_filters(query, rest)
   end
 
+  @doc """
+  Compte le nombre total d'albums.
+
+  ## Exemples
+
+      iex> count_all()
+      42
+  """
+  @spec count_all() :: non_neg_integer()
+  def count_all do
+    Repo.aggregate(Album, :count)
+  end
+
+  @doc """
+  Compte le nombre d'albums publiés.
+
+  ## Exemples
+
+      iex> count_published()
+      25
+  """
+  @spec count_published() :: non_neg_integer()
+  def count_published do
+    from(a in Album, where: a.published == true)
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Compte le nombre d'albums non publiés (brouillons).
+
+  ## Exemples
+
+      iex> count_draft()
+      17
+  """
+  @spec count_draft() :: non_neg_integer()
+  def count_draft do
+    from(a in Album, where: a.published == false)
+    |> Repo.aggregate(:count)
+  end
+
   # Applique les preloads à la query en utilisant AlbumQuery
   @spec apply_preload(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
   defp apply_preload(query, nil), do: query

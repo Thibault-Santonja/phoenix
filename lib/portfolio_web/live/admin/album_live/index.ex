@@ -29,10 +29,18 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     filter = params["filter"]
     albums = load_albums(filter)
 
+    # Optimisation: calculer les statistiques une seule fois au lieu de 3x dans le template
+    count_stats = %{
+      all: Photography.count_all_albums(),
+      published: Photography.count_published_albums(),
+      draft: Photography.count_draft_albums()
+    }
+
     {:noreply,
      socket
      |> assign(:filter, filter)
      |> assign(:albums, albums)
+     |> assign(:count_stats, count_stats)
      |> apply_action(socket.assigns.live_action, params)}
   end
 

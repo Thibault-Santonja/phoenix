@@ -36,10 +36,8 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
     albums = Photography.list_albums()
     published_albums = Enum.filter(albums, & &1.published)
 
-    total_photos =
-      albums
-      |> Enum.map(&Photography.count_photos_in_album(&1.id))
-      |> Enum.sum()
+    # Optimisation: une seule requête SQL au lieu de N requêtes
+    total_photos = Photography.count_all_photos()
 
     %{
       total_albums: length(albums),

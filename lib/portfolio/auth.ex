@@ -444,15 +444,30 @@ defmodule Portfolio.Auth do
   end
 
   @doc """
-  Liste tous les utilisateurs du système.
+  Liste tous les utilisateurs du système avec filtres optionnels.
+
+  ## Options
+
+  - `:role` - Filtre par rôle (`:admin` ou `:user`)
 
   ## Exemples
 
       iex> list_users()
       [%User{}, %User{}]
+
+      iex> list_users(role: :admin)
+      [%User{role: :admin}]
   """
-  @spec list_users() :: [User.t()]
-  def list_users do
-    Repo.all(User)
+  @spec list_users(keyword()) :: [User.t()]
+  def list_users(opts \\ []) do
+    query = from(u in User)
+
+    query =
+      case opts[:role] do
+        nil -> query
+        role -> from u in query, where: u.role == ^role
+      end
+
+    Repo.all(query)
   end
 end

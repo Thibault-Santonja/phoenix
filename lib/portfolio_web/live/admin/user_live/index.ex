@@ -33,17 +33,9 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
      |> assign(:users, users)}
   end
 
+  # Optimisation: filtrage en base de données au lieu de filtrer en mémoire
   defp load_users(nil), do: Auth.list_users()
-
-  defp load_users("admin") do
-    Auth.list_users()
-    |> Enum.filter(&(&1.role == :admin))
-  end
-
-  defp load_users("user") do
-    Auth.list_users()
-    |> Enum.filter(&(&1.role == :user))
-  end
-
+  defp load_users("admin"), do: Auth.list_users(role: :admin)
+  defp load_users("user"), do: Auth.list_users(role: :user)
   defp load_users(_), do: Auth.list_users()
 end
