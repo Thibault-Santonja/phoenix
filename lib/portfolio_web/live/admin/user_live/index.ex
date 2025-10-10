@@ -42,8 +42,12 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
   end
 
   # Optimisation: filtrage en base de données au lieu de filtrer en mémoire
-  defp load_users(nil), do: Auth.list_users()
-  defp load_users("admin"), do: Auth.list_users(role: :admin)
-  defp load_users("user"), do: Auth.list_users(role: :user)
-  defp load_users(_), do: Auth.list_users()
+  # Pattern simplifié
+  defp load_users(filter) do
+    case filter do
+      "admin" -> Auth.list_users(role: :admin)
+      "user" -> Auth.list_users(role: :user)
+      _ -> Auth.list_users()
+    end
+  end
 end

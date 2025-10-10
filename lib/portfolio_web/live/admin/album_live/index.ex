@@ -16,18 +16,23 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   on_mount PortfolioWeb.LiveAuth
 
+  # Pagination : 25 albums par page
+  @albums_per_page 25
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
      socket
      |> assign(:page_title, "Albums")
-     |> assign(:filter, nil)}
+     |> assign(:filter, nil)
+     |> assign(:page, 1)
+     |> assign(:per_page, @albums_per_page)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
     filter = params["filter"]
-    albums = load_albums(filter)
+    page = String.to_integer(params["page"] || "1")
 
     # Optimisation: calculer les statistiques une seule fois au lieu de 3x dans le template
     count_stats = %{
@@ -36,9 +41,23 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
       draft: Photography.count_draft_albums()
     }
 
+    # Calculer le nombre total d'albums pour la pagination
+    total_albums =
+      case filter do
+        "draft" -> count_stats.draft
+        "published" -> count_stats.published
+        _ -> count_stats.all
+      end
+
+    total_pages = ceil(total_albums / socket.assigns.per_page)
+    albums = load_albums(filter, page, socket.assigns.per_page)
+
     {:noreply,
      socket
      |> assign(:filter, filter)
+     |> assign(:page, page)
+     |> assign(:total_pages, total_pages)
+     |> assign(:total_albums, total_albums)
      |> assign(:albums, albums)
      |> assign(:count_stats, count_stats)
      |> apply_action(socket.assigns.live_action, params)}
@@ -50,19 +69,20 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   end
 
   # Optimisation: utiliser with_photo_count au lieu de preload toutes les photos
-  defp load_albums(nil) do
-    Photography.list_albums(with_photo_count: true)
-  end
+  # Pattern simplifié pour éviter la répétition
+  defp load_albums(filter, page, per_page) do
+    offset = (page - 1) * per_page
+    opts = [with_photo_count: true, limit: per_page, offset: offset]
 
-  defp load_albums("draft") do
-    Photography.list_albums(published: false, with_photo_count: true)
-  end
+    opts =
+      case filter do
+        "draft" -> Keyword.put(opts, :published, false)
+        "published" -> Keyword.put(opts, :published, true)
+        _ -> opts
+      end
 
-  defp load_albums("published") do
-    Photography.list_albums(published: true, with_photo_count: true)
+    Photography.list_albums(opts)
   end
-
-  defp load_albums(_), do: Photography.list_albums(with_photo_count: true)
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
@@ -70,7 +90,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
     case Photography.delete_album(album) do
       {:ok, _album} ->
-        albums = load_albums(socket.assigns.filter)
+        albums = load_albums(socket.assigns.filter, socket.assigns.page, socket.assigns.per_page)
 
         {:noreply,
          socket
@@ -90,7 +110,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
     case Photography.update_album(album, %{published: !album.published}) do
       {:ok, _album} ->
-        albums = load_albums(socket.assigns.filter)
+        albums = load_albums(socket.assigns.filter, socket.assigns.page, socket.assigns.per_page)
 
         {:noreply,
          socket
@@ -118,6 +138,31 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   defp format_type(:japan), do: "Japon"
   defp format_type(:taiwan), do: "Taïwan"
   defp format_type(type), do: to_string(type)
+
+  # Fonction helper pour la pagination - génère la plage de numéros de page à afficher
+  defp pagination_range(current_page, total_pages) do
+    # Afficher au maximum 7 numéros de page
+    max_pages = 7
+    half = div(max_pages, 2)
+
+    cond do
+      # Si total <= max_pages, afficher tout
+      total_pages <= max_pages ->
+        1..total_pages
+
+      # Si on est proche du début
+      current_page <= half + 1 ->
+        1..max_pages
+
+      # Si on est proche de la fin
+      current_page >= total_pages - half ->
+        (total_pages - max_pages + 1)..total_pages
+
+      # Sinon, centrer autour de la page actuelle
+      true ->
+        (current_page - half)..(current_page + half)
+    end
+  end
 
   # Fonction helper pour le badge de type
   defp type_badge_class(:wedding), do: "bg-pink-100 text-pink-800"

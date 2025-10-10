@@ -43,6 +43,8 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   - `:published` - Filtre par statut de publication (boolean)
   - `:preload` - Liste des associations à précharger (liste d'atoms)
   - `:with_photo_count` - Ajoute un champ virtuel `photo_count` au lieu de précharger toutes les photos (boolean)
+  - `:limit` - Nombre maximum de résultats (integer)
+  - `:offset` - Nombre de résultats à sauter (integer)
 
   ## Exemples
 
@@ -263,6 +265,18 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   defp apply_filters(query, [{:with_photo_count, true} | rest]) do
     query
     |> AlbumQuery.with_photo_count()
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:limit, limit} | rest]) when is_integer(limit) do
+    query
+    |> limit(^limit)
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:offset, offset} | rest]) when is_integer(offset) do
+    query
+    |> offset(^offset)
     |> apply_filters(rest)
   end
 
