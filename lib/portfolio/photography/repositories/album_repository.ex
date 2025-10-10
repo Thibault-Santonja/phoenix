@@ -42,6 +42,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   - `:type` - Filtre par type d'album (atom)
   - `:published` - Filtre par statut de publication (boolean)
   - `:preload` - Liste des associations à précharger (liste d'atoms)
+  - `:with_photo_count` - Ajoute un champ virtuel `photo_count` au lieu de précharger toutes les photos (boolean)
 
   ## Exemples
 
@@ -256,6 +257,12 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   defp apply_filters(query, [{:preload, preloads} | rest]) do
     query
     |> apply_preload(preloads)
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:with_photo_count, true} | rest]) do
+    query
+    |> AlbumQuery.with_photo_count()
     |> apply_filters(rest)
   end
 

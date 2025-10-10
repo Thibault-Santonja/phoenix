@@ -444,6 +444,34 @@ defmodule Portfolio.Auth do
   end
 
   @doc """
+  Compte le nombre d'administrateurs.
+
+  ## Exemples
+
+      iex> count_admin_users()
+      2
+  """
+  @spec count_admin_users() :: non_neg_integer()
+  def count_admin_users do
+    from(u in User, where: u.role == :admin)
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Compte le nombre d'utilisateurs réguliers.
+
+  ## Exemples
+
+      iex> count_regular_users()
+      3
+  """
+  @spec count_regular_users() :: non_neg_integer()
+  def count_regular_users do
+    from(u in User, where: u.role == :user)
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
   Liste tous les utilisateurs du système avec filtres optionnels.
 
   ## Options

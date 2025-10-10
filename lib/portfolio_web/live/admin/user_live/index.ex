@@ -27,10 +27,18 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
     filter = params["filter"]
     users = load_users(filter)
 
+    # Optimisation: calculer les statistiques une seule fois au lieu de 2x dans le template
+    user_stats = %{
+      total: Auth.count_users(),
+      admins: Auth.count_admin_users(),
+      regular_users: Auth.count_regular_users()
+    }
+
     {:noreply,
      socket
      |> assign(:filter, filter)
-     |> assign(:users, users)}
+     |> assign(:users, users)
+     |> assign(:user_stats, user_stats)}
   end
 
   # Optimisation: filtrage en base de données au lieu de filtrer en mémoire

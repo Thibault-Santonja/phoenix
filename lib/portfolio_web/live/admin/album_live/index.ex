@@ -49,19 +49,20 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     |> assign(:page_title, "Albums")
   end
 
+  # Optimisation: utiliser with_photo_count au lieu de preload toutes les photos
   defp load_albums(nil) do
-    Photography.list_albums(preload: [:photos])
+    Photography.list_albums(with_photo_count: true)
   end
 
   defp load_albums("draft") do
-    Photography.list_albums(published: false, preload: [:photos])
+    Photography.list_albums(published: false, with_photo_count: true)
   end
 
   defp load_albums("published") do
-    Photography.list_albums(published: true, preload: [:photos])
+    Photography.list_albums(published: true, with_photo_count: true)
   end
 
-  defp load_albums(_), do: Photography.list_albums(preload: [:photos])
+  defp load_albums(_), do: Photography.list_albums(with_photo_count: true)
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do

@@ -147,7 +147,7 @@
     >
       <div class="text-sm font-medium text-gray-600">Total utilisateurs</div>
       <div class="mt-1 text-2xl font-bold text-gray-900">
-        {length(Auth.list_users())}
+        {@user_stats.total}
       </div>
     </.link>
 
@@ -164,7 +164,7 @@
     >
       <div class="text-sm font-medium text-gray-600">Administrateurs</div>
       <div class="mt-1 text-2xl font-bold text-purple-600">
-        {Enum.count(Auth.list_users(), &(&1.role == :admin))}
+        {@user_stats.admins}
       </div>
     </.link>
 
@@ -181,7 +181,7 @@
     >
       <div class="text-sm font-medium text-gray-600">Utilisateurs</div>
       <div class="mt-1 text-2xl font-bold text-gray-600">
-        {Enum.count(Auth.list_users(), &(&1.role == :user))}
+        {@user_stats.regular_users}
       </div>
     </.link>
   </div>
