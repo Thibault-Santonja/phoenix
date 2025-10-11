@@ -46,8 +46,13 @@
         />
 
         <:actions>
-          <.button type="submit" class="w-full" phx-disable-with="Envoi...">
-            Envoyer le lien de connexion
+          <.button
+            type="submit"
+            class="w-full phx-submit-loading:opacity-75"
+            phx-disable-with="Envoi..."
+          >
+            <span class="phx-submit-loading:hidden">Envoyer le lien de connexion</span>
+            <span class="hidden phx-submit-loading:inline">Envoi en cours...</span>
           </.button>
         </:actions>
       </.simple_form>

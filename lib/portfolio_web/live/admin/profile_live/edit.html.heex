@@ -32,9 +32,10 @@
 
       <.button
         type="submit"
-        class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+        class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 phx-submit-loading:opacity-75"
       >
-        Enregistrer
+        <span class="phx-submit-loading:hidden">Enregistrer</span>
+        <span class="hidden phx-submit-loading:inline">Enregistrement...</span>
       </.button>
     </.form>
   </div>
@@ -47,9 +48,10 @@
         <button
           phx-click="revoke_all_sessions"
           data-confirm="Êtes-vous sûr de vouloir déconnecter toutes les autres sessions ?"
-          class="text-sm text-red-600 hover:text-red-800 font-medium"
+          class="text-sm text-red-600 hover:text-red-800 font-medium phx-click-loading:opacity-50"
         >
-          Déconnecter toutes les autres sessions
+          <span class="phx-click-loading:hidden">Déconnecter toutes les autres sessions</span>
+          <span class="hidden phx-click-loading:inline">Déconnexion...</span>
         </button>
       <% end %>
     </div>
@@ -83,9 +85,10 @@
                 phx-click="revoke_session"
                 phx-value-id={session.id}
                 data-confirm="Êtes-vous sûr de vouloir révoquer cette session ?"
-                class="ml-4 text-sm text-red-600 hover:text-red-800 font-medium"
+                class="ml-4 text-sm text-red-600 hover:text-red-800 font-medium phx-click-loading:opacity-50"
               >
-                Révoquer
+                <span class="phx-click-loading:hidden">Révoquer</span>
+                <span class="hidden phx-click-loading:inline">Révocation...</span>
               </button>
             <% end %>
           </div>

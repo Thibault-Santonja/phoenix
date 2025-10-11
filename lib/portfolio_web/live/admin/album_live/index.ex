@@ -26,7 +26,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
      |> assign(:page_title, "Albums")
      |> assign(:filter, nil)
      |> assign(:page, 1)
-     |> assign(:per_page, @albums_per_page)}
+     |> assign(:per_page, @albums_per_page)
+     |> assign(:loading_action, nil)}
   end
 
   @impl true
@@ -95,12 +96,14 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
         {:noreply,
          socket
          |> put_flash(:info, "Album supprimé avec succès")
-         |> assign(:albums, albums)}
+         |> assign(:albums, albums)
+         |> assign(:loading_action, nil)}
 
       {:error, _changeset} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Impossible de supprimer l'album")}
+         |> put_flash(:error, "Impossible de supprimer l'album")
+         |> assign(:loading_action, nil)}
     end
   end
 
@@ -115,12 +118,14 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
         {:noreply,
          socket
          |> put_flash(:info, "Statut de publication mis à jour")
-         |> assign(:albums, albums)}
+         |> assign(:albums, albums)
+         |> assign(:loading_action, nil)}
 
       {:error, _changeset} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Impossible de mettre à jour le statut")}
+         |> put_flash(:error, "Impossible de mettre à jour le statut")
+         |> assign(:loading_action, nil)}
     end
   end
 

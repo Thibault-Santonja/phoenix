@@ -102,9 +102,12 @@
                 <div class="mt-4">
                   <button
                     type="submit"
-                    class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 phx-submit-loading:opacity-75"
                   >
-                    Uploader {length(@uploads.photos.entries)} photo(s)
+                    <span class="phx-submit-loading:hidden">
+                      Uploader {length(@uploads.photos.entries)} photo(s)
+                    </span>
+                    <span class="hidden phx-submit-loading:inline">Upload en cours...</span>
                   </button>
                 </div>
               <% end %>
@@ -152,9 +155,10 @@
                     <button
                       type="button"
                       phx-click="save_photo_order"
-                      class="inline-flex items-center px-3 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                      class="inline-flex items-center px-3 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 phx-click-loading:opacity-50"
                     >
-                      Enregistrer l'ordre
+                      <span class="phx-click-loading:hidden">Enregistrer l'ordre</span>
+                      <span class="hidden phx-click-loading:inline">Enregistrement...</span>
                     </button>
                   </div>
                 <% end %>
@@ -221,9 +225,10 @@
                             phx-click="delete_photo"
                             phx-value-id={photo.id}
                             data-confirm="Êtes-vous sûr de vouloir supprimer cette photo ?"
-                            class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                            class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 phx-click-loading:opacity-50"
                           >
-                            Supprimer
+                            <span class="phx-click-loading:hidden">Supprimer</span>
+                            <span class="hidden phx-click-loading:inline">Suppression...</span>
                           </button>
                         </div>
                       </div>
@@ -322,9 +327,10 @@
           <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
               type="submit"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm phx-submit-loading:opacity-75"
             >
-              Enregistrer
+              <span class="phx-submit-loading:hidden">Enregistrer</span>
+              <span class="hidden phx-submit-loading:inline">Enregistrement...</span>
             </button>
             <button
               type="button"

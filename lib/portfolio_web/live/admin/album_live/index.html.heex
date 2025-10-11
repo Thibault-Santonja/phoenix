@@ -186,7 +186,7 @@
                         phx-click="toggle_publish"
                         phx-value-id={album.id}
                         class={[
-                          "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+                          "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 phx-submit-loading:opacity-50 phx-submit-loading:cursor-wait",
                           if(album.published, do: "bg-indigo-600", else: "bg-gray-200")
                         ]}
                       >
@@ -210,9 +210,10 @@
                         phx-click="delete"
                         phx-value-id={album.id}
                         data-confirm="Êtes-vous sûr de vouloir supprimer cet album ?"
-                        class="text-red-600 hover:text-red-900"
+                        class="text-red-600 hover:text-red-900 phx-click-loading:opacity-50 phx-click-loading:cursor-wait"
                       >
-                        Supprimer
+                        <span class="phx-click-loading:hidden">Supprimer</span>
+                        <span class="hidden phx-click-loading:inline">Suppression...</span>
                       </a>
                     </td>
                   </tr>
