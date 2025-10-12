@@ -648,4 +648,92 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
       assert html =~ "filter=published"
     end
   end
+
+  describe "Index - Pagination" do
+    setup [:authenticate_user]
+
+    test "displays first page of albums when there are more than 25", %{conn: conn} do
+      # Create 30 albums to trigger pagination (25 per page)
+      for i <- 1..30 do
+        create_album(title: "Album #{i}")
+      end
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums")
+
+      # Should show pagination UI
+      assert html =~ "Affichage de"
+      assert html =~ "sur"
+      assert html =~ "albums"
+    end
+
+    test "paginates to second page", %{conn: conn} do
+      # Create 30 albums
+      for i <- 1..30 do
+        create_album(title: "Album #{String.pad_leading(Integer.to_string(i), 2, "0")}")
+      end
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?page=2")
+
+      # Should show page 2 content
+      assert html =~ "Affichage de"
+      # Page 2 shows albums 26-30 (5 albums)
+      assert html =~ "26"
+      assert html =~ "30"
+    end
+
+    test "pagination UI shows correct page numbers", %{conn: conn} do
+      # Create 30 albums to get 2 pages
+      for i <- 1..30 do
+        create_album(title: "Album #{i}")
+      end
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums")
+
+      # Should show page numbers
+      assert html =~ "page=2"
+    end
+
+    test "pagination works with filters", %{conn: conn} do
+      # Create 30 published albums and 5 drafts
+      for i <- 1..30 do
+        create_album(title: "Published #{i}", published: true)
+      end
+
+      for i <- 1..5 do
+        create_album(title: "Draft #{i}", published: false)
+      end
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?filter=published&page=2")
+
+      # Should show page 2 of published albums (26-30)
+      assert html =~ "filter=published"
+      assert html =~ "Affichage de"
+      assert html =~ "26"
+      assert html =~ "30"
+    end
+
+    test "hides pagination when albums fit on one page", %{conn: conn} do
+      # Create only 10 albums (less than 25 per page)
+      for i <- 1..10 do
+        create_album(title: "Album #{i}")
+      end
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums")
+
+      # Should not show pagination
+      refute html =~ "Précédent"
+      refute html =~ "Suivant"
+    end
+
+    test "pagination displays total album count", %{conn: conn} do
+      for i <- 1..30 do
+        create_album(title: "Album #{i}")
+      end
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums")
+
+      assert html =~ "30"
+      assert html =~ "albums"
+    end
+  end
 end
