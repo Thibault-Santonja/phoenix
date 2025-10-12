@@ -94,12 +94,20 @@
               <section class="lg:grid lg:grid-cols-5">
                 <img
                   src={album.photography}
+                  srcset={[
+                    "#{album.photography}?w=320&q=75 320w",
+                    "#{album.photography}?w=640&q=75 640w",
+                    "#{album.photography}?w=960&q=75 960w",
+                    "#{album.photography}?w=1280&q=75 1280w"
+                  ]}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 60vw"
                   class={[
                     "object-cover w-full rounded-lg mb-4",
                     "max-h-120",
                     "lg:col-span-3"
                   ]}
                   loading="lazy"
+                  decoding="async"
                 />
                 <div class={[
                   "text-sm text-gray-600 dark:text-gray-300 leading-relaxed",
@@ -186,6 +194,7 @@
           "lg:col-span-3"
         ]}
         loading="lazy"
+        decoding="async"
       />
       <div class={[
         "text-sm text-gray-700 dark:text-gray-300 leading-relaxed",

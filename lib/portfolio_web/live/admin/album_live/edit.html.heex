@@ -202,6 +202,8 @@
                       class={"h-32 w-full object-cover rounded-lg #{if !@reordering_mode, do: "cursor-pointer"}"}
                       phx-click={if !@reordering_mode, do: "edit_photo"}
                       phx-value-id={photo.id}
+                      loading="lazy"
+                      decoding="async"
                     />
                     <%= if photo.title && !@reordering_mode do %>
                       <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-2 rounded-b-lg">
@@ -281,6 +283,8 @@
                     src={@editing_photo.file_path}
                     alt={@editing_photo.title || "Photo"}
                     class="w-full h-48 object-cover rounded-lg"
+                    loading="eager"
+                    decoding="async"
                   />
                   <p class="text-xs text-gray-500 mt-1">
                     {@editing_photo.original_filename}
