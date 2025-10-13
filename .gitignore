@@ -45,6 +45,10 @@ notes.md
 
 .gitignore
 AGENTS.md
+# Allow ADR documentation
+!docs/adr/
+!docs/adr/**/*.md
+# Ignore other docs
 docs/
 docs/**/**.md
 priv/static/uploads/*
