@@ -7,6 +7,12 @@ defmodule PortfolioWeb.AuthController do
 
   alias Portfolio.Auth
 
+  # Rate limiting: 10 token verification attempts per 5 minutes per IP
+  # Prevents brute force attacks on magic link tokens
+  plug PortfolioWeb.Plugs.RateLimiterPlug,
+       [action: :magic_link_verify, identifier: :ip]
+       when action in [:verify_magic_link]
+
   @doc """
   Vérifie un magic link et authentifie l'utilisateur.
 

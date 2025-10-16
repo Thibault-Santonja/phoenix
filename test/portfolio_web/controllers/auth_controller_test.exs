@@ -5,6 +5,12 @@ defmodule PortfolioWeb.AuthControllerTest do
   alias Portfolio.Auth.{MagicLink, User}
   alias Portfolio.Repo
 
+  setup do
+    # Use unique IP for each test to avoid rate limit interference
+    unique_ip = {127, 0, 0, System.unique_integer([:positive]) |> rem(255) |> max(1)}
+    {:ok, conn: %{build_conn() | remote_ip: unique_ip}}
+  end
+
   describe "verify_magic_link/2" do
     test "creates session and redirects to /admin/albums with valid token", %{conn: conn} do
       user = insert_user()
@@ -190,6 +196,107 @@ defmodule PortfolioWeb.AuthControllerTest do
         assert redirected_to(conn) == ~p"/login"
         assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "invalide"
       end
+    end
+  end
+
+  describe "verify_magic_link/2 - rate limiting" do
+    setup do
+      # Ensure rate limiter is reset before tests
+      :ok
+    end
+
+    test "allows up to 10 verification attempts per 5 minutes per IP", %{conn: conn} do
+      user = insert_user()
+      magic_link = insert_magic_link(user)
+
+      # Get a unique IP for this test to avoid interference
+      test_ip = {127, 0, 0, System.unique_integer([:positive]) |> rem(255)}
+
+      # Make 10 attempts (will fail because token is consumed after first use)
+      for i <- 1..10 do
+        conn_with_ip = %{conn | remote_ip: test_ip}
+
+        if i == 1 do
+          # First attempt succeeds
+          conn_result = get(conn_with_ip, ~p"/auth/magic/#{magic_link.token}")
+          assert redirected_to(conn_result) == ~p"/admin"
+        else
+          # Subsequent attempts with same token fail but don't hit rate limit
+          conn_result = get(conn_with_ip, ~p"/auth/magic/#{magic_link.token}")
+          assert redirected_to(conn_result) == ~p"/login"
+          refute Phoenix.Flash.get(conn_result.assigns.flash, :error) =~ "Trop de tentatives"
+        end
+      end
+    end
+
+    test "blocks 11th verification attempt with rate limit error", %{conn: conn} do
+      # Get a unique IP for this test
+      test_ip = {127, 0, 0, System.unique_integer([:positive]) |> rem(255) |> max(1)}
+
+      # Make 10 verification attempts with different invalid tokens
+      for i <- 1..10 do
+        conn_with_ip = %{conn | remote_ip: test_ip}
+        conn_result = get(conn_with_ip, ~p"/auth/magic/invalid_token_#{i}")
+
+        # Should get invalid token error, not rate limit
+        assert redirected_to(conn_result) == ~p"/login"
+        assert Phoenix.Flash.get(conn_result.assigns.flash, :error) =~ "invalide"
+      end
+
+      # 11th attempt should be rate limited
+      conn_with_ip = %{conn | remote_ip: test_ip}
+      conn_result = get(conn_with_ip, ~p"/auth/magic/invalid_token_11")
+
+      # Rate limiter returns 429 and redirects to /login with flash message
+      assert conn_result.status == 302
+      assert redirected_to(conn_result) == "/login"
+      assert Phoenix.Flash.get(conn_result.assigns.flash, :error) =~ "Trop de tentatives"
+      assert Enum.any?(get_resp_header(conn_result, "retry-after"))
+    end
+
+    test "rate limit is per IP address", %{conn: conn} do
+      user = insert_user()
+
+      # IP 1 uses all attempts
+      ip1 = {127, 0, 0, System.unique_integer([:positive]) |> rem(255)}
+
+      for i <- 1..10 do
+        conn_with_ip1 = %{conn | remote_ip: ip1}
+        get(conn_with_ip1, ~p"/auth/magic/invalid_token_ip1_#{i}")
+      end
+
+      # IP 1's 11th attempt should be blocked
+      conn_with_ip1 = %{conn | remote_ip: ip1}
+      conn_result = get(conn_with_ip1, ~p"/auth/magic/invalid_token_ip1_11")
+      assert Phoenix.Flash.get(conn_result.assigns.flash, :error) =~ "Trop de tentatives"
+
+      # IP 2 should still be able to verify
+      ip2 = {127, 0, 0, System.unique_integer([:positive]) |> rem(255)}
+      magic_link = insert_magic_link(user)
+      conn_with_ip2 = %{conn | remote_ip: ip2}
+      conn_result = get(conn_with_ip2, ~p"/auth/magic/#{magic_link.token}")
+
+      assert redirected_to(conn_result) == ~p"/admin"
+
+      error_flash = Phoenix.Flash.get(conn_result.assigns.flash, :error)
+      assert is_nil(error_flash) or not String.contains?(error_flash, "Trop de tentatives")
+    end
+
+    test "rate limit includes retry-after header", %{conn: conn} do
+      test_ip = {127, 0, 0, System.unique_integer([:positive]) |> rem(255)}
+
+      # Use up all attempts
+      for i <- 1..10 do
+        conn_with_ip = %{conn | remote_ip: test_ip}
+        get(conn_with_ip, ~p"/auth/magic/invalid_#{i}")
+      end
+
+      # Next attempt should have retry-after header
+      conn_with_ip = %{conn | remote_ip: test_ip}
+      conn_result = get(conn_with_ip, ~p"/auth/magic/invalid_11")
+
+      [retry_after] = get_resp_header(conn_result, "retry-after")
+      assert String.to_integer(retry_after) > 0
     end
   end
 

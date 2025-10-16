@@ -95,11 +95,44 @@ defmodule Portfolio.RateLimiterTest do
       assert period == :timer.hours(1)
     end
 
+    test "returns configured limit for magic_link_verify" do
+      {limit, period} = RateLimiter.limit(:magic_link_verify)
+
+      assert limit == 10
+      assert period == :timer.minutes(5)
+    end
+
     test "returns configured limit for login_attempt" do
       {limit, period} = RateLimiter.limit(:login_attempt)
 
       assert limit == 10
       assert period == :timer.hours(1)
+    end
+  end
+
+  describe "magic_link_verify rate limiting" do
+    test "permet 10 vérifications par 5 minutes" do
+      identifier = "verifier-#{System.unique_integer([:positive])}"
+
+      # Utiliser les 10 tentatives autorisées
+      for i <- 1..10 do
+        assert {:allow, remaining} = RateLimiter.check_rate(:magic_link_verify, identifier)
+        assert remaining == 10 - i
+      end
+
+      # La 11ème tentative doit être bloquée
+      assert {:deny, retry_after} = RateLimiter.check_rate(:magic_link_verify, identifier)
+      # Retry after devrait être ~5 minutes (300000 ms)
+      assert retry_after <= :timer.minutes(5)
+      assert retry_after > 0
+    end
+
+    test "période plus courte que magic_link_request" do
+      {_, magic_link_period} = RateLimiter.limit(:magic_link_request)
+      {_, verify_period} = RateLimiter.limit(:magic_link_verify)
+
+      # Verify doit avoir une période plus courte (5 min vs 1 heure)
+      assert verify_period < magic_link_period
     end
   end
 end
