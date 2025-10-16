@@ -209,12 +209,60 @@ defmodule Portfolio.Photography do
   end
 
   @doc """
+  Liste les années ayant des albums publiés, triées par ordre décroissant.
+
+  Utilise une requête SQL optimisée pour récupérer uniquement les années distinctes
+  sans charger les albums complets. Idéal pour le lazy loading.
+
+  ## Exemples
+
+      iex> list_published_years()
+      [2024, 2023, 2022, 2021]
+
+  """
+  @spec list_published_years() :: [integer()]
+  def list_published_years do
+    AlbumRepository.list_published_years()
+  end
+
+  @doc """
+  Liste les albums publiés pour une année spécifique.
+
+  Optimisé pour le lazy loading : charge uniquement les albums d'une année donnée.
+  Utilisez `list_published_years/0` en combinaison avec cette fonction pour un
+  chargement progressif par année.
+
+  ## Paramètres
+
+  - `year` - L'année pour laquelle récupérer les albums (integer)
+  - `opts` - Options
+    - `:preload` - Associations à précharger (ex: [:photos])
+
+  ## Exemples
+
+      iex> list_published_for_year(2024)
+      [%Album{}, %Album{}]
+
+      iex> list_published_for_year(2024, preload: [:photos])
+      [%Album{photos: [...]}, ...]
+
+  """
+  @spec list_published_for_year(integer(), keyword()) :: [Album.t()]
+  def list_published_for_year(year, opts \\ []) when is_integer(year) do
+    AlbumRepository.list_published_for_year(year, opts)
+  end
+
+  @doc """
   Liste les albums publiés groupés par année avec cache.
 
   Utilise Cachex pour mettre en cache les résultats et éviter les requêtes répétées.
   Le cache expire après 1 heure ou est invalidé lors de la publication d'un album.
 
   Retourne une map avec les années comme clés et les albums comme valeurs.
+
+  **Note de performance:** Pour de meilleurs résultats avec de grands datasets,
+  préférez utiliser `list_published_years/0` + `list_published_for_year/2` qui
+  permettent un lazy loading plus efficace.
 
   ## Options
 

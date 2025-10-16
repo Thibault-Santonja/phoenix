@@ -199,10 +199,89 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   end
 
   @doc """
+  Liste les années ayant des albums publiés, triées par ordre décroissant.
+
+  Utilise une requête SQL optimisée avec EXTRACT(YEAR) pour obtenir uniquement
+  les années distinctes sans charger les albums complets.
+
+  Cette fonction est optimale pour le lazy loading : elle permet d'afficher
+  rapidement la liste des années disponibles, puis de charger les albums
+  d'une année spécifique à la demande avec `list_published_for_year/2`.
+
+  ## Exemples
+
+      iex> list_published_years()
+      [2024, 2023, 2022, 2021]
+
+  """
+  @spec list_published_years() :: [integer()]
+  def list_published_years do
+    from(a in Album,
+      where: a.published == true,
+      select: fragment("EXTRACT(YEAR FROM ?)", a.date_prise_vue),
+      distinct: true,
+      order_by: [desc: fragment("EXTRACT(YEAR FROM ?)", a.date_prise_vue)]
+    )
+    |> Repo.all()
+    |> Enum.map(fn
+      %Decimal{} = year -> Decimal.to_integer(year)
+      year when is_float(year) -> trunc(year)
+      year when is_integer(year) -> year
+    end)
+  end
+
+  @doc """
+  Liste les albums publiés pour une année spécifique.
+
+  Optimisé pour le lazy loading : charge uniquement les albums d'une année
+  donnée au lieu de tous les albums. Combine avec `list_published_years/0`
+  pour un chargement efficace par année.
+
+  ## Paramètres
+
+  - `year` - L'année pour laquelle récupérer les albums (integer)
+  - `opts` - Options
+    - `:preload` - Associations à précharger (ex: [:photos])
+
+  ## Exemples
+
+      iex> list_published_for_year(2024)
+      [%Album{date_prise_vue: ~D[2024-12-25]}, %Album{date_prise_vue: ~D[2024-06-15]}]
+
+      iex> list_published_for_year(2024, preload: [:photos])
+      [%Album{photos: [%Photo{}, ...]}, ...]
+
+  """
+  @spec list_published_for_year(integer(), keyword()) :: [Album.t()]
+  def list_published_for_year(year, opts \\ []) when is_integer(year) do
+    start_date = Date.new!(year, 1, 1)
+    end_date = Date.new!(year, 12, 31)
+
+    query =
+      AlbumQuery.base()
+      |> AlbumQuery.published()
+      |> AlbumQuery.where_date_between(start_date, end_date)
+      |> AlbumQuery.order_by_date_desc()
+
+    query =
+      if opts[:preload] do
+        apply_preload(query, opts[:preload])
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+  @doc """
   Liste les albums publiés groupés par année de prise de vue.
 
   Retourne une map avec les années comme clés et les listes d'albums comme valeurs.
   Les albums sont triés par date décroissante au sein de chaque année.
+
+  **Note:** Pour de meilleures performances avec de grands datasets, préférez
+  utiliser `list_published_years/0` + `list_published_for_year/2` qui permettent
+  un lazy loading plus efficace.
 
   ## Exemples
 

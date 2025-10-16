@@ -229,4 +229,28 @@ defmodule Portfolio.Photography.Queries.AlbumQuery do
       preload: [photos: ^cover_photo_query]
     )
   end
+
+  @doc """
+  Filters albums by date range.
+
+  Returns albums where date_prise_vue is between start_date and end_date (inclusive).
+
+  ## Parameters
+
+  - `query` - The Ecto query
+  - `start_date` - Start date (Date struct)
+  - `end_date` - End date (Date struct)
+
+  ## Examples
+
+      iex> start_date = ~D[2024-01-01]
+      iex> end_date = ~D[2024-12-31]
+      iex> AlbumQuery.base() |> AlbumQuery.where_date_between(start_date, end_date)
+      #Ecto.Query<...>
+
+  """
+  @spec where_date_between(Ecto.Query.t(), Date.t(), Date.t()) :: Ecto.Query.t()
+  def where_date_between(query, start_date, end_date) do
+    where(query, [album: a], a.date_prise_vue >= ^start_date and a.date_prise_vue <= ^end_date)
+  end
 end

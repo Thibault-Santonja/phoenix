@@ -219,6 +219,210 @@ defmodule Portfolio.Photography.Repositories.AlbumRepositoryTest do
     end
   end
 
+  describe "list_published_years/0" do
+    test "returns distinct years with published albums in descending order" do
+      insert_album(%{
+        title: "Album 2024",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: true
+      })
+
+      insert_album(%{
+        title: "Album 2023",
+        type: :couples,
+        date_prise_vue: ~D[2023-09-10],
+        published: true
+      })
+
+      insert_album(%{
+        title: "Album 2022",
+        type: :events,
+        date_prise_vue: ~D[2022-12-01],
+        published: true
+      })
+
+      result = AlbumRepository.list_published_years()
+
+      assert result == [2024, 2023, 2022]
+    end
+
+    test "excludes unpublished albums" do
+      insert_album(%{
+        title: "Published 2024",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: true
+      })
+
+      insert_album(%{
+        title: "Draft 2023",
+        type: :wedding,
+        date_prise_vue: ~D[2023-06-15],
+        published: false
+      })
+
+      result = AlbumRepository.list_published_years()
+
+      assert result == [2024]
+      refute 2023 in result
+    end
+
+    test "returns empty list when no published albums" do
+      insert_album(%{
+        title: "Draft",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: false
+      })
+
+      result = AlbumRepository.list_published_years()
+
+      assert result == []
+    end
+
+    test "handles multiple albums in same year" do
+      insert_album(%{
+        title: "Album 2024-1",
+        type: :wedding,
+        date_prise_vue: ~D[2024-01-15],
+        published: true
+      })
+
+      insert_album(%{
+        title: "Album 2024-2",
+        type: :couples,
+        date_prise_vue: ~D[2024-12-31],
+        published: true
+      })
+
+      result = AlbumRepository.list_published_years()
+
+      # Should return year 2024 only once despite multiple albums
+      assert result == [2024]
+    end
+  end
+
+  describe "list_published_for_year/2" do
+    test "returns albums for specific year only" do
+      album_2024_1 =
+        insert_album(%{
+          title: "Album 2024-1",
+          type: :wedding,
+          date_prise_vue: ~D[2024-01-15],
+          published: true
+        })
+
+      album_2024_2 =
+        insert_album(%{
+          title: "Album 2024-2",
+          type: :couples,
+          date_prise_vue: ~D[2024-12-31],
+          published: true
+        })
+
+      _album_2023 =
+        insert_album(%{
+          title: "Album 2023",
+          type: :events,
+          date_prise_vue: ~D[2023-06-15],
+          published: true
+        })
+
+      result = AlbumRepository.list_published_for_year(2024)
+
+      assert length(result) == 2
+      album_ids = Enum.map(result, & &1.id)
+      assert album_2024_1.id in album_ids
+      assert album_2024_2.id in album_ids
+    end
+
+    test "excludes unpublished albums for the year" do
+      insert_album(%{
+        title: "Published 2024",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: true
+      })
+
+      insert_album(%{
+        title: "Draft 2024",
+        type: :couples,
+        date_prise_vue: ~D[2024-09-20],
+        published: false
+      })
+
+      result = AlbumRepository.list_published_for_year(2024)
+
+      assert length(result) == 1
+      assert hd(result).title == "Published 2024"
+    end
+
+    test "returns empty list for year with no albums" do
+      insert_album(%{
+        title: "Album 2024",
+        type: :wedding,
+        date_prise_vue: ~D[2024-06-15],
+        published: true
+      })
+
+      result = AlbumRepository.list_published_for_year(2023)
+
+      assert result == []
+    end
+
+    test "orders albums by date descending within the year" do
+      album_dec =
+        insert_album(%{
+          title: "December",
+          type: :wedding,
+          date_prise_vue: ~D[2024-12-25],
+          published: true
+        })
+
+      album_jan =
+        insert_album(%{
+          title: "January",
+          type: :couples,
+          date_prise_vue: ~D[2024-01-10],
+          published: true
+        })
+
+      album_jun =
+        insert_album(%{
+          title: "June",
+          type: :events,
+          date_prise_vue: ~D[2024-06-15],
+          published: true
+        })
+
+      result = AlbumRepository.list_published_for_year(2024)
+
+      # Should be ordered: December, June, January
+      assert [album_dec.id, album_jun.id, album_jan.id] == Enum.map(result, & &1.id)
+    end
+
+    test "supports preload option" do
+      album =
+        insert_album(%{
+          title: "Album 2024",
+          type: :wedding,
+          date_prise_vue: ~D[2024-06-15],
+          published: true
+        })
+
+      insert_photo(album, %{title: "Photo 1"})
+      insert_photo(album, %{title: "Photo 2"})
+
+      result = AlbumRepository.list_published_for_year(2024, preload: [:photos])
+
+      assert length(result) == 1
+      album_with_photos = hd(result)
+      assert Ecto.assoc_loaded?(album_with_photos.photos)
+      assert length(album_with_photos.photos) == 2
+    end
+  end
+
   describe "list_published_by_year/0" do
     test "groups published albums by year" do
       insert_album(%{
