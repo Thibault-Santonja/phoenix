@@ -42,6 +42,20 @@ defmodule PortfolioWeb.Router do
     plug PortfolioWeb.Plugs.RequireAuth, :fetch_current_user
   end
 
+  # Pipeline pour les pages d'authentification (login, register)
+  # Redirige vers /admin si l'utilisateur est déjà connecté
+  pipeline :auth_pages do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
+    plug PortfolioWeb.Plugs.RequireAuth, :fetch_current_user
+    plug PortfolioWeb.Plugs.RequireAuth, :redirect_if_user_is_authenticated
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -71,12 +85,16 @@ defmodule PortfolioWeb.Router do
   scope "/", PortfolioWeb, host: "photo." do
     pipe_through :photography
 
-    live "/", PhotographyLive.Index, :index
-    live "/gallery", PhotographyLive.Gallery, :index
-    live "/gallery/:chapter", PhotographyLive.Gallery, :index
-    live "/timeline", PhotographyLive.Timeline, :index
-    live "/timeline/:chapter", PhotographyLive.Timeline, :index
-    live "/:chapter", PhotographyLive.Index, :index
+    # Pages publiques avec utilisateur optionnel
+    live_session :current_user,
+      on_mount: [{PortfolioWeb.UserAuth, :mount_current_user}] do
+      live "/", PhotographyLive.Index, :index
+      live "/gallery", PhotographyLive.Gallery, :index
+      live "/gallery/:chapter", PhotographyLive.Gallery, :index
+      live "/timeline", PhotographyLive.Timeline, :index
+      live "/timeline/:chapter", PhotographyLive.Timeline, :index
+      live "/:chapter", PhotographyLive.Index, :index
+    end
   end
 
   scope "/", PortfolioWeb, host: "tech." do
@@ -90,9 +108,18 @@ defmodule PortfolioWeb.Router do
 
   # Routes d'authentification
   scope "/", PortfolioWeb do
+    pipe_through :auth_pages
+
+    live_session :redirect_if_authenticated,
+      on_mount: [{PortfolioWeb.UserAuth, :redirect_if_user_is_authenticated}] do
+      live "/login", AuthLive.Login, :index
+    end
+  end
+
+  # Routes d'authentification (sans LiveView)
+  scope "/", PortfolioWeb do
     pipe_through :browser
 
-    live "/login", AuthLive.Login, :index
     get "/auth/magic/:token", AuthController, :verify_magic_link
     delete "/logout", AuthController, :logout
   end
@@ -102,7 +129,7 @@ defmodule PortfolioWeb.Router do
     pipe_through :require_authenticated_admin
 
     live_session :require_authenticated_admin,
-      on_mount: [] do
+      on_mount: [{PortfolioWeb.UserAuth, :ensure_authenticated}] do
       # Tableau de bord
       live "/", DashboardLive.Index, :index
 

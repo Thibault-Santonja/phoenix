@@ -17,6 +17,7 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   def call(conn, :fetch_current_user), do: fetch_current_user(conn, [])
   def call(conn, :require_authenticated_user), do: require_authenticated_user(conn, [])
   def call(conn, :require_admin_role), do: require_admin_role(conn, [])
+  def call(conn, :redirect_if_user_is_authenticated), do: redirect_if_user_is_authenticated(conn, [])
 
   @doc """
   Récupère l'utilisateur courant depuis le token de session avec cache.
@@ -118,6 +119,24 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
       |> put_flash(:error, "Vous n'avez pas les permissions pour accéder à cette page.")
       |> redirect(to: "/")
       |> halt()
+    end
+  end
+
+  @doc """
+  Redirige les utilisateurs déjà authentifiés.
+
+  Utile pour les pages de login/register qui ne devraient être accessibles
+  qu'aux utilisateurs non connectés.
+
+  Redirige vers /admin si l'utilisateur est déjà connecté.
+  """
+  def redirect_if_user_is_authenticated(conn, _opts) do
+    if conn.assigns[:current_user] do
+      conn
+      |> redirect(to: "/admin")
+      |> halt()
+    else
+      conn
     end
   end
 end
