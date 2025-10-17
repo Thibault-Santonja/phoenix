@@ -115,6 +115,30 @@ defmodule PortfolioWeb.AuthControllerTest do
       assert Auth.get_session_by_token(session.token) == nil
     end
 
+    test "invalidates session cache on logout", %{conn: conn} do
+      user = insert_user()
+      {:ok, session} = Auth.create_session(user)
+
+      # Simuler une session en cache (en prod uniquement, skip en test)
+      # En test le cache est skip automatiquement, donc on vérifie juste que
+      # Cachex.del est appelé sans erreur
+      cache_key = {:session, session.token}
+
+      # Mettre la session en cache manuellement pour le test
+      Cachex.put(:portfolio_cache, cache_key, session)
+
+      # Vérifier que la session est en cache
+      assert {:ok, ^session} = Cachex.get(:portfolio_cache, cache_key)
+
+      # Logout
+      conn
+      |> init_test_session(%{session_token: session.token})
+      |> delete(~p"/logout")
+
+      # Vérifier que le cache a été invalidé
+      assert {:ok, nil} = Cachex.get(:portfolio_cache, cache_key)
+    end
+
     test "works even when no session exists", %{conn: conn} do
       conn =
         conn
@@ -176,7 +200,9 @@ defmodule PortfolioWeb.AuthControllerTest do
       ]
 
       for token <- malformed_tokens do
-        test_conn = build_conn() |> get(~p"/auth/magic/#{token}")
+        # Use unique IP for each iteration to avoid rate limiting
+        unique_ip = {127, 0, 0, System.unique_integer([:positive]) |> rem(255) |> max(1)}
+        test_conn = %{build_conn() | remote_ip: unique_ip} |> get(~p"/auth/magic/#{token}")
         # Les tokens invalides devraient rediriger vers /login avec erreur
         assert redirected_to(test_conn) == ~p"/login"
         assert Phoenix.Flash.get(test_conn.assigns.flash, :error) =~ "invalide"

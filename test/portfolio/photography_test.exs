@@ -87,6 +87,9 @@ defmodule Portfolio.PhotographyTest do
 
   describe "upload_photos/2" do
     test "uploads multiple photos successfully", %{test_base_path: test_base_path} do
+      # Create album first
+      create_album(title: "Test Album", slug: "test-album")
+
       # Create temporary test files
       uploads = [
         %{
@@ -131,6 +134,9 @@ defmodule Portfolio.PhotographyTest do
     end
 
     test "handles empty upload list" do
+      # Create album first
+      create_album(title: "Test Album", slug: "test-album")
+
       assert {:ok, []} = Photography.upload_photos("test-album", [])
     end
   end

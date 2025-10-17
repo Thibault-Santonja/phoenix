@@ -19,12 +19,15 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   def call(conn, :require_admin_role), do: require_admin_role(conn, [])
 
   @doc """
-  Récupère l'utilisateur courant depuis le token de session.
+  Récupère l'utilisateur courant depuis le token de session avec cache.
 
   Vérifie que:
-  - Le token de session existe en base de données
+  - Le token de session existe en base de données (ou dans le cache)
   - La session n'a pas expiré (30 jours d'inactivité)
   - Met à jour l'activité de la session pour prolonger sa durée
+
+  Utilise Cachex pour mettre en cache les sessions pendant 1 heure et éviter
+  les requêtes DB répétées. Le cache est invalidé lors du logout.
 
   Assigne `conn.assigns.current_user` si un utilisateur est connecté.
   """
@@ -32,7 +35,7 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
     session_token = get_session(conn, :session_token)
 
     if session_token do
-      case Auth.get_session_by_token(session_token) do
+      case fetch_session_from_cache(session_token) do
         nil ->
           # Session invalide ou expirée
           conn
@@ -41,7 +44,12 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
 
         session ->
           # Mettre à jour l'activité de la session
-          Auth.update_session_activity(session)
+          # Async en production pour ne pas ralentir la requête, sync en test pour la prévisibilité
+          if Mix.env() == :test do
+            Auth.update_session_activity(session)
+          else
+            Task.start(fn -> Auth.update_session_activity(session) end)
+          end
 
           conn
           |> assign(:current_user, session.user)
@@ -49,6 +57,33 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
       end
     else
       assign(conn, :current_user, nil)
+    end
+  end
+
+  # Récupère une session depuis le cache ou la base de données
+  defp fetch_session_from_cache(session_token) do
+    cache_key = {:session, session_token}
+
+    # En test, skip le cache pour éviter la pollution entre tests
+    if Mix.env() == :test do
+      Auth.get_session_by_token(session_token)
+    else
+      case Cachex.fetch(:portfolio_cache, cache_key, fn ->
+             case Auth.get_session_by_token(session_token) do
+               nil ->
+                 # Session invalide, ne pas mettre en cache
+                 {:ignore, nil}
+
+               session ->
+                 # Cacher la session pendant 1 heure
+                 {:commit, session, ttl: :timer.hours(1)}
+             end
+           end) do
+        {:ok, session} -> session
+        {:commit, session} -> session
+        {:ignore, nil} -> nil
+        _ -> nil
+      end
     end
   end
 
