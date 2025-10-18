@@ -47,7 +47,7 @@ defmodule Portfolio.Photography do
 
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.{Album, Photo}
-  alias Portfolio.Photography.Events.PhotoUploaded
+  alias Portfolio.Photography.Events.{PhotoDeleted, PhotoUploaded}
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
   alias Portfolio.Repo
 
@@ -403,24 +403,41 @@ defmodule Portfolio.Photography do
   """
   @spec delete_photo(Photo.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_photo(%Photo{} = photo) do
-    Ecto.Multi.new()
-    |> Ecto.Multi.delete(:photo, photo)
-    |> Ecto.Multi.run(:file, fn _repo, %{photo: deleted_photo} ->
-      # Supprimer le fichier via FileStorage
-      case storage().delete_photo(deleted_photo.file_path) do
-        :ok ->
-          {:ok, :ok}
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.delete(:photo, photo)
+      |> Ecto.Multi.run(:file, fn _repo, %{photo: deleted_photo} ->
+        # Supprimer le fichier via FileStorage
+        case storage().delete_photo(deleted_photo.file_path) do
+          :ok ->
+            {:ok, :ok}
 
-        {:error, :not_found} ->
-          # Si le fichier n'existe pas, c'est acceptable (données orphelines)
-          {:ok, :ok}
+          {:error, :not_found} ->
+            # Si le fichier n'existe pas, c'est acceptable (données orphelines)
+            {:ok, :ok}
 
-        {:error, reason} ->
-          # Autre erreur de suppression fichier - rollback de la transaction
-          {:error, reason}
-      end
-    end)
-    |> Repo.transaction()
+          {:error, reason} ->
+            # Autre erreur de suppression fichier - rollback de la transaction
+            {:error, reason}
+        end
+      end)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{photo: deleted_photo}} ->
+        # Émettre l'événement de domaine
+        DomainEvents.publish(:photo_deleted, %PhotoDeleted{
+          photo_id: deleted_photo.id,
+          album_id: deleted_photo.album_id,
+          file_path: deleted_photo.file_path,
+          deleted_at: DateTime.utc_now()
+        })
+
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """

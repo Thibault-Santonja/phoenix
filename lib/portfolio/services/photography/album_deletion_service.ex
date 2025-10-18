@@ -15,7 +15,9 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
 
   use Portfolio.Services.Service
 
+  alias Portfolio.DomainEvents
   alias Portfolio.Photography.Album
+  alias Portfolio.Photography.Events.AlbumDeleted
   alias Portfolio.Photography.Repositories.PhotoRepository
   alias Portfolio.Repo
 
@@ -77,6 +79,22 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
           %{photo_count: count},
           %{album_id: album.id}
         )
+
+        # Emit domain event on success
+        case result do
+          {:ok, %{album: deleted_album, photos: photos}} ->
+            DomainEvents.publish(:album_deleted, %AlbumDeleted{
+              album_id: deleted_album.id,
+              title: deleted_album.title,
+              slug: deleted_album.slug,
+              deleted_at: DateTime.utc_now(),
+              user_id: nil,
+              photo_count: length(photos)
+            })
+
+          _ ->
+            :ok
+        end
 
         result
       end

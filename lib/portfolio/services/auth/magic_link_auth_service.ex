@@ -109,9 +109,26 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   defp fetch_or_create_user(email) do
     case Repo.get_by(User, email: email) do
       nil ->
-        %User{}
-        |> User.changeset(%{email: email, role: "admin"})
-        |> Repo.insert()
+        result =
+          %User{}
+          |> User.changeset(%{email: email, role: "admin"})
+          |> Repo.insert()
+
+        case result do
+          {:ok, user} ->
+            # Emit UserCreated event for new users
+            DomainEvents.publish(:user_created, %Portfolio.Auth.Events.UserCreated{
+              user_id: user.id,
+              email: user.email,
+              role: user.role,
+              created_at: user.inserted_at
+            })
+
+            {:ok, user}
+
+          error ->
+            error
+        end
 
       user ->
         {:ok, user}

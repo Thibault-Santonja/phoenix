@@ -12,7 +12,7 @@ defmodule Portfolio.Auth do
   alias Portfolio.Auth.User
   alias Portfolio.Auth.UserSession
   alias Portfolio.DomainEvents
-  alias Portfolio.Auth.Events.MagicLinkVerified
+  alias Portfolio.Auth.Events.{MagicLinkVerified, SessionCreated}
 
   alias Portfolio.Repo
 
@@ -242,13 +242,33 @@ defmodule Portfolio.Auth do
   def create_session(%User{} = user) do
     token = generate_token()
 
-    %UserSession{}
-    |> UserSession.changeset(%{
-      user_id: user.id,
-      token: token,
-      last_activity_at: DateTime.utc_now() |> DateTime.truncate(:second)
-    })
-    |> Repo.insert()
+    result =
+      %UserSession{}
+      |> UserSession.changeset(%{
+        user_id: user.id,
+        token: token,
+        last_activity_at: DateTime.utc_now() |> DateTime.truncate(:second)
+      })
+      |> Repo.insert()
+
+    case result do
+      {:ok, session} ->
+        # Émettre l'événement de domaine
+        expires_at = DateTime.add(session.last_activity_at, 30, :day)
+
+        DomainEvents.publish(:session_created, %SessionCreated{
+          session_id: session.id,
+          user_id: user.id,
+          email: user.email,
+          created_at: session.inserted_at,
+          expires_at: expires_at
+        })
+
+        {:ok, session}
+
+      error ->
+        error
+    end
   end
 
   @doc """

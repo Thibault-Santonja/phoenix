@@ -8,9 +8,79 @@ defmodule Portfolio.Auth.Events do
 
   ## Events
 
+  - `UserCreated` - A new user has been created in the system
+  - `SessionCreated` - A user session has been created (successful login)
   - `MagicLinkRequested` - A user has requested a magic link for authentication
   - `MagicLinkVerified` - A magic link has been successfully verified
   """
+
+  defmodule UserCreated do
+    @moduledoc """
+    Event raised when a new user is created in the system.
+
+    This event is triggered when a user record is first created,
+    typically during the first magic link request.
+
+    ## Fields
+
+    - `user_id` - Unique identifier of the new user
+    - `email` - Email address of the new user
+    - `role` - Role assigned to the user
+    - `created_at` - Timestamp when the user was created
+
+    ## Use Cases
+
+    - Send welcome email
+    - Log user registration metrics
+    - Initialize user preferences
+    - Trigger onboarding workflow
+    """
+
+    @enforce_keys [:user_id, :email, :role, :created_at]
+    defstruct [:user_id, :email, :role, :created_at]
+
+    @type t :: %__MODULE__{
+            user_id: Ecto.UUID.t(),
+            email: String.t(),
+            role: atom(),
+            created_at: DateTime.t()
+          }
+  end
+
+  defmodule SessionCreated do
+    @moduledoc """
+    Event raised when a user session is created (successful login).
+
+    This event is triggered when a user successfully authenticates
+    and a session is created.
+
+    ## Fields
+
+    - `session_id` - Unique identifier of the session
+    - `user_id` - ID of the authenticated user
+    - `email` - Email address of the authenticated user
+    - `created_at` - Timestamp when the session was created
+    - `expires_at` - Timestamp when the session will expire
+
+    ## Use Cases
+
+    - Log authentication events
+    - Track active sessions
+    - Update user last_login timestamp
+    - Monitor login patterns for security
+    """
+
+    @enforce_keys [:session_id, :user_id, :email, :created_at, :expires_at]
+    defstruct [:session_id, :user_id, :email, :created_at, :expires_at]
+
+    @type t :: %__MODULE__{
+            session_id: Ecto.UUID.t(),
+            user_id: Ecto.UUID.t(),
+            email: String.t(),
+            created_at: DateTime.t(),
+            expires_at: DateTime.t()
+          }
+  end
 
   defmodule MagicLinkRequested do
     @moduledoc """
