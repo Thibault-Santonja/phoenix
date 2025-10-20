@@ -34,7 +34,7 @@
       </.link>
     </div>
   </div>
-  
+
 <!-- Filtres -->
   <div class="mt-6 flex items-center gap-2">
     <span class="text-sm font-medium text-gray-700">Filtrer :</span>
@@ -225,7 +225,7 @@
       </div>
     </div>
   <% end %>
-  
+
 <!-- Pagination -->
   <%= if @total_pages > 1 do %>
     <div class="mt-6 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
@@ -291,7 +291,7 @@
 
             <%= for page_num <- pagination_range(@page, @total_pages) do %>
               <%= if page_num == @page do %>
-                <span class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                <span class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                   {page_num}
                 </span>
               <% else %>

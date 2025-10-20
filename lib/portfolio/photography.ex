@@ -179,18 +179,31 @@ defmodule Portfolio.Photography do
   """
   @spec update_album(Album.t(), map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def update_album(album, attrs) do
-    case AlbumRepository.update(album, attrs) do
-      {:ok, updated_album} = result ->
-        # Invalider le cache si l'album est publié
-        if updated_album.published do
-          invalidate_albums_cache()
-        end
+    start_time = System.monotonic_time()
 
-        result
+    result =
+      case AlbumRepository.update(album, attrs) do
+        {:ok, updated_album} = result ->
+          # Invalider le cache si l'album est publié
+          if updated_album.published do
+            invalidate_albums_cache()
+          end
 
-      error ->
-        error
-    end
+          result
+
+        error ->
+          error
+      end
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :photography, :album, :updated],
+      %{duration: duration},
+      %{album_id: album.id, result: elem(result, 0)}
+    )
+
+    result
   end
 
   @doc """
@@ -365,25 +378,52 @@ defmodule Portfolio.Photography do
   """
   @spec create_photo(map()) :: {:ok, Photo.t()} | {:error, Ecto.Changeset.t()}
   def create_photo(attrs) do
-    with {:ok, photo} <- PhotoRepository.insert(attrs) do
-      # Émettre l'événement de domaine
-      DomainEvents.publish(:photo_uploaded, %PhotoUploaded{
-        photo_id: photo.id,
-        album_id: photo.album_id,
-        file_path: photo.file_path,
-        hash: photo.hash,
-        uploaded_at: photo.inserted_at
-      })
+    start_time = System.monotonic_time()
 
-      {:ok, photo}
-    end
+    result =
+      with {:ok, photo} <- PhotoRepository.insert(attrs) do
+        # Émettre l'événement de domaine
+        DomainEvents.publish(:photo_uploaded, %PhotoUploaded{
+          photo_id: photo.id,
+          album_id: photo.album_id,
+          file_path: photo.file_path,
+          hash: photo.hash,
+          uploaded_at: photo.inserted_at
+        })
+
+        {:ok, photo}
+      end
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :photography, :photo, :created],
+      %{duration: duration},
+      %{album_id: attrs[:album_id], result: elem(result, 0)}
+    )
+
+    result
   end
 
   @doc """
   Met à jour une photo existante.
   """
   @spec update_photo(Photo.t(), map()) :: {:ok, Photo.t()} | {:error, Ecto.Changeset.t()}
-  def update_photo(photo, attrs), do: PhotoRepository.update(photo, attrs)
+  def update_photo(photo, attrs) do
+    start_time = System.monotonic_time()
+
+    result = PhotoRepository.update(photo, attrs)
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :photography, :photo, :updated],
+      %{duration: duration},
+      %{photo_id: photo.id, album_id: photo.album_id, result: elem(result, 0)}
+    )
+
+    result
+  end
 
   @doc """
   Supprime une photo ainsi que son fichier sur le disque de manière atomique.
@@ -403,6 +443,8 @@ defmodule Portfolio.Photography do
   """
   @spec delete_photo(Photo.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_photo(%Photo{} = photo) do
+    start_time = System.monotonic_time()
+
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.delete(:photo, photo)
@@ -423,6 +465,8 @@ defmodule Portfolio.Photography do
       end)
       |> Repo.transaction()
 
+    duration = System.monotonic_time() - start_time
+
     case result do
       {:ok, %{photo: deleted_photo}} ->
         # Émettre l'événement de domaine
@@ -433,9 +477,21 @@ defmodule Portfolio.Photography do
           deleted_at: DateTime.utc_now()
         })
 
+        :telemetry.execute(
+          [:portfolio, :photography, :photo, :deleted],
+          %{duration: duration},
+          %{photo_id: deleted_photo.id, album_id: deleted_photo.album_id, result: :ok}
+        )
+
         result
 
       error ->
+        :telemetry.execute(
+          [:portfolio, :photography, :photo, :deleted],
+          %{duration: duration},
+          %{photo_id: photo.id, album_id: photo.album_id, result: :error}
+        )
+
         error
     end
   end

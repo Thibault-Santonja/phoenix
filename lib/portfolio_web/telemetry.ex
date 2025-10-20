@@ -23,9 +23,27 @@ defmodule PortfolioWeb.Telemetry do
 
   def metrics do
     [
-      # Photography Metrics
+      # Photography Metrics - Albums
       counter("portfolio.photography.album.created.count"),
       distribution("portfolio.photography.album.created.duration",
+        unit: {:native, :millisecond}
+      ),
+      counter("portfolio.photography.album.updated.count"),
+      distribution("portfolio.photography.album.updated.duration",
+        unit: {:native, :millisecond}
+      ),
+
+      # Photography Metrics - Photos
+      counter("portfolio.photography.photo.created.count"),
+      distribution("portfolio.photography.photo.created.duration",
+        unit: {:native, :millisecond}
+      ),
+      counter("portfolio.photography.photo.updated.count"),
+      distribution("portfolio.photography.photo.updated.duration",
+        unit: {:native, :millisecond}
+      ),
+      counter("portfolio.photography.photo.deleted.count"),
+      distribution("portfolio.photography.photo.deleted.duration",
         unit: {:native, :millisecond}
       ),
       counter("portfolio.photography.photos.uploaded.count"),
