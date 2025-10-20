@@ -55,4 +55,3 @@ docs/**/**.md
 
 priv/static/uploads/*
 .gitignore
-AGENTS.md
