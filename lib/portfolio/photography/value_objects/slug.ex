@@ -1,46 +1,35 @@
 defmodule Portfolio.Photography.ValueObjects.Slug do
   @moduledoc """
-  Value Object representing a URL-friendly slug.
+  Value Object pour les slugs URL-safe.
 
-  Slugs are immutable, normalized strings used in URLs to identify resources
-  in a human-readable and SEO-friendly way.
+  ## Invariants
 
-  ## Characteristics
+  - Minuscules alphanumériques + tirets uniquement
+  - Maximum 100 caractères
+  - Pas de tirets au début/fin
+  - Ne peut pas être vide
 
-  - **Immutable**: Once created, a slug cannot be modified
-  - **Normalized**: Automatically converted to lowercase, ASCII-only format
-  - **URL-safe**: Contains only letters, numbers, and hyphens
-  - **Validated**: Ensures the slug meets all requirements
+  ## Exemples
 
-  ## Rules
+      iex> Slug.new("Paris 2024")
+      {:ok, %Slug{value: "paris-2024"}}
 
-  - Lowercase only
-  - ASCII only (accented characters are transliterated)
-  - Hyphens instead of spaces
-  - No special characters except hyphens
-  - Max length: 100 characters
-  - Cannot be empty
+      iex> Slug.new("Invalid!@#")
+      {:ok, %Slug{value: "invalid"}}
 
-  ## Examples
-
-      iex> Slug.new("Alexandre & Anne - Mariage 2024")
-      {:ok, %Slug{value: "alexandre-anne-mariage-2024"}}
-
-      iex> Slug.new("Café à Paris")
-      {:ok, %Slug{value: "cafe-a-paris"}}
-
-      iex> Slug.new("Multiple   Spaces")
-      {:ok, %Slug{value: "multiple-spaces"}}
-
-      iex> Slug.new("@@@@")
+      iex> Slug.new("")
       {:error, :invalid_slug}
 
-  ## Usage with Phoenix
+      iex> Slug.new(String.duplicate("a", 150))
+      {:error, :too_long}
 
-  The Slug implements the `Phoenix.Param` protocol, allowing it to be used
-  directly in Phoenix routes:
+  ## Pattern DDD
 
-      <%= link "View Album", to: ~p"/albums/\#{album.slug}" %>
+  Un Value Object est :
+  - **Immutable :** Ne peut être modifié après création
+  - **Auto-validant :** Garantit ses invariants à la création
+  - **Égalité par valeur :** Deux slugs identiques sont égaux
+  - **Sans identité :** Pas d'ID, comparaison par attributs
   """
 
   @enforce_keys [:value]
@@ -51,220 +40,125 @@ defmodule Portfolio.Photography.ValueObjects.Slug do
   @max_length 100
 
   @doc """
-  Creates a new Slug from a string.
+  Crée un nouveau Slug à partir d'une chaîne.
 
-  The input string is normalized according to slug rules. If the normalized
-  result is valid, returns `{:ok, slug}`, otherwise returns `{:error, :invalid_slug}`.
+  Normalise automatiquement :
+  - Conversion en minuscules
+  - Suppression des caractères spéciaux
+  - Remplacement des espaces par des tirets
+  - Suppression des tirets multiples
+  - Suppression des tirets en début/fin
 
-  ## Parameters
+  ## Exemples
 
-    - `string` - The string to convert to a slug
+      iex> Slug.new("Paris 2024")
+      {:ok, %Slug{value: "paris-2024"}}
 
-  ## Returns
-
-    - `{:ok, %Slug{}}` - Successfully created slug
-    - `{:error, :invalid_slug}` - The string cannot be converted to a valid slug
-
-  ## Examples
-
-      iex> Slug.new("Hello World")
+      iex> Slug.new("Hello   World!!!")
       {:ok, %Slug{value: "hello-world"}}
-
-      iex> Slug.new("Été 2024")
-      {:ok, %Slug{value: "ete-2024"}}
 
       iex> Slug.new("")
       {:error, :invalid_slug}
   """
-  @spec new(String.t()) :: {:ok, t()} | {:error, :invalid_slug}
-  def new(string) when is_binary(string) do
-    normalized = normalize(string)
+  @spec new(String.t()) :: {:ok, t()} | {:error, :invalid_slug | :too_long}
+  def new(str) when is_binary(str) do
+    slug_value =
+      str
+      |> String.downcase()
+      |> transliterate()
+      |> String.replace(~r/[^a-z0-9\s-]/, "")
+      |> String.replace(~r/\s+/, "-")
+      |> String.replace(~r/-+/, "-")
+      |> String.trim("-")
 
-    if valid?(normalized) do
-      {:ok, %__MODULE__{value: normalized}}
-    else
-      {:error, :invalid_slug}
+    cond do
+      slug_value == "" ->
+        {:error, :invalid_slug}
+
+      String.length(slug_value) > @max_length ->
+        {:error, :too_long}
+
+      true ->
+        {:ok, %__MODULE__{value: slug_value}}
     end
   end
 
   @doc """
-  Creates a Slug, raising an exception on error.
+  Crée un Slug en levant une exception en cas d'erreur.
 
-  Similar to `new/1`, but raises `ArgumentError` if the slug is invalid.
-  Use this when you expect the input to always be valid.
+  Utile quand on sait que l'entrée est valide.
 
-  ## Parameters
+  ## Exemples
 
-    - `string` - The string to convert to a slug
+      iex> Slug.new!("Paris 2024")
+      %Slug{value: "paris-2024"}
 
-  ## Returns
-
-    - `%Slug{}` - The created slug
-
-  ## Raises
-
-    - `ArgumentError` - If the string cannot be converted to a valid slug
-
-  ## Examples
-
-      iex> Slug.new!("Valid Title")
-      %Slug{value: "valid-title"}
-
-      iex> Slug.new!("@@@@")
+      iex> Slug.new!("")
       ** (ArgumentError) Invalid slug: invalid_slug
   """
   @spec new!(String.t()) :: t()
-  def new!(string) do
-    case new(string) do
+  def new!(str) do
+    case new(str) do
       {:ok, slug} -> slug
       {:error, reason} -> raise ArgumentError, "Invalid slug: #{reason}"
     end
   end
 
   @doc """
-  Normalizes a string into a valid slug format.
+  Extrait la valeur string du Slug.
 
-  This function applies all slug transformation rules:
+  ## Exemples
 
-  1. Convert to lowercase
-  2. Transliterate accented characters to ASCII
-  3. Remove all characters except letters, numbers, spaces, and hyphens
-  4. Replace spaces with hyphens
-  5. Replace multiple consecutive hyphens with a single hyphen
-  6. Trim hyphens from start and end
-  7. Truncate to maximum length
-
-  ## Parameters
-
-    - `string` - The string to normalize
-
-  ## Returns
-
-    - Normalized string suitable for use as a slug
-
-  ## Examples
-
-      iex> Slug.normalize("Hello World")
-      "hello-world"
-
-      iex> Slug.normalize("Café à Paris")
-      "cafe-a-paris"
-
-      iex> Slug.normalize("Multiple   Spaces")
-      "multiple-spaces"
-
-      iex> Slug.normalize("Special!@#$%Characters")
-      "specialcharacters"
+      iex> {:ok, slug} = Slug.new("test")
+      iex> Slug.to_string(slug)
+      "test"
   """
-  @spec normalize(String.t()) :: String.t()
-  def normalize(string) do
-    string
-    |> String.downcase()
-    |> transliterate_accents()
-    |> String.replace(~r/[^a-z0-9\s-]/, "")
-    |> String.replace(~r/\s+/, "-")
-    |> String.replace(~r/-+/, "-")
-    |> String.trim("-")
-    |> String.slice(0, @max_length)
+  @spec to_string(t()) :: String.t()
+  def to_string(%__MODULE__{value: value}), do: value
+
+  # Translitère les caractères accentués en caractères ASCII
+  @spec transliterate(String.t()) :: String.t()
+  defp transliterate(str) do
+    # Convertir en graphemes pour traiter caractère par caractère
+    str
+    |> String.graphemes()
+    |> Enum.map(&transliterate_char/1)
+    |> Enum.join()
   end
 
-  # Validates that a normalized string is a valid slug
-  @spec valid?(String.t()) :: boolean()
-  defp valid?(string) do
-    String.length(string) > 0 and
-      String.length(string) <= @max_length and
-      String.match?(string, ~r/^[a-z0-9-]+$/)
+  # Translitère un caractère individuel
+  defp transliterate_char(char) do
+    case char do
+      c when c in ~w(à á â ã ä å ā ă) -> "a"
+      "æ" -> "ae"
+      "ç" -> "c"
+      c when c in ~w(è é ê ë ē ė ę) -> "e"
+      c when c in ~w(ì í î ï ī į) -> "i"
+      c when c in ~w(ñ ń) -> "n"
+      c when c in ~w(ò ó ô õ ö ø ō ő) -> "o"
+      "œ" -> "oe"
+      c when c in ~w(ù ú û ü ū ű) -> "u"
+      c when c in ~w(ý ÿ) -> "y"
+      c when c in ~w(' ' ') -> ""
+      _ -> char
+    end
   end
 
-  # Transliterates accented characters to their ASCII equivalents
-  @spec transliterate_accents(String.t()) :: String.t()
-  defp transliterate_accents(string) do
-    replacements = %{
-      # Lowercase a variants
-      "à" => "a",
-      "á" => "a",
-      "â" => "a",
-      "ã" => "a",
-      "ä" => "a",
-      "å" => "a",
-      # Lowercase e variants
-      "è" => "e",
-      "é" => "e",
-      "ê" => "e",
-      "ë" => "e",
-      # Lowercase i variants
-      "ì" => "i",
-      "í" => "i",
-      "î" => "i",
-      "ï" => "i",
-      # Lowercase o variants
-      "ò" => "o",
-      "ó" => "o",
-      "ô" => "o",
-      "õ" => "o",
-      "ö" => "o",
-      # Lowercase u variants
-      "ù" => "u",
-      "ú" => "u",
-      "û" => "u",
-      "ü" => "u",
-      # Other characters
-      "ç" => "c",
-      "ñ" => "n",
-      "œ" => "oe",
-      "æ" => "ae",
-      # Uppercase variants (in case input has uppercase)
-      "À" => "a",
-      "Á" => "a",
-      "Â" => "a",
-      "Ã" => "a",
-      "Ä" => "a",
-      "Å" => "a",
-      "È" => "e",
-      "É" => "e",
-      "Ê" => "e",
-      "Ë" => "e",
-      "Ì" => "i",
-      "Í" => "i",
-      "Î" => "i",
-      "Ï" => "i",
-      "Ò" => "o",
-      "Ó" => "o",
-      "Ô" => "o",
-      "Õ" => "o",
-      "Ö" => "o",
-      "Ù" => "u",
-      "Ú" => "u",
-      "Û" => "u",
-      "Ü" => "u",
-      "Ç" => "c",
-      "Ñ" => "n",
-      "Œ" => "oe",
-      "Æ" => "ae"
-    }
+  @doc """
+  Vérifie si deux slugs sont égaux (égalité par valeur).
 
-    Enum.reduce(replacements, string, fn {from, to}, acc ->
-      String.replace(acc, from, to)
-    end)
-  end
+  ## Exemples
 
-  defimpl String.Chars do
-    @moduledoc """
-    Implements the String.Chars protocol for Slug.
+      iex> {:ok, slug1} = Slug.new("test")
+      iex> {:ok, slug2} = Slug.new("test")
+      iex> Slug.equal?(slug1, slug2)
+      true
+  """
+  @spec equal?(t(), t()) :: boolean()
+  def equal?(%__MODULE__{value: v1}, %__MODULE__{value: v2}), do: v1 == v2
+end
 
-    This allows slugs to be converted to strings using `to_string/1`.
-    """
-
-    def to_string(%Portfolio.Photography.ValueObjects.Slug{value: value}), do: value
-  end
-
-  defimpl Phoenix.Param do
-    @moduledoc """
-    Implements the Phoenix.Param protocol for Slug.
-
-    This allows slugs to be used directly in Phoenix routes.
-    """
-
-    def to_param(%Portfolio.Photography.ValueObjects.Slug{value: value}), do: value
-  end
+# Implémente le protocole String.Chars pour conversion automatique
+defimpl String.Chars, for: Portfolio.Photography.ValueObjects.Slug do
+  def to_string(%{value: value}), do: value
 end

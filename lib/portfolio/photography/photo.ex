@@ -159,6 +159,10 @@ defmodule Portfolio.Photography.Photo do
           {:ok, slug} ->
             put_change(changeset, :slug, to_string(slug))
 
+          {:error, :too_long} ->
+            # Si le titre est trop long pour un slug, on laisse la validation de length gérer l'erreur
+            changeset
+
           {:error, _} ->
             add_error(changeset, :title, "ne peut pas être converti en slug valide")
         end

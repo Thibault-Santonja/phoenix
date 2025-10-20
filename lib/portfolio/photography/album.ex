@@ -170,6 +170,14 @@ defmodule Portfolio.Photography.Album do
               {:ok, slug} ->
                 put_change(changeset, :slug, to_string(slug))
 
+              {:error, :too_long} ->
+                # Si le titre est trop long pour un slug, on tronque à 100 caractères
+                truncated = String.slice(title, 0, 100)
+                case Slug.new(truncated) do
+                  {:ok, slug} -> put_change(changeset, :slug, to_string(slug))
+                  {:error, _} -> add_error(changeset, :title, "ne peut pas être converti en slug valide")
+                end
+
               {:error, _} ->
                 add_error(changeset, :title, "ne peut pas être converti en slug valide")
             end
