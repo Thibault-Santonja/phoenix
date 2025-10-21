@@ -29,6 +29,9 @@ defmodule PortfolioWeb.AuthController do
           {:ok, session} ->
             conn
             |> put_session(:session_token, session.token)
+            # Assigner directement l'user pour éviter un fetch DB immédiat après redirect
+            |> assign(:current_user, user)
+            |> assign(:current_session, session)
             |> put_flash(:info, "Connexion réussie ! Bienvenue #{user.email}")
             |> redirect(to: ~p"/admin")
 

@@ -33,31 +33,36 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   Assigne `conn.assigns.current_user` si un utilisateur est connecté.
   """
   def fetch_current_user(conn, _opts) do
-    session_token = get_session(conn, :session_token)
-
-    if session_token do
-      case fetch_session_from_cache(session_token) do
-        nil ->
-          # Session invalide ou expirée
-          conn
-          |> clear_session()
-          |> assign(:current_user, nil)
-
-        session ->
-          # Mettre à jour l'activité de la session
-          # Async en production pour ne pas ralentir la requête, sync en test pour la prévisibilité
-          if Mix.env() == :test do
-            Auth.update_session_activity(session)
-          else
-            Task.start(fn -> Auth.update_session_activity(session) end)
-          end
-
-          conn
-          |> assign(:current_user, session.user)
-          |> assign(:current_session, session)
-      end
+    # Si current_user est déjà assigné (ex: juste après login), ne pas refetch
+    if conn.assigns[:current_user] do
+      conn
     else
-      assign(conn, :current_user, nil)
+      session_token = get_session(conn, :session_token)
+
+      if session_token do
+        case fetch_session_from_cache(session_token) do
+          nil ->
+            # Session invalide ou expirée - effacer le token
+            conn
+            |> clear_session()
+            |> assign(:current_user, nil)
+
+          session ->
+            # Mettre à jour l'activité de la session
+            # Async en production pour ne pas ralentir la requête, sync en test pour la prévisibilité
+            if Mix.env() == :test do
+              Auth.update_session_activity(session)
+            else
+              Task.start(fn -> Auth.update_session_activity(session) end)
+            end
+
+            conn
+            |> assign(:current_user, session.user)
+            |> assign(:current_session, session)
+        end
+      else
+        assign(conn, :current_user, nil)
+      end
     end
   end
 
