@@ -146,6 +146,17 @@ defmodule PortfolioWeb.Router do
     end
   end
 
+  # LiveDashboard (protégé par authentification admin en production)
+  import Phoenix.LiveDashboard.Router
+
+  scope "/admin" do
+    pipe_through :require_authenticated_admin
+
+    live_dashboard "/metrics",
+      metrics: PortfolioWeb.Telemetry,
+      ecto_repos: [Portfolio.Repo]
+  end
+
   scope "/", PortfolioWeb do
     pipe_through :browser
 
@@ -160,19 +171,11 @@ defmodule PortfolioWeb.Router do
   #   pipe_through :api
   # end
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
+  # Enable Swoosh mailbox preview in development
   if Application.compile_env(:portfolio, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
-
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: PortfolioWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
