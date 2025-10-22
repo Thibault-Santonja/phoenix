@@ -9,6 +9,13 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
   describe "execute/3" do
     setup do
       album = create_album(slug: "test-album-#{System.unique_integer([:positive])}")
+
+      # Cleanup: Delete album directory after test
+      on_exit(fn ->
+        album_dir = Path.join(["priv", "static", "uploads", "albums", album.slug])
+        File.rm_rf(album_dir)
+      end)
+
       %{album: album}
     end
 
@@ -49,6 +56,12 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
     test "handles duplicate hash by returning database error" do
       album = create_album(slug: "rollback-test-#{System.unique_integer([:positive])}")
 
+      # Cleanup: Delete album directory after test
+      on_exit(fn ->
+        album_dir = Path.join(["priv", "static", "uploads", "albums", album.slug])
+        File.rm_rf(album_dir)
+      end)
+
       uploads = [
         %{
           path: "test/fixtures/test_image.jpg",
@@ -72,6 +85,12 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
 
     test "handles empty upload list" do
       album = create_album(slug: "empty-test-#{System.unique_integer([:positive])}")
+
+      # Cleanup: Delete album directory after test
+      on_exit(fn ->
+        album_dir = Path.join(["priv", "static", "uploads", "albums", album.slug])
+        File.rm_rf(album_dir)
+      end)
 
       assert {:ok, []} = PhotoUploadService.execute(album.slug, [])
     end
