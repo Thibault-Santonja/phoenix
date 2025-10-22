@@ -19,11 +19,15 @@ defmodule PortfolioWeb.Plugs.SetLocale do
       Gettext.put_locale(PortfolioWeb.Gettext, locale)
       put_session(conn, :locale, locale)
     else
-      conn
+      # Locale non supportée, utiliser la locale par défaut
+      Gettext.put_locale(PortfolioWeb.Gettext, "fr")
+      put_session(conn, :locale, "fr")
     end
   end
 
   def call(conn, _) do
+    # Pas de cookie locale, utiliser la locale par défaut
+    Gettext.put_locale(PortfolioWeb.Gettext, "fr")
     put_session(conn, :locale, "fr")
   end
 end

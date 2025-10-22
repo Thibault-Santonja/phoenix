@@ -8,7 +8,9 @@ defmodule PortfolioWeb.Live.Index do
 
   @impl true
   def mount(_, session, socket) do
-    Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])
+    # Récupérer la locale de la session, avec fallback sur "fr" si nil
+    locale = session["locale"] || "fr"
+    Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     {:ok, socket}
   end
