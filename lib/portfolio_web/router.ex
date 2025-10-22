@@ -60,7 +60,7 @@ defmodule PortfolioWeb.Router do
     plug :accepts, ["json"]
   end
 
-  # Pipeline pour l'interface admin avec authentification
+  # Pipeline pour l'interface admin avec authentification (pour les controllers)
   pipeline :require_authenticated_admin do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -71,6 +71,16 @@ defmodule PortfolioWeb.Router do
     plug PortfolioWeb.Plugs.RequireAuth, :fetch_current_user
     plug PortfolioWeb.Plugs.RequireAuth, :require_authenticated_user
     plug PortfolioWeb.Plugs.RequireAuth, :require_admin_role
+  end
+
+  # Pipeline pour les LiveViews admin (l'auth est gérée par on_mount)
+  pipeline :admin_live do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
   end
 
   scope "/", PortfolioWeb, host: "amvcc." do
@@ -126,7 +136,7 @@ defmodule PortfolioWeb.Router do
 
   # Interface Admin (protégée par authentification)
   scope "/admin", PortfolioWeb.Admin, as: :admin do
-    pipe_through :require_authenticated_admin
+    pipe_through :admin_live
 
     live_session :require_authenticated_admin,
       on_mount: [{PortfolioWeb.UserAuth, :ensure_authenticated}] do

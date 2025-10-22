@@ -71,6 +71,8 @@ defmodule PortfolioWeb.UserAuth do
 
   # Fonction privée pour monter l'utilisateur courant dans le socket
   defp mount_current_user(socket, session) do
+    # IMPORTANT: Utiliser une clé string "session_token" car Phoenix convertit
+    # les clés de session en strings lors du passage à LiveView
     case session["session_token"] do
       nil ->
         assign(socket, :current_user, nil)
