@@ -2,6 +2,8 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   use PortfolioWeb, :live_view
   import PortfolioWeb.Components.ThemeButton
 
+  alias Portfolio.Photography
+
   @default_data [
     %{
       title: gettext("A title in China"),
@@ -22,47 +24,38 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       photo_url: "/images/photography/taiwan.webp"
     }
   ]
-  @supported_album ["20250614_MALN", "20250621_Bours"]
 
-  defp get_folder_pictures(chapter) when chapter in @supported_album do
-    :code.priv_dir(:portfolio)
-    |> Path.join("./static/images/photography/#{chapter}/*.webp")
-    |> Path.wildcard()
-    |> Stream.map(&get_url/1)
-    |> Stream.reject(&skip_file_in_prod?/1)
-    |> Stream.map(&build_photo_data/1)
-    |> Enum.to_list()
-  end
+  # Récupère les photos d'un album depuis la base de données
+  defp get_album_photos(album_slug) when is_binary(album_slug) do
+    case Photography.get_album_by_slug(album_slug) do
+      {:ok, album} ->
+        photos = Photography.list_photos_by_album(album.id)
 
-  defp get_folder_pictures(_), do: @default_data
+        if Enum.empty?(photos) do
+          @default_data
+        else
+          Enum.map(photos, fn photo ->
+            %{
+              title: photo.title || album.title,
+              description: photo.description || album.description || "",
+              photo_url: photo.file_path
+            }
+          end)
+        end
 
-  defp build_photo_data(url) do
-    %{
-      title: "No title",
-      description: "No description",
-      photo_url: "/" <> url
-    }
-  end
-
-  defp skip_file_in_prod?(url) do
-    if Application.get_env(:portfolio, :env) == :prod do
-      not Regex.match?(~r/-[a-f0-9]{8,}\.webp$/, url)
-    else
-      false
+      {:error, :not_found} ->
+        @default_data
     end
   end
 
-  defp get_url(path) do
-    [_priv_path, url] = String.split(path, "/static/", trim: true)
-    url
-  end
+  defp get_album_photos(_), do: @default_data
 
   @impl true
   def mount(params, session, socket) do
     chapter = Map.get(params, "chapter", nil)
     language = Map.get(params, "hl", session["locale"] || "fr")
     Gettext.put_locale(PortfolioWeb.Gettext, language)
-    data = get_folder_pictures(chapter)
+    data = get_album_photos(chapter)
 
     {
       :ok,
@@ -71,7 +64,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       |> assign(language: language)
       |> assign(data: data)
       |> assign(pictures: Enum.count(data))
-      |> assign(project_id: 1)
+      |> assign(project_id: 0)
     }
   end
 
