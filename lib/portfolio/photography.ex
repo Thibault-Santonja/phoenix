@@ -184,8 +184,9 @@ defmodule Portfolio.Photography do
     result =
       case AlbumRepository.update(album, attrs) do
         {:ok, updated_album} = result ->
-          # Invalider le cache si l'album est publié
-          if updated_album.published do
+          # Invalider le cache si l'album est/était publié
+          # (pour gérer à la fois publish et unpublish)
+          if updated_album.published or album.published do
             invalidate_albums_cache()
           end
 
