@@ -112,8 +112,6 @@ defmodule Mix.Tasks.MigrateLegacyAlbums do
         {"Reconstitution - Août 2024 #2", "reenactment", ~D[2024-08-10]},
       "2024-09-08_reenactment.webp" =>
         {"Reconstitution - Septembre 2024", "reenactment", ~D[2024-09-08]},
-      "2025-06-14_Minuit_avant_la_Nuit.webp" =>
-        {"Minuit avant la Nuit - Aperçu", "reenactment", ~D[2025-06-14]}
     }
 
     Enum.each(gallery_mapping, fn {filename, {title, category, date}} ->
