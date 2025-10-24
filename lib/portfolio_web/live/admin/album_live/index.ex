@@ -27,6 +27,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
      |> assign(:filter, nil)
      |> assign(:page, 1)
      |> assign(:per_page, @albums_per_page)
+     |> assign(:sort_by, "date")
+     |> assign(:sort_order, "desc")
      |> assign(:loading_action, nil)}
   end
 
@@ -34,6 +36,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   def handle_params(params, _url, socket) do
     filter = params["filter"]
     page = String.to_integer(params["page"] || "1")
+    sort_by = params["sort_by"] || "date"
+    sort_order = params["sort_order"] || "desc"
 
     # Optimisation: calculer les statistiques une seule fois au lieu de 3x dans le template
     count_stats = %{
@@ -51,12 +55,14 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
       end
 
     total_pages = ceil(total_albums / socket.assigns.per_page)
-    albums = load_albums(filter, page, socket.assigns.per_page)
+    albums = load_albums(filter, page, socket.assigns.per_page, sort_by, sort_order)
 
     {:noreply,
      socket
      |> assign(:filter, filter)
      |> assign(:page, page)
+     |> assign(:sort_by, sort_by)
+     |> assign(:sort_order, sort_order)
      |> assign(:total_pages, total_pages)
      |> assign(:total_albums, total_albums)
      |> assign(:albums, albums)
@@ -71,7 +77,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   # Optimisation: utiliser with_photo_count au lieu de preload toutes les photos
   # Pattern simplifié pour éviter la répétition
-  defp load_albums(filter, page, per_page) do
+  defp load_albums(filter, page, per_page, sort_by, sort_order) do
     offset = (page - 1) * per_page
     opts = [with_photo_count: true, limit: per_page, offset: offset]
 
@@ -82,6 +88,18 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
         _ -> opts
       end
 
+    # Ajouter le tri
+    order_by =
+      case {sort_by, sort_order} do
+        {"title", "asc"} -> [asc: :title]
+        {"title", "desc"} -> [desc: :title]
+        {"date", "asc"} -> [asc: :date_prise_vue]
+        {"date", "desc"} -> [desc: :date_prise_vue]
+        _ -> [desc: :date_prise_vue]
+      end
+
+    opts = Keyword.put(opts, :order_by, order_by)
+
     Photography.list_albums(opts)
   end
 
@@ -91,7 +109,14 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
     case Photography.delete_album(album) do
       {:ok, _album} ->
-        albums = load_albums(socket.assigns.filter, socket.assigns.page, socket.assigns.per_page)
+        albums =
+          load_albums(
+            socket.assigns.filter,
+            socket.assigns.page,
+            socket.assigns.per_page,
+            socket.assigns.sort_by,
+            socket.assigns.sort_order
+          )
 
         {:noreply,
          socket
@@ -113,7 +138,14 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
     case Photography.update_album(album, %{published: !album.published}) do
       {:ok, _album} ->
-        albums = load_albums(socket.assigns.filter, socket.assigns.page, socket.assigns.per_page)
+        albums =
+          load_albums(
+            socket.assigns.filter,
+            socket.assigns.page,
+            socket.assigns.per_page,
+            socket.assigns.sort_by,
+            socket.assigns.sort_order
+          )
 
         {:noreply,
          socket
@@ -183,4 +215,32 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   defp type_badge_class(:japan), do: "bg-rose-100 text-rose-800"
   defp type_badge_class(:taiwan), do: "bg-cyan-100 text-cyan-800"
   defp type_badge_class(_), do: "bg-gray-100 text-gray-800"
+
+  # Fonction helper pour construire les paramètres de tri
+  defp build_sort_params(filter, page, sort_by, sort_order) do
+    params = [sort_by: sort_by, sort_order: sort_order]
+    params = if filter, do: [{:filter, filter} | params], else: params
+    params = if page > 1, do: [{:page, page} | params], else: params
+    URI.encode_query(params)
+  end
+
+  # Fonction helper pour basculer l'ordre de tri
+  defp toggle_order(current_sort_by, current_sort_order, clicked_sort_by) do
+    if current_sort_by == clicked_sort_by do
+      if current_sort_order == "asc", do: "desc", else: "asc"
+    else
+      # Si on clique sur un nouveau tri, commencer par descendant pour les dates, ascendant pour les titres
+      if clicked_sort_by == "date", do: "desc", else: "asc"
+    end
+  end
+
+  # Fonction helper pour construire les paramètres de pagination
+  defp build_pagination_params(filter, page, sort_by, sort_order) do
+    params = []
+    params = if filter, do: [{:filter, filter} | params], else: params
+    params = if page > 1, do: [{:page, page} | params], else: params
+    params = if sort_by != "date", do: [{:sort_by, sort_by} | params], else: params
+    params = if sort_order != "desc", do: [{:sort_order, sort_order} | params], else: params
+    URI.encode_query(params)
+  end
 end

@@ -88,6 +88,91 @@
     </.link>
   </div>
 
+  <!-- Tri -->
+  <div class="mt-4 flex items-center gap-2">
+    <span class="text-sm font-medium text-gray-700">Trier par :</span>
+    <.link
+      patch={
+        ~p"/admin/albums?#{build_sort_params(@filter, @page, "date", toggle_order(@sort_by, @sort_order, "date"))}"
+      }
+      class={[
+        "inline-flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors",
+        if @sort_by == "date" do
+          "bg-indigo-100 text-indigo-800"
+        else
+          "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        end
+      ]}
+    >
+      Date
+      <%= if @sort_by == "date" do %>
+        <%= if @sort_order == "asc" do %>
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+            </path>
+          </svg>
+        <% else %>
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+            </path>
+          </svg>
+        <% end %>
+      <% end %>
+    </.link>
+    <.link
+      patch={
+        ~p"/admin/albums?#{build_sort_params(@filter, @page, "title", toggle_order(@sort_by, @sort_order, "title"))}"
+      }
+      class={[
+        "inline-flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors",
+        if @sort_by == "title" do
+          "bg-indigo-100 text-indigo-800"
+        else
+          "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        end
+      ]}
+    >
+      Titre
+      <%= if @sort_by == "title" do %>
+        <%= if @sort_order == "asc" do %>
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+            </path>
+          </svg>
+        <% else %>
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+            </path>
+          </svg>
+        <% end %>
+      <% end %>
+    </.link>
+  </div>
+
   <%= if @albums == [] do %>
     <div class="mt-8 text-center">
       <svg
@@ -233,9 +318,7 @@
         <%= if @page > 1 do %>
           <.link
             patch={
-              if @filter,
-                do: ~p"/admin/albums?filter=#{@filter}&page=#{@page - 1}",
-                else: ~p"/admin/albums?page=#{@page - 1}"
+              ~p"/admin/albums?#{build_pagination_params(@filter, @page - 1, @sort_by, @sort_order)}"
             }
             class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
@@ -245,9 +328,7 @@
         <%= if @page < @total_pages do %>
           <.link
             patch={
-              if @filter,
-                do: ~p"/admin/albums?filter=#{@filter}&page=#{@page + 1}",
-                else: ~p"/admin/albums?page=#{@page + 1}"
+              ~p"/admin/albums?#{build_pagination_params(@filter, @page + 1, @sort_by, @sort_order)}"
             }
             class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
@@ -272,9 +353,7 @@
             <%= if @page > 1 do %>
               <.link
                 patch={
-                  if @filter,
-                    do: ~p"/admin/albums?filter=#{@filter}&page=#{@page - 1}",
-                    else: ~p"/admin/albums?page=#{@page - 1}"
+                  ~p"/admin/albums?#{build_pagination_params(@filter, @page - 1, @sort_by, @sort_order)}"
                 }
                 class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
               >
@@ -297,9 +376,7 @@
               <% else %>
                 <.link
                   patch={
-                    if @filter,
-                      do: ~p"/admin/albums?filter=#{@filter}&page=#{page_num}",
-                      else: ~p"/admin/albums?page=#{page_num}"
+                    ~p"/admin/albums?#{build_pagination_params(@filter, page_num, @sort_by, @sort_order)}"
                   }
                   class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
                 >
@@ -311,9 +388,7 @@
             <%= if @page < @total_pages do %>
               <.link
                 patch={
-                  if @filter,
-                    do: ~p"/admin/albums?filter=#{@filter}&page=#{@page + 1}",
-                    else: ~p"/admin/albums?page=#{@page + 1}"
+                  ~p"/admin/albums?#{build_pagination_params(@filter, @page + 1, @sort_by, @sort_order)}"
                 }
                 class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
               >
