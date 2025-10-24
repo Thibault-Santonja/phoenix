@@ -229,18 +229,6 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
         reference_link: "https://www.amvcc.com/spectacles-animations/les-seigneuriales-de-coucy/"
       },
       %{
-        type: "music",
-        date: "2025-06-15",
-        title: "Minuit avant la Nuit 2025",
-        description:
-          gettext(
-            "Beneath the old trees of Saint-Pierre park, time slowed down. Soft light drifted over faces, carried by the voices of Miki, Philippe Katerine, Kompromat, and Kavinsky. For this 2025 edition, I rediscovered what makes Minuit avant la Nuit so special — that rare blend of warmth, collective energy, and music that transcends genres to reach something deeper.Photographing this moment meant chasing the fleeting — the smiles in the crowd, an artist’s silhouette in the stage lights, the birth of a memory still taking shape."
-          ),
-        photography: "/images/photography/gallery/2025-06-14_Minuit_avant_la_Nuit.webp",
-        url: "/gallery/20250614_MALN",
-        reference_link: "https://minuitavantlanuit.fr/"
-      },
-      %{
         type: "reenactment",
         date: "2025-06-21",
         title: gettext("Bringing the Donjon de Bours to life"),
