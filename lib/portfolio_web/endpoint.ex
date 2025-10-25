@@ -9,7 +9,9 @@ defmodule PortfolioWeb.Endpoint do
     key: "_portfolio_key",
     signing_salt: "sisdz80o",
     same_site: "Lax",
-    compress: true
+    compress: true,
+    # Session persistante configurable (défaut: 24h)
+    max_age: Application.compile_env(:portfolio, [:session, :max_age_seconds], 24 * 60 * 60)
   ]
 
   socket "/live", Phoenix.LiveView.Socket,

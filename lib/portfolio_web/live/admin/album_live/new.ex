@@ -27,14 +27,21 @@ defmodule PortfolioWeb.Admin.AlbumLive.New do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="max-w-2xl mx-auto">
-      <.live_component
-        module={FormComponent}
-        id="new-album-form"
-        title="Nouvel Album"
-        action={:new}
-        album={@album}
-      />
+    <div class="px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex items-start justify-between mb-4">
+        <.back_to_dashboard />
+        <.admin_logout_button current_user={@current_user} />
+      </div>
+
+      <div class="max-w-2xl mx-auto">
+        <.live_component
+          module={FormComponent}
+          id="new-album-form"
+          title="Nouvel Album"
+          action={:new}
+          album={@album}
+        />
+      </div>
     </div>
     """
   end

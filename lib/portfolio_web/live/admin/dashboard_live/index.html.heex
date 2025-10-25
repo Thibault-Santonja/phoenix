@@ -1,14 +1,17 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- En-tête -->
-  <header class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">
-      Tableau de bord administrateur
-    </h1>
-    <p class="mt-2 text-gray-600">
-      Bienvenue, {@current_user.email}
-    </p>
+  <header class="mb-8 flex items-start justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">
+        Tableau de bord administrateur
+      </h1>
+      <p class="mt-2 text-gray-600">
+        Bienvenue, {@current_user.email}
+      </p>
+    </div>
+    <.admin_logout_button current_user={@current_user} />
   </header>
-  
+
 <!-- Statistiques -->
   <section class="mb-12">
     <h2 class="text-xl font-semibold text-gray-900 mb-4">Statistiques</h2>
@@ -42,7 +45,7 @@
           </div>
         </:footer>
       </.stat_card>
-      
+
 <!-- Total Photos -->
       <.stat_card
         title="Total Photos"
@@ -50,7 +53,7 @@
         icon="hero-photo"
         color="green"
       />
-      
+
 <!-- Albums Publiés -->
       <.stat_card
         title="Albums Publiés"
@@ -68,7 +71,7 @@
           </div>
         </:footer>
       </.stat_card>
-      
+
 <!-- Utilisateurs -->
       <.stat_card
         title="Utilisateurs"
@@ -93,7 +96,7 @@
       </.stat_card>
     </div>
   </section>
-  
+
 <!-- Actions rapides -->
   <section class="mb-12">
     <h2 class="text-xl font-semibold text-gray-900 mb-4">Actions rapides</h2>
@@ -107,7 +110,7 @@
         color="blue"
         navigate={~p"/admin/albums"}
       />
-      
+
 <!-- Créer un album -->
       <.action_card
         title="Créer un album"
@@ -116,7 +119,7 @@
         color="green"
         navigate={~p"/admin/albums/new"}
       />
-      
+
 <!-- Modifier le profil -->
       <.action_card
         title="Mon profil"
@@ -127,7 +130,7 @@
       />
     </div>
   </section>
-  
+
 <!-- Informations système -->
   <section>
     <h2 class="text-xl font-semibold text-gray-900 mb-4">Informations</h2>

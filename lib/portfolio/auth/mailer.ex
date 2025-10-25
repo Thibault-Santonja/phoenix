@@ -36,6 +36,8 @@ defmodule Portfolio.Auth.Mailer do
 
         <p style="margin: 30px 0;">
           <a href="#{magic_link_url}"
+             target="_blank"
+             rel="noopener noreferrer"
              style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
             Se connecter
           </a>

@@ -33,6 +33,16 @@ config :portfolio, PortfolioWeb.Endpoint,
 config :portfolio, Portfolio.Mailer, adapter: Swoosh.Adapters.Local
 config :portfolio, PortfolioWeb.Gettext, locales: ~w(en fr)
 
+# Configure session settings
+config :portfolio, :session,
+  # Session cookie max age in seconds (default: 24 hours)
+  max_age_seconds: 24 * 60 * 60
+
+# Configure authentication
+config :portfolio, :auth,
+  # Session inactivity timeout in seconds (default: 2 hours)
+  session_expiration_seconds: 2 * 60 * 60
+
 # Configure file uploads
 config :portfolio, :uploads,
   base_path: "priv/static/uploads",

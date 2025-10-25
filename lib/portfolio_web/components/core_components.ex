@@ -820,6 +820,39 @@ defmodule PortfolioWeb.CoreComponents do
   end
 
   @doc """
+  Renders a logout button for admin pages.
+
+  ## Examples
+
+      <.admin_logout_button current_user={@current_user} />
+  """
+  attr :current_user, :map, required: true
+  attr :class, :string, default: nil
+
+  def admin_logout_button(assigns) do
+    ~H"""
+    <div class={["flex items-center gap-4", @class]}>
+      <%= if @current_user do %>
+        <span class="text-sm text-gray-600">
+          Connecté en tant que
+          <span class="font-medium text-gray-900">
+            {@current_user.name || @current_user.email}
+          </span>
+        </span>
+        <span class="text-gray-300">|</span>
+        <.link
+          href={~p"/logout"}
+          method="delete"
+          class="text-sm text-gray-600 hover:text-gray-900 font-medium"
+        >
+          Déconnexion
+        </.link>
+      <% end %>
+    </div>
+    """
+  end
+
+  @doc """
   Renders an action card for quick navigation.
 
   ## Examples

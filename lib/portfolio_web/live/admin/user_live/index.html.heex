@@ -1,6 +1,9 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- En-tête avec bouton retour -->
-  <.back_to_dashboard />
+  <div class="flex items-start justify-between mb-4">
+    <.back_to_dashboard />
+    <.admin_logout_button current_user={@current_user} />
+  </div>
 
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900">
@@ -10,7 +13,7 @@
       {length(@users)} utilisateur(s) au total
     </p>
   </div>
-  
+
 <!-- Liste des utilisateurs -->
   <div class="bg-white shadow-md rounded-lg overflow-hidden">
     <table class="min-w-full divide-y divide-gray-200">
@@ -108,7 +111,7 @@
       </tbody>
     </table>
   </div>
-  
+
 <!-- Message si aucun utilisateur -->
   <%= if Enum.empty?(@users) do %>
     <div class="text-center py-12">
@@ -131,7 +134,7 @@
       </p>
     </div>
   <% end %>
-  
+
 <!-- Statistiques en bas -->
   <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
     <.link
