@@ -89,7 +89,7 @@ defmodule PortfolioWeb do
       import Phoenix.HTML
       # Core UI components
       import PortfolioWeb.CoreComponents,
-        only: [stat_card: 1, action_card: 1, back_to_dashboard: 1]
+        only: [stat_card: 1, action_card: 1, back_to_dashboard: 1, admin_logout_button: 1]
 
       use PortfolioWeb.Components.MishkaComponents
 
