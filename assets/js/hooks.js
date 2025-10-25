@@ -378,27 +378,31 @@ export const HorizontalScrollFadeIn = {
   },
 
   mounted() {
-    window.addEventListener(
-      "wheel",
-      (e) => {
-        if (e.deltaY === 0) return;
+    this.handleWheel = (e) => {
+      if (e.deltaY === 0) return;
 
-        // prevent the page from scrolling vertically
-        e.preventDefault();
+      // prevent the page from scrolling vertically
+      e.preventDefault();
 
-        // Scroll horizontally
-        this.el.scrollBy({
-          left: e.deltaY,
-          // behavior: "smooth",
-        });
-      },
-      { passive: false },
-    ); // passive must be false to call preventDefault()
+      // Scroll horizontally
+      this.el.scrollBy({
+        left: e.deltaY,
+        // behavior: "smooth",
+      });
+    };
+
+    this.el.addEventListener("wheel", this.handleWheel, { passive: false });
     this.animateItems(100);
   },
 
   updated() {
     this.animateItems(0);
+  },
+
+  destroyed() {
+    if (this.handleWheel) {
+      this.el.removeEventListener("wheel", this.handleWheel);
+    }
   },
 };
 
