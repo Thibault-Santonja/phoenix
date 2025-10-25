@@ -359,6 +359,12 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
     |> apply_filters(rest)
   end
 
+  defp apply_filters(query, [{:order_by, order_spec} | rest]) when is_list(order_spec) do
+    query
+    |> order_by(^order_spec)
+    |> apply_filters(rest)
+  end
+
   defp apply_filters(query, [_other | rest]) do
     apply_filters(query, rest)
   end

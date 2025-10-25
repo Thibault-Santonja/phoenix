@@ -62,6 +62,61 @@ defmodule Portfolio.Photography.Repositories.AlbumRepositoryTest do
     end
   end
 
+  describe "list/1 with order_by" do
+    setup do
+      album_c = insert_album(%{title: "Charlie Album", type: :wedding, date_prise_vue: ~D[2024-03-15]})
+      album_a = insert_album(%{title: "Alpha Album", type: :couples, date_prise_vue: ~D[2024-01-10]})
+      album_b = insert_album(%{title: "Bravo Album", type: :landscape, date_prise_vue: ~D[2024-02-20]})
+
+      %{album_a: album_a, album_b: album_b, album_c: album_c}
+    end
+
+    test "orders by title ascending", %{album_a: album_a, album_b: album_b, album_c: album_c} do
+      albums = AlbumRepository.list(order_by: [asc: :title])
+
+      assert length(albums) == 3
+      assert Enum.at(albums, 0).id == album_a.id
+      assert Enum.at(albums, 1).id == album_b.id
+      assert Enum.at(albums, 2).id == album_c.id
+    end
+
+    test "orders by title descending", %{album_a: album_a, album_b: album_b, album_c: album_c} do
+      albums = AlbumRepository.list(order_by: [desc: :title])
+
+      assert length(albums) == 3
+      assert Enum.at(albums, 0).id == album_c.id
+      assert Enum.at(albums, 1).id == album_b.id
+      assert Enum.at(albums, 2).id == album_a.id
+    end
+
+    test "orders by date ascending", %{album_a: album_a, album_b: album_b, album_c: album_c} do
+      albums = AlbumRepository.list(order_by: [asc: :date_prise_vue])
+
+      assert length(albums) == 3
+      assert Enum.at(albums, 0).id == album_a.id
+      assert Enum.at(albums, 1).id == album_b.id
+      assert Enum.at(albums, 2).id == album_c.id
+    end
+
+    test "orders by date descending", %{album_a: album_a, album_b: album_b, album_c: album_c} do
+      albums = AlbumRepository.list(order_by: [desc: :date_prise_vue])
+
+      assert length(albums) == 3
+      assert Enum.at(albums, 0).id == album_c.id
+      assert Enum.at(albums, 1).id == album_b.id
+      assert Enum.at(albums, 2).id == album_a.id
+    end
+
+    test "combines order_by with filters", %{album_a: album_a} do
+      insert_album(%{title: "Zulu Wedding", type: :wedding, date_prise_vue: ~D[2024-04-01]})
+
+      albums = AlbumRepository.list(type: :couples, order_by: [asc: :title])
+
+      assert length(albums) == 1
+      assert hd(albums).id == album_a.id
+    end
+  end
+
   describe "list/1 with preload" do
     test "preloads photos association" do
       album = insert_album(%{title: "Album with photos", type: :wedding})
