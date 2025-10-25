@@ -2381,6 +2381,10 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:70
+msgid "Back"
+msgstr "Back"
+
 #: lib/portfolio_web/live/photography_live/timeline.html.heex:197
 #, elixir-autogen, elixir-format
 msgid "I am so sorry but at the moment, this portfolio gallery is empty"
