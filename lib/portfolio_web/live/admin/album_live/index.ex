@@ -27,8 +27,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
      |> assign(:filter, nil)
      |> assign(:page, 1)
      |> assign(:per_page, @albums_per_page)
-     |> assign(:sort_by, "date")
-     |> assign(:sort_order, "desc")
+     |> assign(:sort_by, nil)
+     |> assign(:sort_order, nil)
      |> assign(:loading_action, nil)}
   end
 
@@ -36,8 +36,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   def handle_params(params, _url, socket) do
     filter = params["filter"]
     page = String.to_integer(params["page"] || "1")
-    sort_by = params["sort_by"] || "date"
-    sort_order = params["sort_order"] || "desc"
+    sort_by = params["sort_by"]
+    sort_order = params["sort_order"]
 
     # Optimisation: calculer les statistiques une seule fois au lieu de 3x dans le template
     count_stats = %{
@@ -88,13 +88,21 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
         _ -> opts
       end
 
-    # Ajouter le tri
+    # Ajouter le tri (ordre par défaut : date décroissante)
     order_by =
       case {sort_by, sort_order} do
         {"title", "asc"} -> [asc: :title]
         {"title", "desc"} -> [desc: :title]
+        {"type", "asc"} -> [asc: :type]
+        {"type", "desc"} -> [desc: :type]
         {"date", "asc"} -> [asc: :date_prise_vue]
         {"date", "desc"} -> [desc: :date_prise_vue]
+        {"photos", "asc"} -> [asc: :photo_count]
+        {"photos", "desc"} -> [desc: :photo_count]
+        {"published", "asc"} -> [asc: :published]
+        {"published", "desc"} -> [desc: :published]
+        # Ordre par défaut si aucun tri actif
+        {nil, _} -> [desc: :date_prise_vue]
         _ -> [desc: :date_prise_vue]
       end
 
@@ -216,31 +224,56 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   defp type_badge_class(:taiwan), do: "bg-cyan-100 text-cyan-800"
   defp type_badge_class(_), do: "bg-gray-100 text-gray-800"
 
-  # Fonction helper pour construire les paramètres de tri
-  defp build_sort_params(filter, page, sort_by, sort_order) do
-    params = [sort_by: sort_by, sort_order: sort_order]
-    params = if filter, do: [{:filter, filter} | params], else: params
-    params = if page > 1, do: [{:page, page} | params], else: params
-    URI.encode_query(params)
-  end
-
-  # Fonction helper pour basculer l'ordre de tri
-  defp toggle_order(current_sort_by, current_sort_order, clicked_sort_by) do
-    if current_sort_by == clicked_sort_by do
-      if current_sort_order == "asc", do: "desc", else: "asc"
-    else
-      # Si on clique sur un nouveau tri, commencer par descendant pour les dates, ascendant pour les titres
-      if clicked_sort_by == "date", do: "desc", else: "asc"
-    end
-  end
-
-  # Fonction helper pour construire les paramètres de pagination
-  defp build_pagination_params(filter, page, sort_by, sort_order) do
+  # Fonction helper pour construire les paramètres de pagination/navigation
+  defp build_params(filter, page, sort_by, sort_order) do
     params = []
     params = if filter, do: [{:filter, filter} | params], else: params
     params = if page > 1, do: [{:page, page} | params], else: params
-    params = if sort_by != "date", do: [{:sort_by, sort_by} | params], else: params
-    params = if sort_order != "desc", do: [{:sort_order, sort_order} | params], else: params
+    params = if sort_by, do: [{:sort_by, sort_by} | params], else: params
+    params = if sort_order, do: [{:sort_order, sort_order} | params], else: params
     URI.encode_query(params)
+  end
+
+  # Cycle de tri à 3 états pour une colonne
+  # Dates: desc → asc → none
+  # Autres: asc → desc → none
+  defp next_sort_state(column, current_sort_by, current_sort_order) do
+    is_date_column = column == "date"
+
+    cond do
+      # Pas de tri actif OU tri sur une autre colonne
+      current_sort_by != column or current_sort_by == nil ->
+        if is_date_column do
+          {column, "desc"}
+        else
+          {column, "asc"}
+        end
+
+      # Tri actif sur cette colonne
+      current_sort_by == column ->
+        case {is_date_column, current_sort_order} do
+          # Date: desc → asc → none
+          {true, "desc"} -> {column, "asc"}
+          {true, "asc"} -> {nil, nil}
+          # Autres: asc → desc → none
+          {false, "asc"} -> {column, "desc"}
+          {false, "desc"} -> {nil, nil}
+          _ -> {nil, nil}
+        end
+    end
+  end
+
+  # Helper pour obtenir l'icône de tri à afficher
+  defp sort_icon(column, current_sort_by, current_sort_order) do
+    cond do
+      current_sort_by == column and current_sort_order == "asc" ->
+        "↑"
+
+      current_sort_by == column and current_sort_order == "desc" ->
+        "↓"
+
+      true ->
+        ""
+    end
   end
 end
