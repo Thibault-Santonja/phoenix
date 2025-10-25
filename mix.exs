@@ -58,17 +58,21 @@ defmodule Portfolio.MixProject do
       {:tidewave, "~> 0.1", only: [:dev]},
       {:mishka_chelekom, "~> 0.0", only: [:dev]},
       {:live_debugger, "~> 0.2", only: [:dev]},
-      {:ash_phoenix, "~> 2.0"},
-      {:ash, "~> 3.0"},
-      {:igniter, "~> 0.5", only: [:dev, :test]},
-      {:phoenix, "~> 1.7.21"},
+      {:finch, "~> 0.13"},
+      {:oban, "~> 2.0"},
+      {:igniter, "~> 0.6", only: [:dev, :test]},
+      {:bcrypt_elixir, "~> 3.0"},
+      {:phoenix, "~> 1.8.0-rc.3", override: true},
+      {:phoenix_ecto, "~> 4.5"},
+      {:ecto_sql, "~> 3.10"},
+      {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.0"},
+      {:phoenix_live_view, "~> 1.0.9"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.9", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.1",
@@ -76,8 +80,8 @@ defmodule Portfolio.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:swoosh, "~> 1.5"},
-      {:finch, "~> 0.13"},
+      {:swoosh, "~> 1.16"},
+      {:req, "~> 0.5"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.26"},
@@ -86,6 +90,7 @@ defmodule Portfolio.MixProject do
       {:bandit, "~> 1.5"},
       # For CI
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false}
     ]
@@ -106,7 +111,8 @@ defmodule Portfolio.MixProject do
         "tailwind portfolio --minify",
         "esbuild portfolio --minify",
         "phx.digest"
-      ]
+      ],
+      precommit: ["format --check-formatted", "credo --strict", "test"]
     ]
   end
 end
