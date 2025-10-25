@@ -46,7 +46,7 @@ defmodule Mix.Tasks.MigrateLegacyAlbums do
       slug: "minuit-avant-la-nuit",
       type: :reenactment,
       description:
-        "Festival médiéval fantastique à Lagny-sur-Marne. Une soirée magique avec reconstitutions historiques, spectacles et ambiance médiévale.",
+        "Sous les arbres centenaires du parc Saint-Pierre, le temps semblait suspendu. Une lumière douce glissait sur les visages, portée par les voix de Miki, Philippe Katerine, Kompromat ou encore Kavinsky. J’ai retrouvé, pour cette édition 2025, cette alchimie rare qui fait la beauté de Minuit avant la Nuit : une vibration collective, une chaleur simple, une fête qui traverse les genres pour mieux toucher à l’essentiel.Photographier ce moment, c’était chercher à capter l’éphémère — les sourires dans la foule, la silhouette d’un artiste dans l’éclat des projecteurs, l’écho d’un souvenir déjà en train de s’écrire.",
       date_prise_vue: ~D[2025-06-14],
       published: true
     }
