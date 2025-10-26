@@ -79,6 +79,21 @@ defmodule Portfolio.Auth.User do
     |> validate_length(:name, min: 2, max: 100)
   end
 
+  @doc """
+  Changeset pour la modification d'un utilisateur par un admin.
+
+  Permet de modifier le rôle d'un utilisateur.
+  L'email ne peut pas être modifié pour des raisons de sécurité.
+  """
+  @spec admin_changeset(t(), map()) :: Ecto.Changeset.t()
+  def admin_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:role, :name])
+    |> validate_required([:role])
+    |> validate_inclusion(:role, [:admin, :superadmin, :user])
+    |> validate_length(:name, min: 2, max: 100)
+  end
+
   # Validation de l'email avec RFC 5322
   defp validate_email(changeset) do
     changeset

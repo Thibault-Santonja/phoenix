@@ -225,6 +225,76 @@ defmodule Portfolio.Auth.UserTest do
     end
   end
 
+  describe "admin_changeset/2" do
+    test "allows updating role" do
+      user = insert_user(role: :admin)
+      changeset = User.admin_changeset(user, %{role: :user})
+      assert changeset.valid?
+      assert Ecto.Changeset.get_change(changeset, :role) == :user
+    end
+
+    test "allows updating name" do
+      user = insert_user()
+      changeset = User.admin_changeset(user, %{name: "Admin Updated"})
+      assert changeset.valid?
+      assert Ecto.Changeset.get_change(changeset, :name) == "Admin Updated"
+    end
+
+    test "allows updating both role and name" do
+      user = insert_user(role: :admin)
+      changeset = User.admin_changeset(user, %{role: :user, name: "Regular User"})
+      assert changeset.valid?
+      assert Ecto.Changeset.get_change(changeset, :role) == :user
+      assert Ecto.Changeset.get_change(changeset, :name) == "Regular User"
+    end
+
+    test "requires role" do
+      user = insert_user()
+      changeset = User.admin_changeset(user, %{role: nil})
+      refute changeset.valid?
+      assert "can't be blank" in errors_on(changeset).role
+    end
+
+    test "validates role inclusion" do
+      user = insert_user()
+      changeset = User.admin_changeset(user, %{role: :invalid})
+      refute changeset.valid?
+      assert "is invalid" in errors_on(changeset).role
+    end
+
+    test "validates name min length" do
+      user = insert_user()
+      changeset = User.admin_changeset(user, %{name: "X"})
+      refute changeset.valid?
+      assert "should be at least 2 character(s)" in errors_on(changeset).name
+    end
+
+    test "validates name max length" do
+      user = insert_user()
+      long_name = String.duplicate("x", 101)
+      changeset = User.admin_changeset(user, %{name: long_name})
+      refute changeset.valid?
+      assert "should be at most 100 character(s)" in errors_on(changeset).name
+    end
+
+    test "ignores email changes for security" do
+      user = insert_user(email: "original@example.com")
+      changeset = User.admin_changeset(user, %{email: "changed@example.com", role: :user})
+
+      # Email should not be in changes
+      refute Map.has_key?(changeset.changes, :email)
+    end
+
+    test "accepts all valid roles" do
+      user = insert_user()
+
+      for role <- [:admin, :superadmin, :user] do
+        changeset = User.admin_changeset(user, %{role: role})
+        assert changeset.valid?, "Role #{role} should be valid"
+      end
+    end
+  end
+
   # Helper functions
   defp insert_user(attrs \\ %{}) do
     attrs = Enum.into(attrs, %{})

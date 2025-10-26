@@ -451,6 +451,38 @@ defmodule Portfolio.Auth do
   end
 
   @doc """
+  Met à jour un utilisateur via l'interface admin.
+
+  Permet de modifier le rôle et le nom de l'utilisateur.
+
+  ## Exemples
+
+      iex> update_user_as_admin(user, %{role: :user})
+      {:ok, %User{}}
+  """
+  @spec update_user_as_admin(User.t(), map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def update_user_as_admin(user, attrs) do
+    user
+    |> User.admin_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Supprime un utilisateur et toutes ses données associées.
+
+  Supprime également toutes les sessions et magic links de l'utilisateur.
+
+  ## Exemples
+
+      iex> delete_user(user)
+      {:ok, %User{}}
+  """
+  @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def delete_user(user) do
+    Repo.delete(user)
+  end
+
+  @doc """
   Compte le nombre total d'utilisateurs dans le système.
 
   ## Exemples
