@@ -116,66 +116,61 @@
                     scope="col"
                     class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                   >
-                    <% {next_sort_by, next_sort_order} = next_sort_state("title", @sort_by, @sort_order) %>
-                    <.link
-                      patch={~p"/admin/albums?#{build_params(@filter, 1, next_sort_by, next_sort_order)}"}
-                      class="group inline-flex items-center gap-1 hover:text-indigo-600"
-                    >
-                      Titre
-                      <span class="text-gray-400"><%= sort_icon("title", @sort_by, @sort_order) %></span>
-                    </.link>
+                    <.sortable_header
+                      column="title"
+                      label="Titre"
+                      current_sort_by={@sort_by}
+                      current_sort_order={@sort_order}
+                      filter={@filter}
+                    />
                   </th>
                   <th
                     scope="col"
                     class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    <% {next_sort_by, next_sort_order} = next_sort_state("type", @sort_by, @sort_order) %>
-                    <.link
-                      patch={~p"/admin/albums?#{build_params(@filter, 1, next_sort_by, next_sort_order)}"}
-                      class="group inline-flex items-center gap-1 hover:text-indigo-600"
-                    >
-                      Type
-                      <span class="text-gray-400"><%= sort_icon("type", @sort_by, @sort_order) %></span>
-                    </.link>
+                    <.sortable_header
+                      column="type"
+                      label="Type"
+                      current_sort_by={@sort_by}
+                      current_sort_order={@sort_order}
+                      filter={@filter}
+                    />
                   </th>
                   <th
                     scope="col"
                     class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    <% {next_sort_by, next_sort_order} = next_sort_state("date", @sort_by, @sort_order) %>
-                    <.link
-                      patch={~p"/admin/albums?#{build_params(@filter, 1, next_sort_by, next_sort_order)}"}
-                      class="group inline-flex items-center gap-1 hover:text-indigo-600"
-                    >
-                      Date
-                      <span class="text-gray-400"><%= sort_icon("date", @sort_by, @sort_order) %></span>
-                    </.link>
+                    <.sortable_header
+                      column="date"
+                      label="Date"
+                      current_sort_by={@sort_by}
+                      current_sort_order={@sort_order}
+                      filter={@filter}
+                    />
                   </th>
                   <th
                     scope="col"
                     class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    <% {next_sort_by, next_sort_order} = next_sort_state("photos", @sort_by, @sort_order) %>
-                    <.link
-                      patch={~p"/admin/albums?#{build_params(@filter, 1, next_sort_by, next_sort_order)}"}
-                      class="group inline-flex items-center gap-1 hover:text-indigo-600"
-                    >
-                      Photos
-                      <span class="text-gray-400"><%= sort_icon("photos", @sort_by, @sort_order) %></span>
-                    </.link>
+                    <.sortable_header
+                      column="photos"
+                      label="Photos"
+                      current_sort_by={@sort_by}
+                      current_sort_order={@sort_order}
+                      filter={@filter}
+                    />
                   </th>
                   <th
                     scope="col"
                     class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    <% {next_sort_by, next_sort_order} = next_sort_state("published", @sort_by, @sort_order) %>
-                    <.link
-                      patch={~p"/admin/albums?#{build_params(@filter, 1, next_sort_by, next_sort_order)}"}
-                      class="group inline-flex items-center gap-1 hover:text-indigo-600"
-                    >
-                      Publié
-                      <span class="text-gray-400"><%= sort_icon("published", @sort_by, @sort_order) %></span>
-                    </.link>
+                    <.sortable_header
+                      column="published"
+                      label="Publié"
+                      current_sort_by={@sort_by}
+                      current_sort_order={@sort_order}
+                      filter={@filter}
+                    />
                   </th>
                   <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                     <span class="sr-only">Actions</span>

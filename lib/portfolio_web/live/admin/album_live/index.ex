@@ -73,6 +73,33 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     |> assign(:page_title, "Albums")
   end
 
+  # Composant pour un en-tête de colonne triable
+  attr :column, :string, required: true
+  attr :label, :string, required: true
+  attr :current_sort_by, :string, required: true
+  attr :current_sort_order, :string, required: true
+  attr :filter, :string, default: nil
+
+  defp sortable_header(assigns) do
+    {next_sort_by, next_sort_order} =
+      next_sort_state(assigns.column, assigns.current_sort_by, assigns.current_sort_order)
+
+    assigns =
+      assigns
+      |> assign(:next_sort_by, next_sort_by)
+      |> assign(:next_sort_order, next_sort_order)
+
+    ~H"""
+    <.link
+      patch={~p"/admin/albums?#{build_params(@filter, 1, @next_sort_by, @next_sort_order)}"}
+      class="group inline-flex items-center gap-1 hover:text-indigo-600"
+    >
+      <%= @label %>
+      <span class="text-gray-400"><%= sort_icon(@column, @current_sort_by, @current_sort_order) %></span>
+    </.link>
+    """
+  end
+
   # Recharge les albums en utilisant les paramètres actuels du socket
   defp reload_albums(socket) do
     load_albums(
