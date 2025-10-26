@@ -37,6 +37,32 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   alias Portfolio.Repo
 
   @doc """
+  Liste toutes les photos avec options de filtrage.
+
+  ## Options
+
+  - `:album_id` - Filtre par ID d'album
+  - `:limit` - Limite le nombre de résultats
+  - `:offset` - Décalage pour la pagination
+  - `:preload` - Associations à précharger
+  - `:order_by` - Ordre de tri
+
+  ## Exemples
+
+      iex> list()
+      [%Photo{}, %Photo{}]
+
+      iex> list(album_id: album_id, limit: 10, preload: [:album])
+      [%Photo{album: %Album{}}]
+  """
+  @spec list(keyword()) :: [Photo.t()]
+  def list(opts \\ []) do
+    PhotoQuery.base()
+    |> apply_filters(opts)
+    |> Repo.all()
+  end
+
+  @doc """
   Liste toutes les photos d'un album, triées par display_order croissant.
 
   ## Exemples
@@ -291,5 +317,42 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   defp apply_preload(query, preloads) do
     PhotoQuery.with_preload(query, preloads)
+  end
+
+  # Applique les filtres à la query
+  defp apply_filters(query, []), do: query
+
+  defp apply_filters(query, [{:album_id, album_id} | rest]) do
+    query
+    |> PhotoQuery.by_album(album_id)
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:preload, preloads} | rest]) do
+    query
+    |> apply_preload(preloads)
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:limit, limit} | rest]) when is_integer(limit) do
+    query
+    |> limit(^limit)
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:offset, offset} | rest]) when is_integer(offset) do
+    query
+    |> offset(^offset)
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [{:order_by, order_spec} | rest]) when is_list(order_spec) do
+    query
+    |> order_by(^order_spec)
+    |> apply_filters(rest)
+  end
+
+  defp apply_filters(query, [_other | rest]) do
+    apply_filters(query, rest)
   end
 end

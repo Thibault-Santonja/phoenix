@@ -43,6 +43,11 @@ config :portfolio, :auth,
   # Session inactivity timeout in seconds (default: 2 hours)
   session_expiration_seconds: 2 * 60 * 60
 
+# Configure admin interface
+config :portfolio, :admin,
+  # Number of albums to display per page in admin interface
+  albums_per_page: 30
+
 # Configure file uploads
 config :portfolio, :uploads,
   base_path: "priv/static/uploads",

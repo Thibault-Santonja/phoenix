@@ -154,19 +154,9 @@ defmodule Portfolio.Photography do
   """
   @spec create_album(map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def create_album(attrs) do
-    start_time = System.monotonic_time()
-
-    result = AlbumRepository.insert(attrs)
-
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
-      [:portfolio, :photography, :album, :created],
-      %{duration: duration},
-      %{result: elem(result, 0)}
-    )
-
-    result
+    with_telemetry([:album, :created], %{}, fn ->
+      AlbumRepository.insert(attrs)
+    end)
   end
 
   @doc """
@@ -179,9 +169,7 @@ defmodule Portfolio.Photography do
   """
   @spec update_album(Album.t(), map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def update_album(album, attrs) do
-    start_time = System.monotonic_time()
-
-    result =
+    with_telemetry([:album, :updated], %{album_id: album.id}, fn ->
       case AlbumRepository.update(album, attrs) do
         {:ok, updated_album} = result ->
           # Invalider le cache si l'album est/était publié
@@ -195,16 +183,7 @@ defmodule Portfolio.Photography do
         error ->
           error
       end
-
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
-      [:portfolio, :photography, :album, :updated],
-      %{duration: duration},
-      %{album_id: album.id, result: elem(result, 0)}
-    )
-
-    result
+    end)
   end
 
   @doc """
@@ -399,9 +378,7 @@ defmodule Portfolio.Photography do
   """
   @spec create_photo(map()) :: {:ok, Photo.t()} | {:error, Ecto.Changeset.t()}
   def create_photo(attrs) do
-    start_time = System.monotonic_time()
-
-    result =
+    with_telemetry([:photo, :created], %{album_id: attrs[:album_id]}, fn ->
       with {:ok, photo} <- PhotoRepository.insert(attrs) do
         # Émettre l'événement de domaine
         DomainEvents.publish(:photo_uploaded, %PhotoUploaded{
@@ -414,16 +391,7 @@ defmodule Portfolio.Photography do
 
         {:ok, photo}
       end
-
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
-      [:portfolio, :photography, :photo, :created],
-      %{duration: duration},
-      %{album_id: attrs[:album_id], result: elem(result, 0)}
-    )
-
-    result
+    end)
   end
 
   @doc """
@@ -431,19 +399,9 @@ defmodule Portfolio.Photography do
   """
   @spec update_photo(Photo.t(), map()) :: {:ok, Photo.t()} | {:error, Ecto.Changeset.t()}
   def update_photo(photo, attrs) do
-    start_time = System.monotonic_time()
-
-    result = PhotoRepository.update(photo, attrs)
-
-    duration = System.monotonic_time() - start_time
-
-    :telemetry.execute(
-      [:portfolio, :photography, :photo, :updated],
-      %{duration: duration},
-      %{photo_id: photo.id, album_id: photo.album_id, result: elem(result, 0)}
-    )
-
-    result
+    with_telemetry([:photo, :updated], %{photo_id: photo.id, album_id: photo.album_id}, fn ->
+      PhotoRepository.update(photo, attrs)
+    end)
   end
 
   @doc """
@@ -464,57 +422,43 @@ defmodule Portfolio.Photography do
   """
   @spec delete_photo(Photo.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_photo(%Photo{} = photo) do
-    start_time = System.monotonic_time()
+    with_telemetry([:photo, :deleted], %{photo_id: photo.id, album_id: photo.album_id}, fn ->
+      result =
+        Ecto.Multi.new()
+        |> Ecto.Multi.delete(:photo, photo)
+        |> Ecto.Multi.run(:file, fn _repo, %{photo: deleted_photo} ->
+          # Supprimer le fichier via FileStorage
+          case storage().delete_photo(deleted_photo.file_path) do
+            :ok ->
+              {:ok, :ok}
 
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.delete(:photo, photo)
-      |> Ecto.Multi.run(:file, fn _repo, %{photo: deleted_photo} ->
-        # Supprimer le fichier via FileStorage
-        case storage().delete_photo(deleted_photo.file_path) do
-          :ok ->
-            {:ok, :ok}
+            {:error, :not_found} ->
+              # Si le fichier n'existe pas, c'est acceptable (données orphelines)
+              {:ok, :ok}
 
-          {:error, :not_found} ->
-            # Si le fichier n'existe pas, c'est acceptable (données orphelines)
-            {:ok, :ok}
+            {:error, reason} ->
+              # Autre erreur de suppression fichier - rollback de la transaction
+              {:error, reason}
+          end
+        end)
+        |> Repo.transaction()
 
-          {:error, reason} ->
-            # Autre erreur de suppression fichier - rollback de la transaction
-            {:error, reason}
-        end
-      end)
-      |> Repo.transaction()
+      case result do
+        {:ok, %{photo: deleted_photo}} ->
+          # Émettre l'événement de domaine
+          DomainEvents.publish(:photo_deleted, %PhotoDeleted{
+            photo_id: deleted_photo.id,
+            album_id: deleted_photo.album_id,
+            file_path: deleted_photo.file_path,
+            deleted_at: DateTime.utc_now()
+          })
 
-    duration = System.monotonic_time() - start_time
+          result
 
-    case result do
-      {:ok, %{photo: deleted_photo}} ->
-        # Émettre l'événement de domaine
-        DomainEvents.publish(:photo_deleted, %PhotoDeleted{
-          photo_id: deleted_photo.id,
-          album_id: deleted_photo.album_id,
-          file_path: deleted_photo.file_path,
-          deleted_at: DateTime.utc_now()
-        })
-
-        :telemetry.execute(
-          [:portfolio, :photography, :photo, :deleted],
-          %{duration: duration},
-          %{photo_id: deleted_photo.id, album_id: deleted_photo.album_id, result: :ok}
-        )
-
-        result
-
-      error ->
-        :telemetry.execute(
-          [:portfolio, :photography, :photo, :deleted],
-          %{duration: duration},
-          %{photo_id: photo.id, album_id: photo.album_id, result: :error}
-        )
-
-        error
-    end
+        _error ->
+          result
+      end
+    end)
   end
 
   @doc """
@@ -558,6 +502,39 @@ defmodule Portfolio.Photography do
   # =============================================================================
   # Private Functions
   # =============================================================================
+
+  # Exécute une fonction avec instrumentation telemetry
+  #
+  # ## Paramètres
+  # - `event_name` - Liste de segments du nom de l'événement (ex: [:album, :created])
+  # - `metadata` - Map de métadonnées à ajouter à l'événement
+  # - `fun` - Fonction à exécuter et instrumenter
+  #
+  # ## Retour
+  # Retourne le résultat de la fonction
+  #
+  # ## Exemples
+  #
+  #     with_telemetry([:album, :created], %{}, fn ->
+  #       AlbumRepository.insert(attrs)
+  #     end)
+  #
+  defp with_telemetry(event_name, metadata, fun) when is_list(event_name) and is_map(metadata) do
+    start_time = System.monotonic_time()
+    result = fun.()
+    duration = System.monotonic_time() - start_time
+
+    metrics = %{duration: duration}
+    full_metadata = Map.merge(metadata, result_metadata(result))
+
+    :telemetry.execute([:portfolio, :photography | event_name], metrics, full_metadata)
+    result
+  end
+
+  # Extrait les métadonnées du résultat pour telemetry
+  defp result_metadata({:ok, _}), do: %{result: :ok}
+  defp result_metadata({:error, _}), do: %{result: :error}
+  defp result_metadata(_), do: %{}
 
   defp storage do
     Application.get_env(:portfolio, :file_storage)[:backend] ||

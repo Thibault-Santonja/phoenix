@@ -46,7 +46,7 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
       assert html =~ "1"
 
       # Should show draft count
-      assert html =~ "brouillon"
+      assert html =~ "Brouillon"
     end
 
     test "shows correct photo count", %{conn: conn} do
@@ -115,7 +115,7 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
 
       assert view
              |> element("a[href=\"/admin/albums?filter=draft\"]")
-             |> render() =~ "brouillon"
+             |> render() =~ "Brouillon"
     end
 
     test "published albums link navigates with filter parameter", %{conn: conn} do
@@ -123,7 +123,7 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
 
       assert view
              |> element("a[href=\"/admin/albums?filter=published\"]")
-             |> render() =~ "publié"
+             |> render() =~ "Publié"
     end
   end
 end

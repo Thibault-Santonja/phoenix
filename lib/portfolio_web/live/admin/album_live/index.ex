@@ -16,20 +16,18 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   on_mount PortfolioWeb.LiveAuth
 
-  # Pagination : 25 albums par page
-  @albums_per_page 25
-
   @impl true
   def mount(_params, _session, socket) do
+    # Lecture de la configuration pour le nombre d'albums par page
+    albums_per_page = Application.get_env(:portfolio, :admin)[:albums_per_page] || 30
     {:ok,
      socket
      |> assign(:page_title, "Albums")
      |> assign(:filter, nil)
      |> assign(:page, 1)
-     |> assign(:per_page, @albums_per_page)
+     |> assign(:per_page, albums_per_page)
      |> assign(:sort_by, nil)
-     |> assign(:sort_order, nil)
-     |> assign(:loading_action, nil)}
+     |> assign(:sort_order, nil)}
   end
 
   @impl true
@@ -75,6 +73,17 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     |> assign(:page_title, "Albums")
   end
 
+  # Recharge les albums en utilisant les paramètres actuels du socket
+  defp reload_albums(socket) do
+    load_albums(
+      socket.assigns.filter,
+      socket.assigns.page,
+      socket.assigns.per_page,
+      socket.assigns.sort_by,
+      socket.assigns.sort_order
+    )
+  end
+
   # Optimisation: utiliser with_photo_count au lieu de preload toutes les photos
   # Pattern simplifié pour éviter la répétition
   defp load_albums(filter, page, per_page, sort_by, sort_order) do
@@ -113,59 +122,51 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    album = Photography.get_album!(id)
+    case Photography.get_album(id) do
+      {:ok, album} ->
+        case Photography.delete_album(album) do
+          {:ok, _result} ->
+            {:noreply,
+             socket
+             |> put_flash(:info, "Album supprimé avec succès")
+             |> assign(:albums, reload_albums(socket))}
 
-    case Photography.delete_album(album) do
-      {:ok, _album} ->
-        albums =
-          load_albums(
-            socket.assigns.filter,
-            socket.assigns.page,
-            socket.assigns.per_page,
-            socket.assigns.sort_by,
-            socket.assigns.sort_order
-          )
+          {:error, _reason} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, "Impossible de supprimer l'album")}
+        end
 
+      {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Album supprimé avec succès")
-         |> assign(:albums, albums)
-         |> assign(:loading_action, nil)}
-
-      {:error, _changeset} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Impossible de supprimer l'album")
-         |> assign(:loading_action, nil)}
+         |> put_flash(:error, "Album introuvable")
+         |> assign(:albums, reload_albums(socket))}
     end
   end
 
   @impl true
   def handle_event("toggle_publish", %{"id" => id}, socket) do
-    album = Photography.get_album!(id)
+    case Photography.get_album(id) do
+      {:ok, album} ->
+        case Photography.update_album(album, %{published: !album.published}) do
+          {:ok, _album} ->
+            {:noreply,
+             socket
+             |> put_flash(:info, "Statut de publication mis à jour")
+             |> assign(:albums, reload_albums(socket))}
 
-    case Photography.update_album(album, %{published: !album.published}) do
-      {:ok, _album} ->
-        albums =
-          load_albums(
-            socket.assigns.filter,
-            socket.assigns.page,
-            socket.assigns.per_page,
-            socket.assigns.sort_by,
-            socket.assigns.sort_order
-          )
+          {:error, _changeset} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, "Impossible de mettre à jour le statut")}
+        end
 
+      {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Statut de publication mis à jour")
-         |> assign(:albums, albums)
-         |> assign(:loading_action, nil)}
-
-      {:error, _changeset} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Impossible de mettre à jour le statut")
-         |> assign(:loading_action, nil)}
+         |> put_flash(:error, "Album introuvable")
+         |> assign(:albums, reload_albums(socket))}
     end
   end
 
@@ -231,7 +232,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     params = if page > 1, do: [{:page, page} | params], else: params
     params = if sort_by, do: [{:sort_by, sort_by} | params], else: params
     params = if sort_order, do: [{:sort_order, sort_order} | params], else: params
-    URI.encode_query(params)
+    params
   end
 
   # Cycle de tri à 3 états pour une colonne

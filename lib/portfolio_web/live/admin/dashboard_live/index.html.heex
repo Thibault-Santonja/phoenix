@@ -68,6 +68,25 @@
         </:footer>
       </.stat_card>
 
+<!-- Albums Brouillons -->
+      <.stat_card
+        title="Albums Brouillons"
+        value={@stats.draft_albums}
+        icon="hero-pencil-square"
+        color="red"
+        navigate={~p"/admin/albums?filter=draft"}
+      >
+        <:footer>
+          <div class="text-sm text-gray-600">
+            <%= if @stats.total_albums > 0 do %>
+              {Float.round(@stats.draft_albums / @stats.total_albums * 100, 1)}% du total
+            <% else %>
+              0% du total
+            <% end %>
+          </div>
+        </:footer>
+      </.stat_card>
+
 <!-- Utilisateurs -->
       <.stat_card
         title="Utilisateurs"

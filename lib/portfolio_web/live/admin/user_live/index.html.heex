@@ -122,11 +122,11 @@
 
   <!-- Modale d'édition -->
   <%= if @edit_user do %>
-    <div class="fixed inset-0 z-50 overflow-y-auto" phx-click="close_edit_modal">
+    <div class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" phx-click="close_edit_modal"></div>
 
-        <div class="relative bg-white rounded-lg shadow-xl max-w-lg w-full p-6" phx-click="noop">
+        <div class="relative bg-white rounded-lg shadow-xl max-w-lg w-full p-6" style="pointer-events: auto;">
           <h3 class="text-lg font-medium text-gray-900 mb-4">
             Modifier l'utilisateur
           </h3>

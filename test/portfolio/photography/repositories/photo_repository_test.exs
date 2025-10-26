@@ -4,6 +4,103 @@ defmodule Portfolio.Photography.Repositories.PhotoRepositoryTest do
   alias Portfolio.Photography.{Album, Photo}
   alias Portfolio.Photography.Repositories.PhotoRepository
 
+  describe "list/1" do
+    test "returns all photos" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      photo1 = insert_photo(album, %{title: "Photo 1"})
+      photo2 = insert_photo(album, %{title: "Photo 2"})
+
+      photos = PhotoRepository.list()
+
+      assert length(photos) == 2
+      photo_ids = Enum.map(photos, & &1.id)
+      assert photo1.id in photo_ids
+      assert photo2.id in photo_ids
+    end
+
+    test "filters by album_id" do
+      album1 = insert_album(%{title: "Album 1", type: :wedding})
+      album2 = insert_album(%{title: "Album 2", type: :couples})
+
+      photo1 = insert_photo(album1, %{title: "Photo 1"})
+      _photo2 = insert_photo(album2, %{title: "Photo 2"})
+
+      photos = PhotoRepository.list(album_id: album1.id)
+
+      assert length(photos) == 1
+      assert hd(photos).id == photo1.id
+    end
+
+    test "applies limit" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      insert_photo(album, %{title: "Photo 1"})
+      insert_photo(album, %{title: "Photo 2"})
+      insert_photo(album, %{title: "Photo 3"})
+
+      photos = PhotoRepository.list(limit: 2)
+
+      assert length(photos) == 2
+    end
+
+    test "applies offset for pagination" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      _photo1 = insert_photo(album, %{title: "Photo 1", display_order: 0})
+      photo2 = insert_photo(album, %{title: "Photo 2", display_order: 1})
+      photo3 = insert_photo(album, %{title: "Photo 3", display_order: 2})
+
+      photos = PhotoRepository.list(offset: 1, limit: 2, order_by: [asc: :display_order])
+
+      assert length(photos) == 2
+      assert Enum.at(photos, 0).id == photo2.id
+      assert Enum.at(photos, 1).id == photo3.id
+    end
+
+    test "preloads associations" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      insert_photo(album, %{title: "Photo"})
+
+      [photo] = PhotoRepository.list(preload: [:album])
+
+      assert photo.album.id == album.id
+      refute match?(%Ecto.Association.NotLoaded{}, photo.album)
+    end
+
+    test "applies custom order_by" do
+      album = insert_album(%{title: "Album", type: :wedding})
+      photo1 = insert_photo(album, %{title: "A Photo", display_order: 0})
+      photo2 = insert_photo(album, %{title: "Z Photo", display_order: 1})
+      photo3 = insert_photo(album, %{title: "M Photo", display_order: 2})
+
+      photos = PhotoRepository.list(order_by: [asc: :title])
+
+      assert length(photos) == 3
+      assert Enum.at(photos, 0).id == photo1.id
+      assert Enum.at(photos, 1).id == photo3.id
+      assert Enum.at(photos, 2).id == photo2.id
+    end
+
+    test "combines multiple filters" do
+      album1 = insert_album(%{title: "Album 1", type: :wedding})
+      album2 = insert_album(%{title: "Album 2", type: :couples})
+
+      photo1 = insert_photo(album1, %{title: "Photo 1", display_order: 0})
+      photo2 = insert_photo(album1, %{title: "Photo 2", display_order: 1})
+      _photo3 = insert_photo(album2, %{title: "Photo 3", display_order: 0})
+
+      photos = PhotoRepository.list(album_id: album1.id, limit: 1, preload: [:album])
+
+      assert length(photos) == 1
+      assert hd(photos).id == photo1.id
+      refute match?(%Ecto.Association.NotLoaded{}, hd(photos).album)
+    end
+
+    test "returns empty list when no photos" do
+      photos = PhotoRepository.list()
+
+      assert photos == []
+    end
+  end
+
   describe "list_by_album/1" do
     test "returns all photos for an album sorted by display_order" do
       album = insert_album(%{title: "Test Album", type: :wedding})

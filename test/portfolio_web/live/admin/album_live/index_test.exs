@@ -649,12 +649,137 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
     end
   end
 
+  describe "Index - Sorting" do
+    setup [:authenticate_user]
+
+    test "sorts albums by title ascending", %{conn: conn} do
+      _album_c = create_album(title: "Charlie", date_prise_vue: ~D[2024-01-01])
+      _album_a = create_album(title: "Alpha", date_prise_vue: ~D[2024-02-01])
+      _album_b = create_album(title: "Bravo", date_prise_vue: ~D[2024-03-01])
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?sort_by=title&sort_order=asc")
+
+      # Albums should appear in title order: Alpha, Bravo, Charlie
+      alpha_pos = :binary.match(html, "Alpha") |> elem(0)
+      bravo_pos = :binary.match(html, "Bravo") |> elem(0)
+      charlie_pos = :binary.match(html, "Charlie") |> elem(0)
+
+      assert alpha_pos < bravo_pos
+      assert bravo_pos < charlie_pos
+    end
+
+    test "sorts albums by title descending", %{conn: conn} do
+      _album_c = create_album(title: "Charlie", date_prise_vue: ~D[2024-01-01])
+      _album_a = create_album(title: "Alpha", date_prise_vue: ~D[2024-02-01])
+      _album_b = create_album(title: "Bravo", date_prise_vue: ~D[2024-03-01])
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?sort_by=title&sort_order=desc")
+
+      # Albums should appear in reverse title order: Charlie, Bravo, Alpha
+      alpha_pos = :binary.match(html, "Alpha") |> elem(0)
+      bravo_pos = :binary.match(html, "Bravo") |> elem(0)
+      charlie_pos = :binary.match(html, "Charlie") |> elem(0)
+
+      assert charlie_pos < bravo_pos
+      assert bravo_pos < alpha_pos
+    end
+
+    test "sorts albums by date ascending", %{conn: conn} do
+      _album_c = create_album(title: "Newest", date_prise_vue: ~D[2024-03-01])
+      _album_a = create_album(title: "Oldest", date_prise_vue: ~D[2024-01-01])
+      _album_b = create_album(title: "Middle", date_prise_vue: ~D[2024-02-01])
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?sort_by=date&sort_order=asc")
+
+      # Albums should appear in date order: Oldest, Middle, Newest
+      oldest_pos = :binary.match(html, "Oldest") |> elem(0)
+      middle_pos = :binary.match(html, "Middle") |> elem(0)
+      newest_pos = :binary.match(html, "Newest") |> elem(0)
+
+      assert oldest_pos < middle_pos
+      assert middle_pos < newest_pos
+    end
+
+    test "sorts albums by date descending", %{conn: conn} do
+      _album_c = create_album(title: "Newest", date_prise_vue: ~D[2024-03-01])
+      _album_a = create_album(title: "Oldest", date_prise_vue: ~D[2024-01-01])
+      _album_b = create_album(title: "Middle", date_prise_vue: ~D[2024-02-01])
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?sort_by=date&sort_order=desc")
+
+      # Albums should appear in reverse date order: Newest, Middle, Oldest
+      oldest_pos = :binary.match(html, "Oldest") |> elem(0)
+      middle_pos = :binary.match(html, "Middle") |> elem(0)
+      newest_pos = :binary.match(html, "Newest") |> elem(0)
+
+      assert newest_pos < middle_pos
+      assert middle_pos < oldest_pos
+    end
+
+    test "displays sort indicators on column headers", %{conn: conn} do
+      create_album(title: "Test")
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?sort_by=title&sort_order=asc")
+
+      # Should show ascending arrow for title column
+      assert html =~ "↑"
+    end
+
+    test "clicking column header sorts by that column", %{conn: conn} do
+      create_album(title: "Album A")
+      create_album(title: "Album B")
+
+      {:ok, view, _html} = live(conn, ~p"/admin/albums")
+
+      # Click on title header to sort
+      view
+      |> element("a", "Titre")
+      |> render_click()
+
+      # Should update the view with sort parameters
+      assert render(view) =~ "sort_by=title"
+      assert render(view) =~ "sort_order"
+    end
+
+    test "sorting persists with pagination", %{conn: conn} do
+      # Create 40 albums to trigger pagination (30 per page)
+      for i <- 1..40 do
+        create_album(title: "Album #{String.pad_leading(Integer.to_string(i), 2, "0")}")
+      end
+
+      {:ok, _view, html} = live(conn, ~p"/admin/albums?sort_by=title&sort_order=desc&page=1")
+
+      # Should maintain sort parameters in pagination links
+      assert html =~ "sort_by=title"
+      assert html =~ "sort_order=desc"
+    end
+
+    test "sorting works with filters", %{conn: conn} do
+      create_album(title: "Zebra", published: true)
+      create_album(title: "Alpha", published: true)
+      create_album(title: "Middle", published: false)
+
+      {:ok, _view, html} =
+        live(conn, ~p"/admin/albums?filter=published&sort_by=title&sort_order=asc")
+
+      # Should show only published albums in sorted order
+      assert html =~ "Alpha"
+      assert html =~ "Zebra"
+      refute html =~ "Middle"
+
+      # Alpha should appear before Zebra
+      alpha_pos = :binary.match(html, "Alpha") |> elem(0)
+      zebra_pos = :binary.match(html, "Zebra") |> elem(0)
+      assert alpha_pos < zebra_pos
+    end
+  end
+
   describe "Index - Pagination" do
     setup [:authenticate_user]
 
-    test "displays first page of albums when there are more than 25", %{conn: conn} do
-      # Create 30 albums to trigger pagination (25 per page)
-      for i <- 1..30 do
+    test "displays first page of albums when there are more than 30", %{conn: conn} do
+      # Create 40 albums to trigger pagination (30 per page)
+      for i <- 1..40 do
         create_album(title: "Album #{i}")
       end
 
@@ -667,8 +792,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
     end
 
     test "paginates to second page", %{conn: conn} do
-      # Create 30 albums
-      for i <- 1..30 do
+      # Create 40 albums
+      for i <- 1..40 do
         create_album(title: "Album #{String.pad_leading(Integer.to_string(i), 2, "0")}")
       end
 
@@ -676,14 +801,14 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
 
       # Should show page 2 content
       assert html =~ "Affichage de"
-      # Page 2 shows albums 26-30 (5 albums)
-      assert html =~ "26"
-      assert html =~ "30"
+      # Page 2 shows albums 31-40 (10 albums)
+      assert html =~ "31"
+      assert html =~ "40"
     end
 
     test "pagination UI shows correct page numbers", %{conn: conn} do
-      # Create 30 albums to get 2 pages
-      for i <- 1..30 do
+      # Create 40 albums to get 2 pages
+      for i <- 1..40 do
         create_album(title: "Album #{i}")
       end
 
@@ -694,8 +819,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
     end
 
     test "pagination works with filters", %{conn: conn} do
-      # Create 30 published albums and 5 drafts
-      for i <- 1..30 do
+      # Create 40 published albums and 5 drafts
+      for i <- 1..40 do
         create_album(title: "Published #{i}", published: true)
       end
 
@@ -705,15 +830,15 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
 
       {:ok, _view, html} = live(conn, ~p"/admin/albums?filter=published&page=2")
 
-      # Should show page 2 of published albums (26-30)
+      # Should show page 2 of published albums (31-40)
       assert html =~ "filter=published"
       assert html =~ "Affichage de"
-      assert html =~ "26"
-      assert html =~ "30"
+      assert html =~ "31"
+      assert html =~ "40"
     end
 
     test "hides pagination when albums fit on one page", %{conn: conn} do
-      # Create only 10 albums (less than 25 per page)
+      # Create only 10 albums (less than 30 per page)
       for i <- 1..10 do
         create_album(title: "Album #{i}")
       end
@@ -726,13 +851,13 @@ defmodule PortfolioWeb.Admin.AlbumLive.IndexTest do
     end
 
     test "pagination displays total album count", %{conn: conn} do
-      for i <- 1..30 do
+      for i <- 1..40 do
         create_album(title: "Album #{i}")
       end
 
       {:ok, _view, html} = live(conn, ~p"/admin/albums")
 
-      assert html =~ "30"
+      assert html =~ "40"
       assert html =~ "albums"
     end
   end
