@@ -25,40 +25,19 @@
         color="blue"
         navigate={~p"/admin/albums"}
       >
-        <:footer>
-          <div class="flex items-center justify-between text-sm gap-3">
-            <.link
-              navigate={~p"/admin/albums?filter=published"}
-              class="flex items-center text-green-600 font-medium hover:text-green-700"
-              onclick="event.stopPropagation()"
-            >
-              <span>{@stats.published_albums} publiés</span>
-              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </.link>
-            <.link
-              navigate={~p"/admin/albums?filter=draft"}
-              class="flex items-center text-orange-600 font-medium hover:text-orange-700"
-              onclick="event.stopPropagation()"
-            >
-              <span>{@stats.draft_albums} brouillons</span>
-              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </.link>
-          </div>
-        </:footer>
+      <:footer>
+        <div class="flex items-center text-sm text-blue-600 font-medium">
+          <span>Voir la liste</span>
+          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </div>
+      </:footer>
       </.stat_card>
 
 <!-- Total Photos -->
@@ -67,6 +46,7 @@
         value={@stats.total_photos}
         icon="hero-photo"
         color="green"
+        navigate={~p"/admin/photos"}
       />
 
 <!-- Albums Publiés -->
@@ -75,6 +55,7 @@
         value={@stats.published_albums}
         icon="hero-check-circle"
         color="purple"
+        navigate={~p"/admin/albums?filter=published"}
       >
         <:footer>
           <div class="text-sm text-gray-600">

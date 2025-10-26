@@ -345,6 +345,25 @@ defmodule Portfolio.Photography do
   # =============================================================================
 
   @doc """
+  Liste toutes les photos avec options de filtrage.
+
+  ## Options
+
+  - `:album_id` - Filtre par ID d'album
+  - `:limit` - Limite le nombre de résultats
+  - `:offset` - Décalage pour la pagination
+  - `:preload` - Associations à précharger
+  - `:order_by` - Ordre de tri
+
+  ## Exemples
+
+      iex> list_photos()
+      [%Photo{}, %Photo{}]
+  """
+  @spec list_photos(keyword()) :: [Photo.t()]
+  def list_photos(opts \\ []), do: PhotoRepository.list(opts)
+
+  @doc """
   Liste toutes les photos d'un album.
 
   ## Exemples
@@ -606,6 +625,12 @@ defmodule Portfolio.Photography do
   def count_photos_in_album(album_id) do
     PhotoRepository.count_by_album(album_id)
   end
+
+  @doc """
+  Alias pour count_photos_in_album/1.
+  """
+  @spec count_photos_by_album(Ecto.UUID.t()) :: non_neg_integer()
+  def count_photos_by_album(album_id), do: count_photos_in_album(album_id)
 
   @doc """
   Compte le nombre total de photos dans tous les albums.

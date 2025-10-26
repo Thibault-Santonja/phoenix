@@ -148,6 +148,9 @@ defmodule PortfolioWeb.Router do
       live "/albums/new", AlbumLive.New, :new
       live "/albums/:id/edit", AlbumLive.Edit, :edit
 
+      # Gestion des photos
+      live "/photos", PhotoLive.Index, :index
+
       # Gestion des utilisateurs
       live "/users", UserLive.Index, :index
 
