@@ -210,65 +210,16 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   """
   @spec reorder(Ecto.UUID.t(), [Ecto.UUID.t()]) :: {:ok, integer()} | {:error, :invalid_photos}
   def reorder(album_id, photo_ids) when is_list(photo_ids) do
-    # Build a transaction with all updates using Ecto.Multi
     multi =
       Multi.new()
       |> Multi.run(:validate_photos, fn _repo, _changes ->
-        # Vérifier que toutes les photos appartiennent à l'album
-        photos = list_by_album(album_id)
-        photo_ids_set = MapSet.new(photo_ids)
-        existing_ids_set = MapSet.new(Enum.map(photos, & &1.id))
-
-        if MapSet.subset?(photo_ids_set, existing_ids_set) do
-          {:ok, photos}
-        else
-          {:error, :invalid_photos}
-        end
+        validate_photos_belong_to_album(album_id, photo_ids)
       end)
       |> Multi.run(:reorder_photos, fn repo, %{validate_photos: _photos} ->
-        # Handle empty list edge case
-        if Enum.empty?(photo_ids) do
-          {:ok, 0}
-        else
-          # Optimized: Single UPDATE query using CASE WHEN instead of N queries
-          # 100 photos: 100 UPDATE queries → 1 UPDATE query
-          now = DateTime.utc_now()
-
-          # Convert UUIDs to binary format for Postgrex
-          binary_photo_ids = Enum.map(photo_ids, &Ecto.UUID.dump!/1)
-
-          # Build CASE WHEN clauses for display_order
-          case_whens =
-            photo_ids
-            |> Enum.with_index()
-            |> Enum.map_join(" ", fn {_id, idx} ->
-              "WHEN id = $#{idx + 2}::uuid THEN #{idx}"
-            end)
-
-          # Build parameterized query
-          query = """
-          UPDATE photos
-          SET
-            display_order = CASE #{case_whens} END,
-            updated_at = $1
-          WHERE id = ANY($#{length(photo_ids) + 2}::uuid[])
-          """
-
-          # Parameters: [updated_at, photo_id1_binary, ..., photo_idN_binary, array_of_photo_ids_binary]
-          params = [now] ++ binary_photo_ids ++ [binary_photo_ids]
-
-          case repo.query(query, params) do
-            {:ok, %{num_rows: count}} -> {:ok, count}
-            {:error, reason} -> {:error, reason}
-          end
-        end
+        execute_reorder_query(repo, photo_ids)
       end)
 
-    case Repo.transaction(multi) do
-      {:ok, %{reorder_photos: count}} -> {:ok, count}
-      {:error, :validate_photos, :invalid_photos, _changes} -> {:error, :invalid_photos}
-      {:error, _failed_operation, reason, _changes} -> {:error, reason}
-    end
+    handle_reorder_transaction_result(Repo.transaction(multi))
   end
 
   @doc """
@@ -299,6 +250,72 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   def count_all do
     Repo.aggregate(Photo, :count)
   end
+
+  # Valide que toutes les photos de la liste appartiennent à l'album spécifié
+  defp validate_photos_belong_to_album(album_id, photo_ids) do
+    photos = list_by_album(album_id)
+    photo_ids_set = MapSet.new(photo_ids)
+    existing_ids_set = MapSet.new(Enum.map(photos, & &1.id))
+
+    if MapSet.subset?(photo_ids_set, existing_ids_set) do
+      {:ok, photos}
+    else
+      {:error, :invalid_photos}
+    end
+  end
+
+  # Exécute la requête SQL optimisée de réorganisation
+  defp execute_reorder_query(_repo, []), do: {:ok, 0}
+
+  defp execute_reorder_query(repo, photo_ids) do
+    query = build_reorder_sql_query(photo_ids)
+    params = build_reorder_query_params(photo_ids)
+
+    case repo.query(query, params) do
+      {:ok, %{num_rows: count}} -> {:ok, count}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  # Construit la requête SQL avec CASE WHEN pour une mise à jour atomique
+  defp build_reorder_sql_query(photo_ids) do
+    case_whens = build_case_when_clauses(photo_ids)
+
+    """
+    UPDATE photos
+    SET
+      display_order = CASE #{case_whens} END,
+      updated_at = $1
+    WHERE id = ANY($#{length(photo_ids) + 2}::uuid[])
+    """
+  end
+
+  # Construit les clauses CASE WHEN pour associer chaque ID à son index
+  defp build_case_when_clauses(photo_ids) do
+    photo_ids
+    |> Enum.with_index()
+    |> Enum.map_join(" ", fn {_id, idx} ->
+      "WHEN id = $#{idx + 2}::uuid THEN #{idx}"
+    end)
+  end
+
+  # Prépare les paramètres de la requête avec les UUIDs au format binaire
+  defp build_reorder_query_params(photo_ids) do
+    now = DateTime.utc_now()
+    binary_photo_ids = Enum.map(photo_ids, &Ecto.UUID.dump!/1)
+
+    # [updated_at, photo_id1_binary, ..., photo_idN_binary, array_of_all_ids]
+    [now] ++ binary_photo_ids ++ [binary_photo_ids]
+  end
+
+  # Gère le résultat de la transaction de réorganisation
+  defp handle_reorder_transaction_result({:ok, %{reorder_photos: count}}), do: {:ok, count}
+
+  defp handle_reorder_transaction_result({:error, :validate_photos, :invalid_photos, _changes}),
+    do: {:error, :invalid_photos}
+
+  defp handle_reorder_transaction_result({:error, _failed_operation, reason, _changes}),
+    do: {:error, reason}
 
   # Construit la requête de base pour récupérer une photo par ID
   defp base_get_query(id) do
