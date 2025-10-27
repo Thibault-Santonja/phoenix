@@ -46,7 +46,7 @@ defmodule Portfolio.Photography do
   """
 
   alias Portfolio.DomainEvents
-  alias Portfolio.Photography.{Album, Photo}
+  alias Portfolio.Photography.{Album, Photo, Storage}
   alias Portfolio.Photography.Events.{PhotoDeleted, PhotoUploaded}
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
   alias Portfolio.Repo
@@ -428,7 +428,7 @@ defmodule Portfolio.Photography do
         |> Ecto.Multi.delete(:photo, photo)
         |> Ecto.Multi.run(:file, fn _repo, %{photo: deleted_photo} ->
           # Supprimer le fichier via FileStorage
-          case storage().delete_photo(deleted_photo.file_path) do
+          case Storage.backend().delete_photo(deleted_photo.file_path) do
             :ok ->
               {:ok, :ok}
 
@@ -535,11 +535,6 @@ defmodule Portfolio.Photography do
   defp result_metadata({:ok, _}), do: %{result: :ok}
   defp result_metadata({:error, _}), do: %{result: :error}
   defp result_metadata(_), do: %{}
-
-  defp storage do
-    Application.get_env(:portfolio, :file_storage)[:backend] ||
-      Portfolio.Photography.Storage.LocalStorage
-  end
 
   # Invalidate all caches related to published albums
   defp invalidate_albums_cache do
