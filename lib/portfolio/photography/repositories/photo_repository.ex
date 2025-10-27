@@ -76,19 +76,13 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   """
   @spec list_by_album(Ecto.UUID.t(), keyword()) :: [Photo.t()]
   def list_by_album(album_id, opts \\ []) do
-    query =
-      PhotoQuery.base()
-      |> PhotoQuery.by_album(album_id)
-      |> PhotoQuery.order_by_display_order()
+    # Utilise apply_filters pour une gestion cohérente des preloads
+    opts_with_album = Keyword.put(opts, :album_id, album_id)
 
-    query =
-      if opts[:preload] do
-        apply_preload(query, opts[:preload])
-      else
-        query
-      end
-
-    Repo.all(query)
+    PhotoQuery.base()
+    |> PhotoQuery.order_by_display_order()
+    |> apply_filters(opts_with_album)
+    |> Repo.all()
   end
 
   @doc """
@@ -107,9 +101,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   """
   @spec get(Ecto.UUID.t(), keyword()) :: {:ok, Photo.t()} | {:error, :not_found}
   def get(id, opts \\ []) do
-    query = from p in Photo, where: p.id == ^id
-
-    query
+    base_get_query(id)
     |> apply_preload(opts[:preload])
     |> Repo.one()
     |> case do
@@ -132,9 +124,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   """
   @spec get!(Ecto.UUID.t(), keyword()) :: Photo.t()
   def get!(id, opts \\ []) do
-    query = from p in Photo, where: p.id == ^id
-
-    query
+    base_get_query(id)
     |> apply_preload(opts[:preload])
     |> Repo.one!()
   end
@@ -308,6 +298,11 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   @spec count_all() :: non_neg_integer()
   def count_all do
     Repo.aggregate(Photo, :count)
+  end
+
+  # Construit la requête de base pour récupérer une photo par ID
+  defp base_get_query(id) do
+    from p in Photo, where: p.id == ^id
   end
 
   # Applique les preloads à la query en utilisant PhotoQuery
