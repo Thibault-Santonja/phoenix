@@ -25,6 +25,34 @@ defmodule Portfolio.Photography do
   - **Application Layer** : Ce module (API publique, orchestration)
   - **Infrastructure Layer** : Repositories, FileStorage
 
+  ## Stratégie de Cache
+
+  Le contexte utilise Cachex pour optimiser les requêtes fréquentes :
+
+  ### Albums Publiés par Année
+
+  - **Clé de cache** : `{:published_albums_by_year, preloads}`
+  - **TTL** : 1 heure
+  - **Invalidation** : Lors de la publication/dépublication d'un album
+  - **Fonction** : `list_published_albums_by_year/1`
+
+  ### Invalidation du Cache
+
+  Le cache est automatiquement invalidé dans les cas suivants :
+
+  1. **Mise à jour d'un album** (`update_album/2`) :
+     - Invalide si l'album est/était publié
+     - Gère à la fois publish et unpublish
+
+  2. **Publication d'un album** (`publish_album/2`) :
+     - Délégué au `AlbumPublicationService`
+     - Invalide le cache après publication réussie
+
+  ### Mode Test
+
+  En environnement test, le cache est automatiquement désactivé via
+  l'option `:skip_cache` pour éviter la pollution entre tests.
+
   ## Exemples
 
       # Lister tous les albums publiés groupés par année
@@ -536,7 +564,15 @@ defmodule Portfolio.Photography do
   defp result_metadata({:error, _}), do: %{result: :error}
   defp result_metadata(_), do: %{}
 
-  # Invalidate all caches related to published albums
+  # Invalide tous les caches liés aux albums publiés
+  #
+  # Cette fonction doit être appelée après toute opération qui affecte
+  # la liste des albums publiés :
+  # - Publication d'un album (publish_album/2)
+  # - Dépublication d'un album (update_album/2 avec published: false)
+  # - Mise à jour d'un album publié (update_album/2)
+  #
+  # Note: La suppression d'album (delete_album/1) est gérée par AlbumDeletionService
   defp invalidate_albums_cache do
     Cachex.del(:portfolio_cache, {:published_albums_by_year, []})
     Cachex.del(:portfolio_cache, {:published_albums_by_year, [:photos]})
