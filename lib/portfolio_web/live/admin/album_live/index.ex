@@ -111,41 +111,45 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     )
   end
 
-  # Optimisation: utiliser with_photo_count au lieu de preload toutes les photos
-  # Pattern simplifié pour éviter la répétition
+  # Charge les albums avec les filtres, pagination et tri spécifiés
   defp load_albums(filter, page, per_page, sort_by, sort_order) do
-    offset = (page - 1) * per_page
-    opts = [with_photo_count: true, limit: per_page, offset: offset]
-
-    opts =
-      case filter do
-        "draft" -> Keyword.put(opts, :published, false)
-        "published" -> Keyword.put(opts, :published, true)
-        _ -> opts
-      end
-
-    # Ajouter le tri (ordre par défaut : date décroissante)
-    order_by =
-      case {sort_by, sort_order} do
-        {"title", "asc"} -> [asc: :title]
-        {"title", "desc"} -> [desc: :title]
-        {"type", "asc"} -> [asc: :type]
-        {"type", "desc"} -> [desc: :type]
-        {"date", "asc"} -> [asc: :date_prise_vue]
-        {"date", "desc"} -> [desc: :date_prise_vue]
-        {"photos", "asc"} -> [asc: :photo_count]
-        {"photos", "desc"} -> [desc: :photo_count]
-        {"published", "asc"} -> [asc: :published]
-        {"published", "desc"} -> [desc: :published]
-        # Ordre par défaut si aucun tri actif
-        {nil, _} -> [desc: :date_prise_vue]
-        _ -> [desc: :date_prise_vue]
-      end
-
-    opts = Keyword.put(opts, :order_by, order_by)
-
-    Photography.list_albums(opts)
+    []
+    |> build_base_opts(per_page, page)
+    |> apply_filter_opts(filter)
+    |> apply_sort_opts(sort_by, sort_order)
+    |> Photography.list_albums()
   end
+
+  # Construit les options de base pour la requête (pagination et compteur de photos)
+  defp build_base_opts(opts, per_page, page) do
+    offset = (page - 1) * per_page
+    Keyword.merge(opts, with_photo_count: true, limit: per_page, offset: offset)
+  end
+
+  # Applique les filtres de publication
+  defp apply_filter_opts(opts, "draft"), do: Keyword.put(opts, :published, false)
+  defp apply_filter_opts(opts, "published"), do: Keyword.put(opts, :published, true)
+  defp apply_filter_opts(opts, _), do: opts
+
+  # Applique les options de tri
+  defp apply_sort_opts(opts, sort_by, sort_order) do
+    order_by = build_order_by(sort_by, sort_order)
+    Keyword.put(opts, :order_by, order_by)
+  end
+
+  # Construit la clause ORDER BY en fonction des paramètres de tri
+  defp build_order_by("title", "asc"), do: [asc: :title]
+  defp build_order_by("title", "desc"), do: [desc: :title]
+  defp build_order_by("type", "asc"), do: [asc: :type]
+  defp build_order_by("type", "desc"), do: [desc: :type]
+  defp build_order_by("date", "asc"), do: [asc: :date_prise_vue]
+  defp build_order_by("date", "desc"), do: [desc: :date_prise_vue]
+  defp build_order_by("photos", "asc"), do: [asc: :photo_count]
+  defp build_order_by("photos", "desc"), do: [desc: :photo_count]
+  defp build_order_by("published", "asc"), do: [asc: :published]
+  defp build_order_by("published", "desc"), do: [desc: :published]
+  # Ordre par défaut : date décroissante
+  defp build_order_by(_, _), do: [desc: :date_prise_vue]
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
