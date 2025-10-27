@@ -20,7 +20,7 @@
     action={:edit}
     album={@album}
   />
-
+  
 <!-- Section Photos -->
   <div class="md:grid md:grid-cols-3 md:gap-6 mt-10">
     <div class="md:col-span-1">
@@ -116,7 +116,7 @@
               <% end %>
             </form>
           </div>
-
+          
 <!-- Liste des photos existantes -->
           <%= if @album.photos != [] do %>
             <div class="mt-6 border-t border-gray-200 pt-6">
@@ -265,7 +265,7 @@
         phx-click="close_photo_modal"
       >
       </div>
-
+      
 <!-- Center modal -->
       <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
         &#8203;
@@ -279,7 +279,7 @@
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
                   Éditer la photo
                 </h3>
-
+                
 <!-- Photo preview -->
                 <div class="mb-4">
                   <img
@@ -293,7 +293,7 @@
                     {@editing_photo.original_filename}
                   </p>
                 </div>
-
+                
 <!-- Form fields -->
                 <div class="space-y-4">
                   <div>

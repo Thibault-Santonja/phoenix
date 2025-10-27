@@ -64,9 +64,14 @@ defmodule Portfolio.Photography.Repositories.AlbumRepositoryTest do
 
   describe "list/1 with order_by" do
     setup do
-      album_c = insert_album(%{title: "Charlie Album", type: :wedding, date_prise_vue: ~D[2024-03-15]})
-      album_a = insert_album(%{title: "Alpha Album", type: :couples, date_prise_vue: ~D[2024-01-10]})
-      album_b = insert_album(%{title: "Bravo Album", type: :landscape, date_prise_vue: ~D[2024-02-20]})
+      album_c =
+        insert_album(%{title: "Charlie Album", type: :wedding, date_prise_vue: ~D[2024-03-15]})
+
+      album_a =
+        insert_album(%{title: "Alpha Album", type: :couples, date_prise_vue: ~D[2024-01-10]})
+
+      album_b =
+        insert_album(%{title: "Bravo Album", type: :landscape, date_prise_vue: ~D[2024-02-20]})
 
       %{album_a: album_a, album_b: album_b, album_c: album_c}
     end

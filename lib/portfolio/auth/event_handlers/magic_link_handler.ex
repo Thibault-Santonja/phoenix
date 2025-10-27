@@ -101,5 +101,4 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandler do
     Logger.warning("MagicLinkHandler received unexpected message: #{inspect(msg)}")
     {:noreply, state}
   end
-
 end

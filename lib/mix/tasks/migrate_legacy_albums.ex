@@ -103,7 +103,8 @@ defmodule Mix.Tasks.MigrateLegacyAlbums do
       "2024-03-24_music.webp" => {"Concert - Mars 2024", "music", ~D[2024-03-24]},
       "2024-03-26_music.webp" => {"Concert - Mars 2024 #2", "music", ~D[2024-03-26]},
       "2024-04-26_amvcc.webp" => {"AMVCC - Avril 2024", "amvcc", ~D[2024-04-26]},
-      "2024-05-04_reenactment.webp" => {"Reconstitution - Mai 2024", "reenactment", ~D[2024-05-04]},
+      "2024-05-04_reenactment.webp" =>
+        {"Reconstitution - Mai 2024", "reenactment", ~D[2024-05-04]},
       "2024-05-18_wedding.webp" => {"Mariage - Mai 2024", "wedding", ~D[2024-05-18]},
       "2024-07-26_amvcc.webp" => {"AMVCC - Juillet 2024", "amvcc", ~D[2024-07-26]},
       "2024-08-02_reenactment.webp" =>
@@ -111,7 +112,7 @@ defmodule Mix.Tasks.MigrateLegacyAlbums do
       "2024-08-10_reenactment.webp" =>
         {"Reconstitution - Août 2024 #2", "reenactment", ~D[2024-08-10]},
       "2024-09-08_reenactment.webp" =>
-        {"Reconstitution - Septembre 2024", "reenactment", ~D[2024-09-08]},
+        {"Reconstitution - Septembre 2024", "reenactment", ~D[2024-09-08]}
     }
 
     Enum.each(gallery_mapping, fn {filename, {title, category, date}} ->

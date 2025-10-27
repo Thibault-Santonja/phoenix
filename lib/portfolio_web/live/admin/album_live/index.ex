@@ -20,6 +20,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   def mount(_params, _session, socket) do
     # Lecture de la configuration pour le nombre d'albums par page
     albums_per_page = Application.get_env(:portfolio, :admin)[:albums_per_page] || 30
+
     {:ok,
      socket
      |> assign(:page_title, "Albums")
@@ -94,8 +95,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
       patch={~p"/admin/albums?#{build_params(@filter, 1, @next_sort_by, @next_sort_order)}"}
       class="group inline-flex items-center gap-1 hover:text-indigo-600"
     >
-      <%= @label %>
-      <span class="text-gray-400"><%= sort_icon(@column, @current_sort_by, @current_sort_order) %></span>
+      {@label}
+      <span class="text-gray-400">{sort_icon(@column, @current_sort_by, @current_sort_order)}</span>
     </.link>
     """
   end

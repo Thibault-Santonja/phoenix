@@ -17,7 +17,9 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   def call(conn, :fetch_current_user), do: fetch_current_user(conn, [])
   def call(conn, :require_authenticated_user), do: require_authenticated_user(conn, [])
   def call(conn, :require_admin_role), do: require_admin_role(conn, [])
-  def call(conn, :redirect_if_user_is_authenticated), do: redirect_if_user_is_authenticated(conn, [])
+
+  def call(conn, :redirect_if_user_is_authenticated),
+    do: redirect_if_user_is_authenticated(conn, [])
 
   @doc """
   Récupère l'utilisateur courant depuis le token de session avec cache.
