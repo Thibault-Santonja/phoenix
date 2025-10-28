@@ -84,12 +84,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   """
   @spec get(Ecto.UUID.t(), keyword()) :: {:ok, Album.t()} | {:error, :not_found}
   def get(id, opts \\ []) do
-    query = from a in Album, where: a.id == ^id
-
-    query
-    |> apply_preload(opts[:preload])
-    |> Repo.one()
-    |> case do
+    case fetch_one(:id, id, opts) do
       nil -> {:error, :not_found}
       album -> {:ok, album}
     end
@@ -109,12 +104,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   """
   @spec get_by_slug(String.t(), keyword()) :: {:ok, Album.t()} | {:error, :not_found}
   def get_by_slug(slug, opts \\ []) do
-    query = from a in Album, where: a.slug == ^slug
-
-    query
-    |> apply_preload(opts[:preload])
-    |> Repo.one()
-    |> case do
+    case fetch_one(:slug, slug, opts) do
       nil -> {:error, :not_found}
       album -> {:ok, album}
     end
@@ -134,9 +124,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   """
   @spec get!(Ecto.UUID.t(), keyword()) :: Album.t()
   def get!(id, opts \\ []) do
-    query = from a in Album, where: a.id == ^id
-
-    query
+    build_get_query(:id, id)
     |> apply_preload(opts[:preload])
     |> Repo.one!()
   end
@@ -218,16 +206,11 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   def list_published_years do
     from(a in Album,
       where: a.published == true,
-      select: fragment("EXTRACT(YEAR FROM ?)", a.date_prise_vue),
+      select: fragment("CAST(EXTRACT(YEAR FROM ?) AS INTEGER)", a.date_prise_vue),
       distinct: true,
-      order_by: [desc: fragment("EXTRACT(YEAR FROM ?)", a.date_prise_vue)]
+      order_by: [desc: fragment("CAST(EXTRACT(YEAR FROM ?) AS INTEGER)", a.date_prise_vue)]
     )
     |> Repo.all()
-    |> Enum.map(fn
-      %Decimal{} = year -> Decimal.to_integer(year)
-      year when is_float(year) -> trunc(year)
-      year when is_integer(year) -> year
-    end)
   end
 
   @doc """
@@ -239,7 +222,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
 
   ## Paramètres
 
-  - `year` - L'année pour laquelle récupérer les albums (integer)
+  - `year` - L'année pour laquelle récupérer les albums (integer, 1..9999)
   - `opts` - Options
     - `:preload` - Associations à précharger (ex: [:photos])
 
@@ -253,9 +236,10 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
 
   """
   @spec list_published_for_year(integer(), keyword()) :: [Album.t()]
-  def list_published_for_year(year, opts \\ []) when is_integer(year) do
-    start_date = Date.new!(year, 1, 1)
-    end_date = Date.new!(year, 12, 31)
+  def list_published_for_year(year, opts \\ [])
+      when is_integer(year) and year >= 1 and year <= 9999 do
+    {:ok, start_date} = Date.new(year, 1, 1)
+    {:ok, end_date} = Date.new(year, 12, 31)
 
     query =
       AlbumQuery.base()
@@ -311,6 +295,19 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
     |> Enum.group_by(fn album ->
       album.date_prise_vue.year
     end)
+  end
+
+  # Construction de requête pour get/get_by_slug
+  @spec build_get_query(:id | :slug, term()) :: Ecto.Query.t()
+  defp build_get_query(:id, id), do: from(a in Album, where: a.id == ^id)
+  defp build_get_query(:slug, slug), do: from(a in Album, where: a.slug == ^slug)
+
+  # Récupère un album avec preload optionnel (retourne nil si non trouvé)
+  @spec fetch_one(:id | :slug, term(), keyword()) :: Album.t() | nil
+  defp fetch_one(field, value, opts) do
+    build_get_query(field, value)
+    |> apply_preload(opts[:preload])
+    |> Repo.one()
   end
 
   # Applique les filtres à la query en utilisant AlbumQuery

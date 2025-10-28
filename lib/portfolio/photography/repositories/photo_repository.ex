@@ -101,10 +101,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   """
   @spec get(Ecto.UUID.t(), keyword()) :: {:ok, Photo.t()} | {:error, :not_found}
   def get(id, opts \\ []) do
-    base_get_query(id)
-    |> apply_preload(opts[:preload])
-    |> Repo.one()
-    |> case do
+    case fetch_one(id, opts) do
       nil -> {:error, :not_found}
       photo -> {:ok, photo}
     end
@@ -125,7 +122,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   @spec get!(Ecto.UUID.t(), keyword()) :: Photo.t()
   def get!(id, opts \\ []) do
     base_get_query(id)
-    |> apply_preload(opts[:preload])
+    |> apply_preload_if_present(opts[:preload])
     |> Repo.one!()
   end
 
@@ -322,12 +319,19 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
     from p in Photo, where: p.id == ^id
   end
 
-  # Applique les preloads à la query en utilisant PhotoQuery
-  @spec apply_preload(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
-  defp apply_preload(query, nil), do: query
-  defp apply_preload(query, []), do: query
+  # Récupère une photo avec preload optionnel (retourne nil si non trouvée)
+  defp fetch_one(id, opts) do
+    base_get_query(id)
+    |> apply_preload_if_present(opts[:preload])
+    |> Repo.one()
+  end
 
-  defp apply_preload(query, preloads) do
+  # Applique les preloads à la query en utilisant PhotoQuery
+  @spec apply_preload_if_present(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
+  defp apply_preload_if_present(query, nil), do: query
+  defp apply_preload_if_present(query, []), do: query
+
+  defp apply_preload_if_present(query, preloads) do
     PhotoQuery.with_preload(query, preloads)
   end
 
@@ -342,7 +346,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   defp apply_filters(query, [{:preload, preloads} | rest]) do
     query
-    |> apply_preload(preloads)
+    |> apply_preload_if_present(preloads)
     |> apply_filters(rest)
   end
 
