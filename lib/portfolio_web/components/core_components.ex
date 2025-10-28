@@ -923,4 +923,203 @@ defmodule PortfolioWeb.CoreComponents do
     </.link>
     """
   end
+
+  @doc """
+  Renders a colored badge component.
+
+  Useful for displaying status, types, or categories.
+
+  ## Examples
+
+      <.badge color="green">Publié</.badge>
+      <.badge color="orange">Brouillon</.badge>
+      <.badge color="blue">Concert</.badge>
+
+  """
+  attr :color, :string,
+    default: "gray",
+    values: ["gray", "green", "orange", "blue", "red", "indigo", "purple", "yellow"]
+
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def badge(assigns) do
+    color_classes = %{
+      "gray" => "bg-gray-100 text-gray-800",
+      "green" => "bg-green-100 text-green-800",
+      "orange" => "bg-orange-100 text-orange-800",
+      "blue" => "bg-blue-100 text-blue-800",
+      "red" => "bg-red-100 text-red-800",
+      "indigo" => "bg-indigo-100 text-indigo-800",
+      "purple" => "bg-purple-100 text-purple-800",
+      "yellow" => "bg-yellow-100 text-yellow-800"
+    }
+
+    assigns = assign(assigns, :color_class, color_classes[assigns.color])
+
+    ~H"""
+    <span class={[
+      "inline-flex rounded-full px-2 text-xs font-semibold leading-5",
+      @color_class,
+      @class
+    ]}>
+      {render_slot(@inner_block)}
+    </span>
+    """
+  end
+
+  @doc """
+  Renders a filter badge/button with active state.
+
+  Used for filter buttons in admin interfaces.
+
+  ## Examples
+
+      <.filter_badge navigate={~p"/admin/albums"} active={true}>
+        Tous <span class="ml-1.5 text-xs">(42)</span>
+      </.filter_badge>
+
+      <.filter_badge navigate={~p"/admin/albums?filter=published"} active={false} color="green">
+        Publiés <span class="ml-1.5 text-xs">(25)</span>
+      </.filter_badge>
+
+  """
+  attr :navigate, :string, required: true
+  attr :active, :boolean, default: false
+
+  attr :color, :string,
+    default: "indigo",
+    values: ["indigo", "green", "orange", "blue", "red"]
+
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def filter_badge(assigns) do
+    active_classes = %{
+      "indigo" => "bg-indigo-100 text-indigo-800",
+      "green" => "bg-green-100 text-green-800",
+      "orange" => "bg-orange-100 text-orange-800",
+      "blue" => "bg-blue-100 text-blue-800",
+      "red" => "bg-red-100 text-red-800"
+    }
+
+    assigns =
+      assign(
+        assigns,
+        :active_class,
+        if(assigns.active, do: active_classes[assigns.color], else: "")
+      )
+
+    ~H"""
+    <.link
+      navigate={@navigate}
+      class={[
+        "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors",
+        if(@active, do: @active_class, else: "bg-gray-100 text-gray-700 hover:bg-gray-200"),
+        @class
+      ]}
+    >
+      {render_slot(@inner_block)}
+    </.link>
+    """
+  end
+
+  @doc """
+  Renders a primary action button.
+
+  Consistent styling for primary actions across the admin interface.
+
+  ## Examples
+
+      <.primary_button navigate={~p"/admin/albums/new"}>
+        Nouvel album
+      </.primary_button>
+
+      <.primary_button navigate={~p"/admin/albums/new"} class="w-full">
+        Créer un album
+      </.primary_button>
+
+  """
+  attr :navigate, :string, default: nil
+  attr :patch, :string, default: nil
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def primary_button(assigns) do
+    ~H"""
+    <.link
+      navigate={@navigate}
+      patch={@patch}
+      class={[
+        "inline-flex items-center justify-center rounded-md border border-transparent",
+        "bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm",
+        "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+        @class
+      ]}
+    >
+      {render_slot(@inner_block)}
+    </.link>
+    """
+  end
+
+  @doc """
+  Renders a link styled as a button.
+
+  Used for action links like "Éditer" and "Supprimer".
+
+  ## Examples
+
+      <.link_button color="indigo" navigate={~p"/admin/albums/\#{id}/edit"}>
+        Éditer
+      </.link_button>
+
+      <.link_button color="red" phx-click="delete" phx-value-id={id} confirm="Êtes-vous sûr ?">
+        Supprimer
+      </.link_button>
+
+  """
+  attr :color, :string, default: "indigo", values: ["indigo", "red", "gray"]
+  attr :navigate, :string, default: nil
+  attr :patch, :string, default: nil
+  attr :href, :string, default: nil
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(phx-click phx-value-id data-confirm)
+
+  slot :inner_block, required: true
+
+  def link_button(assigns) do
+    color_classes = %{
+      "indigo" => "text-indigo-600 hover:text-indigo-900",
+      "red" => "text-red-600 hover:text-red-900",
+      "gray" => "text-gray-600 hover:text-gray-900"
+    }
+
+    assigns = assign(assigns, :color_class, color_classes[assigns.color])
+
+    cond do
+      assigns.navigate ->
+        ~H"""
+        <.link navigate={@navigate} class={[@color_class, @class]} {@rest}>
+          {render_slot(@inner_block)}
+        </.link>
+        """
+
+      assigns.patch ->
+        ~H"""
+        <.link patch={@patch} class={[@color_class, @class]} {@rest}>
+          {render_slot(@inner_block)}
+        </.link>
+        """
+
+      true ->
+        ~H"""
+        <a href={@href || "#"} class={[@color_class, @class]} {@rest}>
+          {render_slot(@inner_block)}
+        </a>
+        """
+    end
+  end
 end
