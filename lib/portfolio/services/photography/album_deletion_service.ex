@@ -19,6 +19,7 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
   alias Portfolio.Photography.Album
   alias Portfolio.Photography.Events.AlbumDeleted
   alias Portfolio.Photography.Repositories.PhotoRepository
+  alias Portfolio.Photography.Storage
   alias Portfolio.Repo
 
   @impl true
@@ -103,25 +104,26 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
 
   # Delete all photo files, accepting :not_found as success
   defp delete_photo_files(photos) do
+    backend = Storage.backend()
+
     results =
       Enum.map(photos, fn photo ->
-        storage().delete_photo(photo.file_path)
+        backend.delete_photo(photo.file_path)
       end)
 
     # Check if all deletions succeeded (we accept :not_found)
-    if Enum.all?(results, &(&1 == :ok || &1 == {:error, :not_found})) do
+    if Enum.all?(results, &deletion_successful?/1) do
       {:ok, :ok}
     else
       # Find the first real error
-      error = Enum.find(results, &match?({:error, reason} when reason != :not_found, &1))
-      error
+      Enum.find(results, &(not deletion_successful?(&1)))
     end
   end
 
-  defp storage do
-    Application.get_env(:portfolio, :file_storage)[:backend] ||
-      Portfolio.Photography.Storage.LocalStorage
-  end
+  # A deletion is considered successful if :ok or file was already missing
+  defp deletion_successful?(:ok), do: true
+  defp deletion_successful?({:error, :not_found}), do: true
+  defp deletion_successful?(_), do: false
 
   defp photo_count({:ok, %{photos: photos}}), do: length(photos)
   defp photo_count(_), do: 0
