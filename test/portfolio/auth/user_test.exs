@@ -95,10 +95,7 @@ defmodule Portfolio.Auth.UserTest do
       assert changeset.valid?
     end
 
-    test "accepts superadmin role" do
-      changeset = User.changeset(%User{}, %{email: "test@example.com", role: :superadmin})
-      assert changeset.valid?
-    end
+
 
     test "checks email uniqueness constraint" do
       _user = insert_user(email: "test@example.com")
@@ -123,7 +120,7 @@ defmodule Portfolio.Auth.UserTest do
       assert changeset.valid?
       # put_change force la valeur, donc on doit vérifier avec apply_changes
       user = Ecto.Changeset.apply_changes(changeset)
-      assert user.role == :admin
+      assert user.role == :user
     end
 
     test "requires email for registration" do
@@ -138,10 +135,10 @@ defmodule Portfolio.Auth.UserTest do
       assert "doit être une adresse email valide" in errors_on(changeset).email
     end
 
-    test "automatically sets role to admin" do
+    test "automatically sets role to user (security)" do
       changeset = User.registration_changeset(%User{}, %{email: "test@example.com"})
       user = Ecto.Changeset.apply_changes(changeset)
-      assert user.role == :admin
+      assert user.role == :user
     end
 
     test "accepts optional name on registration" do
@@ -288,7 +285,7 @@ defmodule Portfolio.Auth.UserTest do
     test "accepts all valid roles" do
       user = insert_user()
 
-      for role <- [:admin, :superadmin, :user] do
+      for role <- [:admin, :user] do
         changeset = User.admin_changeset(user, %{role: role})
         assert changeset.valid?, "Role #{role} should be valid"
       end
@@ -301,11 +298,12 @@ defmodule Portfolio.Auth.UserTest do
 
     default_attrs = %{
       email: "test#{System.unique_integer([:positive])}@example.com",
-      role: :admin
+      role: :user
     }
 
+    # Use bootstrap_admin_changeset for tests to allow role specification
     %User{}
-    |> User.registration_changeset(Map.merge(default_attrs, attrs))
+    |> User.bootstrap_admin_changeset(Map.merge(default_attrs, attrs))
     |> Repo.insert!()
   end
 end

@@ -32,7 +32,7 @@ defmodule Portfolio.AuthTest do
       email = "newuser@example.com"
       assert {:ok, user} = Auth.get_or_create_user(email)
       assert user.email == email
-      assert user.role == :admin
+      assert user.role == :user
     end
   end
 

@@ -32,7 +32,7 @@ defmodule Portfolio.Auth.User do
   schema "users" do
     field :email, :string
     field :name, :string
-    field :role, Ecto.Enum, values: [:admin, :superadmin, :user], default: :admin
+    field :role, Ecto.Enum, values: [:admin, :user], default: :user
 
     has_many :magic_links, MagicLink
     has_many :user_sessions, UserSession
@@ -49,12 +49,15 @@ defmodule Portfolio.Auth.User do
     |> cast(attrs, [:email, :name, :role])
     |> validate_required([:email, :role])
     |> validate_email()
-    |> validate_inclusion(:role, [:admin, :superadmin, :user])
+    |> validate_inclusion(:role, [:admin, :user])
     |> unique_constraint(:email)
   end
 
   @doc """
   Changeset pour l'enregistrement d'un nouvel utilisateur.
+
+  Par défaut, les nouveaux utilisateurs ont le rôle :user.
+  Le rôle :admin doit être attribué manuellement par un administrateur existant.
   """
   @spec registration_changeset(t(), map()) :: Ecto.Changeset.t()
   def registration_changeset(user, attrs) do
@@ -62,7 +65,7 @@ defmodule Portfolio.Auth.User do
     |> cast(attrs, [:email, :name])
     |> validate_required([:email])
     |> validate_email()
-    |> put_change(:role, :admin)
+    |> put_change(:role, :user)
     |> unique_constraint(:email)
   end
 
@@ -90,8 +93,32 @@ defmodule Portfolio.Auth.User do
     user
     |> cast(attrs, [:role, :name])
     |> validate_required([:role])
-    |> validate_inclusion(:role, [:admin, :superadmin, :user])
+    |> validate_inclusion(:role, [:admin, :user])
     |> validate_length(:name, min: 2, max: 100)
+  end
+
+  @doc """
+  Changeset pour le bootstrap de l'admin initial.
+
+  **ATTENTION:** Ce changeset est uniquement destiné à être utilisé pour créer
+  le tout premier administrateur du système (bootstrap). Il permet de créer
+  directement un utilisateur avec le rôle :admin sans validation préalable.
+
+  Ne doit être utilisé que dans :
+  - Seeds (priv/repo/seeds.exs)
+  - Release tasks de bootstrap
+  - Scripts d'initialisation en production
+
+  Pour toute autre création d'utilisateur, utilisez `registration_changeset/2`.
+  """
+  @spec bootstrap_admin_changeset(t(), map()) :: Ecto.Changeset.t()
+  def bootstrap_admin_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:email, :name, :role])
+    |> validate_required([:email, :role])
+    |> validate_email()
+    |> validate_inclusion(:role, [:admin, :user])
+    |> unique_constraint(:email)
   end
 
   # Validation de l'email avec RFC 5322
