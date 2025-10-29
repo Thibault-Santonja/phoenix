@@ -12,6 +12,11 @@ config :portfolio,
   env: config_env(),
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
+# Bootstrap configuration
+config :portfolio, Portfolio.Bootstrap,
+  max_retries: 20,
+  retry_interval_ms: 30_000
+
 # Configures the endpoint
 config :portfolio, PortfolioWeb.Endpoint,
   url: [host: "localhost"],

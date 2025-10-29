@@ -13,16 +13,17 @@
 alias Portfolio.Repo
 alias Portfolio.Auth.User
 
-# Créer l'utilisateur admin initial (vous !)
+# Bootstrap de l'utilisateur admin initial
+# ADMIN_EMAIL peut être défini via variable d'environnement en production
 admin_email = System.get_env("ADMIN_EMAIL") || "thibault.santonja@pm.me"
 
 case Repo.get_by(User, email: admin_email) do
   nil ->
     %User{}
-    |> User.registration_changeset(%{
+    |> User.bootstrap_admin_changeset(%{
       email: admin_email,
-      name: "Admin",
-      role: "admin"
+      name: "Thibault Santonja",
+      role: :admin
     })
     |> Repo.insert!()
     |> then(fn user ->
@@ -30,5 +31,15 @@ case Repo.get_by(User, email: admin_email) do
     end)
 
   user ->
-    IO.puts("✓ Utilisateur admin existe déjà: #{user.email}")
+    # Si l'utilisateur existe mais n'est pas admin, le promouvoir
+    if user.role != :admin do
+      user
+      |> User.admin_changeset(%{role: :admin})
+      |> Repo.update!()
+      |> then(fn updated_user ->
+        IO.puts("✓ Utilisateur #{updated_user.email} promu en admin")
+      end)
+    else
+      IO.puts("✓ Utilisateur admin existe déjà: #{user.email}")
+    end
 end
