@@ -74,15 +74,15 @@ defmodule Portfolio.Photography do
   """
 
   alias Portfolio.DomainEvents
-  alias Portfolio.Photography.{Album, Photo, Storage}
-  alias Portfolio.Photography.Events.{PhotoDeleted, PhotoUploaded}
+  alias Portfolio.Photography.{Album, Photo}
+  alias Portfolio.Photography.Events.PhotoUploaded
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
-  alias Portfolio.Repo
 
   # Service Layer
   alias Portfolio.Services.Photography.{
     AlbumDeletionService,
     AlbumPublicationService,
+    PhotoDeletionService,
     PhotoUploadService
   }
 
@@ -300,25 +300,10 @@ defmodule Portfolio.Photography do
   """
   @spec list_published_albums_by_year(keyword()) :: %{integer() => [Album.t()]}
   def list_published_albums_by_year(opts \\ []) do
-    skip_cache = Keyword.get(opts, :skip_cache, false)
-    cache_key = {:published_albums_by_year, opts[:preload] || []}
-
-    # En test, toujours skip le cache pour éviter la pollution entre tests
-    skip_cache = skip_cache or Mix.env() == :test
-
-    if skip_cache do
-      AlbumRepository.list_published_by_year(opts)
+    if should_skip_cache?(opts) do
+      fetch_published_albums_by_year(opts)
     else
-      case Cachex.fetch(:portfolio_cache, cache_key, fn ->
-             result = AlbumRepository.list_published_by_year(opts)
-             # Cache pendant 1 heure
-             {:commit, result, ttl: :timer.hours(1)}
-           end) do
-        {:ok, albums} -> albums
-        {:commit, albums, _opts} -> albums
-        {:commit, albums} -> albums
-        {:error, _reason} -> AlbumRepository.list_published_by_year(opts)
-      end
+      fetch_from_cache_or_db(opts)
     end
   end
 
@@ -435,10 +420,7 @@ defmodule Portfolio.Photography do
   @doc """
   Supprime une photo ainsi que son fichier sur le disque de manière atomique.
 
-  Cette opération utilise Ecto.Multi pour garantir l'atomicité :
-  - L'enregistrement en base de données est supprimé en premier
-  - Le fichier physique est supprimé ensuite
-  - Si la suppression du fichier échoue, la transaction DB est rollback
+  Délègue au PhotoDeletionService pour orchestrer l'opération complète.
 
   ## Exemples
 
@@ -450,43 +432,7 @@ defmodule Portfolio.Photography do
   """
   @spec delete_photo(Photo.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_photo(%Photo{} = photo) do
-    with_telemetry([:photo, :deleted], %{photo_id: photo.id, album_id: photo.album_id}, fn ->
-      result =
-        Ecto.Multi.new()
-        |> Ecto.Multi.delete(:photo, photo)
-        |> Ecto.Multi.run(:file, fn _repo, %{photo: deleted_photo} ->
-          # Supprimer le fichier via FileStorage
-          case Storage.backend().delete_photo(deleted_photo.file_path) do
-            :ok ->
-              {:ok, :ok}
-
-            {:error, :not_found} ->
-              # Si le fichier n'existe pas, c'est acceptable (données orphelines)
-              {:ok, :ok}
-
-            {:error, reason} ->
-              # Autre erreur de suppression fichier - rollback de la transaction
-              {:error, reason}
-          end
-        end)
-        |> Repo.transaction()
-
-      case result do
-        {:ok, %{photo: deleted_photo}} ->
-          # Émettre l'événement de domaine
-          DomainEvents.publish(:photo_deleted, %PhotoDeleted{
-            photo_id: deleted_photo.id,
-            album_id: deleted_photo.album_id,
-            file_path: deleted_photo.file_path,
-            deleted_at: DateTime.utc_now()
-          })
-
-          result
-
-        _error ->
-          result
-      end
-    end)
+    PhotoDeletionService.execute(photo)
   end
 
   @doc """
@@ -531,6 +477,44 @@ defmodule Portfolio.Photography do
   # Private Functions
   # =============================================================================
 
+  # Détermine si le cache doit être ignoré
+  defp should_skip_cache?(opts) do
+    skip_cache = Keyword.get(opts, :skip_cache, false)
+    # En test, toujours skip le cache pour éviter la pollution entre tests
+    skip_cache or Mix.env() == :test
+  end
+
+  # Récupère les albums publiés par année depuis la DB
+  defp fetch_published_albums_by_year(opts) do
+    AlbumRepository.list_published_by_year(opts)
+  end
+
+  # Récupère depuis le cache ou la DB avec fallback
+  defp fetch_from_cache_or_db(opts) do
+    cache_key = build_cache_key(opts)
+
+    case Cachex.fetch(:portfolio_cache, cache_key, fn ->
+           result = fetch_published_albums_by_year(opts)
+           # Cache pendant 1 heure
+           {:commit, result, ttl: :timer.hours(1)}
+         end) do
+      {:ok, albums} -> albums
+      {:commit, albums, _opts} -> albums
+      {:commit, albums} -> albums
+      {:error, _reason} -> fetch_published_albums_by_year(opts)
+    end
+  end
+
+  # Construit la clé de cache basée sur les options
+  defp build_cache_key(opts) do
+    cache_key(:published_albums_by_year, opts[:preload] || [])
+  end
+
+  # Génère une clé de cache pour les albums publiés par année
+  defp cache_key(:published_albums_by_year, preloads) do
+    {:published_albums_by_year, preloads}
+  end
+
   # Exécute une fonction avec instrumentation telemetry
   #
   # ## Paramètres
@@ -574,8 +558,8 @@ defmodule Portfolio.Photography do
   #
   # Note: La suppression d'album (delete_album/1) est gérée par AlbumDeletionService
   defp invalidate_albums_cache do
-    Cachex.del(:portfolio_cache, {:published_albums_by_year, []})
-    Cachex.del(:portfolio_cache, {:published_albums_by_year, [:photos]})
+    Cachex.del(:portfolio_cache, cache_key(:published_albums_by_year, []))
+    Cachex.del(:portfolio_cache, cache_key(:published_albums_by_year, [:photos]))
     :ok
   end
 
