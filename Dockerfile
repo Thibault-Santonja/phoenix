@@ -22,7 +22,16 @@ WORKDIR /app
 RUN chown nobody /app && \
     apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get install -y bash libstdc++6 openssl libncurses6 locales ca-certificates && \
+    apt-get install -y \
+    bash \
+    libstdc++6 \
+    openssl \
+    libncurses6 \
+    locales \
+    ca-certificates \
+    libvips42 \
+    libvips-tools \
+    exiftool && \
     apt-get clean && \
     rm -f /var/lib/apt/lists/*_* && \
     sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \

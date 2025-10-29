@@ -33,6 +33,7 @@ A Phoenix LiveView application showcasing photography, medieval reenactment, and
 - Elixir 1.17+ and Erlang/OTP 27+
 - PostgreSQL 14+
 - Node.js 18+ (for assets)
+- libvips 8.x+ (for image processing) - See [libvips setup guide](docs/setup/LOCAL_DEV_LIBVIPS.md)
 
 ### Installation
 
