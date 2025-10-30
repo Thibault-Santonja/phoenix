@@ -14,6 +14,8 @@ defmodule Portfolio.Application do
       {Phoenix.PubSub, name: Portfolio.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Portfolio.Finch},
+      # Start Oban for background job processing
+      {Oban, Application.fetch_env!(:portfolio, Oban)},
       # Start Hammer for rate limiting
       {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 2, cleanup_interval_ms: 60_000 * 10]},
       # Start Cachex for caching

@@ -62,6 +62,21 @@ config :portfolio, :uploads,
 # Configure file storage backend
 config :portfolio, :file_storage, backend: Portfolio.Photography.Storage.LocalStorage
 
+# Configure Oban image processing queue
+config :portfolio, :oban_image_processing, limit: 3
+
+# Configure Oban
+config :portfolio, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [
+    default: 10,
+    image_processing: 3
+  ],
+  plugins: [
+    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7}
+  ],
+  repo: Portfolio.Repo
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",
