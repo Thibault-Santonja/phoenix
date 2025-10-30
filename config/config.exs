@@ -62,6 +62,13 @@ config :portfolio, :uploads,
 # Configure file storage backend
 config :portfolio, :file_storage, backend: Portfolio.Photography.Storage.LocalStorage
 
+# Configure image variants for processing
+config :portfolio, :image_variants,
+  thumbnail: [width: 320, quality: 75],
+  small: [width: 640, quality: 80],
+  medium: [width: 1024, quality: 85],
+  large: [width: 1920, quality: 85]
+
 # Configure Oban image processing queue
 config :portfolio, :oban_image_processing, limit: 3
 
