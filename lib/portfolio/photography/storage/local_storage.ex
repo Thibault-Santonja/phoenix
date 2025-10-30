@@ -1,9 +1,9 @@
 defmodule Portfolio.Photography.Storage.LocalStorage do
   @moduledoc """
-  Local filesystem implementation of FileStorage behaviour.
+  Local filesystem implementation of PhotoStorage behaviour.
 
-  Stores photos in `priv/static/uploads/albums/{album-slug}/original/` directory
-  with filenames in format: `{slugified-name}-{hash-8chars}.{ext}`
+  Stores photos in hash-based structure: `priv/static/uploads/photos/{hash}/`
+  This enables content-addressable storage and automatic deduplication.
 
   ## Configuration
 
@@ -14,79 +14,127 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
 
   ## File Organization
 
-      priv/static/uploads/albums/
-        mariage-2024/
-          original/
-            photo-a3f2b8c4.jpg
-            dance-f1e9d2a7.jpg
-        couples-session/
-          original/
-            portrait-c4b8a3f2.webp
+      priv/static/uploads/photos/
+        a3f2b8c4/                    # Hash (SHA256, 8 chars)
+          original.jpg               # Extension preserved
+          thumbnail.webp
+          small.webp
+          medium.webp
+          large.webp
+        f1e9d2a7/
+          original.png
+          thumbnail.webp
+          ...
+
+  ## Features
+
+  - Content-addressable storage via SHA256 hash
+  - Automatic deduplication (same hash = same photo)
+  - Variant generation using ImageProcessor
+  - File integrity verification after storage
   """
 
-  @behaviour Portfolio.Photography.Storage.FileStorage
+  @behaviour Portfolio.Photography.Storage.PhotoStorage
+
+  alias Portfolio.ImageProcessor
+  alias Portfolio.Photography.Storage.PhotoMetadata
 
   require Logger
 
-  # Maximum length for base filename to prevent filesystem issues
-  # Keeps total filename under 255 chars (max on most filesystems)
-  # Format: {base_name}-{hash}.{ext} where hash=8 chars, ext<=4 chars
-  # So: 50 + 1 + 8 + 1 + 4 = 64 chars total (well under 255)
-  @max_filename_length 50
-
   @impl true
-  def store_photo(album_slug, upload) do
-    with {:ok, source_hash} <- compute_hash(upload.path),
-         {:ok, dest_path} <- build_destination_path(album_slug, upload, source_hash),
+  def store_photo(upload, _opts \\ []) do
+    with {:ok, hash} <- compute_hash(upload.path),
+         photo_id <- String.slice(hash, 0, 8),
+         {:ok, dest_path} <- build_destination_path(photo_id, upload),
          :ok <- ensure_directory_exists(dest_path),
          :ok <- copy_file(upload.path, dest_path),
-         # Verify file integrity after copy
-         :ok <- verify_file_integrity(dest_path, source_hash) do
-      public_path = build_public_path(album_slug, upload, source_hash)
+         :ok <- verify_file_integrity(dest_path, hash),
+         {:ok, file_stat} <- File.stat(dest_path),
+         {:ok, dimensions} <- get_image_dimensions(dest_path) do
+      metadata =
+        PhotoMetadata.new(%{
+          photo_id: photo_id,
+          hash: hash,
+          original_filename: upload.client_name,
+          content_type: upload.content_type,
+          file_size: file_stat.size,
+          storage_path: build_public_path(photo_id, upload),
+          width: dimensions.width,
+          height: dimensions.height
+        })
 
-      {:ok,
-       %{
-         file_path: public_path,
-         hash: source_hash,
-         original_filename: upload.client_name
-       }}
+      {:ok, metadata}
     end
   end
 
   @impl true
-  def delete_photo(file_path) do
-    full_path = build_full_path(file_path)
+  def delete_photo(photo_id) do
+    photo_dir = build_photo_directory(photo_id)
 
-    if File.exists?(full_path) do
-      case File.rm(full_path) do
-        :ok ->
-          Logger.info("Photo deleted successfully", file_path: file_path)
+    if File.exists?(photo_dir) do
+      case File.rm_rf(photo_dir) do
+        {:ok, _files} ->
+          Logger.info("Photo and variants deleted successfully", photo_id: photo_id)
           :ok
 
-        {:error, reason} ->
-          Logger.error("Failed to delete photo", file_path: file_path, reason: reason)
+        {:error, reason, _file} ->
+          Logger.error("Failed to delete photo directory",
+            photo_id: photo_id,
+            reason: reason
+          )
+
           {:error, reason}
       end
     else
-      Logger.warning("Attempted to delete non-existent photo", file_path: file_path)
+      Logger.warning("Attempted to delete non-existent photo", photo_id: photo_id)
+      :ok
+    end
+  end
+
+  @impl true
+  def get_photo_url(photo_id, variant) do
+    photo_dir = build_photo_directory(photo_id)
+    variant_filename = variant_to_filename(photo_id, variant)
+    full_path = Path.join(photo_dir, variant_filename)
+
+    if File.exists?(full_path) do
+      public_path = build_variant_public_path(photo_id, variant)
+      {:ok, public_path}
+    else
       {:error, :not_found}
     end
   end
 
   @impl true
-  def photo_exists?(file_path) do
-    full_path = build_full_path(file_path)
-    File.exists?(full_path)
-  end
+  def generate_variants(photo_id) do
+    photo_dir = build_photo_directory(photo_id)
+    original_path = find_original_file(photo_dir)
 
-  @impl true
-  def get_photo_path(file_path) do
-    full_path = build_full_path(file_path)
+    case original_path do
+      {:ok, source_path} ->
+        case ImageProcessor.generate_variants(source_path, photo_dir) do
+          {:ok, variants_map} ->
+            # Convert file paths to public URLs
+            public_variants =
+              variants_map
+              |> Enum.map(fn {variant, _path} ->
+                {variant, build_variant_public_path(photo_id, variant)}
+              end)
+              |> Enum.into(%{})
 
-    if File.exists?(full_path) do
-      {:ok, full_path}
-    else
-      {:error, :not_found}
+            {:ok, public_variants}
+
+          {:error, reason} ->
+            Logger.error("Failed to generate variants",
+              photo_id: photo_id,
+              reason: inspect(reason)
+            )
+
+            {:error, reason}
+        end
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
@@ -110,44 +158,60 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
       {:error, :hash_computation_failed}
   end
 
-  @spec build_destination_path(String.t(), map(), String.t()) :: {:ok, String.t()}
-  defp build_destination_path(album_slug, upload, hash) do
+  defp build_photo_directory(photo_id) do
     base_path = Application.get_env(:portfolio, :uploads)[:base_path] || "priv/static/uploads"
-    extension = get_extension(upload.client_type)
-    filename = build_filename(upload.client_name, hash, extension)
+    Path.join([base_path, "photos", photo_id])
+  end
 
-    dest_path = Path.join([base_path, "albums", album_slug, "original", filename])
+  defp build_destination_path(photo_id, upload) do
+    photo_dir = build_photo_directory(photo_id)
+    extension = get_extension(upload.content_type)
+    filename = "original.#{extension}"
+    dest_path = Path.join(photo_dir, filename)
 
     {:ok, dest_path}
   end
 
-  @spec build_public_path(String.t(), map(), String.t()) :: String.t()
-  defp build_public_path(album_slug, upload, hash) do
-    extension = get_extension(upload.client_type)
-    filename = build_filename(upload.client_name, hash, extension)
-
-    "/uploads/albums/#{album_slug}/original/#{filename}"
+  defp build_public_path(photo_id, upload) do
+    extension = get_extension(upload.content_type)
+    "/uploads/photos/#{photo_id}/original.#{extension}"
   end
 
-  @spec build_filename(String.t(), String.t(), String.t()) :: String.t()
-  defp build_filename(original_name, hash, extension) do
-    # Extract base name without extension
-    base_name =
-      original_name
-      |> Path.rootname()
-      |> String.downcase()
-      |> String.replace(~r/[^a-z0-9-]/, "-")
-      |> String.replace(~r/-+/, "-")
-      |> String.trim("-")
-      |> String.slice(0, @max_filename_length)
-
-    # Fallback to "photo" if name is empty after sanitization
-    base_name = if base_name == "", do: "photo", else: base_name
-
-    "#{base_name}-#{hash}.#{extension}"
+  defp build_variant_public_path(photo_id, variant) do
+    "/uploads/photos/#{photo_id}/#{variant}.webp"
   end
 
-  @spec get_extension(String.t()) :: String.t()
+  defp variant_to_filename(_photo_id, :original) do
+    # Will need to find the actual extension
+    "original.*"
+  end
+
+  defp variant_to_filename(_photo_id, variant) do
+    "#{variant}.webp"
+  end
+
+  defp find_original_file(photo_dir) do
+    # Find the original file (could be .jpg, .png, .webp, etc.)
+    case File.ls(photo_dir) do
+      {:ok, files} ->
+        original =
+          Enum.find(files, fn file ->
+            String.starts_with?(file, "original.")
+          end)
+
+        if original do
+          {:ok, Path.join(photo_dir, original)}
+        else
+          Logger.error("Original file not found in directory", photo_dir: photo_dir)
+          {:error, :file_not_found}
+        end
+
+      {:error, reason} ->
+        Logger.error("Failed to list directory", photo_dir: photo_dir, reason: reason)
+        {:error, :file_not_found}
+    end
+  end
+
   defp get_extension(mime_type) do
     case MIME.extensions(mime_type) do
       [ext | _] -> ext
@@ -155,14 +219,17 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
     end
   end
 
-  @spec build_full_path(String.t()) :: String.t()
-  defp build_full_path(public_path) do
-    base_path = Application.get_env(:portfolio, :uploads)[:base_path] || "priv/static/uploads"
+  defp get_image_dimensions(file_path) do
+    case Vix.Vips.Image.new_from_file(file_path) do
+      {:ok, image} ->
+        width = Vix.Vips.Image.width(image)
+        height = Vix.Vips.Image.height(image)
+        {:ok, %{width: width, height: height}}
 
-    # Remove leading "/uploads/" from public path
-    relative_path = String.replace_prefix(public_path, "/uploads/", "")
-
-    Path.join([base_path, relative_path])
+      {:error, _reason} ->
+        # If we can't read dimensions, return nil values
+        {:ok, %{width: nil, height: nil}}
+    end
   end
 
   @spec ensure_directory_exists(String.t()) :: :ok | {:error, term()}
