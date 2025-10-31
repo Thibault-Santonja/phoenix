@@ -95,8 +95,6 @@ defmodule Portfolio.Auth.UserTest do
       assert changeset.valid?
     end
 
-
-
     test "checks email uniqueness constraint" do
       _user = insert_user(email: "test@example.com")
 

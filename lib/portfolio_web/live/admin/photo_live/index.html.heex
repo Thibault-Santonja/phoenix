@@ -13,7 +13,7 @@
       </p>
     </div>
   </div>
-
+  
 <!-- Filtres -->
   <div class="mb-6 flex items-center gap-2">
     <span class="text-sm font-medium text-gray-700">Filtrer par album :</span>
@@ -46,7 +46,7 @@
       </.link>
     <% end %>
   </div>
-
+  
 <!-- Grille de photos -->
   <div class="bg-white shadow-md rounded-lg overflow-hidden">
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4">
@@ -71,7 +71,7 @@
       <% end %>
     </div>
   </div>
-
+  
 <!-- Message si aucune photo -->
   <%= if Enum.empty?(@photos) do %>
     <div class="text-center py-12">
@@ -94,7 +94,7 @@
       </p>
     </div>
   <% end %>
-
+  
 <!-- Pagination -->
   <%= if @total_pages > 1 do %>
     <div class="mt-6 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-lg shadow">
