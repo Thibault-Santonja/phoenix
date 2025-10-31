@@ -69,6 +69,9 @@ config :portfolio, :image_variants,
   medium: [width: 1024, quality: 85],
   large: [width: 1920, quality: 85]
 
+# Configure photo storage adapter
+config :portfolio, :photo_storage_adapter, Portfolio.Photography.Storage.LocalStorage
+
 # Configure Oban image processing queue
 config :portfolio, :oban_image_processing, limit: 3
 

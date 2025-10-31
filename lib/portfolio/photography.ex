@@ -473,9 +473,115 @@ defmodule Portfolio.Photography do
     PhotoUploadService.execute(album_slug, uploads, opts)
   end
 
+  @doc """
+  Récupère l'URL d'une variante d'une photo.
+
+  Délègue à l'adaptateur de stockage configuré pour récupérer l'URL publique.
+
+  ## Paramètres
+
+  - `photo_id` - L'identifiant de la photo
+  - `variant` - Le nom de la variante (:thumbnail, :small, :medium, :large, :original)
+
+  ## Exemples
+
+      iex> get_photo_url("abc12345", :thumbnail)
+      {:ok, "/uploads/photos/abc12345/thumbnail.webp"}
+
+      iex> get_photo_url("nonexistent", :thumbnail)
+      {:error, :not_found}
+  """
+  @spec get_photo_url(String.t(), atom()) :: {:ok, String.t()} | {:error, term()}
+  def get_photo_url(photo_id, variant) do
+    storage_adapter().get_photo_url(photo_id, variant)
+  end
+
+  @doc """
+  Relance le traitement des variantes pour une photo.
+
+  Utile en cas d'échec du traitement initial ou pour régénérer les variantes
+  avec de nouveaux paramètres.
+
+  Enqueue un nouveau job Oban pour générer les variantes.
+
+  ## Exemples
+
+      iex> reprocess_photo(photo)
+      {:ok, %Oban.Job{}}
+  """
+  @spec reprocess_photo(Photo.t()) :: {:ok, Oban.Job.t()} | {:error, term()}
+  def reprocess_photo(%Photo{id: photo_id} = photo) do
+    with {:ok, updated_photo} <- update_photo(photo, %{processing_status: "pending"}) do
+      Portfolio.Workers.ImageVariantWorker.enqueue(photo_id)
+      {:ok, updated_photo}
+    end
+  end
+
+  @doc """
+  Liste les photos en attente de traitement.
+
+  Utile pour le monitoring et les dashboards admin.
+
+  ## Options
+
+  - `:limit` - Nombre maximum de résultats (défaut: 100)
+  - `:preload` - Associations à précharger
+
+  ## Exemples
+
+      iex> list_pending_photos()
+      [%Photo{processing_status: "pending"}, ...]
+
+      iex> list_pending_photos(limit: 10)
+      [%Photo{}, ...]
+  """
+  @spec list_pending_photos(keyword()) :: [Photo.t()]
+  def list_pending_photos(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 100)
+    preload = Keyword.get(opts, :preload, [])
+
+    PhotoRepository.list_by_processing_status("pending", limit: limit, preload: preload)
+  end
+
+  @doc """
+  Liste les photos dont le traitement a échoué.
+
+  Utile pour le monitoring et les dashboards admin afin d'identifier
+  les photos nécessitant une intervention manuelle.
+
+  ## Options
+
+  - `:limit` - Nombre maximum de résultats (défaut: 100)
+  - `:preload` - Associations à précharger
+
+  ## Exemples
+
+      iex> list_failed_photos()
+      [%Photo{processing_status: "failed"}, ...]
+
+      iex> list_failed_photos(limit: 10, preload: [:album])
+      [%Photo{album: %Album{}}, ...]
+  """
+  @spec list_failed_photos(keyword()) :: [Photo.t()]
+  def list_failed_photos(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 100)
+    preload = Keyword.get(opts, :preload, [])
+
+    PhotoRepository.list_by_processing_status("failed", limit: limit, preload: preload)
+  end
+
   # =============================================================================
   # Private Functions
   # =============================================================================
+
+  # Récupère l'adaptateur de stockage configuré
+  defp storage_adapter do
+    Application.get_env(
+      :portfolio,
+      :photo_storage_adapter,
+      Portfolio.Photography.Storage.LocalStorage
+    )
+  end
 
   # Détermine si le cache doit être ignoré
   defp should_skip_cache?(opts) do

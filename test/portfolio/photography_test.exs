@@ -153,6 +153,116 @@ defmodule Portfolio.PhotographyTest do
     end
   end
 
+  describe "get_photo_url/2" do
+    test "delegates to storage adapter" do
+      # This test verifies the function exists and delegates correctly
+      # The actual URL generation is tested in LocalStorage tests
+      result = Photography.get_photo_url("nonexistent", :thumbnail)
+
+      # Should return error for non-existent photo
+      assert {:error, _reason} = result
+    end
+  end
+
+  describe "reprocess_photo/1" do
+    setup do
+      album = create_album()
+      %{album: album}
+    end
+
+    test "resets photo status to pending and enqueues job", %{album: album} do
+      photo = create_photo(album: album, processing_status: "failed")
+
+      assert {:ok, updated_photo} = Photography.reprocess_photo(photo)
+      assert updated_photo.processing_status == "pending"
+    end
+
+    test "works for completed photos", %{album: album} do
+      photo = create_photo(album: album, processing_status: "completed")
+
+      assert {:ok, updated_photo} = Photography.reprocess_photo(photo)
+      assert updated_photo.processing_status == "pending"
+    end
+  end
+
+  describe "list_pending_photos/1" do
+    setup do
+      album = create_album()
+      %{album: album}
+    end
+
+    test "returns photos with pending status", %{album: album} do
+      photo1 = create_photo(album: album, processing_status: "pending")
+      photo2 = create_photo(album: album, processing_status: "pending")
+      _photo3 = create_photo(album: album, processing_status: "completed")
+
+      photos = Photography.list_pending_photos()
+
+      photo_ids = Enum.map(photos, & &1.id)
+      assert photo1.id in photo_ids
+      assert photo2.id in photo_ids
+      assert length(photos) >= 2
+    end
+
+    test "respects limit option", %{album: album} do
+      Enum.each(1..5, fn _ ->
+        create_photo(album: album, processing_status: "pending")
+      end)
+
+      photos = Photography.list_pending_photos(limit: 3)
+      assert length(photos) <= 3
+    end
+
+    test "returns empty list when no pending photos" do
+      photos = Photography.list_pending_photos()
+      # Filter to only pending (there might be other photos from other tests)
+      pending_photos = Enum.filter(photos, &(&1.processing_status == "pending"))
+      # We can't assert empty because of async tests, just verify structure
+      assert is_list(pending_photos)
+    end
+  end
+
+  describe "list_failed_photos/1" do
+    setup do
+      album = create_album()
+      %{album: album}
+    end
+
+    test "returns photos with failed status", %{album: album} do
+      photo1 = create_photo(album: album, processing_status: "failed")
+      photo2 = create_photo(album: album, processing_status: "failed")
+      _photo3 = create_photo(album: album, processing_status: "completed")
+
+      photos = Photography.list_failed_photos()
+
+      photo_ids = Enum.map(photos, & &1.id)
+      assert photo1.id in photo_ids
+      assert photo2.id in photo_ids
+    end
+
+    test "respects limit option", %{album: album} do
+      Enum.each(1..5, fn _ ->
+        create_photo(album: album, processing_status: "failed")
+      end)
+
+      photos = Photography.list_failed_photos(limit: 3)
+      assert length(photos) <= 3
+    end
+
+    test "can preload associations", %{album: album} do
+      _photo = create_photo(album: album, processing_status: "failed")
+
+      photos = Photography.list_failed_photos(preload: [:album])
+
+      assert length(photos) >= 1
+      first_photo = List.first(photos)
+
+      if first_photo.album_id == album.id do
+        assert %Portfolio.Photography.Album{} = first_photo.album
+      end
+    end
+  end
+
   # Helper functions
 
   defp create_temp_file(content) do

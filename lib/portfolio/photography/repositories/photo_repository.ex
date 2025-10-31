@@ -248,6 +248,37 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
     Repo.aggregate(Photo, :count)
   end
 
+  @doc """
+  Liste les photos par statut de traitement.
+
+  ## Paramètres
+
+  - `status` - Le statut de traitement (pending, processing, completed, failed)
+
+  ## Options
+
+  - `:limit` - Nombre maximum de résultats (défaut: 100)
+  - `:preload` - Associations à précharger
+
+  ## Exemples
+
+      iex> list_by_processing_status("pending", limit: 10)
+      [%Photo{processing_status: "pending"}]
+
+      iex> list_by_processing_status("failed", preload: [:album])
+      [%Photo{processing_status: "failed", album: %Album{}}]
+  """
+  @spec list_by_processing_status(String.t(), keyword()) :: [Photo.t()]
+  def list_by_processing_status(status, opts \\ []) do
+    limit = Keyword.get(opts, :limit, 100)
+    preload = Keyword.get(opts, :preload, [])
+
+    from(p in Photo, where: p.processing_status == ^status, order_by: [desc: p.inserted_at])
+    |> limit(^limit)
+    |> apply_preload_if_present(preload)
+    |> Repo.all()
+  end
+
   # Valide que toutes les photos de la liste appartiennent à l'album spécifié
   defp validate_photos_belong_to_album(album_id, photo_ids) do
     photos = list_by_album(album_id)

@@ -82,6 +82,8 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
     * `:display_order` - Display order in album (defaults to 0)
     * `:taken_at` - Date photo was taken (optional)
     * `:published` - Whether photo is published (defaults to true)
+    * `:processing_status` - Processing status (defaults to "pending")
+    * `:variants` - Map of variant URLs (optional)
 
   ## Examples
 
@@ -108,6 +110,8 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
     display_order = Keyword.get(attrs, :display_order, 0)
     taken_at = Keyword.get(attrs, :taken_at)
     published = Keyword.get(attrs, :published, true)
+    processing_status = Keyword.get(attrs, :processing_status, "pending")
+    variants = Keyword.get(attrs, :variants)
 
     params =
       %{
@@ -115,11 +119,13 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
         file_path: file_path,
         original_filename: original_filename,
         display_order: display_order,
-        published: published
+        published: published,
+        processing_status: processing_status
       }
       |> maybe_add(:title, title)
       |> maybe_add(:description, description)
       |> maybe_add(:taken_at, taken_at)
+      |> maybe_add(:variants, variants)
 
     {:ok, photo} = Photography.create_photo(params)
     photo
