@@ -285,6 +285,124 @@ defmodule Portfolio.Photography.PhotoTest do
 
       assert photo.exif_data == %{}
     end
+
+    test "variants defaults to empty map", %{album_id: album_id} do
+      attrs = %{
+        album_id: album_id,
+        original_filename: "test.jpg",
+        file_path: "/test.jpg"
+      }
+
+      changeset = Photo.changeset(%Photo{}, attrs)
+      photo = Repo.insert!(changeset)
+
+      assert photo.variants == %{}
+    end
+
+    test "processing_status defaults to pending", %{album_id: album_id} do
+      attrs = %{
+        album_id: album_id,
+        original_filename: "test.jpg",
+        file_path: "/test.jpg"
+      }
+
+      changeset = Photo.changeset(%Photo{}, attrs)
+      photo = Repo.insert!(changeset)
+
+      assert photo.processing_status == "pending"
+    end
+
+    test "valid with processing_status as completed", %{album_id: album_id} do
+      attrs = %{
+        album_id: album_id,
+        original_filename: "test.jpg",
+        file_path: "/test.jpg",
+        processing_status: "completed"
+      }
+
+      changeset = Photo.changeset(%Photo{}, attrs)
+
+      assert changeset.valid?
+    end
+
+    test "valid with variants map", %{album_id: album_id} do
+      variants = %{
+        "thumbnail" => "/uploads/photos/abc12345/thumbnail.webp",
+        "small" => "/uploads/photos/abc12345/small.webp",
+        "medium" => "/uploads/photos/abc12345/medium.webp",
+        "large" => "/uploads/photos/abc12345/large.webp"
+      }
+
+      attrs = %{
+        album_id: album_id,
+        original_filename: "test.jpg",
+        file_path: "/test.jpg",
+        variants: variants
+      }
+
+      changeset = Photo.changeset(%Photo{}, attrs)
+
+      assert changeset.valid?
+      assert get_change(changeset, :variants) == variants
+    end
+
+    test "invalid with invalid processing_status", %{album_id: album_id} do
+      attrs = %{
+        album_id: album_id,
+        original_filename: "test.jpg",
+        file_path: "/test.jpg",
+        processing_status: "invalid_status"
+      }
+
+      changeset = Photo.changeset(%Photo{}, attrs)
+
+      refute changeset.valid?
+      assert %{processing_status: ["is invalid"]} = errors_on(changeset)
+    end
+  end
+
+  describe "processing?/1" do
+    test "returns true when status is pending" do
+      photo = %Photo{processing_status: "pending"}
+      assert Photo.processing?(photo)
+    end
+
+    test "returns true when status is processing" do
+      photo = %Photo{processing_status: "processing"}
+      assert Photo.processing?(photo)
+    end
+
+    test "returns false when status is completed" do
+      photo = %Photo{processing_status: "completed"}
+      refute Photo.processing?(photo)
+    end
+
+    test "returns false when status is failed" do
+      photo = %Photo{processing_status: "failed"}
+      refute Photo.processing?(photo)
+    end
+  end
+
+  describe "failed?/1" do
+    test "returns true when status is failed" do
+      photo = %Photo{processing_status: "failed"}
+      assert Photo.failed?(photo)
+    end
+
+    test "returns false when status is pending" do
+      photo = %Photo{processing_status: "pending"}
+      refute Photo.failed?(photo)
+    end
+
+    test "returns false when status is processing" do
+      photo = %Photo{processing_status: "processing"}
+      refute Photo.failed?(photo)
+    end
+
+    test "returns false when status is completed" do
+      photo = %Photo{processing_status: "completed"}
+      refute Photo.failed?(photo)
+    end
   end
 
   describe "unique constraints" do

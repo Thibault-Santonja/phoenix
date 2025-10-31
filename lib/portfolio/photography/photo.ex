@@ -29,6 +29,8 @@ defmodule Portfolio.Photography.Photo do
   - `hash`: Hash SHA256 du fichier pour déduplication
   - `mime_type`: Type MIME du fichier (ex: "image/jpeg")
   - `exif_data`: Métadonnées EXIF extraites (map JSON)
+  - `variants`: Map contenant les URLs des variantes générées (thumbnail, small, medium, large)
+  - `processing_status`: État du traitement des variantes (pending, processing, completed, failed)
 
   ## Exemple
 
@@ -68,6 +70,8 @@ defmodule Portfolio.Photography.Photo do
           hash: String.t() | nil,
           mime_type: String.t() | nil,
           exif_data: map(),
+          variants: map(),
+          processing_status: String.t(),
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil
         }
@@ -86,6 +90,8 @@ defmodule Portfolio.Photography.Photo do
     field :hash, :string
     field :mime_type, :string
     field :exif_data, :map, default: %{}
+    field :variants, :map, default: %{}
+    field :processing_status, :string, default: "pending"
 
     timestamps(type: :utc_datetime)
   end
@@ -119,6 +125,8 @@ defmodule Portfolio.Photography.Photo do
       false
 
   """
+  @valid_processing_statuses ~w(pending processing completed failed)
+
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(photo, attrs) do
     photo
@@ -134,13 +142,16 @@ defmodule Portfolio.Photography.Photo do
       :file_path,
       :hash,
       :mime_type,
-      :exif_data
+      :exif_data,
+      :variants,
+      :processing_status
     ])
     |> validate_required([:album_id, :original_filename, :file_path])
     |> validate_length(:title, max: 200)
     |> validate_length(:description, max: 2000)
     |> validate_number(:display_order, greater_than_or_equal_to: 0)
     |> validate_date_not_future(:taken_at)
+    |> validate_inclusion(:processing_status, @valid_processing_statuses)
     |> generate_slug()
     |> foreign_key_constraint(:album_id)
     |> unique_constraint(:hash)
@@ -168,6 +179,45 @@ defmodule Portfolio.Photography.Photo do
         end
     end
   end
+
+  @doc """
+  Vérifie si la photo est en cours de traitement (pending ou processing).
+
+  ## Exemples
+
+      iex> photo = %Photo{processing_status: "pending"}
+      iex> Photo.processing?(photo)
+      true
+
+      iex> photo = %Photo{processing_status: "completed"}
+      iex> Photo.processing?(photo)
+      false
+
+  """
+  @spec processing?(t()) :: boolean()
+  def processing?(%__MODULE__{processing_status: status})
+      when status in ["pending", "processing"],
+      do: true
+
+  def processing?(%__MODULE__{}), do: false
+
+  @doc """
+  Vérifie si le traitement de la photo a échoué.
+
+  ## Exemples
+
+      iex> photo = %Photo{processing_status: "failed"}
+      iex> Photo.failed?(photo)
+      true
+
+      iex> photo = %Photo{processing_status: "completed"}
+      iex> Photo.failed?(photo)
+      false
+
+  """
+  @spec failed?(t()) :: boolean()
+  def failed?(%__MODULE__{processing_status: "failed"}), do: true
+  def failed?(%__MODULE__{}), do: false
 
   # Valide qu'une date n'est pas dans le futur
   @spec validate_date_not_future(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
