@@ -199,6 +199,41 @@
                       </div>
                     <% end %>
 
+                    <%!-- Processing status badge --%>
+                    <%= if photo.processing_status in ["pending", "processing"] do %>
+                      <div class="absolute top-2 right-2 z-10 bg-yellow-500 text-white rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1">
+                        <svg
+                          class="animate-spin h-3 w-3"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          >
+                          </circle>
+                          <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          >
+                          </path>
+                        </svg>
+                        <span>Traitement...</span>
+                      </div>
+                    <% end %>
+
+                    <%= if photo.processing_status == "failed" do %>
+                      <div class="absolute top-2 right-2 z-10 bg-red-500 text-white rounded-full px-2 py-1 text-xs font-medium">
+                        Échec
+                      </div>
+                    <% end %>
+
                     <img
                       src={photo.file_path}
                       alt={photo.title || "Photo"}
@@ -217,6 +252,16 @@
                     <%= if !@reordering_mode do %>
                       <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center rounded-lg">
                         <div class="opacity-0 group-hover:opacity-100 transition space-x-2">
+                          <%= if photo.processing_status == "failed" do %>
+                            <button
+                              type="button"
+                              phx-click="reprocess_photo"
+                              phx-value-id={photo.id}
+                              class="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700"
+                            >
+                              Réessayer
+                            </button>
+                          <% end %>
                           <button
                             type="button"
                             phx-click="edit_photo"

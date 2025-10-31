@@ -65,15 +65,20 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
     # Utiliser le Photography context pour stocker les fichiers
     case Photography.upload_photos(album.slug, uploads) do
       {:ok, photos_metadata} ->
-        # Créer les photos dans la DB avec les métadonnées retournées
+        # Créer les photos dans la DB avec les métadonnées retournées et enqueue variant generation
         Enum.each(photos_metadata, fn metadata ->
-          Photography.create_photo(%{
-            album_id: album.id,
-            file_path: metadata.file_path,
-            hash: metadata.hash,
-            original_filename: metadata.original_filename,
-            display_order: length(album.photos)
-          })
+          {:ok, _photo} =
+            Photography.create_photo(%{
+              album_id: album.id,
+              file_path: metadata.file_path,
+              hash: metadata.hash,
+              original_filename: metadata.original_filename,
+              display_order: length(album.photos),
+              processing_status: "pending"
+            })
+
+          # Enqueue background job to generate variants
+          Portfolio.Workers.ImageVariantWorker.enqueue(metadata.photo_id)
         end)
 
         # Recharger l'album avec les nouvelles photos
@@ -82,7 +87,10 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
         {:noreply,
          socket
          |> assign(:album, updated_album)
-         |> put_flash(:info, "#{length(photos_metadata)} photo(s) ajoutée(s)")}
+         |> put_flash(
+           :info,
+           "#{length(photos_metadata)} photo(s) ajoutée(s). Traitement des variantes en cours..."
+         )}
 
       {:error, reason} ->
         {:noreply,
@@ -108,6 +116,26 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
         {:noreply,
          socket
          |> put_flash(:error, "Erreur lors de la suppression : #{inspect(reason)}")}
+    end
+  end
+
+  @impl true
+  def handle_event("reprocess_photo", %{"id" => id}, socket) do
+    photo = Photography.get_photo!(id)
+
+    case Photography.reprocess_photo(photo) do
+      {:ok, _updated_photo} ->
+        updated_album = Photography.get_album!(socket.assigns.album.id, preload: [:photos])
+
+        {:noreply,
+         socket
+         |> assign(:album, updated_album)
+         |> put_flash(:info, "Traitement de la photo relancé")}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Erreur lors du retraitement : #{inspect(reason)}")}
     end
   end
 
