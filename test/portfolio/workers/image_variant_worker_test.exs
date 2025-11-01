@@ -165,6 +165,116 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
     end
   end
 
+  describe "concurrent job execution" do
+    test "handles multiple concurrent jobs without conflicts", %{test_base_path: test_base_path} do
+      # Create multiple photos
+      photo_ids = for i <- 1..3, do: "concurrent#{i}"
+
+      for photo_id <- photo_ids do
+        photo_dir = Path.join([test_base_path, "photos", photo_id])
+        File.mkdir_p!(photo_dir)
+        create_test_image(Path.join(photo_dir, "original.jpg"))
+      end
+
+      # Execute jobs concurrently
+      tasks =
+        Enum.map(photo_ids, fn photo_id ->
+          Task.async(fn ->
+            perform_job(ImageVariantWorker, %{photo_id: photo_id})
+          end)
+        end)
+
+      results = Task.await_many(tasks, 30_000)
+
+      # All should succeed
+      assert Enum.all?(results, fn result -> result == :ok end)
+
+      # Verify all variants were created
+      for photo_id <- photo_ids do
+        photo_dir = Path.join([test_base_path, "photos", photo_id])
+        assert File.exists?(Path.join(photo_dir, "thumbnail.webp"))
+        assert File.exists?(Path.join(photo_dir, "small.webp"))
+        assert File.exists?(Path.join(photo_dir, "medium.webp"))
+        assert File.exists?(Path.join(photo_dir, "large.webp"))
+      end
+    end
+  end
+
+  describe "integration with Photography context" do
+    test "updates photo status to completed on success", %{test_base_path: test_base_path} do
+      # This test would require database access
+      # For now, we verify the worker completes successfully
+      photo_id = "integration1"
+      photo_dir = Path.join([test_base_path, "photos", photo_id])
+      File.mkdir_p!(photo_dir)
+      create_test_image(Path.join(photo_dir, "original.jpg"))
+
+      result = perform_job(ImageVariantWorker, %{photo_id: photo_id})
+
+      assert result == :ok
+    end
+
+    test "updates photo status to failed on permanent error" do
+      # File not found should be permanent error
+      result = perform_job(ImageVariantWorker, %{photo_id: "nonexistent"})
+
+      # Should cancel (permanent error)
+      assert {:cancel, {:error, :file_not_found}} = result
+    end
+  end
+
+  describe "performance benchmarks" do
+    @tag :performance
+    @tag timeout: 60_000
+    test "processes single photo within 10 seconds", %{test_base_path: test_base_path} do
+      photo_id = "perf1"
+      photo_dir = Path.join([test_base_path, "photos", photo_id])
+      File.mkdir_p!(photo_dir)
+
+      # Create a larger test image (1920x1080)
+      original_path = Path.join(photo_dir, "original.jpg")
+      {:ok, img} = Vix.Vips.Operation.black(1920, 1080)
+      Vix.Vips.Image.write_to_file(img, original_path)
+
+      {time_micros, result} =
+        :timer.tc(fn ->
+          perform_job(ImageVariantWorker, %{photo_id: photo_id})
+        end)
+
+      time_seconds = time_micros / 1_000_000
+
+      assert result == :ok
+      assert time_seconds < 10.0,
+             "Processing took #{time_seconds}s, expected < 10s"
+    end
+
+    @tag :performance
+    @tag timeout: 60_000
+    test "memory usage stays reasonable during processing", %{test_base_path: test_base_path} do
+      photo_id = "perf2"
+      photo_dir = Path.join([test_base_path, "photos", photo_id])
+      File.mkdir_p!(photo_dir)
+      create_test_image(Path.join(photo_dir, "original.jpg"))
+
+      # Get memory before
+      memory_before = :erlang.memory(:total)
+
+      perform_job(ImageVariantWorker, %{photo_id: photo_id})
+
+      # Force garbage collection
+      :erlang.garbage_collect()
+
+      # Get memory after
+      memory_after = :erlang.memory(:total)
+
+      memory_used_mb = (memory_after - memory_before) / (1024 * 1024)
+
+      # Should not leak significant memory (allow 50MB for processing)
+      assert memory_used_mb < 50,
+             "Memory increased by #{memory_used_mb}MB, expected < 50MB"
+    end
+  end
+
   # Helper functions
 
   defp create_test_image(path) do

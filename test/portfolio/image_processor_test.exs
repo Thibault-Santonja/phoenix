@@ -175,6 +175,77 @@ defmodule Portfolio.ImageProcessorTest do
       assert {:error, :file_not_found} =
                ImageProcessor.generate_variants("/nonexistent.jpg", "/some/path")
     end
+
+    test "handles huge images gracefully", %{output_dir: output} do
+      # Create a very large image (12000x8000)
+      huge_image = Path.join(output, "huge_source.jpg")
+      create_test_image(huge_image, 12000, 8000)
+
+      output_path = Path.join(output, "photo_huge")
+
+      # Should succeed even with huge images
+      assert {:ok, variants} = ImageProcessor.generate_variants(huge_image, output_path)
+
+      # Verify all variants were created
+      assert map_size(variants) == 4
+
+      # Verify largest variant doesn't exceed original size
+      large_path = variants[:large]
+      {:ok, img} = Vix.Vips.Image.new_from_file(large_path)
+      width = Vix.Vips.Image.width(img)
+      assert width <= 12000
+    end
+
+    test "handles PNG format correctly", %{output_dir: output} do
+      # Create a PNG test image
+      png_image = Path.join(output, "test.png")
+      create_test_image(png_image, 1920, 1080)
+
+      output_path = Path.join(output, "photo_png")
+
+      assert {:ok, variants} = ImageProcessor.generate_variants(png_image, output_path)
+
+      # All outputs should be WebP
+      Enum.each(variants, fn {_name, path} ->
+        assert String.ends_with?(path, ".webp")
+      end)
+    end
+
+    test "handles WebP format correctly", %{output_dir: output} do
+      # Create a WebP test image
+      webp_image = Path.join(output, "test.webp")
+      {:ok, img} = Vix.Vips.Operation.black(1920, 1080)
+      Vix.Vips.Image.write_to_file(img, webp_image)
+
+      output_path = Path.join(output, "photo_webp")
+
+      assert {:ok, variants} = ImageProcessor.generate_variants(webp_image, output_path)
+
+      # All outputs should be WebP
+      Enum.each(variants, fn {_name, path} ->
+        assert String.ends_with?(path, ".webp")
+      end)
+    end
+
+    test "returns error for invalid file format", %{output_dir: output} do
+      # Create a text file with image extension
+      invalid = Path.join(output, "invalid.jpg")
+      File.write!(invalid, "This is not an image file, just plain text")
+
+      output_path = Path.join(output, "photo_invalid")
+
+      assert {:error, :corrupted_file} = ImageProcessor.generate_variants(invalid, output_path)
+    end
+
+    test "returns error for empty file", %{output_dir: output} do
+      # Create an empty file
+      empty = Path.join(output, "empty.jpg")
+      File.write!(empty, "")
+
+      output_path = Path.join(output, "photo_empty")
+
+      assert {:error, :corrupted_file} = ImageProcessor.generate_variants(empty, output_path)
+    end
   end
 
   describe "performance" do

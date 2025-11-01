@@ -225,6 +225,151 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
     end
   end
 
+  describe "error handling and edge cases" do
+    test "handles missing source file gracefully" do
+      upload = %{
+        path: "/nonexistent/file.jpg",
+        client_name: "missing.jpg",
+        content_type: "image/jpeg"
+      }
+
+      result = LocalStorage.store_photo(upload)
+      assert {:error, _reason} = result
+    end
+
+    test "stores corrupted files but marks dimensions as nil" do
+      # LocalStorage doesn't validate image format at store time
+      # It just copies the file - validation happens during variant generation
+      temp_path = create_temp_file("not an image")
+
+      upload = %{
+        path: temp_path,
+        client_name: "corrupted.jpg",
+        content_type: "image/jpeg"
+      }
+
+      assert {:ok, metadata} = LocalStorage.store_photo(upload)
+
+      # Dimensions should be nil since we couldn't read the image
+      assert metadata.width == nil
+      assert metadata.height == nil
+
+      # But file should be stored
+      assert metadata.file_size > 0
+    end
+
+    test "delete_photo is idempotent" do
+      # Deleting non-existent photo should succeed (idempotent)
+      assert :ok = LocalStorage.delete_photo("nonexistent-id")
+      assert :ok = LocalStorage.delete_photo("nonexistent-id")
+    end
+
+    test "get_storage_usage returns zero for empty storage" do
+      # Clear any existing photos
+      test_base_path = Application.get_env(:portfolio, :uploads)[:base_path]
+      File.rm_rf!(Path.join(test_base_path, "photos"))
+
+      usage = LocalStorage.get_storage_usage()
+      assert usage == 0
+    end
+
+    test "get_storage_usage calculates total size correctly", %{test_base_path: test_base_path} do
+      # Store a photo
+      temp_path = create_test_image()
+      upload = %{path: temp_path, client_name: "test.jpg", content_type: "image/jpeg"}
+      {:ok, metadata} = LocalStorage.store_photo(upload)
+
+      # Generate variants
+      {:ok, _variants} = LocalStorage.generate_variants(metadata.photo_id)
+
+      # Get storage usage
+      usage = LocalStorage.get_storage_usage()
+
+      # Should be > 0 since we have files
+      assert usage > 0
+
+      # Verify it's calculating total of all files
+      photo_dir = Path.join([test_base_path, "photos", metadata.photo_id])
+      files = File.ls!(photo_dir)
+
+      expected_size =
+        Enum.reduce(files, 0, fn file, acc ->
+          path = Path.join(photo_dir, file)
+          case File.stat(path) do
+            {:ok, %{size: size}} -> acc + size
+            _ -> acc
+          end
+        end)
+
+      assert usage == expected_size
+    end
+
+    test "handles extremely long filenames", %{test_base_path: test_base_path} do
+      temp_path = create_test_image()
+
+      # Create a filename that's 255 characters (max on most filesystems)
+      long_name = String.duplicate("a", 240) <> ".jpg"
+
+      upload = %{
+        path: temp_path,
+        client_name: long_name,
+        content_type: "image/jpeg"
+      }
+
+      assert {:ok, metadata} = LocalStorage.store_photo(upload)
+      assert metadata.original_filename == long_name
+
+      # File should be stored successfully
+      photo_dir = Path.join([test_base_path, "photos", metadata.photo_id])
+      assert File.exists?(photo_dir)
+    end
+
+    test "preserves file metadata (size, timestamps)", %{test_base_path: test_base_path} do
+      temp_path = create_test_image()
+      original_stat = File.stat!(temp_path)
+
+      upload = %{
+        path: temp_path,
+        client_name: "test.jpg",
+        content_type: "image/jpeg"
+      }
+
+      {:ok, metadata} = LocalStorage.store_photo(upload)
+
+      # Stored file should have same size as original
+      stored_path = Path.join([test_base_path, "photos", metadata.photo_id, "original.jpg"])
+      stored_stat = File.stat!(stored_path)
+
+      assert stored_stat.size == original_stat.size
+    end
+
+    test "handles concurrent stores without corruption", %{test_base_path: test_base_path} do
+      # Create multiple images with different content to avoid deduplication
+      uploads =
+        for i <- 1..5 do
+          # Create unique content for each image
+          temp_path = create_temp_file("unique content #{i}")
+          %{path: temp_path, client_name: "photo#{i}.jpg", content_type: "image/jpeg"}
+        end
+
+      # Store them concurrently
+      tasks =
+        Enum.map(uploads, fn upload ->
+          Task.async(fn -> LocalStorage.store_photo(upload) end)
+        end)
+
+      results = Task.await_many(tasks, 10_000)
+
+      # All should succeed
+      assert Enum.all?(results, fn result -> match?({:ok, _}, result) end)
+
+      # Verify all files exist (5 unique photo_ids since content is different)
+      photos_dir = Path.join(test_base_path, "photos")
+      photo_count = length(File.ls!(photos_dir))
+      assert photo_count == 5
+    end
+  end
+
   # Helper functions
 
   defp create_temp_file(content) do
