@@ -7,6 +7,10 @@ A Phoenix LiveView application showcasing photography, medieval reenactment, and
 ### Photography Management
 - **Album Administration**: Create, edit, and manage photography albums
 - **Photo Upload**: Drag & drop photo uploads with previews (up to 20 files, 10MB each)
+- **Image Processing**: Automatic WebP variant generation (thumbnail, small, medium, large)
+- **Background Jobs**: Async image processing with Oban workers and retry logic
+- **Responsive Images**: Automatic srcset generation for optimal loading
+- **Storage Monitoring**: Real-time processing stats and storage usage dashboard
 - **Published/Draft Status**: Control album visibility
 - **Rich Metadata**: Titles, descriptions, dates, locations, and slugs
 - **Public Gallery**: Browse albums by year and type (wedding, music, family, etc.)
@@ -21,10 +25,14 @@ A Phoenix LiveView application showcasing photography, medieval reenactment, and
 ### Architecture
 - **Context-Driven Design**: Separate contexts for Auth and Photography
 - **Repository Pattern**: Dedicated repositories for data access
+- **Service Layer**: Business logic encapsulation (PhotoUploadService, etc.)
+- **Storage Adapters**: Pluggable storage backends (LocalStorage, future CloudflareStorage)
 - **LiveView Components**: Modern, reactive UI with Phoenix LiveView
-- **Comprehensive Tests**: 202 tests with excellent coverage on business logic
+- **Background Processing**: Oban-based async job processing with monitoring
+- **Comprehensive Tests**: 677 tests with excellent coverage
   - Auth Context: 100% coverage
   - Photography Context: 100% coverage
+  - Image Processing: 77 comprehensive tests
   - Plugs & Controllers: 88-100% coverage
 
 ## Setup
@@ -71,8 +79,11 @@ A Phoenix LiveView application showcasing photography, medieval reenactment, and
 Access the admin panel at [`localhost:4000/login`](http://localhost:4000/login). Enter your email to receive a magic link for passwordless authentication.
 
 Admin features:
+- **Dashboard**: `/admin` - Image processing monitoring and statistics
 - **Albums**: `/admin/albums` - Manage photography albums
 - **Profile**: `/admin/profile` - Update profile and manage sessions
+
+For detailed image processing documentation, see [Image Processing Guide](docs/guides/IMAGE_PROCESSING.md).
 
 ## Development
 
