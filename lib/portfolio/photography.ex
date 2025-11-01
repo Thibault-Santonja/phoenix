@@ -570,6 +570,109 @@ defmodule Portfolio.Photography do
     PhotoRepository.list_by_processing_status("failed", limit: limit, preload: preload)
   end
 
+  @doc """
+  Retourne les statistiques de traitement des photos.
+
+  Agrège les compteurs par statut de traitement pour le monitoring
+  et les dashboards admin.
+
+  ## Exemples
+
+      iex> get_processing_stats()
+      %{
+        pending: 12,
+        processing: 3,
+        completed: 1247,
+        failed: 5,
+        total: 1267
+      }
+  """
+  @spec get_processing_stats() :: %{
+          pending: non_neg_integer(),
+          processing: non_neg_integer(),
+          completed: non_neg_integer(),
+          failed: non_neg_integer(),
+          total: non_neg_integer()
+        }
+  def get_processing_stats do
+    PhotoRepository.count_by_processing_status()
+  end
+
+  @doc """
+  Calcule l'espace de stockage utilisé par les photos.
+
+  Retourne la taille totale en octets de tous les fichiers photos
+  (originaux + variants) stockés sur le système.
+
+  ## Options
+
+  - `:unit` - Unité de retour (`:bytes`, `:kb`, `:mb`, `:gb`) (défaut: `:bytes`)
+
+  ## Exemples
+
+      iex> get_storage_usage()
+      3435973120  # bytes
+
+      iex> get_storage_usage(unit: :gb)
+      3.2  # gigabytes
+  """
+  @spec get_storage_usage(keyword()) :: float() | non_neg_integer()
+  def get_storage_usage(opts \\ []) do
+    unit = Keyword.get(opts, :unit, :bytes)
+    bytes = storage_adapter().get_storage_usage()
+
+    case unit do
+      :bytes -> bytes
+      :kb -> bytes / 1024
+      :mb -> bytes / (1024 * 1024)
+      :gb -> bytes / (1024 * 1024 * 1024)
+    end
+  end
+
+  @doc """
+  Retourne la photo en attente de traitement la plus ancienne.
+
+  Utile pour détecter les jobs bloqués ou qui prennent trop de temps.
+
+  ## Exemples
+
+      iex> get_oldest_pending_photo()
+      {:ok, %Photo{inserted_at: ~U[2025-01-26 10:00:00Z]}}
+
+      iex> get_oldest_pending_photo()
+      {:error, :not_found}
+  """
+  @spec get_oldest_pending_photo() :: {:ok, Photo.t()} | {:error, :not_found}
+  def get_oldest_pending_photo do
+    PhotoRepository.get_oldest_by_processing_status("pending")
+  end
+
+  @doc """
+  Relance le traitement de toutes les photos en échec.
+
+  Utile pour une action en masse depuis le dashboard admin.
+  Retourne le nombre de photos relancées.
+
+  ## Exemples
+
+      iex> reprocess_all_failed_photos()
+      {:ok, 5}  # 5 photos relancées
+  """
+  @spec reprocess_all_failed_photos() :: {:ok, non_neg_integer()}
+  def reprocess_all_failed_photos do
+    failed_photos = list_failed_photos(limit: 1000)
+
+    count =
+      Enum.reduce(failed_photos, 0, fn photo, acc ->
+        case reprocess_photo(photo) do
+          {:ok, _} -> acc + 1
+          {:error, _} -> acc
+        end
+      end)
+
+    {:ok, count}
+  end
+
   # =============================================================================
   # Private Functions
   # =============================================================================

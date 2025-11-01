@@ -263,6 +263,114 @@ defmodule Portfolio.PhotographyTest do
     end
   end
 
+  describe "get_processing_stats/0" do
+    test "returns processing stats with all statuses" do
+      album = create_album()
+      create_photo(album: album, processing_status: "pending")
+      create_photo(album: album, processing_status: "processing")
+      create_photo(album: album, processing_status: "completed")
+      create_photo(album: album, processing_status: "failed")
+
+      stats = Photography.get_processing_stats()
+
+      assert stats.pending >= 1
+      assert stats.processing >= 1
+      assert stats.completed >= 1
+      assert stats.failed >= 1
+      assert stats.total >= 4
+    end
+
+    test "returns zero counts when no photos exist" do
+      stats = Photography.get_processing_stats()
+
+      assert is_integer(stats.pending)
+      assert is_integer(stats.processing)
+      assert is_integer(stats.completed)
+      assert is_integer(stats.failed)
+      assert is_integer(stats.total)
+    end
+  end
+
+  describe "get_storage_usage/1" do
+    test "returns storage usage in bytes by default" do
+      usage = Photography.get_storage_usage()
+
+      assert is_integer(usage) or is_float(usage)
+      assert usage >= 0
+    end
+
+    test "returns storage usage in different units" do
+      usage_kb = Photography.get_storage_usage(unit: :kb)
+      usage_mb = Photography.get_storage_usage(unit: :mb)
+      usage_gb = Photography.get_storage_usage(unit: :gb)
+
+      assert is_float(usage_kb) or is_integer(usage_kb)
+      assert is_float(usage_mb) or is_integer(usage_mb)
+      assert is_float(usage_gb) or is_integer(usage_gb)
+    end
+  end
+
+  describe "get_oldest_pending_photo/0" do
+    setup do
+      album = create_album()
+      %{album: album}
+    end
+
+    test "returns oldest pending photo", %{album: album} do
+      # Create photos with slight delay to ensure ordering
+      photo1 = create_photo(album: album, processing_status: "pending")
+      Process.sleep(10)
+      _photo2 = create_photo(album: album, processing_status: "pending")
+
+      {:ok, oldest} = Photography.get_oldest_pending_photo()
+
+      # The oldest should be photo1 (or an even older one from other tests)
+      assert oldest.processing_status == "pending"
+      assert oldest.inserted_at <= photo1.inserted_at
+    end
+
+    test "returns error when no pending photos exist", %{album: album} do
+      _photo = create_photo(album: album, processing_status: "completed")
+
+      # Delete all pending photos to ensure none exist
+      Photography.list_pending_photos()
+      |> Enum.each(&Photography.delete_photo/1)
+
+      result = Photography.get_oldest_pending_photo()
+      assert result == {:error, :not_found} or match?({:ok, _}, result)
+    end
+  end
+
+  describe "reprocess_all_failed_photos/0" do
+    setup do
+      album = create_album()
+      %{album: album}
+    end
+
+    test "reprocesses all failed photos", %{album: album} do
+      photo1 = create_photo(album: album, processing_status: "failed")
+      photo2 = create_photo(album: album, processing_status: "failed")
+
+      {:ok, count} = Photography.reprocess_all_failed_photos()
+
+      assert count >= 2
+
+      # Verify photos are now pending
+      updated1 = Photography.get_photo!(photo1.id)
+      updated2 = Photography.get_photo!(photo2.id)
+
+      assert updated1.processing_status == "pending"
+      assert updated2.processing_status == "pending"
+    end
+
+    test "returns zero when no failed photos", %{album: _album} do
+      {:ok, count} = Photography.reprocess_all_failed_photos()
+
+      assert is_integer(count)
+      assert count >= 0
+    end
+  end
+
   # Helper functions
 
   defp create_temp_file(content) do

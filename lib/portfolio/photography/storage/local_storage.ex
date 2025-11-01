@@ -138,7 +138,46 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
     end
   end
 
+  @impl true
+  def get_storage_usage do
+    base_path = Application.get_env(:portfolio, :uploads)[:base_path] || "priv/static/uploads"
+    photos_dir = Path.join(base_path, "photos")
+
+    if File.exists?(photos_dir) do
+      calculate_directory_size(photos_dir)
+    else
+      0
+    end
+  end
+
   # Private functions
+
+  @spec calculate_directory_size(String.t()) :: non_neg_integer()
+  defp calculate_directory_size(dir_path) do
+    case File.ls(dir_path) do
+      {:ok, entries} ->
+        Enum.reduce(entries, 0, fn entry, acc ->
+          full_path = Path.join(dir_path, entry)
+
+          cond do
+            File.dir?(full_path) ->
+              acc + calculate_directory_size(full_path)
+
+            File.regular?(full_path) ->
+              case File.stat(full_path) do
+                {:ok, %{size: size}} -> acc + size
+                {:error, _} -> acc
+              end
+
+            true ->
+              acc
+          end
+        end)
+
+      {:error, _reason} ->
+        0
+    end
+  end
 
   @spec compute_hash(String.t()) :: {:ok, String.t()} | {:error, term()}
   defp compute_hash(file_path) do

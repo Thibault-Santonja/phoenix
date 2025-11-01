@@ -266,4 +266,24 @@ defmodule Portfolio.Photography.Storage.PhotoStorage do
   """
   @callback generate_variants(photo_id :: String.t()) ::
               {:ok, variants_map()} | {:error, term()}
+
+  @doc """
+  Calculate total storage space used by all photos.
+
+  This operation should:
+  1. Calculate the total size of all photo files (originals + variants)
+  2. Return the total size in bytes
+
+  Used for monitoring storage usage and capacity planning.
+
+  ## Returns
+
+    * `non_neg_integer()` - Total storage used in bytes
+
+  ## Examples
+
+      iex> MyStorage.get_storage_usage()
+      3_435_973_120  # ~3.2 GB
+  """
+  @callback get_storage_usage() :: non_neg_integer()
 end

@@ -279,6 +279,80 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
     |> Repo.all()
   end
 
+  @doc """
+  Compte les photos par statut de traitement.
+
+  Retourne une map avec les compteurs pour chaque statut.
+
+  ## Exemples
+
+      iex> count_by_processing_status()
+      %{
+        pending: 12,
+        processing: 3,
+        completed: 1247,
+        failed: 5,
+        total: 1267
+      }
+  """
+  @spec count_by_processing_status() :: %{
+          pending: non_neg_integer(),
+          processing: non_neg_integer(),
+          completed: non_neg_integer(),
+          failed: non_neg_integer(),
+          total: non_neg_integer()
+        }
+  def count_by_processing_status do
+    query =
+      from p in Photo,
+        select: {p.processing_status, count(p.id)},
+        group_by: p.processing_status
+
+    results = Repo.all(query)
+
+    counts = %{
+      pending: 0,
+      processing: 0,
+      completed: 0,
+      failed: 0
+    }
+
+    counts =
+      Enum.reduce(results, counts, fn {status, count}, acc ->
+        Map.put(acc, String.to_atom(status), count)
+      end)
+
+    total = Enum.reduce(Map.values(counts), 0, &(&1 + &2))
+    Map.put(counts, :total, total)
+  end
+
+  @doc """
+  Récupère la photo la plus ancienne par statut de traitement.
+
+  Utile pour détecter les jobs bloqués.
+
+  ## Exemples
+
+      iex> get_oldest_by_processing_status("pending")
+      {:ok, %Photo{}}
+
+      iex> get_oldest_by_processing_status("pending")
+      {:error, :not_found}
+  """
+  @spec get_oldest_by_processing_status(String.t()) :: {:ok, Photo.t()} | {:error, :not_found}
+  def get_oldest_by_processing_status(status) do
+    query =
+      from p in Photo,
+        where: p.processing_status == ^status,
+        order_by: [asc: p.inserted_at],
+        limit: 1
+
+    case Repo.one(query) do
+      nil -> {:error, :not_found}
+      photo -> {:ok, photo}
+    end
+  end
+
   # Valide que toutes les photos de la liste appartiennent à l'album spécifié
   defp validate_photos_belong_to_album(album_id, photo_ids) do
     photos = list_by_album(album_id)

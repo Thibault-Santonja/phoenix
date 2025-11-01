@@ -23,7 +23,7 @@ defmodule Portfolio.Photography.Storage.PhotoStorageTest do
 
     test "callback count is correct" do
       callbacks = PhotoStorage.behaviour_info(:callbacks)
-      assert length(callbacks) == 4
+      assert length(callbacks) == 5
     end
   end
 
@@ -132,6 +132,9 @@ defmodule Portfolio.Photography.Storage.PhotoStorageTest do
 
       @impl true
       def generate_variants(_photo_id), do: {:ok, %{}}
+
+      @impl true
+      def get_storage_usage, do: 1024
     end
 
     test "mock adapter implements all required callbacks" do
@@ -141,6 +144,7 @@ defmodule Portfolio.Photography.Storage.PhotoStorageTest do
       assert :ok = TestMockStorage.delete_photo("test")
       assert {:ok, _url} = TestMockStorage.get_photo_url("test", :thumbnail)
       assert {:ok, _variants} = TestMockStorage.generate_variants("test")
+      assert 1024 = TestMockStorage.get_storage_usage()
     end
   end
 end
