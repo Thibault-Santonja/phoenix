@@ -8,9 +8,11 @@ defmodule Portfolio.ImageProcessorTest do
   - Error handling for invalid inputs
   - Performance within acceptable bounds
   """
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   alias Portfolio.ImageProcessor
+  alias Vix.Vips.Image
+  alias Vix.Vips.Operation
 
   @test_fixtures_dir "test/fixtures/images"
   @test_output_dir "test/tmp/image_processor"
@@ -50,10 +52,10 @@ defmodule Portfolio.ImageProcessorTest do
       variants = ImageProcessor.variants()
 
       Enum.each(variants, fn {name, config} ->
-        assert Keyword.has_key?(config, :width), "#{name} missing :width"
-        assert Keyword.has_key?(config, :quality), "#{name} missing :quality"
-        assert is_integer(config[:width]), "#{name} width not an integer"
-        assert is_integer(config[:quality]), "#{name} quality not an integer"
+        assert Map.has_key?(config, :width), "#{name} missing :width"
+        assert Map.has_key?(config, :quality), "#{name} missing :quality"
+        assert is_integer(config.width), "#{name} width not an integer"
+        assert is_integer(config.quality), "#{name} quality not an integer"
       end)
     end
 
@@ -61,10 +63,10 @@ defmodule Portfolio.ImageProcessorTest do
       variants = ImageProcessor.variants()
 
       widths = [
-        variants[:thumbnail][:width],
-        variants[:small][:width],
-        variants[:medium][:width],
-        variants[:large][:width]
+        variants[:thumbnail].width,
+        variants[:small].width,
+        variants[:medium].width,
+        variants[:large].width
       ]
 
       assert widths == Enum.sort(widths), "Variants not in ascending size order"
@@ -94,14 +96,18 @@ defmodule Portfolio.ImageProcessorTest do
       end)
     end
 
-    test "variant files are WebP format", %{test_image: source, output_dir: output} do
+    test "variant files match configured formats", %{test_image: source, output_dir: output} do
       output_path = Path.join(output, "photo3")
 
       assert {:ok, variants} = ImageProcessor.generate_variants(source, output_path)
 
-      Enum.each(variants, fn {_name, path} ->
-        assert String.ends_with?(path, ".webp"), "Variant not WebP: #{path}"
-      end)
+      # WebP variants
+      assert String.ends_with?(variants.thumbnail, ".webp")
+      assert String.ends_with?(variants.small, ".webp")
+      assert String.ends_with?(variants.medium, ".webp")
+
+      # AVIF variant (Issue #17)
+      assert String.ends_with?(variants.large, ".avif")
     end
 
     test "creates output directory if it doesn't exist", %{
@@ -123,8 +129,8 @@ defmodule Portfolio.ImageProcessorTest do
       config = ImageProcessor.variants()
 
       Enum.each(variants, fn {name, path} ->
-        {:ok, img} = Vix.Vips.Image.new_from_file(path)
-        width = Vix.Vips.Image.width(img)
+        {:ok, img} = Image.new_from_file(path)
+        width = Image.width(img)
         expected_width = config[name][:width]
 
         # Width should match or be smaller (if original was smaller)
@@ -144,8 +150,8 @@ defmodule Portfolio.ImageProcessorTest do
 
       # All variants should be 200px or smaller (original size)
       Enum.each(variants, fn {_name, path} ->
-        {:ok, img} = Vix.Vips.Image.new_from_file(path)
-        width = Vix.Vips.Image.width(img)
+        {:ok, img} = Image.new_from_file(path)
+        width = Image.width(img)
         assert width <= 200, "Small image was upscaled to #{width}px"
       end)
     end
@@ -177,9 +183,9 @@ defmodule Portfolio.ImageProcessorTest do
     end
 
     test "handles huge images gracefully", %{output_dir: output} do
-      # Create a very large image (12000x8000)
+      # Create a very large image (12_000x8000)
       huge_image = Path.join(output, "huge_source.jpg")
-      create_test_image(huge_image, 12000, 8000)
+      create_test_image(huge_image, 12_000, 8000)
 
       output_path = Path.join(output, "photo_huge")
 
@@ -191,9 +197,9 @@ defmodule Portfolio.ImageProcessorTest do
 
       # Verify largest variant doesn't exceed original size
       large_path = variants[:large]
-      {:ok, img} = Vix.Vips.Image.new_from_file(large_path)
-      width = Vix.Vips.Image.width(img)
-      assert width <= 12000
+      {:ok, img} = Image.new_from_file(large_path)
+      width = Image.width(img)
+      assert width <= 12_000
     end
 
     test "handles PNG format correctly", %{output_dir: output} do
@@ -205,26 +211,28 @@ defmodule Portfolio.ImageProcessorTest do
 
       assert {:ok, variants} = ImageProcessor.generate_variants(png_image, output_path)
 
-      # All outputs should be WebP
-      Enum.each(variants, fn {_name, path} ->
-        assert String.ends_with?(path, ".webp")
-      end)
+      # Outputs should match configured formats (WebP for small variants, AVIF for large)
+      assert String.ends_with?(variants.thumbnail, ".webp")
+      assert String.ends_with?(variants.small, ".webp")
+      assert String.ends_with?(variants.medium, ".webp")
+      assert String.ends_with?(variants.large, ".avif")
     end
 
     test "handles WebP format correctly", %{output_dir: output} do
       # Create a WebP test image
       webp_image = Path.join(output, "test.webp")
-      {:ok, img} = Vix.Vips.Operation.black(1920, 1080)
-      Vix.Vips.Image.write_to_file(img, webp_image)
+      {:ok, img} = Operation.black(1920, 1080)
+      Image.write_to_file(img, webp_image)
 
       output_path = Path.join(output, "photo_webp")
 
       assert {:ok, variants} = ImageProcessor.generate_variants(webp_image, output_path)
 
-      # All outputs should be WebP
-      Enum.each(variants, fn {_name, path} ->
-        assert String.ends_with?(path, ".webp")
-      end)
+      # Outputs should match configured formats (WebP for small variants, AVIF for large)
+      assert String.ends_with?(variants.thumbnail, ".webp")
+      assert String.ends_with?(variants.small, ".webp")
+      assert String.ends_with?(variants.medium, ".webp")
+      assert String.ends_with?(variants.large, ".avif")
     end
 
     test "returns error for invalid file format", %{output_dir: output} do
@@ -289,7 +297,7 @@ defmodule Portfolio.ImageProcessorTest do
 
   defp create_test_image(path, width, height) do
     # Create a simple solid color image for testing
-    {:ok, img} = Vix.Vips.Operation.black(width, height)
-    Vix.Vips.Image.write_to_file(img, path)
+    {:ok, img} = Operation.black(width, height)
+    Image.write_to_file(img, path)
   end
 end

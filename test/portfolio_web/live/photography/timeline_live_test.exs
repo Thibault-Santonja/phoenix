@@ -13,14 +13,15 @@ defmodule PortfolioWeb.Photography.TimelineLiveTest do
 
     test "/timeline path render default page", %{conn: conn, subdomain: subdomain} do
       {:ok, _timeline_live, html} = live(conn, subdomain <> "/timeline")
-      assert html =~ "Thibault San Photographie"
+      assert html =~ "Thibault Santonja"
     end
 
     test "redirection to home ", %{conn: conn, subdomain: subdomain} do
       {:ok, timeline_live, _html} = live(conn, subdomain <> "/timeline")
 
+      # Use the main button (not the one in header) with hero icon
       timeline_live
-      |> element("a", "Home")
+      |> element("a.grow-0", "Accueil")
       |> render_click()
       |> follow_redirect(conn, ~p"/")
     end

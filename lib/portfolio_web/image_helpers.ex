@@ -24,6 +24,7 @@ defmodule PortfolioWeb.ImageHelpers do
 
   use Phoenix.Component
 
+  alias Portfolio.ImageConfig
   alias Portfolio.Photography.Photo
 
   @doc """
@@ -104,22 +105,16 @@ defmodule PortfolioWeb.ImageHelpers do
   """
   @spec image_srcset(Photo.t()) :: String.t()
   def image_srcset(%Photo{variants: variants}) when is_map(variants) do
-    # Map variant names to their widths based on configuration
-    variant_widths = %{
-      "thumbnail" => 320,
-      "small" => 640,
-      "medium" => 1024,
-      "large" => 1920
-    }
+    # Get variant widths from centralized configuration
+    variant_widths = ImageConfig.variant_widths()
 
     variants
     |> Enum.filter(fn {name, _url} -> Map.has_key?(variant_widths, name) end)
     |> Enum.sort_by(fn {name, _url} -> variant_widths[name] end)
-    |> Enum.map(fn {name, url} ->
+    |> Enum.map_join(", ", fn {name, url} ->
       width = variant_widths[name]
       "#{url} #{width}w"
     end)
-    |> Enum.join(", ")
   end
 
   def image_srcset(_photo), do: ""

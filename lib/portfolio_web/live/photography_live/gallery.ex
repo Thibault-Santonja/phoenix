@@ -6,19 +6,19 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
 
   @default_data [
     %{
-      title: gettext("A title in China"),
+      title: gettext("photography.gallery.china_title"),
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       photo_url: "/images/photography/china.webp"
     },
     %{
-      title: gettext("This title Japan"),
+      title: gettext("photography.gallery.japan_title"),
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       photo_url: "/images/photography/japan.webp"
     },
     %{
-      title: gettext("A Taiwan title"),
+      title: gettext("photography.gallery.taiwan_title"),
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       photo_url: "/images/photography/taiwan.webp"
@@ -29,19 +29,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   defp get_album_photos(album_slug) when is_binary(album_slug) do
     case Photography.get_album_by_slug(album_slug) do
       {:ok, album} ->
-        photos = Photography.list_photos_by_album(album.id)
-
-        if Enum.empty?(photos) do
-          @default_data
-        else
-          Enum.map(photos, fn photo ->
-            %{
-              title: photo.title || album.title,
-              description: photo.description || album.description || "",
-              photo_url: photo.file_path
-            }
-          end)
-        end
+        build_photos_data(album)
 
       {:error, :not_found} ->
         @default_data
@@ -49,6 +37,23 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   end
 
   defp get_album_photos(_), do: @default_data
+
+  # Construit la liste des données de photos depuis un album
+  defp build_photos_data(album) do
+    photos = Photography.list_photos_by_album(album.id)
+
+    if Enum.empty?(photos) do
+      @default_data
+    else
+      Enum.map(photos, fn photo ->
+        %{
+          title: photo.title || album.title,
+          description: photo.description || album.description || "",
+          photo_url: photo.file_path
+        }
+      end)
+    end
+  end
 
   @impl true
   def mount(params, session, socket) do
@@ -82,7 +87,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       socket
       |> assign(
         :page_title,
-        gettext("Thibault San Photography") <> " - #{socket.assigns.chapter} - #{project.title}"
+        gettext("photography.page_title") <> " - #{socket.assigns.chapter} - #{project.title}"
       )
       |> assign(project: project)
       |> assign(project_id: id)
@@ -95,7 +100,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
     socket
     |> assign(
       :page_title,
-      gettext("Thibault San Photography") <> " - #{socket.assigns.chapter} - #{project.title}"
+      gettext("photography.brand") <> " - #{socket.assigns.chapter} - #{project.title}"
     )
     |> assign(project: project)
     |> assign(project_id: id)
@@ -105,7 +110,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
     id = "0"
 
     socket
-    |> assign(:page_title, gettext("Thibault San Photography") <> " - #{socket.assigns.chapter}")
+    |> assign(:page_title, gettext("photography.page_title") <> " - #{socket.assigns.chapter}")
     |> assign(project: get_data(socket.assigns.data, id))
     |> assign(project_id: id)
   end

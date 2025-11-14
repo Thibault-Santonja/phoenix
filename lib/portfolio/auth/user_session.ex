@@ -35,13 +35,40 @@ defmodule Portfolio.Auth.UserSession do
 
   @doc """
   Changeset pour créer une nouvelle session.
+
+  Le token est automatiquement hashé avant d'être stocké en DB pour la sécurité.
   """
   def changeset(user_session, attrs) do
     user_session
     |> cast(attrs, [:user_id, :token, :last_activity_at])
     |> validate_required([:user_id, :token, :last_activity_at])
+    |> hash_token()
     |> unique_constraint(:token)
   end
+
+  @doc """
+  Hashe un token pour le stocker en DB de manière sécurisée.
+
+  Utilise SHA-256 pour créer un hash irréversible du token.
+  Cela protège contre le vol de tokens si la DB est compromise.
+
+  ## Exemples
+
+      iex> hash_token_value("raw_token_here")
+      "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+  """
+  @spec hash_token_value(String.t()) :: String.t()
+  def hash_token_value(token) do
+    :crypto.hash(:sha256, token)
+    |> Base.encode16(case: :lower)
+  end
+
+  # Hashe le champ :token dans un changeset
+  defp hash_token(%Ecto.Changeset{valid?: true, changes: %{token: token}} = changeset) do
+    put_change(changeset, :token, hash_token_value(token))
+  end
+
+  defp hash_token(changeset), do: changeset
 
   @doc """
   Vérifie si la session a expiré selon la configuration.

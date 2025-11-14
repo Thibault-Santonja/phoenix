@@ -77,8 +77,8 @@ defmodule Portfolio.Bootstrap.Worker do
     case Bootstrap.run(admin_email: admin_email) do
       :ok ->
         Logger.info("✓ Admin user bootstrap completed successfully")
-        # Le processus peut se terminer, son travail est fait
-        {:stop, :normal, state}
+        # Le processus reste actif mais n'a plus rien à faire
+        {:noreply, Map.put(state, :completed, true)}
 
       {:error, :repo_not_ready} when state.retry_count < max_retries ->
         Logger.debug(

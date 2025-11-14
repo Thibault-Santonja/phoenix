@@ -1,0 +1,27 @@
+[
+  verbose: true,
+  private: false,
+  skip: false,
+  router: "lib/portfolio_web/router.ex",
+  exit: "low",
+  format: "txt",
+  out: "",
+  threshold: "low",
+  # Legitimate false positives explained:
+  #
+  # Config.CSP: CSP headers configured in endpoint.ex via put_secure_browser_headers/2
+  # Config.HTTPS: HTTPS terminated at reverse proxy (Caddy/nginx) in production
+  # Traversal.FileModule: All file paths use validated photo_id (8-char alphanumeric hash)
+  #   - build_photo_directory validates format with regex in local_storage.ex:207
+  #   - photo_id generated from SHA256 hash, not user input
+  #   - Path.join prevents traversal when components are validated
+  # DOS.StringToAtom: Third-party Mishka Chelekom components (uncontrolled)
+  ignore: ["Config.CSP", "Config.HTTPS", "Traversal.FileModule"],
+  ignore_files: [
+    # Third-party Mishka components - we don't control these
+    "lib/portfolio_web/components/mishka_chelekom_components/accordion.ex",
+    "lib/portfolio_web/components/mishka_chelekom_components/badge.ex",
+    "lib/portfolio_web/components/mishka_chelekom_components/button.ex",
+    "lib/portfolio_web/components/mishka_chelekom_components/indicator.ex"
+  ]
+]

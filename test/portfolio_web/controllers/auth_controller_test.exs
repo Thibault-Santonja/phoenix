@@ -7,7 +7,10 @@ defmodule PortfolioWeb.AuthControllerTest do
 
   setup do
     # Use unique IP for each test to avoid rate limit interference
-    unique_ip = {127, 0, 0, System.unique_integer([:positive]) |> rem(255) |> max(1)}
+    # Generate a truly unique octet (1-255) by using the unique integer directly
+    # and wrapping around the 1-255 range
+    octet = 1 + rem(System.unique_integer([:positive]), 254)
+    unique_ip = {127, 0, 0, octet}
     {:ok, conn: %{build_conn() | remote_ip: unique_ip}}
   end
 
@@ -16,7 +19,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       user = insert_user()
       magic_link = insert_magic_link(user)
 
-      conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
 
       assert redirected_to(conn) == ~p"/admin"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Connexion réussie"
@@ -36,8 +39,37 @@ defmodule PortfolioWeb.AuthControllerTest do
       assert updated_magic_link.used_at != nil
     end
 
+    test "sets httponly and secure flags on session cookie", %{conn: conn} do
+      user = insert_user()
+      magic_link = insert_magic_link(user)
+
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
+
+      # Récupérer le cookie Set-Cookie depuis les headers de réponse
+      set_cookie_headers = Plug.Conn.get_resp_header(conn, "set-cookie")
+
+      # Trouver le cookie de session (_portfolio_key)
+      session_cookie =
+        Enum.find(set_cookie_headers, fn cookie ->
+          String.contains?(cookie, "_portfolio_key")
+        end)
+
+      assert session_cookie != nil, "Session cookie should be present"
+
+      # Vérifier que le cookie a le flag HttpOnly
+      assert String.contains?(session_cookie, "HttpOnly"),
+             "Session cookie should have HttpOnly flag"
+
+      # Vérifier que le cookie a le flag SameSite=Lax
+      assert String.contains?(session_cookie, "SameSite=Lax"),
+             "Session cookie should have SameSite=Lax"
+
+      # Note: Le flag Secure n'est actif qu'en production (env != :test)
+      # En test, on vérifie juste que la configuration est présente dans endpoint.ex
+    end
+
     test "redirects to /login with error for invalid token", %{conn: conn} do
-      conn = get(conn, ~p"/auth/magic/invalid_token_123")
+      conn = get(conn, ~p"/auth/verify/invalid_token_123")
 
       assert redirected_to(conn) == ~p"/login"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Lien de connexion invalide"
@@ -54,7 +86,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       expired_at = DateTime.add(DateTime.utc_now(), -1, :hour) |> DateTime.truncate(:second)
       magic_link = insert_magic_link(user, expires_at: expired_at)
 
-      conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
 
       assert redirected_to(conn) == ~p"/login"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "a expiré"
@@ -73,7 +105,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       {:ok, _user} = Auth.verify_magic_link(magic_link.token)
 
       # Essayer de l'utiliser à nouveau
-      conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
 
       assert redirected_to(conn) == ~p"/login"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "déjà été utilisé"
@@ -171,38 +203,42 @@ defmodule PortfolioWeb.AuthControllerTest do
 
       # Pour ce test, on vérifie simplement que le chemin normal fonctionne
       # Le cas d'erreur de create_session est difficile à simuler sans mocker
-      conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
 
       # Le cas normal devrait toujours fonctionner
       assert redirected_to(conn) == ~p"/admin"
     end
 
-    test "handles concurrent magic link usage correctly", %{conn: conn} do
+    test "handles concurrent magic link usage correctly", %{conn: _conn} do
       user = insert_user()
       magic_link = insert_magic_link(user)
 
-      # Première utilisation
-      conn1 = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      # Première utilisation avec IP unique
+      conn1 =
+        %{build_conn() | remote_ip: {127, 0, 0, 10}} |> get(~p"/auth/verify/#{magic_link.token}")
+
       assert redirected_to(conn1) == ~p"/admin"
 
-      # Deuxième utilisation (devrait échouer car déjà utilisé)
-      conn2 = build_conn() |> get(~p"/auth/magic/#{magic_link.token}")
+      # Deuxième utilisation avec IP différente (devrait échouer car déjà utilisé)
+      conn2 =
+        %{build_conn() | remote_ip: {127, 0, 0, 11}} |> get(~p"/auth/verify/#{magic_link.token}")
+
       assert redirected_to(conn2) == ~p"/login"
       assert Phoenix.Flash.get(conn2.assigns.flash, :error) =~ "déjà été utilisé"
     end
 
     test "handles malformed tokens gracefully", %{conn: _conn} do
       malformed_tokens = [
-        "../../etc/passwd",
-        "<script>alert('xss')</script>",
-        String.duplicate("a", 10000),
-        "invalid_token_123"
+        {"../../etc/passwd", 1},
+        {"<script>alert('xss')</script>", 2},
+        {String.duplicate("a", 10_000), 3},
+        {"invalid_token_123", 4}
       ]
 
-      for token <- malformed_tokens do
+      for {token, ip_suffix} <- malformed_tokens do
         # Use unique IP for each iteration to avoid rate limiting
-        unique_ip = {127, 0, 0, System.unique_integer([:positive]) |> rem(255) |> max(1)}
-        test_conn = %{build_conn() | remote_ip: unique_ip} |> get(~p"/auth/magic/#{token}")
+        unique_ip = {127, 0, 0, ip_suffix}
+        test_conn = %{build_conn() | remote_ip: unique_ip} |> get(~p"/auth/verify/#{token}")
         # Les tokens invalides devraient rediriger vers /login avec erreur
         assert redirected_to(test_conn) == ~p"/login"
         assert Phoenix.Flash.get(test_conn.assigns.flash, :error) =~ "invalide"
@@ -215,7 +251,7 @@ defmodule PortfolioWeb.AuthControllerTest do
 
       # Essayer avec le token en majuscules
       uppercase_token = String.upcase(magic_link.token)
-      conn = get(conn, ~p"/auth/magic/#{uppercase_token}")
+      conn = get(conn, ~p"/auth/verify/#{uppercase_token}")
 
       # Devrait échouer si le token original contient des minuscules
       if magic_link.token != uppercase_token do
@@ -244,11 +280,11 @@ defmodule PortfolioWeb.AuthControllerTest do
 
         if i == 1 do
           # First attempt succeeds
-          conn_result = get(conn_with_ip, ~p"/auth/magic/#{magic_link.token}")
+          conn_result = get(conn_with_ip, ~p"/auth/verify/#{magic_link.token}")
           assert redirected_to(conn_result) == ~p"/admin"
         else
           # Subsequent attempts with same token fail but don't hit rate limit
-          conn_result = get(conn_with_ip, ~p"/auth/magic/#{magic_link.token}")
+          conn_result = get(conn_with_ip, ~p"/auth/verify/#{magic_link.token}")
           assert redirected_to(conn_result) == ~p"/login"
           refute Phoenix.Flash.get(conn_result.assigns.flash, :error) =~ "Trop de tentatives"
         end
@@ -262,7 +298,7 @@ defmodule PortfolioWeb.AuthControllerTest do
       # Make 10 verification attempts with different invalid tokens
       for i <- 1..10 do
         conn_with_ip = %{conn | remote_ip: test_ip}
-        conn_result = get(conn_with_ip, ~p"/auth/magic/invalid_token_#{i}")
+        conn_result = get(conn_with_ip, ~p"/auth/verify/invalid_token_#{i}")
 
         # Should get invalid token error, not rate limit
         assert redirected_to(conn_result) == ~p"/login"
@@ -271,7 +307,7 @@ defmodule PortfolioWeb.AuthControllerTest do
 
       # 11th attempt should be rate limited
       conn_with_ip = %{conn | remote_ip: test_ip}
-      conn_result = get(conn_with_ip, ~p"/auth/magic/invalid_token_11")
+      conn_result = get(conn_with_ip, ~p"/auth/verify/invalid_token_11")
 
       # Rate limiter returns 429 and redirects to /login with flash message
       assert conn_result.status == 302
@@ -288,19 +324,19 @@ defmodule PortfolioWeb.AuthControllerTest do
 
       for i <- 1..10 do
         conn_with_ip1 = %{conn | remote_ip: ip1}
-        get(conn_with_ip1, ~p"/auth/magic/invalid_token_ip1_#{i}")
+        get(conn_with_ip1, ~p"/auth/verify/invalid_token_ip1_#{i}")
       end
 
       # IP 1's 11th attempt should be blocked
       conn_with_ip1 = %{conn | remote_ip: ip1}
-      conn_result = get(conn_with_ip1, ~p"/auth/magic/invalid_token_ip1_11")
+      conn_result = get(conn_with_ip1, ~p"/auth/verify/invalid_token_ip1_11")
       assert Phoenix.Flash.get(conn_result.assigns.flash, :error) =~ "Trop de tentatives"
 
       # IP 2 should still be able to verify
       ip2 = {127, 0, 0, System.unique_integer([:positive]) |> rem(255)}
       magic_link = insert_magic_link(user)
       conn_with_ip2 = %{conn | remote_ip: ip2}
-      conn_result = get(conn_with_ip2, ~p"/auth/magic/#{magic_link.token}")
+      conn_result = get(conn_with_ip2, ~p"/auth/verify/#{magic_link.token}")
 
       assert redirected_to(conn_result) == ~p"/admin"
 
@@ -314,12 +350,12 @@ defmodule PortfolioWeb.AuthControllerTest do
       # Use up all attempts
       for i <- 1..10 do
         conn_with_ip = %{conn | remote_ip: test_ip}
-        get(conn_with_ip, ~p"/auth/magic/invalid_#{i}")
+        get(conn_with_ip, ~p"/auth/verify/invalid_#{i}")
       end
 
       # Next attempt should have retry-after header
       conn_with_ip = %{conn | remote_ip: test_ip}
-      conn_result = get(conn_with_ip, ~p"/auth/magic/invalid_11")
+      conn_result = get(conn_with_ip, ~p"/auth/verify/invalid_11")
 
       [retry_after] = get_resp_header(conn_result, "retry-after")
       assert String.to_integer(retry_after) > 0
@@ -445,11 +481,19 @@ defmodule PortfolioWeb.AuthControllerTest do
     default_attrs = %{
       user_id: user.id,
       token: :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false),
+      short_code: generate_short_code(),
       expires_at: DateTime.add(DateTime.utc_now(), 15, :minute) |> DateTime.truncate(:second)
     }
 
     %MagicLink{}
     |> MagicLink.changeset(Map.merge(default_attrs, attrs))
     |> Repo.insert!()
+  end
+
+  defp generate_short_code do
+    :crypto.strong_rand_bytes(4)
+    |> Base.encode32(padding: false)
+    |> String.slice(0..5)
+    |> String.upcase()
   end
 end

@@ -21,5 +21,5 @@ defmodule PortfolioWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext.Backend, otp_app: :portfolio
+  use Gettext.Backend, otp_app: :portfolio, default_locale: "fr"
 end

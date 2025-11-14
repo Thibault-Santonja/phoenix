@@ -8,7 +8,10 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
 
   use PortfolioWeb, :live_view
 
+  alias Ecto.Changeset
   alias Portfolio.Photography
+  alias Portfolio.Photography.Photo
+  alias Portfolio.Workers.ImageVariantWorker
   alias PortfolioWeb.Admin.AlbumLive.FormComponent
 
   @impl true
@@ -17,7 +20,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
 
     {:ok,
      socket
-     |> assign(:page_title, "Éditer l'album")
+     |> assign(:page_title, gettext("admin.albums.edit_title"))
      |> assign(:album, album)
      |> assign(:editing_photo, nil)
      |> assign(:photo_form, nil)
@@ -78,7 +81,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
             })
 
           # Enqueue background job to generate variants
-          Portfolio.Workers.ImageVariantWorker.enqueue(metadata.photo_id)
+          ImageVariantWorker.enqueue(metadata.photo_id)
         end)
 
         # Recharger l'album avec les nouvelles photos
@@ -89,13 +92,15 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
          |> assign(:album, updated_album)
          |> put_flash(
            :info,
-           "#{length(photos_metadata)} photo(s) ajoutée(s). Traitement des variantes en cours..."
+           gettext("admin.albums.photos_added",
+             count: length(photos_metadata)
+           )
          )}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Erreur lors de l'upload : #{inspect(reason)}")}
+         |> put_flash(:error, gettext("admin.albums.upload_error", reason: inspect(reason)))}
     end
   end
 
@@ -110,12 +115,12 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
         {:noreply,
          socket
          |> assign(:album, updated_album)
-         |> put_flash(:info, "Photo supprimée")}
+         |> put_flash(:info, gettext("admin.albums.photo_deleted"))}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Erreur lors de la suppression : #{inspect(reason)}")}
+         |> put_flash(:error, gettext("admin.albums.delete_photo_error", reason: inspect(reason)))}
     end
   end
 
@@ -130,19 +135,19 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
         {:noreply,
          socket
          |> assign(:album, updated_album)
-         |> put_flash(:info, "Traitement de la photo relancé")}
+         |> put_flash(:info, gettext("admin.albums.photo_reprocessing"))}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Erreur lors du retraitement : #{inspect(reason)}")}
+         |> put_flash(:error, gettext("admin.albums.reprocess_error", reason: inspect(reason)))}
     end
   end
 
   @impl true
   def handle_event("edit_photo", %{"id" => id}, socket) do
     photo = Photography.get_photo!(id)
-    changeset = Portfolio.Photography.Photo.changeset(photo, %{})
+    changeset = Photo.changeset(photo, %{})
 
     {:noreply,
      socket
@@ -162,7 +167,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
   def handle_event("validate_photo", %{"photo" => photo_params}, socket) do
     changeset =
       socket.assigns.editing_photo
-      |> Portfolio.Photography.Photo.changeset(photo_params)
+      |> Photo.changeset(photo_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :photo_form, to_form(changeset))}
@@ -179,9 +184,9 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
          |> assign(:album, updated_album)
          |> assign(:editing_photo, nil)
          |> assign(:photo_form, nil)
-         |> put_flash(:info, "Photo mise à jour avec succès")}
+         |> put_flash(:info, gettext("admin.albums.photo_updated"))}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign(socket, :photo_form, to_form(changeset))}
     end
   end
@@ -226,12 +231,12 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
          |> assign(:album, updated_album)
          |> assign(:reordering_mode, false)
          |> assign(:temp_photo_order, [])
-         |> put_flash(:info, "Ordre de #{count} photo(s) enregistré")}
+         |> put_flash(:info, gettext("admin.albums.order_saved", count: count))}
 
       {:error, reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Erreur lors de la réorganisation : #{inspect(reason)}")}
+         |> put_flash(:error, gettext("admin.albums.reorder_error", reason: inspect(reason)))}
     end
   end
 end

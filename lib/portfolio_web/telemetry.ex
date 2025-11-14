@@ -64,6 +64,29 @@ defmodule PortfolioWeb.Telemetry do
         unit: {:native, :millisecond}
       ),
 
+      # Rate Limiter Metrics
+      counter("portfolio.rate_limiter.check.count",
+        tags: [:action, :result]
+      ),
+      distribution("portfolio.rate_limiter.check.duration",
+        tags: [:action],
+        unit: {:native, :millisecond}
+      ),
+      counter("portfolio.rate_limiter.allowed.count",
+        tags: [:action]
+      ),
+      counter("portfolio.rate_limiter.denied.count",
+        tags: [:action]
+      ),
+      summary("portfolio.rate_limiter.remaining.value",
+        tags: [:action],
+        unit: :unit
+      ),
+      summary("portfolio.rate_limiter.retry_after.value",
+        tags: [:action],
+        unit: {:native, :millisecond}
+      ),
+
       # Phoenix Metrics
       summary("phoenix.endpoint.start.system_time",
         unit: {:native, :millisecond}
@@ -115,33 +138,40 @@ defmodule PortfolioWeb.Telemetry do
     :telemetry.attach(
       "portfolio-photography-album-created",
       [:portfolio, :photography, :album, :created],
-      &handle_album_created/4,
+      &__MODULE__.handle_album_created/4,
       nil
     )
 
     :telemetry.attach(
       "portfolio-photography-photos-uploaded",
       [:portfolio, :photography, :photos, :uploaded],
-      &handle_photos_uploaded/4,
+      &__MODULE__.handle_photos_uploaded/4,
       nil
     )
 
     :telemetry.attach(
       "portfolio-auth-magic-link-requested",
       [:portfolio, :auth, :magic_link, :requested],
-      &handle_magic_link_requested/4,
+      &__MODULE__.handle_magic_link_requested/4,
       nil
     )
 
     :telemetry.attach(
       "portfolio-auth-magic-link-verified",
       [:portfolio, :auth, :magic_link, :verified],
-      &handle_magic_link_verified/4,
+      &__MODULE__.handle_magic_link_verified/4,
+      nil
+    )
+
+    :telemetry.attach(
+      "portfolio-rate-limiter-check",
+      [:portfolio, :rate_limiter, :check],
+      &__MODULE__.handle_rate_limiter_check/4,
       nil
     )
   end
 
-  defp handle_album_created(_event, %{duration: duration}, %{result: result}, _config) do
+  def handle_album_created(_event, %{duration: duration}, %{result: result}, _config) do
     require Logger
 
     duration_ms = System.convert_time_unit(duration, :native, :millisecond)
@@ -152,7 +182,7 @@ defmodule PortfolioWeb.Telemetry do
     )
   end
 
-  defp handle_photos_uploaded(_event, %{duration: duration}, metadata, _config) do
+  def handle_photos_uploaded(_event, %{duration: duration}, metadata, _config) do
     require Logger
 
     duration_ms = System.convert_time_unit(duration, :native, :millisecond)
@@ -165,7 +195,7 @@ defmodule PortfolioWeb.Telemetry do
     )
   end
 
-  defp handle_magic_link_requested(_event, %{duration: duration}, metadata, _config) do
+  def handle_magic_link_requested(_event, %{duration: duration}, metadata, _config) do
     require Logger
 
     duration_ms = System.convert_time_unit(duration, :native, :millisecond)
@@ -177,7 +207,7 @@ defmodule PortfolioWeb.Telemetry do
     )
   end
 
-  defp handle_magic_link_verified(_event, %{duration: duration}, %{result: result}, _config) do
+  def handle_magic_link_verified(_event, %{duration: duration}, %{result: result}, _config) do
     require Logger
 
     duration_ms = System.convert_time_unit(duration, :native, :millisecond)
@@ -186,5 +216,31 @@ defmodule PortfolioWeb.Telemetry do
       result: result,
       duration_ms: duration_ms
     )
+  end
+
+  def handle_rate_limiter_check(_event, %{duration: duration}, metadata, _config) do
+    require Logger
+
+    duration_ms = System.convert_time_unit(duration, :native, :millisecond)
+
+    case metadata.result do
+      :allow ->
+        Logger.debug("Rate limit check: allowed",
+          action: metadata.action,
+          identifier: metadata.identifier,
+          remaining: metadata.remaining,
+          duration_ms: duration_ms
+        )
+
+      :deny ->
+        retry_after_seconds = div(metadata.retry_after_ms, 1000)
+
+        Logger.warning("Rate limit check: denied",
+          action: metadata.action,
+          identifier: metadata.identifier,
+          retry_after_seconds: retry_after_seconds,
+          duration_ms: duration_ms
+        )
+    end
   end
 end

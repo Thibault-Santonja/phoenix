@@ -20,7 +20,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
       {:ok, gallery_live, _html} = live(conn, subdomain <> "/gallery")
 
       gallery_live
-      |> element("a", "Home")
+      |> element("a", "Accueil")
       |> render_click()
       |> follow_redirect(conn, ~p"/")
     end

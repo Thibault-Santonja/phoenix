@@ -132,7 +132,11 @@ defmodule PortfolioWeb.Components.Alert do
           <div class={@content_class}>{msg}</div>
         </div>
 
-        <button type="button" class={["group shrink-0", @button_class]} aria-label={gettext("close")}>
+        <button
+          type="button"
+          class={["group shrink-0", @button_class]}
+          aria-label={gettext("components.flash.close")}
+        >
           <.icon name="hero-x-mark-solid" class="aler-icon opacity-40 group-hover:opacity-70" />
         </button>
       </div>
@@ -172,14 +176,14 @@ defmodule PortfolioWeb.Components.Alert do
     >
       <.flash
         kind={:info}
-        title={gettext("Success!")}
+        title={gettext("components.flash.success")}
         flash={@flash}
         variant={@variant}
         width="medium"
       />
       <.flash
         kind={:error}
-        title={gettext("Error!")}
+        title={gettext("components.flash.error")}
         flash={@flash}
         variant={@variant}
         width="medium"
@@ -188,13 +192,13 @@ defmodule PortfolioWeb.Components.Alert do
         id="client-error"
         kind={:error}
         variant={@variant}
-        title={gettext("We can't find the internet")}
+        title={gettext("components.flash.no_internet")}
         phx-disconnected={show_alert(".phx-client-error #client-error")}
         phx-connected={hide_alert("#client-error")}
         width="medium"
         hidden
       >
-        {gettext("Attempting to reconnect")}
+        {gettext("components.flash.reconnecting")}
         <.icon name="hero-arrow-path" class="ms-1 h-3 w-3 animate-spin" />
       </.flash>
 
@@ -202,13 +206,13 @@ defmodule PortfolioWeb.Components.Alert do
         id="server-error"
         kind={:error}
         variant={@variant}
-        title={gettext("Something went wrong!")}
+        title={gettext("components.flash.server_error")}
         phx-disconnected={show_alert(".phx-server-error #server-error")}
         phx-connected={hide_alert("#server-error")}
         width="medium"
         hidden
       >
-        {gettext("Hang in there while we get back on track")}
+        {gettext("components.flash.server_error_message")}
         <.icon name="hero-arrow-path" class="ms-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>

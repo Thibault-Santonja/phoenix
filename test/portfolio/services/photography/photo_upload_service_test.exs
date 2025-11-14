@@ -24,7 +24,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
         %{
           path: "test/fixtures/test_image.jpg",
           client_name: "photo1.jpg",
-          client_type: "image/jpeg"
+          content_type: "image/jpeg"
         }
       ]
 
@@ -34,7 +34,8 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
       [metadata] = metadata_list
       assert metadata.original_filename == "photo1.jpg"
       assert metadata.hash != nil
-      assert String.contains?(metadata.file_path, album.slug)
+      assert metadata.storage_path != nil
+      assert String.starts_with?(metadata.storage_path, "/uploads/photos/")
 
       # Verify photo was created in database
       photos = Photography.list_photos_by_album(album.id)
@@ -46,7 +47,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
         %{
           path: "test/fixtures/test_image.jpg",
           client_name: "photo.jpg",
-          client_type: "image/jpeg"
+          content_type: "image/jpeg"
         }
       ]
 
@@ -66,7 +67,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
         %{
           path: "test/fixtures/test_image.jpg",
           client_name: "valid.jpg",
-          client_type: "image/jpeg"
+          content_type: "image/jpeg"
         }
       ]
 

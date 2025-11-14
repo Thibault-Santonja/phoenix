@@ -44,6 +44,8 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
 
   require Logger
 
+  alias Portfolio.Auth.IPWhitelistService
+
   @doc """
   Initializes the plug with options.
   """
@@ -62,32 +64,56 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
   @doc """
   Checks rate limit for the request.
 
-  If rate limit is exceeded, returns 429 Too Many Requests and halts the connection.
+  If the IP is whitelisted, the request bypasses rate limiting.
+  Otherwise, if rate limit is exceeded, returns 429 Too Many Requests and halts the connection.
   """
   def call(conn, opts) do
-    identifier = get_identifier(conn, opts.identifier, opts.param_name)
+    # Si identifier est :ip, vérifier d'abord la whitelist
+    if opts.identifier == :ip && whitelisted_ip?(conn) do
+      Logger.debug("Rate limit bypassed for whitelisted IP",
+        action: opts.action,
+        ip: get_ip_address(conn)
+      )
 
-    case Portfolio.RateLimiter.check_rate(opts.action, identifier) do
-      {:allow, _remaining} ->
-        conn
+      conn
+    else
+      identifier = get_identifier(conn, opts.identifier, opts.param_name)
 
-      {:deny, retry_after_ms} ->
-        retry_after_seconds = div(retry_after_ms, 1000)
+      case Portfolio.RateLimiter.check_rate(opts.action, identifier) do
+        {:allow, _remaining} ->
+          conn
 
-        Logger.warning("Rate limit exceeded for #{opts.action}",
-          action: opts.action,
-          identifier: identifier,
-          retry_after_seconds: retry_after_seconds
-        )
+        {:deny, retry_after_ms} ->
+          retry_after_seconds = div(retry_after_ms, 1000)
 
-        conn
-        |> put_resp_header("retry-after", to_string(retry_after_seconds))
-        |> put_flash(
-          :error,
-          "Trop de tentatives. Veuillez patienter #{format_retry_time(retry_after_ms)} avant de réessayer."
-        )
-        |> redirect(to: "/login")
-        |> halt()
+          # Enriched logging with attack context
+          ip = get_ip_address(conn)
+          user_agent = get_user_agent(conn)
+          referer = get_referer(conn)
+          path = conn.request_path
+          potential_bot = detect_bot?(conn)
+
+          Logger.warning(
+            ~s(Rate limit exceeded for #{opts.action} ip=#{ip} user_agent="#{user_agent}" referer="#{referer}" path=#{path} potential_bot=#{potential_bot}),
+            action: opts.action,
+            identifier: identifier,
+            retry_after_seconds: retry_after_seconds,
+            ip: ip,
+            user_agent: user_agent,
+            referer: referer,
+            path: path,
+            potential_bot: potential_bot
+          )
+
+          conn
+          |> put_resp_header("retry-after", to_string(retry_after_seconds))
+          |> put_flash(
+            :error,
+            "Trop de tentatives. Veuillez patienter #{format_retry_time(retry_after_ms)} avant de réessayer."
+          )
+          |> redirect(to: "/login")
+          |> halt()
+      end
     end
   end
 
@@ -137,5 +163,50 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
   defp format_retry_time(ms) do
     hours = div(ms, 3_600_000)
     "#{hours} heure#{if hours > 1, do: "s", else: ""}"
+  end
+
+  # Vérifie si l'IP de la connexion est whitelistée
+  defp whitelisted_ip?(conn) do
+    ip = conn.remote_ip
+    IPWhitelistService.whitelisted?(ip)
+  end
+
+  # Extract User-Agent from request headers
+  defp get_user_agent(conn) do
+    case get_req_header(conn, "user-agent") do
+      [user_agent | _] -> user_agent
+      [] -> "unknown"
+    end
+  end
+
+  # Extract Referer from request headers
+  defp get_referer(conn) do
+    case get_req_header(conn, "referer") do
+      [referer | _] -> referer
+      [] -> "none"
+    end
+  end
+
+  # Detect potential bot based on User-Agent patterns
+  defp detect_bot?(conn) do
+    user_agent = get_user_agent(conn) |> String.downcase()
+
+    bot_patterns = [
+      "bot",
+      "crawler",
+      "spider",
+      "scraper",
+      "curl",
+      "wget",
+      "python-requests",
+      "scrapy",
+      "selenium",
+      "phantomjs",
+      "headless"
+    ]
+
+    Enum.any?(bot_patterns, fn pattern ->
+      String.contains?(user_agent, pattern)
+    end)
   end
 end

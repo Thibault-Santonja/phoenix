@@ -511,8 +511,10 @@ defmodule Portfolio.Photography do
   """
   @spec reprocess_photo(Photo.t()) :: {:ok, Oban.Job.t()} | {:error, term()}
   def reprocess_photo(%Photo{id: photo_id} = photo) do
+    alias Portfolio.Workers.ImageVariantWorker
+
     with {:ok, updated_photo} <- update_photo(photo, %{processing_status: "pending"}) do
-      Portfolio.Workers.ImageVariantWorker.enqueue(photo_id)
+      ImageVariantWorker.enqueue(photo_id)
       {:ok, updated_photo}
     end
   end

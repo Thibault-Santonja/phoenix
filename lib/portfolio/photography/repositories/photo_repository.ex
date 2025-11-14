@@ -319,7 +319,9 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
     counts =
       Enum.reduce(results, counts, fn {status, count}, acc ->
-        Map.put(acc, String.to_atom(status), count)
+        # Safe: status comes from Ecto enum, not user input
+        status_atom = status |> to_string() |> String.to_existing_atom()
+        Map.put(acc, status_atom, count)
       end)
 
     total = Enum.reduce(Map.values(counts), 0, &(&1 + &2))

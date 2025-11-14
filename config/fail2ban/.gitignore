@@ -1,0 +1,7 @@
+# Ignore test logs and temporary files
+*.log
+*.log.*
+test_*.log
+*.tmp
+*.swp
+*~

@@ -2,12 +2,12 @@ defmodule Portfolio.ImageProcessor do
   @moduledoc """
   High-performance image processing using libvips via Vix.
 
-  This module provides functions to generate optimized WebP variants from uploaded images,
+  This module provides functions to generate optimized WebP and AVIF variants from uploaded images,
   with configurable quality settings and smart resizing that preserves aspect ratios.
 
   ## Features
 
-  - WebP conversion with configurable quality (75-85)
+  - WebP and AVIF format support with configurable quality and effort
   - Smart resize preserving aspect ratio
   - Metadata stripping (keeps copyright, removes EXIF)
   - Fast processing (~3-5s for 12MP image with 4 variants)
@@ -19,17 +19,17 @@ defmodule Portfolio.ImageProcessor do
 
       # config/config.exs
       config :portfolio, :image_variants,
-        thumbnail: [width: 320, quality: 75],
-        small: [width: 640, quality: 80],
-        medium: [width: 1024, quality: 85],
-        large: [width: 1920, quality: 85]
+        thumbnail: [width: 400, quality: 75, format: :webp, effort: 4],
+        small: [width: 768, quality: 80, format: :webp, effort: 4],
+        medium: [width: 1280, quality: 85, format: :webp, effort: 4],
+        large: [width: 1920, quality: 90, format: :avif, effort: 6]
 
   ## Performance
 
   Expected performance on target VPS (2 vCPU, 2GB RAM):
-  - Single image (4000×3000, 12MP): ~3-5 seconds for 4 variants
+  - Single image (4000×3000, 12MP): ~4-7 seconds for 3 WebP + 1 AVIF variants
   - Memory usage: ~50MB peak per image
-  - Concurrent processing: Up to 3 images simultaneously
+  - Concurrent processing: Up to 2 images simultaneously (Oban limited)
 
   ## Usage Example
 
@@ -38,11 +38,15 @@ defmodule Portfolio.ImageProcessor do
         thumbnail: "/uploads/photos/abc123/thumbnail.webp",
         small: "/uploads/photos/abc123/small.webp",
         medium: "/uploads/photos/abc123/medium.webp",
-        large: "/uploads/photos/abc123/large.webp"
+        large: "/uploads/photos/abc123/large.avif"
       }}
   """
 
   require Logger
+
+  alias Portfolio.ImageConfig
+  alias Vix.Vips.Image
+  alias Vix.Vips.Operation
 
   @typedoc """
   Image variant identifier.
@@ -112,35 +116,51 @@ defmodule Portfolio.ImageProcessor do
   @doc """
   Get configured image variants.
 
-  Returns the map of variant configurations from application config,
-  or default values if not configured.
+  Delegates to Portfolio.ImageConfig for centralized configuration.
 
   ## Examples
 
       iex> ImageProcessor.variants()
       %{
-        thumbnail: [width: 320, quality: 75],
-        small: [width: 640, quality: 80],
-        medium: [width: 1024, quality: 85],
-        large: [width: 1920, quality: 85]
+        thumbnail: %{width: 400, quality: 75, format: :webp, effort: 4},
+        small: %{width: 768, quality: 80, format: :webp, effort: 4},
+        medium: %{width: 1280, quality: 85, format: :webp, effort: 4},
+        large: %{width: 1920, quality: 90, format: :avif, effort: 6}
       }
   """
   @spec variants() :: %{variant() => variant_config()}
   def variants do
-    Application.get_env(:portfolio, :image_variants, default_variants())
-    |> Enum.into(%{})
+    ImageConfig.variants()
   end
+
+  @doc """
+  Get file extension for a given image format.
+
+  ## Parameters
+
+    * `format` - Image format atom (`:webp`, `:avif`, or `:jpeg`)
+
+  ## Returns
+
+    * String file extension without dot (e.g., "webp", "avif", "jpg")
+
+  ## Examples
+
+      iex> ImageProcessor.file_extension(:webp)
+      "webp"
+
+      iex> ImageProcessor.file_extension(:avif)
+      "avif"
+
+      iex> ImageProcessor.file_extension(:jpeg)
+      "jpg"
+  """
+  @spec file_extension(:webp | :avif | :jpeg) :: String.t()
+  def file_extension(:webp), do: "webp"
+  def file_extension(:avif), do: "avif"
+  def file_extension(:jpeg), do: "jpg"
 
   # Private Functions
-
-  defp default_variants do
-    [
-      thumbnail: [width: 320, quality: 75],
-      small: [width: 640, quality: 80],
-      medium: [width: 1024, quality: 85],
-      large: [width: 1920, quality: 85]
-    ]
-  end
 
   defp validate_source_file(path) do
     if File.exists?(path) do
@@ -152,7 +172,7 @@ defmodule Portfolio.ImageProcessor do
   end
 
   defp load_image(path) do
-    case Vix.Vips.Image.new_from_file(path) do
+    case Image.new_from_file(path) do
       {:ok, image} ->
         {:ok, image}
 
@@ -191,19 +211,24 @@ defmodule Portfolio.ImageProcessor do
   end
 
   defp generate_variant(image, variant_name, config, output_base_path) do
-    width = Keyword.fetch!(config, :width)
-    quality = Keyword.fetch!(config, :quality)
-    output_path = Path.join(output_base_path, "#{variant_name}.webp")
+    width = config.width
+    quality = config.quality
+    format = config.format
+    effort = config.effort
+    extension = file_extension(format)
+    output_path = Path.join(output_base_path, "#{variant_name}.#{extension}")
 
     Logger.debug("Generating variant",
       variant: variant_name,
       width: width,
       quality: quality,
+      format: format,
+      effort: effort,
       output_path: output_path
     )
 
     with {:ok, resized} <- resize_image(image, width),
-         :ok <- save_as_webp(resized, output_path, quality) do
+         :ok <- save_image(resized, output_path, format, quality, effort) do
       {:ok, output_path}
     else
       {:error, reason} ->
@@ -217,7 +242,7 @@ defmodule Portfolio.ImageProcessor do
   end
 
   defp resize_image(image, target_width) do
-    current_width = Vix.Vips.Image.width(image)
+    current_width = Image.width(image)
 
     # Don't upscale images smaller than target
     if current_width <= target_width do
@@ -225,7 +250,7 @@ defmodule Portfolio.ImageProcessor do
     else
       scale = target_width / current_width
 
-      case Vix.Vips.Operation.resize(image, scale, kernel: :VIPS_KERNEL_LANCZOS3) do
+      case Operation.resize(image, scale, kernel: :VIPS_KERNEL_LANCZOS3) do
         {:ok, resized} ->
           {:ok, resized}
 
@@ -235,17 +260,32 @@ defmodule Portfolio.ImageProcessor do
     end
   end
 
-  defp save_as_webp(image, output_path, quality) do
-    # WebP save options for optimal quality/size balance
+  defp save_image(image, output_path, format, quality, effort) do
+    # Format-specific save options
     # Vix uses suffix notation for format options
-    suffix = "[Q=#{quality},effort=4,strip]"
+    suffix = build_format_suffix(format, quality, effort)
 
-    case Vix.Vips.Image.write_to_file(image, output_path <> suffix) do
+    case Image.write_to_file(image, output_path <> suffix) do
       :ok ->
         :ok
 
       {:error, reason} ->
-        {:error, {:webp_save_failed, reason}}
+        {:error, {:image_save_failed, format, reason}}
     end
+  end
+
+  defp build_format_suffix(:webp, quality, effort) do
+    # WebP options: Q for quality, effort for compression level (0-6)
+    "[Q=#{quality},effort=#{effort}]"
+  end
+
+  defp build_format_suffix(:avif, quality, effort) do
+    # AVIF options: Q for quality, effort for compression level (0-9)
+    "[Q=#{quality},effort=#{effort}]"
+  end
+
+  defp build_format_suffix(:jpeg, quality, _effort) do
+    # JPEG options: Q for quality
+    "[Q=#{quality}]"
   end
 end

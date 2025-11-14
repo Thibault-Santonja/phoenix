@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="[scrollbar-gutter:stable] scroll-smooth">
+<html lang="fr" class="[scrollbar-gutter:stable] scroll-smooth">
   <head>
     {Application.get_env(:live_debugger, :live_debugger_tags)}
 
@@ -21,46 +21,19 @@
     <.live_title default="Digital Workshop and Portfolio" suffix=" · Thibault Santonja">
       {assigns[:page_title]}
     </.live_title>
-    <title>{gettext("Thibault Santonja - Creative and technical portfolio")}</title>
-    <meta
-      name="description"
-      content={
-        gettext(
-          "Thibault Santonja - A quiet place shaped by hand and heart. Photography, history, and software crafting meet in harmony."
-        )
-      }
-    />
+    <title>{gettext("layouts.root.title")}</title>
+    <meta name="description" content={gettext("layouts.root.description")} />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://thibaultsan.com/" />
-    <meta
-      property="og:title"
-      content={gettext("Thibault Santonja — Digital Workshop & portfolio")}
-    />
-    <meta
-      property="og:description"
-      content={
-        gettext(
-          "A quiet place shaped by hand and heart. Photography, history, and software crafting meet in harmony."
-        )
-      }
-    />
+    <meta property="og:title" content={gettext("layouts.root.og_title")} />
+    <meta property="og:description" content={gettext("layouts.root.og_description")} />
     <meta property="og:image" content="https://thibaultsan.com/images/photography/landscape.webp" />
     <meta property="og:image:alt" content="Thibault Santonja background photography" />
     <meta property="og:site_name" content="Thibault San" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content={gettext("Thibault Santonja — Digital Workshop & portfolio")}
-    />
-    <meta
-      name="twitter:description"
-      content={
-        gettext(
-          "A quiet place shaped by hand and heart. Photography, history, and software crafting meet in harmony."
-        )
-      }
-    />
+    <meta name="twitter:title" content={gettext("layouts.root.twitter_title")} />
+    <meta name="twitter:description" content={gettext("layouts.root.twitter_description")} />
     <meta
       name="twitter:image"
       content="https://thibaultsan.com/images/photography/landscape.webp"

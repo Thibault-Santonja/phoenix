@@ -2,31 +2,45 @@
   <!-- Bouton retour -->
   <.back_to_dashboard />
 
-  <h1 class="text-3xl font-bold mb-8">Mon profil</h1>
+  <h1 class="text-3xl font-bold mb-8">{gettext("admin.profile.title")}</h1>
   
 <!-- Informations du compte -->
   <div class="bg-white shadow rounded-lg p-6 mb-6">
-    <h2 class="text-xl font-semibold mb-4">Informations du compte</h2>
+    <h2 class="text-xl font-semibold mb-4">{gettext("admin.profile.account_information")}</h2>
 
     <.form for={@form} phx-submit="save">
       <div class="mb-4">
-        <.input field={@form[:name]} label="Nom" placeholder="Votre nom" />
+        <.input
+          field={@form[:name]}
+          label={gettext("admin.profile.name_label")}
+          placeholder={gettext("admin.profile.name_placeholder")}
+        />
       </div>
 
       <div class="mb-4">
-        <.input field={@form[:email]} type="email" label="Email" value={@user.email} disabled />
+        <.input
+          field={@form[:email]}
+          type="email"
+          label={gettext("admin.profile.email_label")}
+          value={@user.email}
+          disabled
+        />
         <p class="text-sm text-gray-500 mt-1">
-          L'email ne peut pas être modifié. Contactez un administrateur si nécessaire.
+          {gettext("admin.profile.email_readonly")}
         </p>
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          {gettext("admin.profile.role_label")}
+        </label>
         <p class="text-gray-900">{String.capitalize(to_string(@user.role))}</p>
       </div>
 
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Membre depuis</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          {gettext("admin.profile.member_since")}
+        </label>
         <p class="text-gray-900">{Calendar.strftime(@user.inserted_at, "%d/%m/%Y")}</p>
       </div>
 
@@ -34,8 +48,8 @@
         type="submit"
         class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 phx-submit-loading:opacity-75"
       >
-        <span class="phx-submit-loading:hidden">Enregistrer</span>
-        <span class="hidden phx-submit-loading:inline">Enregistrement...</span>
+        <span class="phx-submit-loading:hidden">{gettext("admin.profile.save")}</span>
+        <span class="hidden phx-submit-loading:inline">{gettext("admin.profile.saving")}</span>
       </.button>
     </.form>
   </div>
@@ -43,22 +57,26 @@
 <!-- Sessions actives -->
   <div class="bg-white shadow rounded-lg p-6">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold">Sessions actives</h2>
+      <h2 class="text-xl font-semibold">{gettext("admin.profile.sessions.title")}</h2>
       <%= if length(@sessions) > 1 do %>
         <button
           phx-click="revoke_all_sessions"
-          data-confirm="Êtes-vous sûr de vouloir déconnecter toutes les autres sessions ?"
+          data-confirm={gettext("admin.profile.sessions.revoke_all_confirm")}
           class="text-sm text-red-600 hover:text-red-800 font-medium phx-click-loading:opacity-50"
         >
-          <span class="phx-click-loading:hidden">Déconnecter toutes les autres sessions</span>
-          <span class="hidden phx-click-loading:inline">Déconnexion...</span>
+          <span class="phx-click-loading:hidden">
+            {gettext("admin.profile.sessions.logout_all")}
+          </span>
+          <span class="hidden phx-click-loading:inline">
+            {gettext("admin.profile.sessions.logging_out")}
+          </span>
         </button>
       <% end %>
     </div>
 
     <div class="space-y-3">
       <%= if @sessions == [] do %>
-        <p class="text-gray-500 text-sm">Aucune session active</p>
+        <p class="text-gray-500 text-sm">{gettext("admin.profile.sessions.no_sessions")}</p>
       <% else %>
         <%= for session <- @sessions do %>
           <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
@@ -67,16 +85,17 @@
                 <%= if @current_session && session.id == @current_session.id do %>
                   <span class="inline-flex items-center">
                     <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                    <span class="text-green-700">Session actuelle</span>
+                    <span class="text-green-700">
+                      {gettext("admin.profile.sessions.current")}
+                    </span>
                   </span>
                 <% else %>
-                  <span class="text-gray-700">Session</span>
+                  <span class="text-gray-700">{gettext("admin.profile.sessions.session")}</span>
                 <% end %>
               </p>
               <p class="text-xs text-gray-500 mt-1">
-                Dernière activité : {Calendar.strftime(
-                  session.last_activity_at,
-                  "%d/%m/%Y à %H:%M"
+                {gettext("admin.profile.sessions.last_activity",
+                  date: Calendar.strftime(session.last_activity_at, "%d/%m/%Y at %H:%M")
                 )}
               </p>
             </div>
@@ -84,11 +103,15 @@
               <button
                 phx-click="revoke_session"
                 phx-value-id={session.id}
-                data-confirm="Êtes-vous sûr de vouloir révoquer cette session ?"
+                data-confirm={gettext("admin.profile.sessions.revoke_confirm")}
                 class="ml-4 text-sm text-red-600 hover:text-red-800 font-medium phx-click-loading:opacity-50"
               >
-                <span class="phx-click-loading:hidden">Révoquer</span>
-                <span class="hidden phx-click-loading:inline">Révocation...</span>
+                <span class="phx-click-loading:hidden">
+                  {gettext("admin.profile.sessions.revoke")}
+                </span>
+                <span class="hidden phx-click-loading:inline">
+                  {gettext("admin.profile.sessions.revoking")}
+                </span>
               </button>
             <% end %>
           </div>

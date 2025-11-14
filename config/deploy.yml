@@ -23,9 +23,9 @@ proxy:
   # Proxy connects to your container on port 80 by default.
   app_port: 4000
   healthcheck:
-    interval: 3
-    path: /
-    timeout: 10
+    interval: 30
+    path: /health
+    timeout: 3
 
 # Credentials for your image host.
 registry:
@@ -50,6 +50,7 @@ env:
     PHX_HOST: "thibaultsan.com"
   secret:
     - SECRET_KEY_BASE
+    - DATABASE_URL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal app logs -r job" will tail logs from the first server in the job section.
@@ -62,10 +63,9 @@ aliases:
 ssh:
   user: amvcc
 # Use a persistent storage volume.
-#
-# volumes:
-#   - "app_storage:/app/storage"
-
+volumes:
+  - "/var/portfolio/uploads:/app/priv/static/uploads"
+  - "/var/portfolio/backups:/app/backups"
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old
 # version inside the asset_path.
@@ -79,25 +79,16 @@ ssh:
 #   wait: 2
 
 # Use accessory services (secrets come from .kamal/secrets).
-#
-# accessories:
-#   db:
-#     image: mysql:8.0
-#     host: 192.168.0.2
-#     port: 3306
-#     env:
-#       clear:
-#         MYSQL_ROOT_HOST: '%'
-#       secret:
-#         - MYSQL_ROOT_PASSWORD
-#     files:
-#       - config/mysql/production.cnf:/etc/mysql/my.cnf
-#       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
-#     directories:
-#       - data:/var/lib/mysql
-#   redis:
-#     image: valkey/valkey:8
-#     host: 192.168.0.2
-#     port: 6379
-#     directories:
-#       - data:/data
+accessories:
+  db:
+    image: postgres:16-alpine
+    host: 157.180.70.8
+    port: 5432
+    env:
+      clear:
+        POSTGRES_DB: portfolio_prod
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - /var/portfolio/db:/var/lib/postgresql/data
+    cmd: postgres -c shared_preload_libraries='pg_stat_statements' -c pg_stat_statements.track=all

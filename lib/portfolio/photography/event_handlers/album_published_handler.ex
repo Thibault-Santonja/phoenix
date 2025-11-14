@@ -120,15 +120,15 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
 
   @spec clear_albums_cache() :: :ok
   defp clear_albums_cache do
-    # Clear Cachex cache for albums
-    case Cachex.clear(:albums_cache) do
-      {:ok, _} ->
-        Logger.debug("Albums cache cleared")
-        :ok
+    # Clear specific Cachex keys for albums
+    # Use targeted deletion instead of clear to preserve other cache entries
+    cache_key_without_photos = {:published_albums_by_year, []}
+    cache_key_with_photos = {:published_albums_by_year, [:photos]}
 
-      {:error, reason} ->
-        Logger.warning("Failed to clear albums cache", reason: inspect(reason))
-        :ok
-    end
+    Cachex.del(:portfolio_cache, cache_key_without_photos)
+    Cachex.del(:portfolio_cache, cache_key_with_photos)
+
+    Logger.debug("Albums cache invalidated (targeted keys)")
+    :ok
   end
 end

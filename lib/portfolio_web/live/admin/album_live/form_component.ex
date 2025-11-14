@@ -19,9 +19,9 @@ defmodule PortfolioWeb.Admin.AlbumLive.FormComponent do
         {@title}
         <:subtitle>
           <%= if @action == :new do %>
-            Créez un nouvel album photo
+            {gettext("admin.albums.form.subtitle_new")}
           <% else %>
-            Modifiez les informations de l'album
+            {gettext("admin.albums.form.subtitle_edit")}
           <% end %>
         </:subtitle>
       </.header>
@@ -33,47 +33,62 @@ defmodule PortfolioWeb.Admin.AlbumLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:title]} type="text" label="Titre" required />
+        <.input field={@form[:title]} type="text" label={gettext("admin.albums.form.title")} required />
 
         <.input
           field={@form[:type]}
           type="select"
-          label="Type"
+          label={gettext("admin.albums.form.type")}
           options={@album_types}
-          prompt="Sélectionner un type"
+          prompt={gettext("admin.albums.form.select_type")}
           required
         />
 
-        <.input field={@form[:description]} type="textarea" label="Description" rows="4" />
+        <.input
+          field={@form[:description]}
+          type="textarea"
+          label={gettext("admin.albums.form.description")}
+          rows="4"
+        />
 
-        <.input field={@form[:location]} type="text" label="Lieu" />
+        <.input field={@form[:location]} type="text" label={gettext("admin.albums.form.location")} />
 
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <.input
             field={@form[:date_prise_vue]}
             type="date"
-            label="Date de début de prise de vue"
+            label={gettext("admin.albums.form.start_date")}
             required
           />
 
-          <.input field={@form[:date_fin_prise_vue]} type="date" label="Date de fin (optionnel)" />
+          <.input
+            field={@form[:date_fin_prise_vue]}
+            type="date"
+            label={gettext("admin.albums.form.end_date")}
+          />
         </div>
 
         <.input
           field={@form[:reference_link]}
           type="url"
-          label="Lien de référence"
+          label={gettext("admin.albums.form.reference_link")}
           placeholder="https://..."
         />
 
-        <.input field={@form[:published]} type="checkbox" label="Publié" />
+        <.input
+          field={@form[:published]}
+          type="checkbox"
+          label={gettext("admin.albums.form.published")}
+        />
 
         <:actions>
-          <.button phx-disable-with="Enregistrement...">
-            {if @action == :new, do: "Créer l'album", else: "Enregistrer les modifications"}
+          <.button phx-disable-with={gettext("admin.albums.form.saving")}>
+            {if @action == :new,
+              do: gettext("admin.albums.form.create"),
+              else: gettext("admin.albums.form.save")}
           </.button>
           <.link navigate={~p"/admin/albums"} class="text-sm text-gray-600 hover:text-gray-900">
-            Annuler
+            {gettext("admin.albums.form.cancel")}
           </.link>
         </:actions>
       </.simple_form>
@@ -114,7 +129,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Album créé avec succès")
+         |> put_flash(:info, gettext("admin.albums.form.create_success"))
          |> push_navigate(to: ~p"/admin/albums/#{album.id}/edit")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -129,7 +144,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.FormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Album mis à jour avec succès")
+         |> put_flash(:info, gettext("admin.albums.form.update_success"))
          |> push_navigate(to: ~p"/admin/albums")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -146,17 +161,17 @@ defmodule PortfolioWeb.Admin.AlbumLive.FormComponent do
     end)
   end
 
-  defp format_type(:couples), do: "Couples"
-  defp format_type(:wedding), do: "Mariage"
-  defp format_type(:motherhood), do: "Maternité"
-  defp format_type(:events), do: "Événements"
-  defp format_type(:landscape), do: "Paysage"
-  defp format_type(:street), do: "Street"
-  defp format_type(:music), do: "Musique"
-  defp format_type(:reenactment), do: "Reconstitution"
+  defp format_type(:couples), do: gettext("album.type.couples")
+  defp format_type(:wedding), do: gettext("album.type.wedding")
+  defp format_type(:motherhood), do: gettext("album.type.motherhood")
+  defp format_type(:events), do: gettext("album.type.events")
+  defp format_type(:landscape), do: gettext("album.type.landscape")
+  defp format_type(:street), do: gettext("album.type.street")
+  defp format_type(:music), do: gettext("album.type.music")
+  defp format_type(:reenactment), do: gettext("album.type.reenactment")
   defp format_type(:amvcc), do: "AMVCC"
-  defp format_type(:china), do: "Chine"
-  defp format_type(:japan), do: "Japon"
-  defp format_type(:taiwan), do: "Taïwan"
+  defp format_type(:china), do: gettext("album.type.china")
+  defp format_type(:japan), do: gettext("album.type.japan")
+  defp format_type(:taiwan), do: gettext("album.type.taiwan")
   defp format_type(type), do: to_string(type)
 end

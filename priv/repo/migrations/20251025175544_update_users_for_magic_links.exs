@@ -18,7 +18,7 @@ defmodule Portfolio.Repo.Migrations.UpdateUsersForMagicLinks do
       DO $$
       BEGIN
         IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'valid_role') THEN
-          ALTER TABLE users ADD CONSTRAINT valid_role CHECK (role IN ('admin', 'superadmin'));
+          ALTER TABLE users ADD CONSTRAINT valid_role CHECK (role IN ('admin'));
         END IF;
       END$$;
       """,

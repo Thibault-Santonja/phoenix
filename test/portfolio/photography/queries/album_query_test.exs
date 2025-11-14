@@ -248,7 +248,8 @@ defmodule Portfolio.Photography.Queries.AlbumQueryTest do
         )
 
       # Small delay to ensure different inserted_at timestamps
-      Process.sleep(10)
+      # Increased to 100ms for more reliable test execution
+      Process.sleep(100)
 
       album2 =
         create_album(

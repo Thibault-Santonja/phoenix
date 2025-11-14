@@ -15,8 +15,9 @@ defmodule PortfolioWeb.Components.CheckboxField do
   """
 
   use Phoenix.Component
-  alias Phoenix.LiveView.Utils
   alias Phoenix.HTML.Form
+  alias Phoenix.LiveView.Utils
+
   import PortfolioWeb.Components.Icon, only: [icon: 1]
 
   @doc """
@@ -94,7 +95,7 @@ defmodule PortfolioWeb.Components.CheckboxField do
     end)
     |> assign_new(:value, fn -> field.value end)
     |> assign_new(:checked, fn ->
-      Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+      Form.normalize_value("checkbox", assigns[:value])
     end)
     |> checkbox_field()
   end

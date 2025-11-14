@@ -23,7 +23,7 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
 
     {:ok,
      socket
-     |> assign(:page_title, "Tableau de bord")
+     |> assign(:page_title, gettext("admin.dashboard.title"))
      |> assign(:stats, stats)
      |> assign(:processing_stats, processing_stats)
      |> assign(:current_user, current_user)}
@@ -42,21 +42,16 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
     {:noreply,
      socket
      |> assign(:processing_stats, processing_stats)
-     |> put_flash(:info, "#{count} photo(s) relancée(s) avec succès")}
+     |> put_flash(:info, gettext("admin.dashboard.photos_restarted", count: count))}
   end
 
   defp load_statistics do
-    albums = Photography.list_albums()
-    published_albums = Enum.filter(albums, & &1.published)
-
-    # Optimisation: une seule requête SQL au lieu de N requêtes
-    total_photos = Photography.count_all_photos()
-
+    # Optimization: Use COUNT queries instead of loading all albums into memory
     %{
-      total_albums: length(albums),
-      published_albums: length(published_albums),
-      draft_albums: length(albums) - length(published_albums),
-      total_photos: total_photos,
+      total_albums: Photography.count_all_albums(),
+      published_albums: Photography.count_published_albums(),
+      draft_albums: Photography.count_draft_albums(),
+      total_photos: Photography.count_all_photos(),
       total_users: Auth.count_users()
     }
   end
@@ -89,23 +84,23 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
 
     cond do
       diff_seconds < 60 ->
-        "#{diff_seconds} seconde#{if diff_seconds > 1, do: "s", else: ""}"
+        ngettext("time.second", "time.seconds", diff_seconds, count: diff_seconds)
 
       diff_seconds < 3600 ->
         minutes = div(diff_seconds, 60)
-        "#{minutes} minute#{if minutes > 1, do: "s", else: ""}"
+        ngettext("time.minute", "time.minutes", minutes, count: minutes)
 
-      diff_seconds < 86400 ->
+      diff_seconds < 86_400 ->
         hours = div(diff_seconds, 3600)
-        "#{hours} heure#{if hours > 1, do: "s", else: ""}"
+        ngettext("time.hour", "time.hours", hours, count: hours)
 
       diff_seconds < 2_592_000 ->
-        days = div(diff_seconds, 86400)
-        "#{days} jour#{if days > 1, do: "s", else: ""}"
+        days = div(diff_seconds, 86_400)
+        ngettext("time.day", "time.days", days, count: days)
 
       true ->
         months = div(diff_seconds, 2_592_000)
-        "#{months} mois"
+        ngettext("time.month", "time.months", months, count: months)
     end
   end
 end

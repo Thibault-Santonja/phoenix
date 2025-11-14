@@ -160,32 +160,45 @@ defmodule Portfolio.Photography.Album do
         changeset
 
       _ ->
-        # Sinon, on génère depuis le titre
-        case get_change(changeset, :title) do
-          nil ->
-            changeset
+        generate_slug_from_title(changeset)
+    end
+  end
 
-          title ->
-            case Slug.new(title) do
-              {:ok, slug} ->
-                put_change(changeset, :slug, to_string(slug))
+  # Génère un slug depuis le titre du changeset
+  @spec generate_slug_from_title(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp generate_slug_from_title(changeset) do
+    case get_change(changeset, :title) do
+      nil -> changeset
+      title -> create_slug_from_title(changeset, title)
+    end
+  end
 
-              {:error, :too_long} ->
-                # Si le titre est trop long pour un slug, on tronque à 100 caractères
-                truncated = String.slice(title, 0, 100)
+  # Crée un slug depuis un titre, avec gestion des erreurs
+  @spec create_slug_from_title(Ecto.Changeset.t(), String.t()) :: Ecto.Changeset.t()
+  defp create_slug_from_title(changeset, title) do
+    case Slug.new(title) do
+      {:ok, slug} ->
+        put_change(changeset, :slug, to_string(slug))
 
-                case Slug.new(truncated) do
-                  {:ok, slug} ->
-                    put_change(changeset, :slug, to_string(slug))
+      {:error, :too_long} ->
+        handle_slug_too_long(changeset, title)
 
-                  {:error, _} ->
-                    add_error(changeset, :title, "ne peut pas être converti en slug valide")
-                end
+      {:error, _} ->
+        add_error(changeset, :title, "ne peut pas être converti en slug valide")
+    end
+  end
 
-              {:error, _} ->
-                add_error(changeset, :title, "ne peut pas être converti en slug valide")
-            end
-        end
+  # Gère le cas où le titre est trop long pour un slug
+  @spec handle_slug_too_long(Ecto.Changeset.t(), String.t()) :: Ecto.Changeset.t()
+  defp handle_slug_too_long(changeset, title) do
+    truncated = String.slice(title, 0, 100)
+
+    case Slug.new(truncated) do
+      {:ok, slug} ->
+        put_change(changeset, :slug, to_string(slug))
+
+      {:error, _} ->
+        add_error(changeset, :title, "ne peut pas être converti en slug valide")
     end
   end
 

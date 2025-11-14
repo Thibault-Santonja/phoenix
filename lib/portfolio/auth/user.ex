@@ -9,14 +9,10 @@ defmodule Portfolio.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Portfolio.Auth.{MagicLink, UserSession}
+  alias Portfolio.Auth.{DisposableEmailChecker, EmailType, MagicLink, MXValidator, UserSession}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-
-  # RFC 5322 compliant email regex
-  # Allows most valid email formats while being strict enough to catch common errors
-  @email_regex ~r/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
   @type t :: %__MODULE__{
           id: Ecto.UUID.t() | nil,
@@ -30,7 +26,7 @@ defmodule Portfolio.Auth.User do
         }
 
   schema "users" do
-    field :email, :string
+    field :email, EmailType
     field :name, :string
     field :role, Ecto.Enum, values: [:admin, :user], default: :user
 
@@ -87,14 +83,34 @@ defmodule Portfolio.Auth.User do
 
   Permet de modifier le rôle d'un utilisateur.
   L'email ne peut pas être modifié pour des raisons de sécurité.
+
+  Protection: Un admin ne peut pas modifier son propre rôle (sécurité).
+  Pour modifier le rôle, passez l'ID de l'admin courant via :current_user_id.
   """
-  @spec admin_changeset(t(), map()) :: Ecto.Changeset.t()
-  def admin_changeset(user, attrs) do
+  @spec admin_changeset(t(), map(), keyword()) :: Ecto.Changeset.t()
+  def admin_changeset(user, attrs, opts \\ []) do
+    current_user_id = Keyword.get(opts, :current_user_id)
+
     user
     |> cast(attrs, [:role, :name])
     |> validate_required([:role])
     |> validate_inclusion(:role, [:admin, :user])
     |> validate_length(:name, min: 2, max: 100)
+    |> validate_not_self_role_modification(current_user_id)
+  end
+
+  # Valide qu'un utilisateur ne modifie pas son propre rôle
+  defp validate_not_self_role_modification(changeset, nil), do: changeset
+
+  defp validate_not_self_role_modification(changeset, current_user_id) do
+    user_id = get_field(changeset, :id)
+    role_changed? = get_change(changeset, :role) != nil
+
+    if user_id == current_user_id and role_changed? do
+      add_error(changeset, :role, "vous ne pouvez pas modifier votre propre rôle")
+    else
+      changeset
+    end
   end
 
   @doc """
@@ -121,13 +137,45 @@ defmodule Portfolio.Auth.User do
     |> unique_constraint(:email)
   end
 
-  # Validation de l'email avec RFC 5322
+  # Validation de l'email
+  # Note: EmailType gère déjà la validation du format et la normalisation (lowercase, trim)
   defp validate_email(changeset) do
     changeset
-    |> validate_format(:email, @email_regex, message: "doit être une adresse email valide")
-    |> validate_length(:email, max: 160)
-    |> update_change(:email, &String.downcase/1)
+    |> validate_required([:email])
+    |> validate_length(:email, max: 320)
+    |> validate_not_disposable_email()
+    |> validate_mx_records()
     |> unsafe_validate_unique(:email, Portfolio.Repo)
     |> unique_constraint(:email)
+  end
+
+  # Valide que l'email n'utilise pas un domaine jetable
+  defp validate_not_disposable_email(changeset) do
+    email = get_field(changeset, :email)
+
+    if email && DisposableEmailChecker.disposable?(email) do
+      add_error(
+        changeset,
+        :email,
+        "les adresses email temporaires ne sont pas autorisées"
+      )
+    else
+      changeset
+    end
+  end
+
+  # Valide que le domaine de l'email possède des enregistrements MX valides
+  defp validate_mx_records(changeset) do
+    email = get_field(changeset, :email)
+
+    if email && !MXValidator.valid_mx?(email) do
+      add_error(
+        changeset,
+        :email,
+        "ce domaine ne peut pas recevoir d'emails"
+      )
+    else
+      changeset
+    end
   end
 end

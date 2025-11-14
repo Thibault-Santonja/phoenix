@@ -6,7 +6,8 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   import Plug.Conn
   import Phoenix.Controller
 
-  alias Portfolio.Auth
+  alias PortfolioWeb.AuthConfig
+  alias PortfolioWeb.AuthHelpers
 
   @behaviour Plug
 
@@ -39,92 +40,57 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
     if conn.assigns[:current_user] do
       conn
     else
-      session_token = get_session(conn, :session_token)
-
-      if session_token do
-        case fetch_session_from_cache(session_token) do
-          nil ->
-            # Session invalide ou expirée - effacer le token
-            conn
-            |> clear_session()
-            |> assign(:current_user, nil)
-
-          session ->
-            # Mettre à jour l'activité de la session
-            # Async en production pour ne pas ralentir la requête, sync en test pour la prévisibilité
-            if Mix.env() == :test do
-              Auth.update_session_activity(session)
-            else
-              Task.start(fn -> Auth.update_session_activity(session) end)
-            end
-
-            conn
-            |> assign(:current_user, session.user)
-            |> assign(:current_session, session)
-        end
-      else
-        assign(conn, :current_user, nil)
-      end
+      fetch_user_from_session(conn)
     end
   end
 
-  # Récupère une session depuis le cache ou la base de données
-  defp fetch_session_from_cache(session_token) do
-    cache_key = {:session, session_token}
+  # Récupère l'utilisateur depuis le token de session
+  defp fetch_user_from_session(conn) do
+    session_token = get_session(conn, :session_token)
 
-    # En test, skip le cache pour éviter la pollution entre tests
-    if Mix.env() == :test do
-      Auth.get_session_by_token(session_token)
-    else
-      case Cachex.fetch(:portfolio_cache, cache_key, fn ->
-             case Auth.get_session_by_token(session_token) do
-               nil ->
-                 # Session invalide, ne pas mettre en cache
-                 {:ignore, nil}
+    case AuthHelpers.fetch_user_from_session_token(session_token) do
+      nil ->
+        conn
+        |> clear_session()
+        |> assign(:current_user, nil)
 
-               session ->
-                 # Cacher la session pendant 1 heure
-                 {:commit, session, ttl: :timer.hours(1)}
-             end
-           end) do
-        {:ok, session} -> session
-        {:commit, session} -> session
-        {:ignore, nil} -> nil
-        _ -> nil
-      end
+      {user, session} ->
+        conn
+        |> assign(:current_user, user)
+        |> assign(:current_session, session)
     end
   end
 
   @doc """
   Exige qu'un utilisateur soit authentifié.
 
-  Redirige vers /login si aucun utilisateur n'est connecté.
+  Redirige vers le chemin de login si aucun utilisateur n'est connecté.
   """
   def require_authenticated_user(conn, _opts) do
     if conn.assigns[:current_user] do
       conn
     else
       conn
-      |> put_flash(:error, "Vous devez être connecté pour accéder à cette page.")
-      |> redirect(to: "/login")
+      |> put_flash(:error, AuthConfig.unauthenticated_message())
+      |> redirect(to: AuthConfig.login_path())
       |> halt()
     end
   end
 
   @doc """
-  Exige que l'utilisateur ait le rôle admin ou superadmin.
+  Exige que l'utilisateur ait le rôle admin.
 
-  Redirige vers / si l'utilisateur n'a pas les permissions.
+  Redirige vers le chemin par défaut si l'utilisateur n'a pas les permissions.
   """
   def require_admin_role(conn, _opts) do
     user = conn.assigns[:current_user]
 
-    if user && user.role in [:admin, :superadmin] do
+    if user && AuthConfig.admin_role?(user.role) do
       conn
     else
       conn
-      |> put_flash(:error, "Vous n'avez pas les permissions pour accéder à cette page.")
-      |> redirect(to: "/")
+      |> put_flash(:error, AuthConfig.unauthorized_message())
+      |> redirect(to: AuthConfig.unauthorized_path())
       |> halt()
     end
   end
@@ -135,12 +101,12 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   Utile pour les pages de login/register qui ne devraient être accessibles
   qu'aux utilisateurs non connectés.
 
-  Redirige vers /admin si l'utilisateur est déjà connecté.
+  Redirige vers le chemin authentifié si l'utilisateur est déjà connecté.
   """
   def redirect_if_user_is_authenticated(conn, _opts) do
     if conn.assigns[:current_user] do
       conn
-      |> redirect(to: "/admin")
+      |> redirect(to: AuthConfig.authenticated_path())
       |> halt()
     else
       conn

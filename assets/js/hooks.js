@@ -461,7 +461,17 @@ export const SmoothScroll = {
     this.handleClick = (e) => {
       e.preventDefault();
       const href = e.currentTarget.getAttribute("href");
-      const target = document.querySelector(href);
+
+      // Try to find element by ID first (standard anchor)
+      let target = document.querySelector(href);
+
+      // If not found and it's a year anchor (#year-XXXX), find first album with that year
+      if (!target && href.startsWith("#year-")) {
+        const yearAnchor = href.substring(1); // Remove the #
+        target = document.querySelector(
+          `[data-album-year-anchor="${yearAnchor}"]`,
+        );
+      }
 
       if (target) {
         target.scrollIntoView({
@@ -560,6 +570,130 @@ export const PhotoSortable = {
       });
 
       log("Sortable instance created:", this.sortable);
+    }
+  },
+};
+
+export const RateLimitCountdown = {
+  mounted() {
+    const retryAfter = parseInt(this.el.dataset.retryAfter, 10);
+    const display = document.getElementById("countdown-display");
+
+    if (!display || !retryAfter) return;
+
+    let remaining = retryAfter;
+
+    const updateDisplay = () => {
+      const minutes = Math.floor(remaining / 60);
+      const seconds = remaining % 60;
+
+      if (minutes > 0) {
+        display.textContent = `${minutes}min ${seconds}s`;
+      } else {
+        display.textContent = `${seconds}s`;
+      }
+    };
+
+    updateDisplay();
+
+    this.interval = setInterval(() => {
+      remaining--;
+
+      if (remaining <= 0) {
+        clearInterval(this.interval);
+        window.location.reload();
+      } else {
+        updateDisplay();
+      }
+    }, 1000);
+  },
+
+  destroyed() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  },
+};
+
+export const MagicLinkExpiration = {
+  mounted() {
+    const expiresIn = parseInt(this.el.dataset.expiresIn, 10);
+    const display = document.getElementById("magic-link-countdown");
+
+    if (!display || !expiresIn) return;
+
+    let remaining = expiresIn;
+
+    const updateDisplay = () => {
+      const minutes = Math.floor(remaining / 60);
+      const seconds = remaining % 60;
+
+      if (minutes > 0) {
+        display.textContent = `${minutes}min ${seconds}s`;
+      } else if (seconds > 0) {
+        display.textContent = `${seconds}s`;
+      } else {
+        display.textContent = "expiré";
+        display.parentElement.parentElement.parentElement.classList.remove(
+          "bg-green-50",
+        );
+        display.parentElement.parentElement.parentElement.classList.add(
+          "bg-red-50",
+        );
+        display.parentElement.querySelector("p").innerHTML =
+          "Le lien de connexion a expiré. Veuillez demander un nouveau lien.";
+      }
+    };
+
+    updateDisplay();
+
+    this.interval = setInterval(() => {
+      remaining--;
+
+      if (remaining < 0) {
+        clearInterval(this.interval);
+      } else {
+        updateDisplay();
+      }
+    }, 1000);
+  },
+
+  destroyed() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  },
+};
+
+export const InfiniteScroll = {
+  mounted() {
+    this.pending = false;
+
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && !this.pending) {
+          this.pending = true;
+          this.pushEvent("load_more", {}, () => {
+            this.pending = false;
+          });
+        }
+      },
+      {
+        root: null,
+        // Trigger 1200px before reaching the marker (approximately 2-3 albums)
+        // Similar to Instagram/Twitter strategy for smooth infinite scroll
+        rootMargin: "1200px",
+        threshold: 0,
+      },
+    );
+
+    this.observer.observe(this.el);
+  },
+
+  destroyed() {
+    if (this.observer) {
+      this.observer.disconnect();
     }
   },
 };

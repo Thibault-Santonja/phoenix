@@ -9,7 +9,7 @@
     /images/photography/street_1600.webp 800w,
     /images/photography/street.webp 1200w"
     src="/images/photography/street_960.webp"
-    alt={gettext("Thibault San Photography - Artistic photography used as background")}
+    alt={gettext("home.background_image_alt")}
     loading="lazy"
     decoding="async"
     class="object-cover fixed top-0 -z-50 min-h-full min-w-full"
@@ -35,14 +35,14 @@
       <div class="my-8 text-balance grid grid-cols-1 gap-4">
         <div>
           <h2 class="text-base font-black mb-2">
-            {gettext("Welcome to my digital workshop")}
+            {gettext("home.welcome")}
           </h2>
 
-          <p>{gettext("A quiet place shaped by hand and heart,")}</p>
-          <p>{gettext("Where light meets ink, Where code meets craft.")}</p>
+          <p>{gettext("home.tagline_1")}</p>
+          <p>{gettext("home.tagline_2")}</p>
         </div>
 
-        <p>{gettext("Here, you can wander through the different threads of my work:")}</p>
+        <p>{gettext("home.introduction")}</p>
 
         <ul class={[
           "grid grid-cols-2 gap-4",
@@ -66,9 +66,9 @@
                   "mr-2"
                 ]}
               />
-              {gettext("Photography")}
+              {gettext("home.photography.title")}
             </h2>
-            <p>{gettext("Fragments of light, stories without words and emotional journey")}</p>
+            <p>{gettext("home.photography.description")}</p>
           </a>
 
           <li class={[
@@ -89,9 +89,7 @@
                 </h2>
                 <p>
                   <%!-- weaving --%>
-                  {gettext(
-                    "Breathing life into history, and kindling a strong friendship community of care, curiosity, and craft"
-                  )}
+                  {gettext("home.amvcc.description")}
                 </p>
               </a>
             </span>
@@ -100,7 +98,7 @@
               href="https://www.amvcc.com/"
               target="_blank"
               class="font-bold hover:font-black"
-              aria-label={gettext("AMVCC page")}
+              aria-label={gettext("home.amvcc.aria_label")}
             >
               AMVCC.com
             </a>
@@ -123,9 +121,9 @@
                   "mr-2"
                 ]}
               />
-              {gettext("Software crafter")}
+              {gettext("home.tech.title")}
             </h2>
-            <p>{gettext("Thoughtful crafted code, shaped with care for people and planet")}</p>
+            <p>{gettext("home.tech.description")}</p>
           </a>
 
           <a
@@ -146,14 +144,14 @@
                   "mr-2"
                 ]}
               />
-              {gettext("The bookshelf")}
+              {gettext("home.bookshelf.title")}
             </h2>
-            <p>{gettext("A curated digital bookshelf")}</p>
-            <p>~ <strong>{gettext("Coming soon")}</strong> ~</p>
+            <p>{gettext("home.bookshelf.description")}</p>
+            <p>~ <strong>{gettext("home.bookshelf.coming_soon")}</strong> ~</p>
           </a>
         </ul>
 
-        <p>{gettext("Take your time, each path tells a part of the story.")}</p>
+        <p>{gettext("home.closing")}</p>
       </div>
     </article>
 
@@ -173,7 +171,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
-              aria-label={gettext("E-mail me")}
+              aria-label={gettext("home.social.email_aria")}
             >
               <.icon
                 name="hero-envelope-solid"
@@ -197,7 +195,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
-              aria-label={gettext("Instagram profile")}
+              aria-label={gettext("home.social.instagram_aria")}
             >
               <svg
                 id="instagram-svg"
@@ -228,7 +226,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
-              aria-label={gettext("Github profile")}
+              aria-label={gettext("home.social.github_aria")}
             >
               <svg
                 id="github-svg"
@@ -256,7 +254,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
-              aria-label={gettext("Linkedin profile")}
+              aria-label={gettext("home.social.linkedin_aria")}
             >
               <svg
                 id="linkedin-svg"
@@ -288,7 +286,7 @@
                 "bg-zinc-200",
                 "p-2"
               ]}
-              aria-label={gettext("Facebook profile")}
+              aria-label={gettext("home.social.facebook_aria")}
             >
               <svg
                 id="facebook-svg"

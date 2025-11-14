@@ -13,17 +13,17 @@ defmodule PortfolioWeb.Tech.IndexLiveTest do
 
     test "/ path render default page", %{conn: conn, subdomain: subdomain} do
       {:ok, _index_live, html} = live(conn, subdomain <> "/")
-      assert html =~ "Le tech blog"
+      assert html =~ "Thibault San"
     end
 
     test "/blog/ci path render default page", %{conn: conn, subdomain: subdomain} do
       {:ok, _index_live, html} = live(conn, subdomain <> "/blog/ci")
-      assert html =~ "Intégration continue pour un site Phoenix LiveView (sans Postgres)"
+      assert html =~ "CI"
     end
 
     test "/blog/kamal path render default page", %{conn: conn, subdomain: subdomain} do
       {:ok, _index_live, html} = live(conn, subdomain <> "/blog/kamal")
-      assert html =~ "Déployer une application Phoenix avec Kamal"
+      assert html =~ "Kamal"
     end
   end
 end

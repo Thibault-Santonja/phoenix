@@ -171,7 +171,7 @@ defmodule PortfolioWeb.Components.Pagination do
         params={@params}
         label={@first_label}
         class={@first_label_class}
-        aria_label={gettext("First page")}
+        aria_label={gettext("mishka.pagination.first_page")}
         disabled={@active <= 1}
       />
 
@@ -182,7 +182,7 @@ defmodule PortfolioWeb.Components.Pagination do
         params={@params}
         label={@previous_label}
         class={@prev_label_class}
-        aria_label={gettext("Previous page")}
+        aria_label={gettext("mishka.pagination.previous_page")}
         disabled={@active <= 1}
       />
 
@@ -221,7 +221,7 @@ defmodule PortfolioWeb.Components.Pagination do
         params={@params}
         label={@next_label}
         class={@next_label_class}
-        aria_label={gettext("Next page")}
+        aria_label={gettext("mishka.pagination.next_page")}
         disabled={@active >= @total}
       />
 
@@ -232,7 +232,7 @@ defmodule PortfolioWeb.Components.Pagination do
         params={@params}
         label={@last_label}
         class={@last_label_class}
-        aria_label={gettext("Last page")}
+        aria_label={gettext("mishka.pagination.last_page")}
         disabled={@active >= @total}
       />
 
@@ -259,9 +259,9 @@ defmodule PortfolioWeb.Components.Pagination do
       aria-current={elem(@page, 1) == elem(@page, 0) && "page"}
       aria-label={
         if elem(@page, 1) == elem(@page, 0) do
-          gettext("Page %{page}, current page", page: elem(@page, 0))
+          gettext("mishka.pagination.current_page", page: elem(@page, 0))
         else
-          gettext("Go to page %{page}", page: elem(@page, 0))
+          gettext("mishka.pagination.go_to_page", page: elem(@page, 0))
         end
       }
       aria-disabled={elem(@page, 0) == elem(@page, 1)}
@@ -1535,7 +1535,7 @@ defmodule PortfolioWeb.Components.Pagination do
 
   defp color_variant(params, _) when is_binary(params), do: params
 
-  defp default_classes() do
+  defp default_classes do
     [
       "w-fit flex [&.grouped-pagination>*]::flex-1 [&:not(.grouped-pagination)]:justify-start [&:not(.grouped-pagination)]:items-center [&:not(.grouped-pagination)]:flex-wrap  [&_.pagination-button.active-pagination-button]:font-medium [&.grouped-pagination]:overflow-hidden"
     ]

@@ -8,29 +8,45 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
 
   Key features:
   - Dynamic display of albums by year from database.
+  - Lazy loading with infinite scroll for optimal performance.
   - Year highlight transitions on scroll using IntersectionObserver.
   - Translated album titles and descriptions using Gettext.
   - Responsive design with Tailwind CSS grid layout.
   - Enhanced visual experience with custom CSS and animations.
-  - Lightweight JavaScript hook (`YearTrigger`) for animated year switching.
+  - Lightweight JavaScript hooks (`YearTrigger`, `InfiniteScroll`) for UX.
   """
 
   use PortfolioWeb, :live_view
 
   alias Portfolio.Photography
 
+  @albums_per_page Application.compile_env(:portfolio, [:timeline, :albums_per_page], 20)
+
   @impl true
   def mount(_, session, socket) do
     locale = session["locale"] || "fr"
     Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
-    # Charger les albums depuis la DB
-    db_albums = Photography.list_published_albums_by_year(preload: [:photos])
+    # Load list of years for navigation (lightweight query)
+    years = Photography.list_published_years()
 
-    # Convertir les albums DB au format attendu par le template
-    timeline_data = convert_albums_to_timeline_format(db_albums)
+    socket =
+      socket
+      |> assign(:years, years)
+      |> assign(:page, 1)
+      |> assign(:has_more, true)
+      |> assign(:albums_loaded, 0)
+      |> stream(:albums, [])
 
-    {:ok, assign(socket, :timeline_data, timeline_data)}
+    # Load initial page of albums if connected
+    socket =
+      if connected?(socket) do
+        load_albums(socket, 1)
+      else
+        socket
+      end
+
+    {:ok, socket}
   end
 
   @impl true
@@ -43,64 +59,75 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     {:noreply, push_event(socket, "change_locale", %{"locale" => locale})}
   end
 
-  defp apply_action(socket, :index, %{"chapter" => chapter}) do
-    timeline_data = socket.assigns[:timeline_data] || %{}
-    data = filter_data(timeline_data, chapter)
+  @impl true
+  def handle_event("load_more", _, socket) do
+    if socket.assigns.has_more do
+      next_page = socket.assigns.page + 1
+      {:noreply, load_albums(socket, next_page)}
+    else
+      {:noreply, socket}
+    end
+  end
 
+  defp apply_action(socket, :index, %{"chapter" => chapter}) do
     socket
     |> assign(:chapter, chapter)
-    |> assign(:data, data)
-    |> assign(years: data |> Map.keys() |> Enum.sort(:desc))
     |> assign(:page_title, build_title(chapter))
+    |> assign(:page, 1)
+    |> assign(:has_more, true)
+    |> assign(:albums_loaded, 0)
+    |> stream(:albums, [], reset: true)
+    |> load_albums(1)
   end
 
   defp apply_action(socket, :index, _params) do
-    timeline_data = socket.assigns[:timeline_data] || %{}
-
     socket
     |> assign(:chapter, nil)
-    |> assign(:data, timeline_data)
-    |> assign(years: timeline_data |> Map.keys() |> Enum.sort(:desc))
-    |> assign(:page_title, gettext("Photographies timeline gallery"))
+    |> assign(:page_title, gettext("photography.timeline.title"))
   end
 
   defp build_title(chapter) do
-    gettext("Photographies gallery - ") <> String.capitalize(chapter)
+    gettext("photography.timeline.gallery_prefix") <> String.capitalize(chapter)
   end
 
-  defp filter_data(data, chapter) do
-    data
-    |> Enum.map(fn {k, v} -> {k, Enum.filter(v, &(&1.type == chapter))} end)
-    |> Enum.filter(fn {_k, v} -> not Enum.empty?(v) end)
-    |> Map.new()
-  end
+  # Load albums with pagination
+  defp load_albums(socket, page) do
+    chapter_filter = Map.get(socket.assigns, :chapter)
+    offset = (page - 1) * @albums_per_page
 
-  # Convertit les albums de la DB au format attendu par le template
-  defp convert_albums_to_timeline_format(albums_by_year) do
-    albums_by_year
-    |> Enum.map(fn {year, albums} ->
-      timeline_albums = Enum.map(albums, &album_to_timeline_item/1)
-      {year, timeline_albums}
-    end)
-    |> Map.new()
-  end
+    opts = [
+      published: true,
+      preload: [:photos],
+      limit: @albums_per_page + 1,
+      offset: offset
+    ]
 
-  defp album_to_timeline_item(album) do
-    # Utiliser la première photo comme cover photo
-    cover_photo = List.first(album.photos)
+    opts =
+      if chapter_filter do
+        Keyword.put(opts, :type, String.to_existing_atom(chapter_filter))
+      else
+        opts
+      end
 
-    # Construire la chaîne de date avec plage si date_fin existe
-    date_str = format_date_range(album.date_prise_vue, album.date_fin_prise_vue)
+    albums = Photography.list_albums(opts)
 
-    %{
-      type: to_string(album.type),
-      date: date_str,
-      title: album.title,
-      description: album.description || "",
-      photography: if(cover_photo, do: cover_photo.file_path, else: nil),
-      url: "/gallery/#{album.slug}",
-      reference_link: album.reference_link
-    }
+    # Check if there are more albums to load
+    {albums_to_show, has_more} =
+      if length(albums) > @albums_per_page do
+        {Enum.take(albums, @albums_per_page), true}
+      else
+        {albums, false}
+      end
+
+    # Track total albums loaded for empty state
+    current_count = socket.assigns[:albums_loaded] || 0
+    new_count = current_count + length(albums_to_show)
+
+    socket
+    |> assign(:page, page)
+    |> assign(:has_more, has_more)
+    |> assign(:albums_loaded, new_count)
+    |> stream(:albums, albums_to_show)
   end
 
   # Formate une plage de dates pour l'affichage

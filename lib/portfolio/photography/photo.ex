@@ -72,6 +72,16 @@ defmodule Portfolio.Photography.Photo do
           exif_data: map(),
           variants: map(),
           processing_status: String.t(),
+          # EXIF metadata fields (ADR-011 Phase 3)
+          captured_at: DateTime.t() | nil,
+          camera: String.t() | nil,
+          lens: String.t() | nil,
+          iso: integer() | nil,
+          aperture: String.t() | nil,
+          focal_length: String.t() | nil,
+          shutter_speed: String.t() | nil,
+          gps_latitude: float() | nil,
+          gps_longitude: float() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil
         }
@@ -92,6 +102,17 @@ defmodule Portfolio.Photography.Photo do
     field :exif_data, :map, default: %{}
     field :variants, :map, default: %{}
     field :processing_status, :string, default: "pending"
+
+    # EXIF metadata fields (ADR-011 Phase 3)
+    field :captured_at, :utc_datetime
+    field :camera, :string
+    field :lens, :string
+    field :iso, :integer
+    field :aperture, :string
+    field :focal_length, :string
+    field :shutter_speed, :string
+    field :gps_latitude, :float
+    field :gps_longitude, :float
 
     timestamps(type: :utc_datetime)
   end
@@ -144,7 +165,17 @@ defmodule Portfolio.Photography.Photo do
       :mime_type,
       :exif_data,
       :variants,
-      :processing_status
+      :processing_status,
+      # EXIF metadata fields
+      :captured_at,
+      :camera,
+      :lens,
+      :iso,
+      :aperture,
+      :focal_length,
+      :shutter_speed,
+      :gps_latitude,
+      :gps_longitude
     ])
     |> validate_required([:album_id, :original_filename, :file_path])
     |> validate_length(:title, max: 200)

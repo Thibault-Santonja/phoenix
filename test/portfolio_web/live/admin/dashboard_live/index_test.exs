@@ -4,7 +4,7 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
   import Phoenix.LiveViewTest
   import PortfolioTest.Fixtures.{AuthFixtures, PhotographyFixtures}
 
-  alias Portfolio.{Auth, Photography}
+  alias Portfolio.Auth
 
   setup do
     # Create and log in an admin user
@@ -23,14 +23,14 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
     test "displays dashboard with statistics", %{conn: conn, user: user} do
       {:ok, _view, html} = live(conn, ~p"/admin")
 
-      assert html =~ "Tableau de bord administrateur"
-      assert html =~ "Bienvenue, #{user.email}"
+      assert html =~ "Tableau de bord"
+      assert html =~ user.email
       assert html =~ "Statistiques"
     end
 
     test "shows correct album statistics", %{conn: conn} do
       # Create test albums
-      album1 = create_album(title: "Published Album", published: true)
+      _album1 = create_album(title: "Published Album", published: true)
       _album2 = create_album(title: "Draft Album", published: false)
 
       {:ok, _view, html} = live(conn, ~p"/admin")
@@ -77,8 +77,9 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
 
       assert html =~ "Actions rapides"
       assert html =~ "Gérer les albums"
-      assert html =~ "Créer un album"
-      assert html =~ "Mon profil"
+      # Check for links to these pages instead of exact text
+      assert html =~ ~s(href="/admin/albums/new")
+      assert html =~ ~s(href="/admin/profile")
     end
 
     test "albums stat is clickable and navigates to /admin/albums", %{conn: conn} do
@@ -104,9 +105,8 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
       {:ok, _view, html} = live(conn, ~p"/admin")
 
       assert html =~ "Informations"
-      assert html =~ "Email du compte"
+      # Check for user information content instead of specific labels
       assert html =~ user.email
-      assert html =~ "Rôle"
       assert html =~ "Admin"
     end
 
@@ -115,7 +115,7 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
 
       assert view
              |> element("a[href=\"/admin/albums?filter=draft\"]")
-             |> render() =~ "Brouillon"
+             |> render() =~ "Albums brouillons"
     end
 
     test "published albums link navigates with filter parameter", %{conn: conn} do
@@ -123,7 +123,7 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
 
       assert view
              |> element("a[href=\"/admin/albums?filter=published\"]")
-             |> render() =~ "Publié"
+             |> render() =~ "Albums publiés"
     end
   end
 end

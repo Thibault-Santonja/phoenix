@@ -40,18 +40,38 @@ config :portfolio, PortfolioWeb.Gettext, locales: ~w(en fr)
 
 # Configure session settings
 config :portfolio, :session,
-  # Session cookie max age in seconds (default: 24 hours)
+  # Duree de vie maximale du cookie de session cote navigateur (24 heures)
+  # Note: La session expire reellement selon auth.session_expiration_seconds (2h)
   max_age_seconds: 24 * 60 * 60
 
 # Configure authentication
 config :portfolio, :auth,
-  # Session inactivity timeout in seconds (default: 2 hours)
-  session_expiration_seconds: 2 * 60 * 60
+  # Duree d'inactivite maximale avant expiration de session (2 heures)
+  # Une session inactive > 2h est supprimee et l'utilisateur doit se reconnecter
+  # Nettoyage automatique par SessionCleanerWorker toutes les 15 minutes
+  session_expiration_seconds: 2 * 60 * 60,
+  # Throttle des mises a jour de last_activity_at pour reduire la charge DB (5 minutes)
+  # last_activity_at n'est mis a jour que si la derniere MAJ remonte a > 5 minutes
+  # Impact: reduction ~95% des ecritures DB, marge acceptable de 5 min sur 2h d'expiration
+  activity_update_throttle_seconds: 5 * 60,
+  # Duree de vie d'un magic link (15 minutes)
+  # Un magic link expire 15 minutes apres sa creation
+  # Nettoyage automatique par MagicLinkCleanerWorker toutes les heures
+  magic_link_ttl_minutes: 15,
+  # Duree de vie maximale d'une session (30 jours)
+  # Meme si active, une session expire apres 30 jours (renouvellement requis)
+  # Utilise pour les evenements et metadata (non enforce en DB actuellement)
+  session_max_age_days: 30
 
 # Configure admin interface
 config :portfolio, :admin,
   # Number of albums to display per page in admin interface
   albums_per_page: 30
+
+# Configure public timeline
+config :portfolio, :timeline,
+  # Number of albums to load per page in public timeline (lazy loading)
+  albums_per_page: 20
 
 # Configure file uploads
 config :portfolio, :uploads,
@@ -63,27 +83,46 @@ config :portfolio, :uploads,
 config :portfolio, :file_storage, backend: Portfolio.Photography.Storage.LocalStorage
 
 # Configure image variants for processing
+# Aligned with Tailwind CSS breakpoints (ADR-011 Phase 4)
+# - thumbnail: 400px WebP (Tailwind xs/sm range, cards/previews)
+# - small: 768px WebP (Tailwind md breakpoint, tablets)
+# - medium: 1280px WebP (Tailwind xl breakpoint, desktop)
+# - large: 1920px AVIF (Full HD, fullscreen display, superior quality)
+# Quality increases with size (75 -> 80 -> 85 -> 90) for professional portfolio
+# AVIF for large variant: 30-40% better compression + superior perceptual quality
 config :portfolio, :image_variants,
-  thumbnail: [width: 320, quality: 75],
-  small: [width: 640, quality: 80],
-  medium: [width: 1024, quality: 85],
-  large: [width: 1920, quality: 85]
+  thumbnail: [width: 400, quality: 75, format: :webp, effort: 4],
+  small: [width: 768, quality: 80, format: :webp, effort: 4],
+  medium: [width: 1280, quality: 85, format: :webp, effort: 4],
+  large: [width: 1920, quality: 90, format: :avif, effort: 6]
 
 # Configure photo storage adapter
 config :portfolio, :photo_storage_adapter, Portfolio.Photography.Storage.LocalStorage
 
 # Configure Oban image processing queue
-config :portfolio, :oban_image_processing, limit: 3
+config :portfolio, :oban_image_processing, limit: 2
 
-# Configure Oban
+# Configure Oban (job processing)
 config :portfolio, Oban,
   engine: Oban.Engines.Basic,
   queues: [
     default: 10,
-    image_processing: 3
+    image_processing: 2,
+    exif_extraction: 5
   ],
   plugins: [
-    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7}
+    # Pruner: Supprime les jobs completes/annules de plus de 7 jours
+    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7},
+    # Cron: Planification des taches recurrentes de nettoyage
+    {Oban.Plugins.Cron,
+     crontab: [
+       # MagicLinkCleaner: Supprime les magic links expires (expires_at < now)
+       # Frequence: Toutes les heures ("0 * * * *" = minute 0 de chaque heure)
+       {"0 * * * *", Portfolio.Workers.MagicLinkCleanerWorker},
+       # SessionCleaner: Supprime les sessions inactives (last_activity_at < now - 2h)
+       # Frequence: Toutes les 15 minutes ("*/15 * * * *" = minutes 0, 15, 30, 45)
+       {"*/15 * * * *", Portfolio.Workers.SessionCleanerWorker}
+     ]}
   ],
   repo: Portfolio.Repo
 
@@ -138,15 +177,57 @@ config :logger, :console,
     :requested_at,
     :expires_at,
     :verified_at,
+    :created_by_id,
+    :performed_by_id,
+    :resource_type,
+    :resource_id,
+    :captured_at,
+    :camera,
     # Storage metadata
     :source,
     :destination,
     :directory,
+    :photo_dir,
+    :source_path,
+    :output_base_path,
+    :expected_base,
+    :attempted_path,
     # Common metadata
     :result,
     :reason,
     :error,
-    :duration_ms
+    :duration_ms,
+    # Image processing metadata
+    :variant,
+    :width,
+    :height,
+    :quality,
+    :format,
+    :effort,
+    :output_path,
+    :path,
+    :variant_count,
+    :attempt,
+    :max_attempts,
+    :image_id,
+    # Validation metadata
+    :expected_hash,
+    :actual_hash,
+    :errors,
+    :fields,
+    :paths,
+    # Rate limiting metadata
+    :action,
+    :identifier,
+    :retry_after_seconds,
+    :retry_after_ms,
+    :remaining,
+    :ip,
+    :user_agent,
+    :referer,
+    :potential_bot,
+    # CDN metadata
+    :message
   ]
 
 # Use Jason for JSON parsing in Phoenix

@@ -12,6 +12,8 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
   use Oban.Testing, repo: Portfolio.Repo
 
   alias Portfolio.Workers.ImageVariantWorker
+  alias Vix.Vips.Image
+  alias Vix.Vips.Operation
 
   setup do
     # Configure test storage path
@@ -22,7 +24,8 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
     File.mkdir_p!(test_base_path)
 
     on_exit(fn ->
-      File.rm_rf!(test_base_path)
+      # Use non-raising version to avoid errors if directory is already cleaned up
+      File.rm_rf(test_base_path)
     end)
 
     %{test_base_path: test_base_path}
@@ -48,7 +51,8 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
       assert File.exists?(Path.join(photo_dir, "thumbnail.webp"))
       assert File.exists?(Path.join(photo_dir, "small.webp"))
       assert File.exists?(Path.join(photo_dir, "medium.webp"))
-      assert File.exists?(Path.join(photo_dir, "large.webp"))
+      # Large variant is now AVIF (Issue #17)
+      assert File.exists?(Path.join(photo_dir, "large.avif"))
     end
 
     test "emits telemetry events on success", %{test_base_path: test_base_path} do
@@ -195,7 +199,8 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
         assert File.exists?(Path.join(photo_dir, "thumbnail.webp"))
         assert File.exists?(Path.join(photo_dir, "small.webp"))
         assert File.exists?(Path.join(photo_dir, "medium.webp"))
-        assert File.exists?(Path.join(photo_dir, "large.webp"))
+        # Large variant is now AVIF (Issue #17)
+        assert File.exists?(Path.join(photo_dir, "large.avif"))
       end
     end
   end
@@ -233,8 +238,8 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
 
       # Create a larger test image (1920x1080)
       original_path = Path.join(photo_dir, "original.jpg")
-      {:ok, img} = Vix.Vips.Operation.black(1920, 1080)
-      Vix.Vips.Image.write_to_file(img, original_path)
+      {:ok, img} = Operation.black(1920, 1080)
+      Image.write_to_file(img, original_path)
 
       {time_micros, result} =
         :timer.tc(fn ->
@@ -244,6 +249,7 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
       time_seconds = time_micros / 1_000_000
 
       assert result == :ok
+
       assert time_seconds < 10.0,
              "Processing took #{time_seconds}s, expected < 10s"
     end
@@ -279,7 +285,7 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
 
   defp create_test_image(path) do
     # Create a simple test image
-    {:ok, img} = Vix.Vips.Operation.black(100, 100)
-    Vix.Vips.Image.write_to_file(img, path)
+    {:ok, img} = Operation.black(100, 100)
+    Image.write_to_file(img, path)
   end
 end

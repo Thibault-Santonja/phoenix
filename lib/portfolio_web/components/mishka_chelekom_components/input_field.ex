@@ -24,6 +24,9 @@ defmodule PortfolioWeb.Components.InputField do
   """
 
   use Phoenix.Component
+
+  alias Phoenix.HTML.Form
+
   import PortfolioWeb.Components.Icon, only: [icon: 1]
 
   @doc """
@@ -69,7 +72,7 @@ defmodule PortfolioWeb.Components.InputField do
   attr :errors, :list, default: [], doc: "List of error messages to be displayed"
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
-  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :options, :list, doc: "the options to pass to Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
   attr :rest, :global,
@@ -92,7 +95,7 @@ defmodule PortfolioWeb.Components.InputField do
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+        Form.normalize_value("checkbox", assigns[:value])
       end)
 
     ~H"""
@@ -128,7 +131,7 @@ defmodule PortfolioWeb.Components.InputField do
         {@rest}
       >
         <option :if={@prompt} value="">{@prompt}</option>
-        {Phoenix.HTML.Form.options_for_select(@options, @value)}
+        {Form.options_for_select(@options, @value)}
       </select>
 
       <.error :for={msg <- @errors}>{msg}</.error>
@@ -149,7 +152,7 @@ defmodule PortfolioWeb.Components.InputField do
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
-      >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+      >{Form.normalize_value("textarea", @value)}</textarea>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -165,7 +168,7 @@ defmodule PortfolioWeb.Components.InputField do
         type={@type}
         name={@name}
         id={@id}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        value={Form.normalize_value(@type, @value)}
         class={[
           "mt-2 block w-full rounded-lg text-zinc-900 dark:text-zinc-200 focus:ring-0 sm:text-sm sm:leading-6",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",

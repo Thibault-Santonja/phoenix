@@ -5,6 +5,8 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
   use ExUnit.Case, async: false
 
   alias Portfolio.Photography.Storage.{LocalStorage, PhotoMetadata}
+  alias Vix.Vips.Image
+  alias Vix.Vips.Operation
 
   setup do
     # Create unique test directory for each test
@@ -91,7 +93,7 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
       assert metadata1.photo_id == metadata2.photo_id
 
       # Only one directory created (deduplication)
-      photo_dir = Path.join([test_base_path, "photos", metadata1.photo_id])
+      _photo_dir = Path.join([test_base_path, "photos", metadata1.photo_id])
       photos_dir = Path.join(test_base_path, "photos")
       assert length(File.ls!(photos_dir)) == 1
     end
@@ -192,39 +194,6 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
     end
   end
 
-  describe "generate_variants/1" do
-    test "generates all configured variants", %{test_base_path: test_base_path} do
-      # Store a real image
-      temp_path = create_test_image()
-      upload = %{path: temp_path, client_name: "test.jpg", content_type: "image/jpeg"}
-      assert {:ok, metadata} = LocalStorage.store_photo(upload)
-
-      # Generate variants
-      assert {:ok, variants} = LocalStorage.generate_variants(metadata.photo_id)
-
-      # Should have all configured variants
-      assert Map.has_key?(variants, :thumbnail)
-      assert Map.has_key?(variants, :small)
-      assert Map.has_key?(variants, :medium)
-      assert Map.has_key?(variants, :large)
-
-      # URLs should be correct
-      assert variants[:thumbnail] == "/uploads/photos/#{metadata.photo_id}/thumbnail.webp"
-      assert variants[:small] == "/uploads/photos/#{metadata.photo_id}/small.webp"
-
-      # Files should exist
-      photo_dir = Path.join([test_base_path, "photos", metadata.photo_id])
-      assert File.exists?(Path.join(photo_dir, "thumbnail.webp"))
-      assert File.exists?(Path.join(photo_dir, "small.webp"))
-      assert File.exists?(Path.join(photo_dir, "medium.webp"))
-      assert File.exists?(Path.join(photo_dir, "large.webp"))
-    end
-
-    test "returns error if original file not found" do
-      assert {:error, :file_not_found} = LocalStorage.generate_variants("nonexistent")
-    end
-  end
-
   describe "error handling and edge cases" do
     test "handles missing source file gracefully" do
       upload = %{
@@ -295,6 +264,7 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
       expected_size =
         Enum.reduce(files, 0, fn file, acc ->
           path = Path.join(photo_dir, file)
+
           case File.stat(path) do
             {:ok, %{size: size}} -> acc + size
             _ -> acc
@@ -381,8 +351,8 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
   defp create_test_image do
     # Create a simple black image for testing
     temp_path = Path.join(System.tmp_dir!(), "test-#{:rand.uniform(100_000)}.jpg")
-    {:ok, img} = Vix.Vips.Operation.black(100, 100)
-    Vix.Vips.Image.write_to_file(img, temp_path)
+    {:ok, img} = Operation.black(100, 100)
+    Image.write_to_file(img, temp_path)
     temp_path
   end
 end

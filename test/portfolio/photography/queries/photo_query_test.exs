@@ -105,7 +105,7 @@ defmodule Portfolio.Photography.Queries.PhotoQueryTest do
   describe "with_album/1" do
     test "preloads album association" do
       album = create_album()
-      photo = create_photo(album: album)
+      _photo = create_photo(album: album)
 
       [loaded_photo] =
         PhotoQuery.base()
@@ -121,7 +121,7 @@ defmodule Portfolio.Photography.Queries.PhotoQueryTest do
   describe "with_preload/2" do
     test "preloads single association" do
       album = create_album()
-      photo = create_photo(album: album)
+      _photo = create_photo(album: album)
 
       [loaded_photo] =
         PhotoQuery.base()
@@ -134,7 +134,7 @@ defmodule Portfolio.Photography.Queries.PhotoQueryTest do
 
     test "preloads multiple associations" do
       album = create_album()
-      photo = create_photo(album: album)
+      _photo = create_photo(album: album)
 
       [loaded_photo] =
         PhotoQuery.base()

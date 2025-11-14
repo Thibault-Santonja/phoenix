@@ -132,7 +132,7 @@ defmodule PortfolioWeb.Components.Sidebar do
             data-original-width={size_class(@size)}
             id={"toggle-button-#{@id}"}
             data-sidebar-selector={"##{@id}"}
-            aria-label={gettext("Minimize sidebar")}
+            aria-label={gettext("mishka.sidebar.minimize")}
             class={[
               "size-8 flex items-center justify-center leading-5",
               "rounded focus:outline-none bg-gray-500/10 border",
@@ -141,7 +141,7 @@ defmodule PortfolioWeb.Components.Sidebar do
             ]}
           >
             <.icon name="hero-chevron-right" class={["minimize-icon size-5", @minimize_icon_class]} />
-            <span class="sr-only">{gettext("Minimize sidebar")}</span>
+            <span class="sr-only">{gettext("mishka.sidebar.minimize")}</span>
           </button>
         </div>
         <div class={[
@@ -151,7 +151,7 @@ defmodule PortfolioWeb.Components.Sidebar do
           <button
             type="button"
             class={["dismiss-sidebar-button focus:outline-none", @close_button_class]}
-            aria-label={gettext("Close sidebar")}
+            aria-label={gettext("mishka.sidebar.close")}
             phx-click={JS.exec(@on_hide, "phx-remove", to: "##{@id}")}
           >
             <.icon name="hero-x-mark" class={@close_icon_class} />

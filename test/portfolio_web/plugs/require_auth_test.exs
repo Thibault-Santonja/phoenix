@@ -66,10 +66,13 @@ defmodule PortfolioWeb.Plugs.RequireAuthTest do
       user = insert_user()
       {:ok, session} = Auth.create_session(user)
 
-      old_activity = session.last_activity_at
+      # Modifier la session pour avoir une activité ancienne (> 5 minutes)
+      # pour dépasser le throttling et forcer la mise à jour
+      old_activity = DateTime.add(DateTime.utc_now(), -6, :minute) |> DateTime.truncate(:second)
 
-      # Attendre un instant pour que le timestamp soit différent
-      Process.sleep(1000)
+      session
+      |> Ecto.Changeset.change(%{last_activity_at: old_activity})
+      |> Repo.update!()
 
       conn
       |> init_test_session(%{session_token: session.token})
@@ -78,6 +81,60 @@ defmodule PortfolioWeb.Plugs.RequireAuthTest do
       # Vérifier que l'activité a été mise à jour
       updated_session = Repo.get!(Portfolio.Auth.UserSession, session.id)
       assert DateTime.compare(updated_session.last_activity_at, old_activity) == :gt
+    end
+
+    test "reloads user with fresh role data on each request", %{conn: conn} do
+      user = insert_user(%{role: :user})
+      {:ok, session} = Auth.create_session(user)
+
+      # Première requête : le user doit avoir le rôle :user
+      conn1 =
+        conn
+        |> init_test_session(%{session_token: session.token})
+        |> RequireAuth.call(:fetch_current_user)
+
+      assert conn1.assigns.current_user.role == :user
+
+      # Modifier le rôle de l'utilisateur en base de données
+      {:ok, _updated_user} = Auth.update_user_as_admin(user, %{role: :admin})
+
+      # Deuxième requête : le user doit avoir le nouveau rôle :admin
+      # (même si la session est en cache)
+      conn2 =
+        build_conn()
+        |> init_test_session(%{session_token: session.token})
+        |> RequireAuth.call(:fetch_current_user)
+
+      assert conn2.assigns.current_user.role == :admin
+    end
+
+    test "fresh role data allows access to admin routes immediately", %{conn: conn} do
+      user = insert_user(%{role: :user})
+      {:ok, session} = Auth.create_session(user)
+
+      # Première requête : le user ne peut pas accéder aux routes admin
+      conn1 =
+        conn
+        |> init_test_session(%{session_token: session.token})
+        |> fetch_flash()
+        |> RequireAuth.call(:fetch_current_user)
+        |> RequireAuth.call(:require_admin_role)
+
+      assert conn1.halted
+      assert redirected_to(conn1) == "/"
+
+      # Promouvoir l'utilisateur en admin
+      {:ok, _updated_user} = Auth.update_user_as_admin(user, %{role: :admin})
+
+      # Deuxième requête : le user peut maintenant accéder aux routes admin
+      conn2 =
+        build_conn()
+        |> init_test_session(%{session_token: session.token})
+        |> fetch_flash()
+        |> RequireAuth.call(:fetch_current_user)
+        |> RequireAuth.call(:require_admin_role)
+
+      refute conn2.halted
     end
   end
 
@@ -132,19 +189,6 @@ defmodule PortfolioWeb.Plugs.RequireAuthTest do
       refute conn.halted
     end
 
-    test "allows request when user has superadmin role", %{conn: conn} do
-      user = insert_user(%{role: :superadmin})
-
-      conn =
-        conn
-        |> init_test_session(%{})
-        |> fetch_flash()
-        |> assign(:current_user, user)
-        |> RequireAuth.call(:require_admin_role)
-
-      refute conn.halted
-    end
-
     test "redirects to / when current_user is nil", %{conn: conn} do
       conn =
         conn
@@ -179,8 +223,11 @@ defmodule PortfolioWeb.Plugs.RequireAuthTest do
       role: :admin
     }
 
-    %User{}
-    |> User.registration_changeset(Map.merge(default_attrs, attrs))
-    |> Repo.insert!()
+    merged_attrs = Map.merge(default_attrs, attrs)
+
+    # Use bootstrap_admin_changeset for tests
+    changeset = %User{} |> User.bootstrap_admin_changeset(merged_attrs)
+
+    Repo.insert!(changeset)
   end
 end

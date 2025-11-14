@@ -1,11 +1,11 @@
 defmodule Portfolio.AuthTest do
-  use Portfolio.DataCase
+  use Portfolio.DataCase, async: false
 
   alias Portfolio.Auth
   alias Portfolio.Auth.{MagicLink, User, UserSession}
 
   setup do
-    # Reset rate limiting before each test to avoid cross-contamination
+    # Tests that use rate limiting need async: false to avoid state conflicts
     :ok
   end
 
@@ -39,12 +39,12 @@ defmodule Portfolio.AuthTest do
   describe "get_user/1" do
     test "returns user when ID is valid" do
       user = insert_user()
-      found_user = Auth.get_user(user.id)
+      assert {:ok, found_user} = Auth.get_user(user.id)
       assert found_user.id == user.id
     end
 
-    test "returns nil when ID does not exist" do
-      assert Auth.get_user(Ecto.UUID.generate()) == nil
+    test "returns error when ID does not exist" do
+      assert Auth.get_user(Ecto.UUID.generate()) == {:error, :not_found}
     end
   end
 
@@ -89,7 +89,7 @@ defmodule Portfolio.AuthTest do
       end
 
       # 6th request should be rate limited
-      assert {:error, :rate_limit_exceeded} = Auth.request_magic_link(email)
+      assert {:error, {:rate_limit_exceeded, _retry_after_ms}} = Auth.request_magic_link(email)
     end
 
     test "rate limit is per email address" do
@@ -101,7 +101,7 @@ defmodule Portfolio.AuthTest do
         assert {:ok, _} = Auth.request_magic_link(email1)
       end
 
-      assert {:error, :rate_limit_exceeded} = Auth.request_magic_link(email1)
+      assert {:error, {:rate_limit_exceeded, _retry_after_ms}} = Auth.request_magic_link(email1)
 
       # User 2 should still be able to request
       assert {:ok, _magic_link} = Auth.request_magic_link(email2)
@@ -213,10 +213,18 @@ defmodule Portfolio.AuthTest do
     test "returns nil and deletes expired session" do
       user = insert_user()
 
-      session =
-        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -2, :hour))
+      # Generate raw token before it gets hashed
+      raw_token = :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false)
 
-      assert Auth.get_session_by_token(session.token) == nil
+      session =
+        insert_session(user,
+          token: raw_token,
+          last_activity_at: DateTime.add(DateTime.utc_now(), -2, :hour)
+        )
+
+      # Use raw token (get_session_by_token will hash it to match DB)
+      assert Auth.get_session_by_token(raw_token) == nil
+      # Session should be deleted due to expiration
       assert Repo.get(UserSession, session.id) == nil
     end
   end
@@ -224,10 +232,13 @@ defmodule Portfolio.AuthTest do
   describe "update_session_activity/1" do
     test "updates last_activity_at" do
       user = insert_user()
-      {:ok, session} = Auth.create_session(user)
 
-      # Wait a bit
-      :timer.sleep(1000)
+      # Create session with old activity timestamp to bypass throttling
+      # (default throttle is 5 minutes, so we go back 6 minutes)
+      old_activity = DateTime.add(DateTime.utc_now(), -6, :minute) |> DateTime.truncate(:second)
+
+      raw_token = :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false)
+      session = insert_session(user, token: raw_token, last_activity_at: old_activity)
 
       {:ok, updated_session} = Auth.update_session_activity(session)
 
@@ -302,12 +313,13 @@ defmodule Portfolio.AuthTest do
     |> Repo.insert!()
   end
 
-  defp insert_magic_link(user, attrs \\ %{}) do
+  defp insert_magic_link(user, attrs) do
     attrs = Enum.into(attrs, %{})
 
     default_attrs = %{
       user_id: user.id,
       token: :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false),
+      short_code: generate_short_code(),
       expires_at: DateTime.add(DateTime.utc_now(), 15, :minute) |> DateTime.truncate(:second)
     }
 
@@ -316,7 +328,14 @@ defmodule Portfolio.AuthTest do
     |> Repo.insert!()
   end
 
-  defp insert_session(user, attrs \\ %{}) do
+  defp generate_short_code do
+    :crypto.strong_rand_bytes(4)
+    |> Base.encode32(padding: false)
+    |> String.slice(0..5)
+    |> String.upcase()
+  end
+
+  defp insert_session(user, attrs) do
     attrs = Enum.into(attrs, %{})
 
     default_attrs = %{

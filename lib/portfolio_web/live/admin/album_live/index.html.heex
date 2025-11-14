@@ -7,9 +7,9 @@
 
   <div class="sm:flex sm:items-center sm:justify-between">
     <div class="sm:flex-auto">
-      <h1 class="text-2xl font-semibold text-gray-900">Albums</h1>
+      <h1 class="text-2xl font-semibold text-gray-900">{gettext("admin.albums.index.title")}</h1>
       <p class="mt-2 text-sm text-gray-700">
-        Liste de tous les albums photo du portfolio
+        {gettext("admin.albums.index.subtitle")}
       </p>
     </div>
     <div class="mt-4 sm:mt-0 sm:ml-16">
@@ -17,14 +17,16 @@
         navigate={~p"/admin/albums/new"}
         class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
       >
-        Nouvel album
+        {gettext("admin.albums.index.new_album")}
       </.link>
     </div>
   </div>
   
 <!-- Filtres -->
   <div class="mt-6 flex items-center gap-2">
-    <span class="text-sm font-medium text-gray-700">Filtrer :</span>
+    <span class="text-sm font-medium text-gray-700">
+      {gettext("admin.albums.index.filter_label")}
+    </span>
     <.link
       navigate={~p"/admin/albums"}
       class={[
@@ -36,7 +38,7 @@
         end
       ]}
     >
-      Tous
+      {gettext("admin.albums.index.filter_all")}
       <span class="ml-1.5 text-xs">
         ({@count_stats.all})
       </span>
@@ -52,7 +54,7 @@
         end
       ]}
     >
-      Publiés
+      {gettext("admin.albums.index.filter_published")}
       <span class="ml-1.5 text-xs">
         ({@count_stats.published})
       </span>
@@ -68,7 +70,7 @@
         end
       ]}
     >
-      Brouillons
+      {gettext("admin.albums.index.filter_drafts")}
       <span class="ml-1.5 text-xs">
         ({@count_stats.draft})
       </span>
@@ -91,16 +93,18 @@
           d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
         />
       </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun album</h3>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">
+        {gettext("admin.albums.index.no_albums")}
+      </h3>
       <p class="mt-1 text-sm text-gray-500">
-        Commencez par créer un nouvel album.
+        {gettext("admin.albums.index.no_albums_hint")}
       </p>
       <div class="mt-6">
         <.link
           navigate={~p"/admin/albums/new"}
           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Créer un album
+          {gettext("admin.albums.index.create_album")}
         </.link>
       </div>
     </div>
@@ -118,7 +122,7 @@
                   >
                     <.sortable_header
                       column="title"
-                      label="Titre"
+                      label={gettext("admin.albums.index.column_title")}
                       current_sort_by={@sort_by}
                       current_sort_order={@sort_order}
                       filter={@filter}
@@ -130,7 +134,7 @@
                   >
                     <.sortable_header
                       column="type"
-                      label="Type"
+                      label={gettext("admin.albums.index.column_type")}
                       current_sort_by={@sort_by}
                       current_sort_order={@sort_order}
                       filter={@filter}
@@ -142,7 +146,7 @@
                   >
                     <.sortable_header
                       column="date"
-                      label="Date"
+                      label={gettext("admin.albums.index.column_date")}
                       current_sort_by={@sort_by}
                       current_sort_order={@sort_order}
                       filter={@filter}
@@ -154,7 +158,7 @@
                   >
                     <.sortable_header
                       column="photos"
-                      label="Photos"
+                      label={gettext("admin.albums.index.column_photos")}
                       current_sort_by={@sort_by}
                       current_sort_order={@sort_order}
                       filter={@filter}
@@ -166,14 +170,14 @@
                   >
                     <.sortable_header
                       column="published"
-                      label="Publié"
+                      label={gettext("admin.albums.index.column_published")}
                       current_sort_by={@sort_by}
                       current_sort_order={@sort_order}
                       filter={@filter}
                     />
                   </th>
                   <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                    <span class="sr-only">Actions</span>
+                    <span class="sr-only">{gettext("admin.albums.index.actions")}</span>
                   </th>
                 </tr>
               </thead>
@@ -220,17 +224,21 @@
                         navigate={~p"/admin/albums/#{album.id}/edit"}
                         class="text-indigo-600 hover:text-indigo-900 mr-4"
                       >
-                        Éditer
+                        {gettext("admin.albums.index.edit")}
                       </.link>
                       <a
                         href="#"
                         phx-click="delete"
                         phx-value-id={album.id}
-                        data-confirm="Êtes-vous sûr de vouloir supprimer cet album ?"
+                        data-confirm={gettext("admin.albums.index.delete_confirm")}
                         class="text-red-600 hover:text-red-900 phx-click-loading:opacity-50 phx-click-loading:cursor-wait"
                       >
-                        <span class="phx-click-loading:hidden">Supprimer</span>
-                        <span class="hidden phx-click-loading:inline">Suppression...</span>
+                        <span class="phx-click-loading:hidden">
+                          {gettext("admin.albums.index.delete")}
+                        </span>
+                        <span class="hidden phx-click-loading:inline">
+                          {gettext("admin.albums.index.deleting")}
+                        </span>
                       </a>
                     </td>
                   </tr>
@@ -252,7 +260,7 @@
             patch={~p"/admin/albums?#{build_params(@filter, @page - 1, @sort_by, @sort_order)}"}
             class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Précédent
+            {gettext("admin.albums.index.previous")}
           </.link>
         <% end %>
         <%= if @page < @total_pages do %>
@@ -260,17 +268,19 @@
             patch={~p"/admin/albums?#{build_params(@filter, @page + 1, @sort_by, @sort_order)}"}
             class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Suivant
+            {gettext("admin.albums.index.next")}
           </.link>
         <% end %>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <p class="text-sm text-gray-700">
-            Affichage de <span class="font-medium">{(@page - 1) * @per_page + 1}</span>
-            à <span class="font-medium">{min(@page * @per_page, @total_albums)}</span>
-            sur <span class="font-medium">{@total_albums}</span>
-            albums
+            {gettext("admin.albums.index.showing")}
+            <span class="font-medium">{(@page - 1) * @per_page + 1}</span>
+            {gettext("admin.albums.index.to")}
+            <span class="font-medium">{min(@page * @per_page, @total_albums)}</span>
+            {gettext("admin.albums.index.of")} <span class="font-medium">{@total_albums}</span>
+            {gettext("admin.albums.index.albums_count")}
           </p>
         </div>
         <div>
@@ -285,7 +295,7 @@
                 }
                 class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
               >
-                <span class="sr-only">Précédent</span>
+                <span class="sr-only">{gettext("admin.albums.index.previous")}</span>
                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path
                     fill-rule="evenodd"
@@ -320,7 +330,7 @@
                 }
                 class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
               >
-                <span class="sr-only">Suivant</span>
+                <span class="sr-only">{gettext("admin.albums.index.next")}</span>
                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path
                     fill-rule="evenodd"

@@ -84,7 +84,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepositoryTest do
       album2 = insert_album(%{title: "Album 2", type: :couples})
 
       photo1 = insert_photo(album1, %{title: "Photo 1", display_order: 0})
-      photo2 = insert_photo(album1, %{title: "Photo 2", display_order: 1})
+      _photo2 = insert_photo(album1, %{title: "Photo 2", display_order: 1})
       _photo3 = insert_photo(album2, %{title: "Photo 3", display_order: 0})
 
       photos = PhotoRepository.list(album_id: album1.id, limit: 1, preload: [:album])

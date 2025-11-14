@@ -44,6 +44,7 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
 
     type = Keyword.get(attrs, :type, :wedding)
     date_prise_vue = Keyword.get(attrs, :date_prise_vue, Date.utc_today())
+    date_fin_prise_vue = Keyword.get(attrs, :date_fin_prise_vue)
     location = Keyword.get(attrs, :location)
     description = Keyword.get(attrs, :description)
     published = Keyword.get(attrs, :published, false)
@@ -57,6 +58,7 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
         date_prise_vue: date_prise_vue,
         published: published
       }
+      |> maybe_add(:date_fin_prise_vue, date_fin_prise_vue)
       |> maybe_add(:location, location)
       |> maybe_add(:description, description)
       |> maybe_add(:reference_link, reference_link)
@@ -155,7 +157,7 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
   def create_album_with_photos(photo_count \\ 3, attrs \\ []) do
     album = create_album(attrs)
 
-    photos =
+    _photos =
       for i <- 1..photo_count do
         create_photo(
           album: album,

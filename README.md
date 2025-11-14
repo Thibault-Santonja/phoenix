@@ -19,7 +19,7 @@ A Phoenix LiveView application showcasing photography, medieval reenactment, and
 - **Passwordless Login**: Magic link authentication via email
 - **Session Management**: Database-backed sessions with 30-day expiry
 - **User Profiles**: Manage profile information and active sessions
-- **Role-Based Access**: Admin and superadmin roles with middleware protection
+- **Role-Based Access**: Admin role with middleware protection
 - **Session Security**: Individual or bulk session revocation
 
 ### Architecture
@@ -61,7 +61,7 @@ A Phoenix LiveView application showcasing photography, medieval reenactment, and
    # In IEx: iex -S mix
    alias Portfolio.Auth.User
    alias Portfolio.Repo
-   
+
    %User{}
    |> User.registration_changeset(%{email: "admin@example.com", role: "admin"})
    |> Repo.insert!()

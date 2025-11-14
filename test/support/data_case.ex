@@ -29,6 +29,26 @@ defmodule Portfolio.DataCase do
 
   setup tags do
     Portfolio.DataCase.setup_sandbox(tags)
+
+    # Handle rate limiter reset based on tags
+    case tags do
+      %{skip_rate_limit_reset: actions} when is_list(actions) ->
+        # Reset everything except these actions
+        Portfolio.RateLimiter.reset_all_except(actions)
+
+      %{reset_rate_limit: actions} when is_list(actions) ->
+        # Reset only these actions
+        Portfolio.RateLimiter.reset_actions(actions)
+
+      %{skip_rate_limit_reset: true} ->
+        # Don't reset anything (for tests that build up rate limits)
+        :ok
+
+      _ ->
+        # Default: reset everything
+        Portfolio.RateLimiter.reset_all()
+    end
+
     :ok
   end
 

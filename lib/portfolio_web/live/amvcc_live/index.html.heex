@@ -9,8 +9,8 @@
       <%!-- Image Loading loading={"lazy" || "eager"} --%>
       <img
         src="https://www.amvcc.com/wp-content/uploads/2025/03/cropped-2024-05-03-05_Seigneuriales_8604_102833-1-scaled-1.jpg"
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
-        title={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
+        title={gettext("amvcc.index.hero.photo_alt")}
         class="w-full h-full object-cover animate-fade-in"
         loading="lazy"
       />
@@ -22,7 +22,7 @@
         <h1 class="text-4xl font-bold text-white md:text-6xl">La Seigneurie de Coucy</h1>
 
         <p class="mt-4 text-lg text-white md:text-2xl">
-          {gettext("Medieval re-enactment troupe")}
+          {gettext("amvcc.index.hero.subtitle")}
         </p>
 
         <div
@@ -34,14 +34,14 @@
             href="/blog"
             class="bg-primary hover:bg-opacity-90 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
           >
-            {gettext("Explore our articles")}
+            {gettext("amvcc.index.hero.explore_articles")}
           </a>
 
           <a
             href="#about"
             class="border-2 border-white text-white hover:text-amvcc-base-content hover:bg-amvcc-base-100 hover px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105"
           >
-            {gettext("Let's meet us")}
+            {gettext("amvcc.index.hero.meet_us")}
           </a>
         </div>
       </div>
@@ -69,7 +69,7 @@
 <section id="about" class="bg-amvcc-base-200 py-16 px-4 md:px-16 lg:px-32">
   <header>
     <h2 class="text-center mb-6 text-3xl font-bold text-zinc-900 px-8 sm:px-16 text-balance">
-      {gettext("A rigorous approach rooted in research")}
+      {gettext("amvcc.index.about.rigorous_approach")}
     </h2>
 
     <p class="text-center mb-8 text-lg px-2 sm:px-4">
@@ -86,7 +86,7 @@
     <div class="space-y-8 text-left">
       <section>
         <h3 class="text-2xl font-semibold mb-2">
-          {gettext("Promoting the work of historians")}
+          {gettext("amvcc.index.about.promoting_historians")}
         </h3>
         <p class="leading-relaxed font-light">
           {gettext(
@@ -97,7 +97,7 @@
 
       <section>
         <h3 class="text-2xl font-semibold mb-2">
-          {gettext("Reconstructing for better transmission")}
+          {gettext("amvcc.index.about.reconstructing_transmission")}
         </h3>
         <p class="leading-relaxed font-light">
           {gettext(
@@ -112,14 +112,14 @@
             {NaiveDateTime.utc_now().year - 2019}+
           </div>
           <div class="text-sm ">
-            {gettext("Experience years")}
+            {gettext("amvcc.index.stats.experience_years")}
           </div>
         </div>
 
         <div class="text-center p-6 bg-amvcc-base-100 rounded-lg border border-amvcc-base-300">
           <div class="text-3xl font-bold text-primary mb-2">20+</div>
           <div class="text-sm ">
-            {gettext("Members")}
+            {gettext("amvcc.index.stats.members")}
           </div>
         </div>
       </section>
@@ -130,8 +130,8 @@
         class="object-cover h-full w-full rounded-xl"
         src="https://www.amvcc.com/wp-content/uploads/2023/06/2023-04-28-01_Seigneuriales_Coucy_0124-scaled.jpg"
         loading="lazy"
-        title={gettext("Thibault San photography – Seigneuriales de Coucy")}
-        alt={gettext("Thibault San photography for la Seigneurie de Coucy")}
+        title={gettext("amvcc.index.photo_alt.thibault_san_2")}
+        alt={gettext("amvcc.index.photo_alt.thibault_san_1")}
       />
     </aside>
   </article>
@@ -154,7 +154,7 @@
       </aside>
       <div>
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Based on historical source and archeology")}
+          {gettext("amvcc.index.about.based_on_sources")}
         </h4>
         <p>
           {gettext(
@@ -174,14 +174,14 @@
               "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
             )
           }
-          alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+          alt={gettext("amvcc.index.hero.photo_alt")}
           class="w-full h-32 object-cover rounded-lg border border-amvcc-base-300"
           loading="lazy"
         />
       </aside>
       <div>
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Understanding uses and practices")}
+          {gettext("amvcc.index.about.understanding_practices")}
         </h4>
         <p>
           {gettext(
@@ -194,9 +194,9 @@
 
   <article class="bg-amvcc-base-100 rounded-xl p-8 md:p-12 border border-amvcc-base-300">
     <div class="text-center mb-12">
-      <h3 class="text-3xl font-semibold mb-4">{gettext("Our approach")}</h3>
+      <h3 class="text-3xl font-semibold mb-4">{gettext("amvcc.index.about.title")}</h3>
       <p class="text-lg ">
-        {gettext("Combining academic rigour and audience engagement to bring history to life.")}
+        {gettext("amvcc.index.about.combining_rigour")}
       </p>
     </div>
 
@@ -205,9 +205,11 @@
         <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
           <span class="text-white text-2xl">📚</span>
         </div>
-        <h4 class="text-lg font-semibold mb-2">{gettext("Based on research")}</h4>
+        <h4 class="text-lg font-semibold mb-2">
+          {gettext("amvcc.index.animations.research_badge")}
+        </h4>
         <p>
-          {gettext("Each activity is based on historical research")}
+          {gettext("amvcc.index.animations.based_on_research")}
         </p>
       </div>
 
@@ -217,7 +219,7 @@
         </div>
         <h4 class="text-lg font-semibold mb-2">Enseignement</h4>
         <p>
-          {gettext("Bringing history to life and making it accessible to all audiences")}
+          {gettext("amvcc.index.about.accessible_history")}
         </p>
       </div>
 
@@ -226,9 +228,9 @@
           <span class="text-white text-2xl">🤝</span>
         </div>
         <h4 class="text-lg font-semibold mb-2">
-          {gettext("A community-based approach")}
+          {gettext("amvcc.index.about.community_approach")}
         </h4>
-        <p>{gettext("Involving the public through hands-on experience")}</p>
+        <p>{gettext("amvcc.index.about.involving_public")}</p>
       </div>
     </div>
   </article>
@@ -237,7 +239,7 @@
 <section id="activities" class="bg-amvcc-base-100 py-16 px-4 md:px-16 lg:px-32">
   <header>
     <h2 class="text-center mb-6 text-3xl font-bold text-zinc-900 px-8 sm:px-16 text-balance">
-      {gettext("Our animations and shows")}
+      {gettext("amvcc.index.animations.title")}
     </h2>
 
     <p class="text-center mb-8 text-lg px-2 sm:px-4">
@@ -256,15 +258,15 @@
         class="object-cover h-full w-full rounded-xl"
         src="https://www.amvcc.com/wp-content/uploads/2022/09/306123323_1828729300852382_4965956126231577681_n.jpg"
         loading="lazy"
-        title={gettext("Photographie AMVCC - Seigneuriales de Coucy")}
-        alt={gettext("Photographie AMVCC - la Seigneurie de Coucy")}
+        title={gettext("amvcc.index.photo_alt.seigneuriales")}
+        alt={gettext("amvcc.index.photo_alt.seigneurie")}
       />
     </aside>
 
     <div class="space-y-8 text-left">
       <section>
         <h3 class="text-2xl font-semibold mb-2">
-          {gettext("Reconstructing daily life")}
+          {gettext("amvcc.index.about.reconstructing_life")}
         </h3>
         <p class="leading-relaxed font-light">
           {gettext(
@@ -279,7 +281,7 @@
             8
           </div>
           <div class="text-sm ">
-            {gettext("Animations")}
+            {gettext("amvcc.index.animations.animations")}
           </div>
         </div>
       </section>
@@ -297,11 +299,11 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
       <div class="p-4">
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Mode and textile")}
+          {gettext("amvcc.index.animations.mode_textile")}
         </h4>
 
         <p class="mb-4">
@@ -333,11 +335,11 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
       <div class="p-4">
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Costume walk")}
+          {gettext("amvcc.index.animations.costume_walk")}
         </h4>
 
         <p class="mb-4">
@@ -358,11 +360,11 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
       <div class="p-4">
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Fight demonstrations")}
+          {gettext("amvcc.index.animations.fight_demo")}
         </h4>
 
         <p class="mb-4">
@@ -394,11 +396,11 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
       <div class="p-4">
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Ordinary accounting")}
+          {gettext("amvcc.index.animations.accounting")}
         </h4>
 
         <p class="mb-4">
@@ -430,12 +432,12 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
 
       <div class="p-4">
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Music and instruments")}
+          {gettext("amvcc.index.animations.music")}
         </h4>
 
         <p class="mb-4">
@@ -467,11 +469,11 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
       <div class="p-4">
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Guard rounds")}
+          {gettext("amvcc.index.animations.guard_rounds")}
         </h4>
 
         <p class="mb-4">
@@ -503,11 +505,11 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
       <div class="p-4">
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Cuisine médiévale")}
+          {gettext("amvcc.index.animations.cuisine")}
         </h4>
 
         <p class="mb-4">
@@ -539,11 +541,11 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
       <div class="p-4">
         <h4 class="text-xl font-semibold mb-3">
-          {gettext("Medieval Inn")}
+          {gettext("amvcc.index.animations.medieval_inn")}
         </h4>
 
         <p class="mb-4">
@@ -569,7 +571,7 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
     <header class="col-span-full">
       <h3 class="text-2xl font-semibold mb-2">
-        {gettext("Our animation formats")}
+        {gettext("amvcc.index.animations.formats_title")}
       </h3>
 
       <p class="leading-relaxed font-light">
@@ -595,7 +597,7 @@
 
       <div class="py-8 pr-8">
         <h4 class="text-xl font-semibold text-neutral-900 mb-3">
-          {gettext("Campment life")}
+          {gettext("amvcc.index.animations.campment")}
         </h4>
 
         <p class="text-neutral-700 mb-4">
@@ -627,7 +629,7 @@
 
       <div class="py-8 pr-8">
         <h4 class="text-xl font-semibold text-neutral-900 mb-3">
-          {gettext("Conferences & mediation")}
+          {gettext("amvcc.index.animations.conferences")}
         </h4>
 
         <p class="text-neutral-700 mb-4">
@@ -950,7 +952,7 @@
   </div>
 
   <div
-    id="gallery"
+    id="gallery-grid"
     phx-hook="AnimateGallery"
     class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
   >
@@ -962,7 +964,7 @@
         src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
         data-src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
         class="object-cover h-full w-full rounded-xl"
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
         data-full_image_src="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg"
         title="Enluminure campement XIV°s"
         data-srcset="https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large.jpg 1000w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-300x187.jpg 300w, https://www.amvcc.com/wp-content/uploads/2020/03/1-79_large-768x479.jpg 768w"
@@ -1000,7 +1002,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1013,7 +1015,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1026,7 +1028,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1039,7 +1041,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1052,7 +1054,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1065,7 +1067,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1078,7 +1080,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1091,7 +1093,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1104,7 +1106,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1117,7 +1119,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1130,7 +1132,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1143,7 +1145,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1156,7 +1158,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
     <div class="bg-amvcc-base-400 gallery__image h-48 rounded-xl flex items-center">
@@ -1169,7 +1171,7 @@
             "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
           )
         }
-        alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+        alt={gettext("amvcc.index.hero.photo_alt")}
       />
     </div>
   </div>
