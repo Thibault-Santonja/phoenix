@@ -8,6 +8,8 @@ defmodule Portfolio.Auth.IPWhitelistServiceTest do
 
   setup do
     # Initialize cache before each test
+    # In test environment, init_cache creates the ETS table but doesn't auto-refresh
+    # Tests should use add_to_whitelist() or remove_from_whitelist() which refresh the cache
     IPWhitelistService.init_cache()
     :ok
   end
@@ -103,7 +105,7 @@ defmodule Portfolio.Auth.IPWhitelistServiceTest do
   describe "whitelisted?/1" do
     test "returns true if IP is whitelisted" do
       admin = create_user(role: :admin)
-      create_whitelist_entry("192.168.1.100", admin.id)
+      {:ok, _} = IPWhitelistService.add_to_whitelist(%{ip_address: "192.168.1.100"}, admin.id)
 
       assert IPWhitelistService.whitelisted?("192.168.1.100") == true
     end
@@ -114,9 +116,11 @@ defmodule Portfolio.Auth.IPWhitelistServiceTest do
 
     test "uses cache for performance" do
       admin = create_user(role: :admin)
-      create_whitelist_entry("192.168.1.100", admin.id)
 
-      # First call - should cache
+      # Use add_to_whitelist instead of create_whitelist_entry to ensure cache is populated
+      {:ok, _} = IPWhitelistService.add_to_whitelist(%{ip_address: "192.168.1.100"}, admin.id)
+
+      # First call - should use cache
       assert IPWhitelistService.whitelisted?("192.168.1.100") == true
 
       # Delete the entry from DB
@@ -141,7 +145,7 @@ defmodule Portfolio.Auth.IPWhitelistServiceTest do
 
     test "refreshes cache after deletion" do
       admin = create_user(role: :admin)
-      entry = create_whitelist_entry("192.168.1.100", admin.id)
+      {:ok, entry} = IPWhitelistService.add_to_whitelist(%{ip_address: "192.168.1.100"}, admin.id)
 
       # IP is whitelisted
       assert IPWhitelistService.whitelisted?("192.168.1.100")

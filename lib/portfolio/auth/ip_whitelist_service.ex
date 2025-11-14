@@ -52,7 +52,12 @@ defmodule Portfolio.Auth.IPWhitelistService do
         :ets.delete_all_objects(@cache_table)
     end
 
-    refresh_cache()
+    # Only auto-refresh from database in non-test environments
+    # In test, the cache starts empty and tests populate it as needed
+    if Application.get_env(:portfolio, :auto_refresh_ip_whitelist, true) do
+      refresh_cache()
+    end
+
     :ok
   end
 
@@ -197,14 +202,10 @@ defmodule Portfolio.Auth.IPWhitelistService do
   """
   @spec whitelisted?(String.t()) :: boolean()
   def whitelisted?(ip_address) when is_binary(ip_address) do
-    case :ets.lookup(@cache_table, :whitelist) do
-      [{:whitelist, ips, _expires_at}] ->
-        MapSet.member?(ips, ip_address)
-
-      [] ->
-        # Cache miss - refresh and retry
-        refresh_cache()
-        whitelisted?(ip_address)
+    if :ets.whereis(@cache_table) == :undefined do
+      false
+    else
+      check_cache(ip_address)
     end
   end
 
@@ -213,6 +214,28 @@ defmodule Portfolio.Auth.IPWhitelistService do
   def whitelisted?(ip_tuple) when is_tuple(ip_tuple) do
     ip_string = ip_tuple_to_string(ip_tuple)
     whitelisted?(ip_string)
+  end
+
+  # Check cache for IP address
+  defp check_cache(ip_address) do
+    case :ets.lookup(@cache_table, :whitelist) do
+      [{:whitelist, ips, _expires_at}] ->
+        MapSet.member?(ips, ip_address)
+
+      [] ->
+        handle_cache_miss(ip_address)
+    end
+  end
+
+  # Cache miss - refresh if auto-refresh is enabled
+  defp handle_cache_miss(ip_address) do
+    if Application.get_env(:portfolio, :auto_refresh_ip_whitelist, true) do
+      refresh_cache()
+      whitelisted?(ip_address)
+    else
+      # In test environment, cache is not auto-refreshed
+      false
+    end
   end
 
   # Refreshes the cache from the database

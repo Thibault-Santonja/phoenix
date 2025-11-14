@@ -37,6 +37,10 @@ config :portfolio, :skip_mx_validation, true
 # Event handlers run in separate processes and cannot access the test's DB connection
 config :portfolio, :start_event_handlers, false
 
+# Disable IP whitelist auto-refresh in test (ETS table is created but not populated from DB)
+# Tests that need IP whitelist entries will populate the cache explicitly
+config :portfolio, :auto_refresh_ip_whitelist, false
+
 # Configure from email
 config :portfolio, :from_email, "noreply@portfolio.test"
 
