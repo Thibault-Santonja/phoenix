@@ -20,7 +20,7 @@ defmodule PortfolioWeb.Admin.PhotoLive.Index do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:page_title, "Photos")
+     |> assign(:page_title, gettext("admin.photos.title"))
      |> assign(:page, 1)
      |> assign(:per_page, @photos_per_page)
      |> assign(:album_filter, nil)}

@@ -23,7 +23,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
     {:ok,
      socket
-     |> assign(:page_title, "Albums")
+     |> assign(:page_title, gettext("admin.albums.title"))
      |> assign(:filter, nil)
      |> assign(:page, 1)
      |> assign(:per_page, albums_per_page)
@@ -71,7 +71,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Albums")
+    |> assign(:page_title, gettext("admin.albums.title"))
   end
 
   # Composant pour un en-tête de colonne triable
@@ -160,19 +160,19 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
           {:ok, _result} ->
             {:noreply,
              socket
-             |> put_flash(:info, "Album supprimé avec succès")
+             |> put_flash(:info, gettext("admin.albums.delete_success"))
              |> assign(:albums, reload_albums(socket))}
 
           {:error, _reason} ->
             {:noreply,
              socket
-             |> put_flash(:error, "Impossible de supprimer l'album")}
+             |> put_flash(:error, gettext("admin.albums.delete_error"))}
         end
 
       {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Album introuvable")
+         |> put_flash(:error, gettext("admin.albums.not_found"))
          |> assign(:albums, reload_albums(socket))}
     end
   end
@@ -185,36 +185,36 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
           {:ok, _album} ->
             {:noreply,
              socket
-             |> put_flash(:info, "Statut de publication mis à jour")
+             |> put_flash(:info, gettext("admin.albums.publish_updated"))
              |> assign(:albums, reload_albums(socket))}
 
           {:error, _changeset} ->
             {:noreply,
              socket
-             |> put_flash(:error, "Impossible de mettre à jour le statut")}
+             |> put_flash(:error, gettext("admin.albums.publish_error"))}
         end
 
       {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Album introuvable")
+         |> put_flash(:error, gettext("admin.albums.not_found"))
          |> assign(:albums, reload_albums(socket))}
     end
   end
 
   # Fonction helper pour formater les types d'albums
-  defp format_type(:couples), do: "Couples"
-  defp format_type(:wedding), do: "Mariage"
-  defp format_type(:motherhood), do: "Maternité"
-  defp format_type(:events), do: "Événements"
-  defp format_type(:landscape), do: "Paysage"
-  defp format_type(:street), do: "Street"
-  defp format_type(:music), do: "Musique"
-  defp format_type(:reenactment), do: "Reconstitution"
+  defp format_type(:couples), do: gettext("album.type.couples")
+  defp format_type(:wedding), do: gettext("album.type.wedding")
+  defp format_type(:motherhood), do: gettext("album.type.motherhood")
+  defp format_type(:events), do: gettext("album.type.events")
+  defp format_type(:landscape), do: gettext("album.type.landscape")
+  defp format_type(:street), do: gettext("album.type.street")
+  defp format_type(:music), do: gettext("album.type.music")
+  defp format_type(:reenactment), do: gettext("album.type.reenactment")
   defp format_type(:amvcc), do: "AMVCC"
-  defp format_type(:china), do: "Chine"
-  defp format_type(:japan), do: "Japon"
-  defp format_type(:taiwan), do: "Taïwan"
+  defp format_type(:china), do: gettext("album.type.china")
+  defp format_type(:japan), do: gettext("album.type.japan")
+  defp format_type(:taiwan), do: gettext("album.type.taiwan")
   defp format_type(type), do: to_string(type)
 
   # Fonction helper pour la pagination - génère la plage de numéros de page à afficher
@@ -271,30 +271,25 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   # Dates: desc → asc → none
   # Autres: asc → desc → none
   defp next_sort_state(column, current_sort_by, current_sort_order) do
-    is_date_column = column == "date"
-
     cond do
       # Pas de tri actif OU tri sur une autre colonne
       current_sort_by != column or current_sort_by == nil ->
-        if is_date_column do
-          {column, "desc"}
-        else
-          {column, "asc"}
-        end
+        initial_sort_order(column)
 
       # Tri actif sur cette colonne
       current_sort_by == column ->
-        case {is_date_column, current_sort_order} do
-          # Date: desc → asc → none
-          {true, "desc"} -> {column, "asc"}
-          {true, "asc"} -> {nil, nil}
-          # Autres: asc → desc → none
-          {false, "asc"} -> {column, "desc"}
-          {false, "desc"} -> {nil, nil}
-          _ -> {nil, nil}
-        end
+        cycle_sort_order(column, current_sort_order)
     end
   end
+
+  defp initial_sort_order("date"), do: {"date", "desc"}
+  defp initial_sort_order(column), do: {column, "asc"}
+
+  defp cycle_sort_order("date", "desc"), do: {"date", "asc"}
+  defp cycle_sort_order("date", "asc"), do: {nil, nil}
+  defp cycle_sort_order(column, "asc"), do: {column, "desc"}
+  defp cycle_sort_order(_column, "desc"), do: {nil, nil}
+  defp cycle_sort_order(_column, _), do: {nil, nil}
 
   # Helper pour obtenir l'icône de tri à afficher
   defp sort_icon(column, current_sort_by, current_sort_order) do

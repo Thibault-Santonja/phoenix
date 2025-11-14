@@ -122,27 +122,22 @@ defmodule Portfolio.Photography.ValueObjects.Slug do
     # Convertir en graphemes pour traiter caractère par caractère
     str
     |> String.graphemes()
-    |> Enum.map(&transliterate_char/1)
-    |> Enum.join()
+    |> Enum.map_join(&transliterate_char/1)
   end
 
   # Translitère un caractère individuel
-  defp transliterate_char(char) do
-    case char do
-      c when c in ~w(à á â ã ä å ā ă) -> "a"
-      "æ" -> "ae"
-      "ç" -> "c"
-      c when c in ~w(è é ê ë ē ė ę) -> "e"
-      c when c in ~w(ì í î ï ī į) -> "i"
-      c when c in ~w(ñ ń) -> "n"
-      c when c in ~w(ò ó ô õ ö ø ō ő) -> "o"
-      "œ" -> "oe"
-      c when c in ~w(ù ú û ü ū ű) -> "u"
-      c when c in ~w(ý ÿ) -> "y"
-      c when c in ~w(' ' ') -> ""
-      _ -> char
-    end
-  end
+  defp transliterate_char(char) when char in ~w(à á â ã ä å ā ă), do: "a"
+  defp transliterate_char("æ"), do: "ae"
+  defp transliterate_char("ç"), do: "c"
+  defp transliterate_char(char) when char in ~w(è é ê ë ē ė ę), do: "e"
+  defp transliterate_char(char) when char in ~w(ì í î ï ī į), do: "i"
+  defp transliterate_char(char) when char in ~w(ñ ń), do: "n"
+  defp transliterate_char(char) when char in ~w(ò ó ô õ ö ø ō ő), do: "o"
+  defp transliterate_char("œ"), do: "oe"
+  defp transliterate_char(char) when char in ~w(ù ú û ü ū ű), do: "u"
+  defp transliterate_char(char) when char in ~w(ý ÿ), do: "y"
+  defp transliterate_char(char) when char in ~w(' ' '), do: ""
+  defp transliterate_char(char), do: char
 
   @doc """
   Vérifie si deux slugs sont égaux (égalité par valeur).

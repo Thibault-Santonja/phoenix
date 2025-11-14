@@ -61,11 +61,11 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     |> assign(:chapter, nil)
     |> assign(:data, timeline_data)
     |> assign(years: timeline_data |> Map.keys() |> Enum.sort(:desc))
-    |> assign(:page_title, gettext("Photographies timeline gallery"))
+    |> assign(:page_title, gettext("photography.timeline.title"))
   end
 
   defp build_title(chapter) do
-    gettext("Photographies gallery - ") <> String.capitalize(chapter)
+    gettext("photography.timeline.gallery_prefix") <> String.capitalize(chapter)
   end
 
   defp filter_data(data, chapter) do

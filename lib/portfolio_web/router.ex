@@ -83,6 +83,11 @@ defmodule PortfolioWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  # Health check endpoint (no authentication required)
+  scope "/", PortfolioWeb do
+    get "/health", HealthController, :index
+  end
+
   scope "/", PortfolioWeb, host: "amvcc." do
     pipe_through :amvcc
 
@@ -130,7 +135,13 @@ defmodule PortfolioWeb.Router do
   scope "/", PortfolioWeb do
     pipe_through :browser
 
-    get "/auth/magic/:token", AuthController, :verify_magic_link
+    # Nouvelle méthode sécurisée (POST) - Landing page + vérification
+    get "/auth/magic/:token", AuthController, :magic_link_landing
+    post "/auth/verify", AuthController, :verify_magic_link_post
+
+    # Ancienne méthode (GET direct) - conservée pour rétrocompatibilité
+    get "/auth/verify/:token", AuthController, :verify_magic_link
+
     delete "/logout", AuthController, :logout
   end
 
@@ -156,6 +167,11 @@ defmodule PortfolioWeb.Router do
 
       # Gestion du profil utilisateur
       live "/profile", ProfileLive.Edit, :edit
+
+      # Gestion de la whitelist IP
+      live "/ip-whitelist", IPWhitelistLive.Index, :index
+      live "/ip-whitelist/new", IPWhitelistLive.Index, :new
+      live "/ip-whitelist/:id/edit", IPWhitelistLive.Index, :edit
     end
   end
 

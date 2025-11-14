@@ -162,7 +162,6 @@ defmodule Portfolio.Bootstrap do
     |> String.split("@")
     |> List.first()
     |> String.split(".")
-    |> Enum.map(&String.capitalize/1)
-    |> Enum.join(" ")
+    |> Enum.map_join(" ", &String.capitalize/1)
   end
 end

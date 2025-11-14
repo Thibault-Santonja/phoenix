@@ -25,6 +25,6 @@ defmodule PortfolioWeb.AmvccLive.Blog.Shoes do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, gettext("Shoes XIVc in western Europe"))
+    |> assign(:page_title, gettext("amvcc.blog.shoes.title"))
   end
 end

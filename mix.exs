@@ -21,7 +21,8 @@ defmodule Portfolio.MixProject do
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test
+        "coveralls.html": :test,
+        precommit: :test
       ],
       dialyzer: [
         plt_add_apps: [:ex_unit, :mix],
@@ -111,7 +112,8 @@ defmodule Portfolio.MixProject do
       {:cachex, "~> 3.6"},
       {:exiftool, "~> 0.2"},
       {:vix, "~> 0.26"},
-      # For CI
+      # For CI and Documentation
+      {:ex_doc, "~> 0.34", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
@@ -139,7 +141,14 @@ defmodule Portfolio.MixProject do
         "esbuild portfolio --minify",
         "phx.digest"
       ],
-      precommit: ["format --check-formatted", "credo --strict", "test"]
+      precommit: [
+        "format --check-formatted",
+        "credo --strict",
+        "test",
+        "deps.audit",
+        "sobelow --config",
+        "docs"
+      ]
     ]
   end
 end

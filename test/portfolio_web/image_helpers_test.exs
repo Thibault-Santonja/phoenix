@@ -17,9 +17,10 @@ defmodule PortfolioWeb.ImageHelpersTest do
 
       srcset = ImageHelpers.image_srcset(photo)
 
-      assert srcset =~ "/photos/abc/thumbnail.webp 320w"
-      assert srcset =~ "/photos/abc/small.webp 640w"
-      assert srcset =~ "/photos/abc/medium.webp 1024w"
+      # Updated widths aligned with Tailwind breakpoints (ADR-011 Phase 4)
+      assert srcset =~ "/photos/abc/thumbnail.webp 400w"
+      assert srcset =~ "/photos/abc/small.webp 768w"
+      assert srcset =~ "/photos/abc/medium.webp 1280w"
       assert srcset =~ "/photos/abc/large.webp 1920w"
     end
 
@@ -33,7 +34,8 @@ defmodule PortfolioWeb.ImageHelpersTest do
 
       srcset = ImageHelpers.image_srcset(photo)
 
-      assert srcset =~ "/photos/abc/small.webp 640w"
+      # Updated widths aligned with Tailwind breakpoints
+      assert srcset =~ "/photos/abc/small.webp 768w"
       assert srcset =~ "/photos/abc/large.webp 1920w"
       refute srcset =~ "thumbnail"
       refute srcset =~ "medium"

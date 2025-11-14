@@ -2,6 +2,7 @@ defmodule PortfolioWeb.Admin.ProfileLive.EditTest do
   use PortfolioWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import PortfolioTest.Fixtures.AuthFixtures
 
   alias Portfolio.Auth
   alias Portfolio.Auth.User
@@ -160,29 +161,6 @@ defmodule PortfolioWeb.Admin.ProfileLive.EditTest do
       # Le bouton devrait être visible maintenant
       assert has_element?(view, "button[phx-click=\"revoke_all_sessions\"]")
     end
-  end
-
-  # Helper functions
-  defp register_and_log_in_user(%{conn: conn}) do
-    user = insert_user()
-    {:ok, session} = Auth.create_session(user)
-
-    conn = init_test_session(conn, %{session_token: session.token})
-
-    %{conn: conn, user: user, session: session}
-  end
-
-  defp insert_user(attrs \\ %{}) do
-    attrs = Enum.into(attrs, %{})
-
-    default_attrs = %{
-      email: "test#{System.unique_integer([:positive])}@example.com",
-      role: :admin
-    }
-
-    %User{}
-    |> User.registration_changeset(Map.merge(default_attrs, attrs))
-    |> Repo.insert!()
   end
 
   describe "navigation" do

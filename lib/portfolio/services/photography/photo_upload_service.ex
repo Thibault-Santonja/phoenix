@@ -73,7 +73,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   end
 
   # Upload files in parallel without creating DB records yet
-  defp upload_files_parallel(album_slug, uploads, opts) do
+  defp upload_files_parallel(_album_slug, uploads, opts) do
     max_concurrency = Keyword.get(opts, :max_concurrency, 4)
     timeout = Keyword.get(opts, :timeout, 30_000)
     ordered = Keyword.get(opts, :ordered, false)
@@ -81,7 +81,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
     results =
       uploads
       |> Task.async_stream(
-        fn upload -> storage().store_photo(album_slug, upload) end,
+        fn upload -> storage().store_photo(upload, []) end,
         max_concurrency: max_concurrency,
         timeout: timeout,
         ordered: ordered,
@@ -123,7 +123,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
         Multi.run(multi, {:create_photo, index}, fn _repo, _changes ->
           Photography.create_photo(%{
             album_id: album.id,
-            file_path: metadata.file_path,
+            file_path: metadata.storage_path,
             hash: metadata.hash,
             original_filename: metadata.original_filename,
             display_order: index
@@ -155,7 +155,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   # Delete uploaded files from storage in case of rollback
   defp rollback_uploaded_files(photos_metadata) do
     Enum.each(photos_metadata, fn metadata ->
-      storage().delete_photo(metadata.file_path)
+      storage().delete_photo(metadata.photo_id)
     end)
 
     :ok

@@ -19,6 +19,9 @@ defmodule PortfolioWeb.TechLive.Blog.Kamal do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, gettext("The tech blog") <> " • " <> gettext("Kamal"))
+    |> assign(
+      :page_title,
+      gettext("layouts.tech.header") <> " • " <> gettext("tech.blog.kamal.kamal")
+    )
   end
 end

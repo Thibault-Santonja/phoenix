@@ -6,6 +6,13 @@ defmodule Portfolio.PhotographyTest do
 
   import PortfolioTest.Fixtures.PhotographyFixtures
 
+  # Helper to create temporary files for upload tests
+  defp create_temp_file(content) do
+    {:ok, path} = Plug.Upload.random_file("test")
+    File.write!(path, content)
+    path
+  end
+
   setup do
     # Create unique test directory for each test to avoid race conditions in parallel execution
     test_base_path = "test/tmp/uploads/test-#{System.unique_integer([:positive])}"
@@ -43,16 +50,18 @@ defmodule Portfolio.PhotographyTest do
     test "deletes photo and its file when file exists", %{test_base_path: test_base_path} do
       album = create_album(title: "Test Album", slug: "test-album")
 
-      # Create a real file
-      file_path = "/uploads/albums/test-album/original/photo-abc123.jpg"
+      # Use a photo_id that matches the storage structure
+      photo_id = "abc12345"
 
-      full_path =
-        Path.join([test_base_path, "albums", "test-album", "original", "photo-abc123.jpg"])
+      # Create a real file in the correct structure: base_path/photos/{photo_id}/
+      photo_dir = Path.join([test_base_path, "photos", photo_id])
+      full_path = Path.join(photo_dir, "original.jpg")
 
-      File.mkdir_p!(Path.dirname(full_path))
+      File.mkdir_p!(photo_dir)
       File.write!(full_path, "test content")
 
-      photo = create_photo(album_id: album.id, file_path: file_path)
+      # The file_path stored in DB should match what delete_photo expects
+      photo = create_photo(album_id: album.id, file_path: photo_id)
 
       # Verify file exists
       assert File.exists?(full_path)
@@ -60,8 +69,8 @@ defmodule Portfolio.PhotographyTest do
       # Delete photo (now returns Ecto.Multi result)
       assert {:ok, %{photo: %Photo{}, file: :ok}} = Photography.delete_photo(photo)
 
-      # Verify file is deleted
-      refute File.exists?(full_path)
+      # Verify directory is deleted (delete_photo removes the whole photo directory)
+      refute File.exists?(photo_dir)
 
       # Verify DB record is deleted
       assert {:error, :not_found} = Photography.get_photo(photo.id)
@@ -101,12 +110,12 @@ defmodule Portfolio.PhotographyTest do
         %{
           path: create_temp_file("photo 1 content"),
           client_name: "photo1.jpg",
-          client_type: "image/jpeg"
+          content_type: "image/jpeg"
         },
         %{
           path: create_temp_file("photo 2 content"),
           client_name: "photo2.jpg",
-          client_type: "image/jpeg"
+          content_type: "image/jpeg"
         }
       ]
 
@@ -115,15 +124,15 @@ defmodule Portfolio.PhotographyTest do
       assert length(metadata_list) == 2
 
       for metadata <- metadata_list do
-        assert metadata.file_path =~ ~r|/uploads/albums/test-album/original/|
+        # Check the metadata structure
+        assert metadata.storage_path =~ ~r|/uploads/photos/|
         assert is_binary(metadata.hash)
         assert is_binary(metadata.original_filename)
+        assert is_binary(metadata.photo_id)
 
-        # Verify file exists on disk
-        full_path =
-          Path.join([test_base_path, String.trim_leading(metadata.file_path, "/uploads/")])
-
-        assert File.exists?(full_path)
+        # Verify file exists on disk using the photo_id
+        photo_dir = Path.join([test_base_path, "photos", metadata.photo_id])
+        assert File.exists?(photo_dir)
       end
     end
 
@@ -369,13 +378,5 @@ defmodule Portfolio.PhotographyTest do
       assert is_integer(count)
       assert count >= 0
     end
-  end
-
-  # Helper functions
-
-  defp create_temp_file(content) do
-    temp_path = Path.join([System.tmp_dir!(), "test-#{:rand.uniform(1_000_000)}.tmp"])
-    File.write!(temp_path, content)
-    temp_path
   end
 end

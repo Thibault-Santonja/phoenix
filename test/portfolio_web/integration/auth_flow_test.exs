@@ -42,8 +42,9 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       assert magic_link.used_at == nil
 
       # Step 4: Click magic link (simulates email link click)
+      # Using legacy GET verification route for testing
       conn = build_conn()
-      conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
       assert redirected_to(conn) == ~p"/admin"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Connexion réussie"
 
@@ -69,13 +70,13 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       # Arrange: Create user and magic link
       magic_link = create_magic_link()
 
-      # Act: Use magic link once
-      conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      # Act: Use magic link once (using legacy route)
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
       assert redirected_to(conn) == ~p"/admin"
 
       # Act: Try to use it again
       conn = build_conn()
-      conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
 
       # Assert: Should be rejected
       assert redirected_to(conn) == ~p"/login"
@@ -87,8 +88,8 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       expired_at = DateTime.add(DateTime.utc_now(), -1, :hour)
       magic_link = create_magic_link(expires_at: expired_at)
 
-      # Act: Try to use expired link
-      conn = get(conn, ~p"/auth/magic/#{magic_link.token}")
+      # Act: Try to use expired link (using legacy route)
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
 
       # Assert: Should be rejected
       assert redirected_to(conn) == ~p"/login"
@@ -194,18 +195,19 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
   end
 
   describe "error handling" do
-    test "handles malformed magic link tokens gracefully", %{conn: conn} do
+    test "handles malformed magic link tokens gracefully", %{conn: _conn} do
       malformed_tokens = [
         "../../etc/passwd",
         "<script>alert('xss')</script>",
-        String.duplicate("a", 10000),
+        String.duplicate("a", 10_000),
         "' OR '1'='1",
         "%00null"
       ]
 
       for token <- malformed_tokens do
         conn = build_conn()
-        conn = get(conn, ~p"/auth/magic/#{token}")
+        # Using legacy route for verification
+        conn = get(conn, ~p"/auth/verify/#{token}")
 
         # Should redirect to login with error, not crash
         assert redirected_to(conn) == ~p"/login"
@@ -213,7 +215,7 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
       end
     end
 
-    test "handles database errors during session creation", %{conn: conn} do
+    test "handles database errors during session creation", %{conn: _conn} do
       # This is difficult to test without mocking, but we can verify
       # the error path exists and handles failures gracefully
 

@@ -35,6 +35,8 @@ import {
   PhotoSortable,
   ParallaxHero,
   SmoothScroll,
+  RateLimitCountdown,
+  MagicLinkExpiration,
 } from "./hooks";
 
 function getSystemTheme() {
@@ -69,6 +71,8 @@ Hooks.DarkModeSwitch = DarkModeSwitch;
 Hooks.PhotoSortable = PhotoSortable;
 Hooks.ParallaxHero = ParallaxHero;
 Hooks.SmoothScroll = SmoothScroll;
+Hooks.RateLimitCountdown = RateLimitCountdown;
+Hooks.MagicLinkExpiration = MagicLinkExpiration;
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

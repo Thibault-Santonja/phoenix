@@ -7,7 +7,7 @@ defmodule Portfolio.Repo.Migrations.ConvertUserRolesToEnum do
 
     # Create the enum type
     execute """
-    CREATE TYPE user_role AS ENUM ('admin', 'superadmin', 'user')
+    CREATE TYPE user_role AS ENUM ('admin', 'user')
     """
 
     # Drop the default temporarily

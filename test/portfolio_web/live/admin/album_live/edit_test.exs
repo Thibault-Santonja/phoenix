@@ -15,7 +15,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       {:ok, view, html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
-      assert html =~ "Éditer l&#39;album"
+      assert html =~ "Modifier l&#39;album"
       assert html =~ "Test Album"
       assert has_element?(view, "form")
       assert has_element?(view, "input[name=\"album[title]\"]")
@@ -128,7 +128,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       html =
         view
-        |> element("button[phx-click=\"delete_photo\"][phx-value-id=\"#{photo.id}\"]")
+        |> element(~s|button[phx-click="delete_photo"][phx-value-id="#{photo.id}"]|)
         |> render_click()
 
       assert html =~ "Photo supprimée"
@@ -151,10 +151,10 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       html =
         view
-        |> element("img[phx-click=\"edit_photo\"][phx-value-id=\"#{photo.id}\"]")
+        |> element(~s|img[phx-click="edit_photo"][phx-value-id="#{photo.id}"]|)
         |> render_click()
 
-      assert html =~ "Éditer la photo"
+      assert html =~ "Modifier la photo"
       assert has_element?(view, "input[name=\"photo[title]\"]")
       assert has_element?(view, "textarea[name=\"photo[description]\"]")
     end
@@ -167,16 +167,16 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       # Ouvrir la modal
       view
-      |> element("img[phx-click=\"edit_photo\"][phx-value-id=\"#{photo.id}\"]")
+      |> element(~s|img[phx-click="edit_photo"][phx-value-id="#{photo.id}"]|)
       |> render_click()
 
       # Fermer la modal
       html =
         view
-        |> element("button[phx-click=\"close_photo_modal\"]")
+        |> element(~s|button[phx-click="close_photo_modal"]|)
         |> render_click()
 
-      refute html =~ "Éditer la photo"
+      refute html =~ "Modifier la photo"
     end
   end
 
@@ -191,13 +191,13 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       # Ouvrir la modal
       view
-      |> element("img[phx-click=\"edit_photo\"][phx-value-id=\"#{photo.id}\"]")
+      |> element(~s|img[phx-click="edit_photo"][phx-value-id="#{photo.id}"]|)
       |> render_click()
 
       # Soumettre le formulaire
       html =
         view
-        |> form("form[phx-submit=\"save_photo\"]", %{
+        |> form(~s|form[phx-submit="save_photo"]|, %{
           photo: %{
             title: "Updated Photo Title",
             description: "Updated description"
@@ -220,7 +220,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       # Ouvrir la modal
       view
-      |> element("img[phx-click=\"edit_photo\"][phx-value-id=\"#{photo.id}\"]")
+      |> element(~s|img[phx-click="edit_photo"][phx-value-id="#{photo.id}"]|)
       |> render_click()
 
       # Soumettre avec titre trop long (> 200 caractères)
@@ -228,7 +228,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
 
       html =
         view
-        |> form("form[phx-submit=\"save_photo\"]", %{
+        |> form(~s|form[phx-submit="save_photo"]|, %{
           photo: %{title: long_title}
         })
         |> render_submit()
@@ -306,7 +306,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
         |> element("button[phx-click=\"save_photo_order\"]")
         |> render_click()
 
-      assert html =~ "Ordre de 3 photo(s) enregistré"
+      assert html =~ "Ordre de 3 photo(s) sauvegardé"
 
       # Vérifier que l'ordre a été mis à jour en base
       updated_album = Photography.get_album!(album.id, preload: [:photos])
@@ -359,7 +359,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
       {:ok, view, _html} = live(conn, ~p"/admin/albums/#{album.id}/edit")
 
       # En mode normal, les boutons de photo doivent être présents
-      assert has_element?(view, "button[phx-click=\"edit_photo\"]", "Éditer")
+      assert has_element?(view, "button[phx-click=\"edit_photo\"]", "Modifier")
       assert has_element?(view, "button[phx-click=\"delete_photo\"]", "Supprimer")
 
       # Activer le mode réorganisation
@@ -436,12 +436,4 @@ defmodule PortfolioWeb.Admin.AlbumLive.EditTest do
   end
 
   # Helper pour créer et authentifier un utilisateur admin
-  defp register_and_log_in_user(%{conn: conn}) do
-    user = create_user(role: :admin)
-    session = create_session(user_id: user.id)
-
-    conn = init_test_session(conn, %{session_token: session.token})
-
-    %{conn: conn, user: user, session: session}
-  end
 end

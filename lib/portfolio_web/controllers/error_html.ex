@@ -2,22 +2,21 @@ defmodule PortfolioWeb.ErrorHTML do
   @moduledoc """
   This module is invoked by your endpoint in case of errors on HTML requests.
 
+  Custom error pages are available for:
+  - 403 Forbidden: CSRF protection and session expiration
+  - 404 Not Found: Uses default Phoenix message
+  - 500 Internal Server Error: Uses default Phoenix message
+
   See config/config.exs.
   """
   use PortfolioWeb, :html
 
-  # If you want to customize your error pages,
-  # uncomment the embed_templates/1 call below
-  # and add pages to the error directory:
-  #
-  #   * lib/portfolio_web/controllers/error_html/404.html.heex
-  #   * lib/portfolio_web/controllers/error_html/500.html.heex
-  #
-  # embed_templates "error_html/*"
+  # Embed custom error templates
+  embed_templates "error_html/*"
 
-  # The default is to render a plain text page based on
-  # the template name. For example, "404.html" becomes
-  # "Not Found".
+  # Fallback for error codes without custom templates
+  # Renders a plain text page based on the template name
+  # For example, "404.html" becomes "Not Found"
   def render(template, _assigns) do
     Phoenix.Controller.status_message_from_template(template)
   end

@@ -20,37 +20,16 @@
     <.live_title default="Tech Blog" suffix=" · Thibault Santonja">
       {assigns[:page_title]}
     </.live_title>
-    <title>{gettext("Thibault Santonja – Tech & craft blog")}</title>
-    <meta
-      name="description"
-      content={
-        gettext(
-          "Thibault Santonja's technical blog sharing deep insights and experiments on software craftsmanship, Elixir, Phoenix, deployment, and modern developer tools."
-        )
-      }
-    />
+    <title>{gettext("layouts.tech.title")}</title>
+    <meta name="description" content={gettext("layouts.tech.description")} />
     <meta property="og:title" content="Thibault San - Software Craftsmanship Blog" />
-    <meta
-      property="og:description"
-      content={
-        gettext(
-          "Explore articles and experimentations on Elixir, Phoenix, deployment, and modern software development practices."
-        )
-      }
-    />
+    <meta property="og:description" content={gettext("layouts.tech.og_description")} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://tech.thibaultsan.com" />
     <meta property="og:image" content="https://thibaultsan.com/images/photography/landscape.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Thibault San - Software Craftsmanship Blog" />
-    <meta
-      name="twitter:description"
-      content={
-        gettext(
-          "Explore articles and experimentations on Elixir, Phoenix, deployment, and modern software development practices."
-        )
-      }
-    />
+    <meta name="twitter:description" content={gettext("layouts.tech.twitter_description")} />
     <meta
       name="twitter:image"
       content="https://thibaultsan.com/images/photography/landscape.webp"
@@ -73,7 +52,7 @@
       <header class="bg-tech-base-100 opacity-95 border-tech-base-300 h-[3rem] sticky top-0 z-10 flex w-full flex-none items-stretch justify-between p-4 shadow md:px-16">
         <div class="flex items-center text-xl font-thin w-full ">
           <a href={~p"/"} class="mx-auto">
-            Thibault San • {gettext("The tech blog")}
+            Thibault San • {gettext("layouts.tech.header")}
           </a>
         </div>
       </header>

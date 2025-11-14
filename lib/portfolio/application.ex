@@ -5,9 +5,12 @@ defmodule Portfolio.Application do
 
   use Application
 
+  alias Portfolio.Auth.IPWhitelistService
+
   @impl true
   def start(_type, _args) do
-    children = [
+    # Base children that always start
+    base_children = [
       PortfolioWeb.Telemetry,
       Portfolio.Repo,
       {DNSCluster, query: Application.get_env(:portfolio, :dns_cluster_query) || :ignore},
@@ -23,19 +26,33 @@ defmodule Portfolio.Application do
       # Bootstrap admin user automatically (skipped in :test env)
       Portfolio.Bootstrap.Worker,
       # Start the session cleaner worker for periodic cleanup
-      Portfolio.Auth.SessionCleaner,
-      # Start domain event handlers
-      Portfolio.Photography.EventHandlers.AlbumPublishedHandler,
-      Portfolio.Photography.EventHandlers.PhotoUploadedHandler,
-      Portfolio.Auth.EventHandlers.MagicLinkHandler,
-      # Start to serve requests, typically the last entry
-      PortfolioWeb.Endpoint
+      Portfolio.Auth.SessionCleaner
     ]
+
+    # Event handlers - disabled in test environment to avoid DB ownership issues
+    event_handlers =
+      if Application.get_env(:portfolio, :start_event_handlers, true) do
+        [
+          Portfolio.Photography.EventHandlers.AlbumPublishedHandler,
+          Portfolio.Photography.EventHandlers.PhotoUploadedHandler,
+          Portfolio.Auth.EventHandlers.MagicLinkHandler
+        ]
+      else
+        []
+      end
+
+    # Combine all children
+    children = base_children ++ event_handlers ++ [PortfolioWeb.Endpoint]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Portfolio.Supervisor]
-    Supervisor.start_link(children, opts)
+    result = Supervisor.start_link(children, opts)
+
+    # Initialiser le cache IP whitelist après le démarrage
+    IPWhitelistService.init_cache()
+
+    result
   end
 
   # Tell Phoenix to update the endpoint configuration

@@ -11,17 +11,26 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
   use PortfolioWeb, :live_view
 
   alias Portfolio.Auth
+  alias Portfolio.Auth.AuditLogger
 
   on_mount PortfolioWeb.LiveAuth
 
   @impl true
   def mount(_params, _session, socket) do
+    # Stocker l'IP address dans les assigns pour l'audit logging
+    ip_address =
+      case get_connect_params(socket) do
+        %{"peer_data" => %{"address" => address}} -> address
+        _ -> nil
+      end
+
     {:ok,
      socket
-     |> assign(:page_title, "Utilisateurs")
+     |> assign(:page_title, gettext("admin.users.title"))
      |> assign(:filter, nil)
      |> assign(:edit_user, nil)
-     |> assign(:delete_user_id, nil)}
+     |> assign(:delete_user_id, nil)
+     |> assign(:ip_address, ip_address)}
   end
 
   @impl true
@@ -56,20 +65,43 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
 
   @impl true
   def handle_event("save_user", %{"user" => user_params}, socket) do
-    case Auth.update_user_as_admin(socket.assigns.edit_user, user_params) do
-      {:ok, _user} ->
+    current_user_id = socket.assigns.current_user.id
+    edit_user = socket.assigns.edit_user
+
+    case Auth.update_user_as_admin(edit_user, user_params, current_user_id: current_user_id) do
+      {:ok, updated_user} ->
+        # Log audit si le rôle a changé
+        if user_params["role"] && to_string(edit_user.role) != user_params["role"] do
+          AuditLogger.log_user_role_changed(
+            updated_user,
+            old_role: edit_user.role,
+            new_role: String.to_existing_atom(user_params["role"]),
+            performed_by_id: current_user_id,
+            ip_address: socket.assigns.ip_address,
+            metadata: %{"via" => "admin_interface"}
+          )
+        end
+
         users = load_users(socket.assigns.filter)
 
         {:noreply,
          socket
-         |> put_flash(:info, "Utilisateur mis à jour avec succès")
+         |> put_flash(:info, gettext("admin.users.update_success"))
          |> assign(:edit_user, nil)
          |> assign(:users, users)}
 
-      {:error, %Ecto.Changeset{} = _changeset} ->
+      {:error, %Ecto.Changeset{} = changeset} ->
+        # Extraire le message d'erreur pour l'afficher
+        error_message =
+          if changeset.errors[:role] do
+            elem(changeset.errors[:role], 0)
+          else
+            gettext("admin.users.update_error")
+          end
+
         {:noreply,
          socket
-         |> put_flash(:error, "Erreur lors de la mise à jour de l'utilisateur")}
+         |> put_flash(:error, error_message)}
     end
   end
 
@@ -86,9 +118,18 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
   @impl true
   def handle_event("delete_user", %{"user-id" => user_id}, socket) do
     user = Enum.find(socket.assigns.users, &(&1.id == user_id))
+    current_user_id = socket.assigns.current_user.id
 
     case Auth.delete_user(user) do
-      {:ok, _user} ->
+      {:ok, deleted_user} ->
+        # Log audit de la suppression
+        AuditLogger.log_user_deleted(
+          deleted_user,
+          performed_by_id: current_user_id,
+          ip_address: socket.assigns.ip_address,
+          metadata: %{"via" => "admin_interface"}
+        )
+
         users = load_users(socket.assigns.filter)
 
         user_stats = %{
@@ -99,7 +140,7 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
 
         {:noreply,
          socket
-         |> put_flash(:info, "Utilisateur supprimé avec succès")
+         |> put_flash(:info, gettext("admin.users.delete_success"))
          |> assign(:delete_user_id, nil)
          |> assign(:users, users)
          |> assign(:user_stats, user_stats)}
@@ -107,7 +148,7 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
       {:error, _changeset} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Erreur lors de la suppression de l'utilisateur")
+         |> put_flash(:error, gettext("admin.users.delete_error"))
          |> assign(:delete_user_id, nil)}
     end
   end
@@ -115,11 +156,53 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
   @impl true
   def handle_event("revoke_sessions", %{"user-id" => user_id}, socket) do
     user = Enum.find(socket.assigns.users, &(&1.id == user_id))
+    current_user_id = socket.assigns.current_user.id
     {count, _} = Auth.delete_all_user_sessions(user)
+
+    # Log audit de la révocation
+    AuditLogger.log_sessions_revoked(
+      user,
+      session_count: count,
+      performed_by_id: current_user_id,
+      ip_address: socket.assigns.ip_address,
+      metadata: %{"via" => "admin_interface"}
+    )
 
     {:noreply,
      socket
-     |> put_flash(:info, "#{count} session(s) révoquée(s) avec succès")}
+     |> put_flash(:info, gettext("admin.users.sessions_revoked", count: count))}
+  end
+
+  @impl true
+  def handle_event("send_magic_link", %{"user-id" => user_id}, socket) do
+    user = Enum.find(socket.assigns.users, &(&1.id == user_id))
+    current_user_id = socket.assigns.current_user.id
+
+    # Utiliser la fonction admin qui bypass le rate limiting
+    case Auth.request_magic_link_as_admin(user.email) do
+      {:ok, _magic_link} ->
+        # Log audit de l'envoi
+        AuditLogger.log_magic_link_sent(
+          user,
+          performed_by_id: current_user_id,
+          ip_address: socket.assigns.ip_address,
+          metadata: %{"via" => "admin_interface", "bypass_rate_limit" => true}
+        )
+
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("admin.users.magic_link_sent", email: user.email))}
+
+      {:error, :user_not_found} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("admin.users.user_not_found"))}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("admin.users.magic_link_error"))}
+    end
   end
 
   # Optimisation: filtrage en base de données au lieu de filtrer en mémoire

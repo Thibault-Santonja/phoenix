@@ -15,7 +15,7 @@ defmodule Portfolio.Repo.Migrations.CreateUsersAuthTables do
     end
 
     create(unique_index(:users, [:email]))
-    create(constraint(:users, :valid_role, check: "role IN ('admin', 'superadmin')"))
+    create(constraint(:users, :valid_role, check: "role IN ('admin')"))
 
     # Table magic_links pour l'authentification passwordless
     create table(:magic_links, primary_key: false) do

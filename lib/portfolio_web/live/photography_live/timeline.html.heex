@@ -6,8 +6,10 @@
 ]}>
   <h1 class="flex flex-col items-end group">
     <a href={~p"/"}>
-      {gettext("Thibault Santonja")}
-      <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
+      {gettext("photography.brand_name")}
+      <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">
+        {gettext("photography.timeline.home")}
+      </p>
     </a>
   </h1>
   <div class="grow flex justify-end gap-4">
@@ -131,7 +133,7 @@
                         "text-sm"
                       ]}
                     >
-                      {gettext("Website")}
+                      {gettext("photography.timeline.website")}
                       <.icon
                         name="hero-arrow-right-circle-solid"
                         class={[
@@ -152,7 +154,7 @@
                         "border-gray-300 rounded-lg border-2"
                       ]}
                     >
-                      {gettext("Show more")}
+                      {gettext("photography.timeline.show_more")}
                       <.icon
                         name="hero-arrow-right-circle-solid"
                         class={[
@@ -181,7 +183,7 @@
     <header class="mb-4">
       <h2 class="text-xl font-semibold">
         <span class="text-xs mr-4 text-gray-500">{Date.utc_today()}</span>
-        {gettext("Empty portfolio chapter")}
+        {gettext("photography.timeline.empty_title")}
       </h2>
     </header>
 
@@ -203,7 +205,7 @@
         "flex flex-col"
       ]}>
         <p>
-          {gettext("I am so sorry but at the moment, this portfolio gallery is empty")}
+          {gettext("photography.timeline.empty_message")}
         </p>
 
         <nav class="flex justify-end mt-4">
@@ -218,7 +220,7 @@
               "border-gray-600 dark:border-gray-300 rounded-lg border-2"
             ]}
           >
-            {gettext("Home")}
+            {gettext("photography.timeline.home")}
             <.icon
               name="hero-arrow-right-circle-solid"
               class={[

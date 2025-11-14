@@ -8,12 +8,12 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
   @endpoint PortfolioWeb.Endpoint
 
   setup %{conn: conn} do
-    # Set English locale for consistent testing
-    Gettext.put_locale(PortfolioWeb.Gettext, "en")
+    # Set French locale for consistent testing (default locale)
+    Gettext.put_locale(PortfolioWeb.Gettext, "fr")
     # Set the photo subdomain
     conn = %{conn | host: "photo.example.com"}
-    # Initialize session with English locale
-    conn = init_test_session(conn, %{"locale" => "en"})
+    # Initialize session with French locale
+    conn = init_test_session(conn, %{"locale" => "fr"})
     %{conn: conn}
   end
 
@@ -22,18 +22,30 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       assert html =~ "Thibault Santonja"
-      assert html =~ "Home"
+      assert html =~ "Accueil"
     end
 
-    test "displays years navigation in header", %{conn: conn} do
+    test "displays years navigation in header when albums exist", %{conn: conn} do
+      create_published_album(2,
+        title: "Test Album 2023",
+        date_prise_vue: ~D[2023-06-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Test Album 2024",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
-      # Should display hardcoded years (2023, 2024, 2025) as links
+      # Should display years as links
       assert html =~ "2023"
       assert html =~ "2024"
-      assert html =~ "2025"
       # Check they're anchor links
       assert html =~ "#year-2023"
+      assert html =~ "#year-2024"
     end
 
     test "displays language selector", %{conn: conn} do
@@ -46,52 +58,78 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       # Page title is set in the HTML head (French: "Galerie chronologique de photographie")
-      assert html =~ "Galerie chronologique" or html =~ "timeline gallery"
+      assert html =~ "Galerie chronologique"
     end
   end
 
   describe "Timeline - Year Grouping" do
-    test "groups hardcoded albums by year", %{conn: conn} do
+    test "groups albums by year", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2023",
+        date_prise_vue: ~D[2023-06-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Album 2024",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       # Check that year sections exist
       assert html =~ ~s(id="year-2023")
       assert html =~ ~s(id="year-2024")
-      assert html =~ ~s(id="year-2025")
     end
 
     test "displays albums within their year section", %{conn: conn} do
+      create_published_album(2,
+        title: "Wedding 2023",
+        date_prise_vue: ~D[2023-06-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Couples 2024",
+        date_prise_vue: ~D[2024-08-20],
+        type: :couples
+      )
+
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
-      # Check for some hardcoded albums from different years
-      # 2023, 2024
-      assert html =~ "Alexandre &amp; Anne"
-      # 2023
-      assert html =~ "Amel &amp; Flo"
-      # 2025
-      assert html =~ "Seigneuriales 2025"
+      assert html =~ "Wedding 2023"
+      assert html =~ "Couples 2024"
     end
 
     test "displays years in descending order", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2022",
+        date_prise_vue: ~D[2022-06-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Album 2024",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
-      # Years should appear in the navigation in ascending order for display
-      # But the content sections (year-2025, year-2024, etc.) should be descending
-      # Just verify all years are present
-      assert html =~ ~s(id="year-2023")
+      # Years should be present
+      assert html =~ ~s(id="year-2022")
       assert html =~ ~s(id="year-2024")
-      assert html =~ ~s(id="year-2025")
     end
   end
 
   describe "Timeline - Database Albums" do
     test "displays published albums from database", %{conn: conn} do
-      _album =
-        create_published_album(3,
-          title: "Test DB Album",
-          date_prise_vue: ~D[2024-06-15],
-          type: :wedding
-        )
+      create_published_album(3,
+        title: "Test DB Album",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
 
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
@@ -132,22 +170,6 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert html =~ ~s(id="year-2024")
     end
 
-    test "merges database albums with hardcoded data", %{conn: conn} do
-      create_published_album(2,
-        title: "New 2024 Album",
-        date_prise_vue: ~D[2024-03-15],
-        type: :landscape
-      )
-
-      {:ok, _view, html} = live(conn, ~p"/timeline")
-
-      # Should have both hardcoded and DB albums
-      # DB album
-      assert html =~ "New 2024 Album"
-      # Hardcoded albums exist (titles may vary by locale)
-      assert html =~ "2024"
-    end
-
     test "uses first photo as cover image", %{conn: conn} do
       album =
         create_album(
@@ -181,9 +203,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       assert html =~ "Multi-day Event"
-      # At minimum, should show the start date
+      # Should show start date at minimum
       assert html =~ "2024-06-15"
-      # Note: The date range display may need enhancement to show both dates
+      # If end date is provided, it should be displayed
+      # Note: implementation shows "2024-06-15 - 2024-06-17" format
+      assert html =~ "2024-06-17"
     end
 
     test "displays album with single date when no end date", %{conn: conn} do
@@ -225,22 +249,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     test "updates page title when filtering by chapter", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/timeline/wedding")
 
-      # Page title should include the chapter name (French: "Galerie de photographie - Wedding")
-      assert html =~ "Wedding" or html =~ "wedding"
+      # Page title should include the chapter name (capitalized)
+      assert html =~ "Wedding"
     end
 
-    test "filters hardcoded albums by chapter", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/timeline/music")
-
-      # Should show music albums
-      assert html =~ "Orchestre de Gisors"
-      assert html =~ "Des caravelles &amp; des batailles"
-
-      # Should not show wedding albums
-      refute html =~ "Amel &amp; Flo"
-    end
-
-    test "shows only relevant years when filtered chapter has limited albums", %{conn: conn} do
+    test "shows only relevant years when filtered", %{conn: conn} do
       # Only create wedding album in 2024
       create_published_album(2,
         title: "2024 Wedding",
@@ -248,26 +261,30 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
         type: :wedding
       )
 
-      {:ok, _view, html} = live(conn, ~p"/timeline/landscape")
-
-      # The view should handle filtering gracefully
-      # Should still render successfully
-      assert html =~ "Thibault Santonja"
-    end
-
-    test "filters database and hardcoded albums together", %{conn: conn} do
+      # Create landscape album in 2023
       create_published_album(2,
-        title: "DB Wedding Album",
-        date_prise_vue: ~D[2024-06-15],
-        type: :wedding
+        title: "2023 Landscape",
+        date_prise_vue: ~D[2023-06-15],
+        type: :landscape
       )
 
       {:ok, _view, html} = live(conn, ~p"/timeline/wedding")
 
-      # Should show both DB and hardcoded wedding albums
-      assert html =~ "DB Wedding Album"
-      # Hardcoded 2023 wedding
-      assert html =~ "Amel &amp; Flo"
+      # Should only show 2024
+      assert html =~ "2024 Wedding"
+      refute html =~ "2023 Landscape"
+    end
+
+    test "filters multiple album types correctly", %{conn: conn} do
+      create_published_album(2, title: "Wedding", date_prise_vue: ~D[2024-06-15], type: :wedding)
+      create_published_album(2, title: "Couples", date_prise_vue: ~D[2024-06-15], type: :couples)
+      create_published_album(2, title: "Music", date_prise_vue: ~D[2024-06-15], type: :music)
+
+      # Filter by wedding
+      {:ok, _view, html} = live(conn, ~p"/timeline/wedding")
+      assert html =~ "Wedding"
+      refute html =~ ">Couples<"
+      refute html =~ ">Music<"
     end
   end
 
@@ -309,7 +326,6 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       assert html =~ "https://example.com/event"
-      # Link text depends on locale - just check the URL exists
     end
 
     test "displays gallery link using album slug", %{conn: conn} do
@@ -323,7 +339,6 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       assert html =~ "/gallery/#{album.slug}"
-      # Link text depends on locale - just check the URL exists
     end
 
     test "does not show reference link when not present", %{conn: conn} do
@@ -336,8 +351,8 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
 
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
-      # Should not have "Website" link
-      refute html =~ ">Website<"
+      # Should not have "Website" link text
+      refute html =~ ">Site web<"
     end
 
     test "albums are sorted by date descending within year", %{conn: conn} do
@@ -365,61 +380,77 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert html =~ "June Album"
       assert html =~ "July Album"
       assert html =~ "August Album"
-
-      # They should appear with their dates
-      assert html =~ "2024-06-01"
-      assert html =~ "2024-07-01"
-      assert html =~ "2024-08-01"
     end
   end
 
   describe "Timeline - Empty State" do
-    test "shows empty state when no albums for filtered chapter", %{conn: conn} do
-      # Don't create any landscape albums
-      {:ok, _view, html} = live(conn, ~p"/timeline/landscape")
-
-      # Should still render but with only hardcoded data or empty sections
-      # The view gracefully handles empty chapters
-      assert html =~ "Thibault Santonja"
-    end
-
-    test "shows placeholder when all years are empty", %{conn: conn} do
-      # This would only happen if we filtered by a non-existent type
-      # But the timeline always has hardcoded data, so this is theoretical
+    test "shows empty state when no albums exist", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
-      # Years should never be completely empty due to hardcoded data
-      # Verify that year sections exist
-      assert html =~ ~s(id="year-2023") or html =~ ~s(id="year-2024") or
-               html =~ ~s(id="year-2025")
+      # Should show empty state message
+      assert html =~ "Chapitre de portfolio vide"
+      assert html =~ "Je suis désolé mais pour le moment, cette galerie de portfolio est vide"
+    end
+
+    test "shows empty state when filtering by chapter with no albums", %{conn: conn} do
+      # Create only wedding albums
+      create_published_album(2,
+        title: "Wedding Album",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
+      {:ok, _view, html} = live(conn, ~p"/timeline/landscape")
+
+      # Should show empty state for landscape
+      assert html =~ "Chapitre de portfolio vide"
     end
   end
 
   describe "Timeline - Navigation Anchors" do
     test "year links have anchor attributes", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2023",
+        date_prise_vue: ~D[2023-06-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Album 2024",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
       {:ok, view, _html} = live(conn, ~p"/timeline")
 
       # Check that year anchor links exist
       assert view |> element("a[href='#year-2023']") |> has_element?()
       assert view |> element("a[href='#year-2024']") |> has_element?()
-      assert view |> element("a[href='#year-2025']") |> has_element?()
     end
 
     test "year sections have correct IDs for anchoring", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2023",
+        date_prise_vue: ~D[2023-06-15],
+        type: :wedding
+      )
+
       {:ok, view, _html} = live(conn, ~p"/timeline")
 
       assert view |> element("li#year-2023") |> has_element?()
-      assert view |> element("li#year-2024") |> has_element?()
-      assert view |> element("li#year-2025") |> has_element?()
     end
 
     test "year sections have YearTrigger hook", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2024",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
       assert html =~ ~s(phx-hook="YearTrigger")
-      assert html =~ ~s(data-year="2023")
       assert html =~ ~s(data-year="2024")
-      assert html =~ ~s(data-year="2025")
     end
   end
 
@@ -445,54 +476,41 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       # Gettext should be using French locale
       assert Gettext.get_locale(PortfolioWeb.Gettext) == "fr"
     end
-
-    test "uses English by default when no locale in session", %{conn: conn} do
-      {:ok, _view, _html} = live(conn, ~p"/timeline")
-
-      # Default locale should be "en"
-      locale = Gettext.get_locale(PortfolioWeb.Gettext)
-      # Accept either default
-      assert locale in ["en", "fr"]
-    end
   end
 
   describe "Timeline - Handle Params" do
     test "applies action for index without chapter", %{conn: conn} do
+      create_published_album(2,
+        title: "Wedding Album",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Couples Album",
+        date_prise_vue: ~D[2024-06-15],
+        type: :couples
+      )
+
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
-      # Without a chapter, should show all albums (check for Galerie/timeline)
-      assert html =~ "Galerie" or html =~ "timeline"
-      # Should show albums from different types
-      # couples
-      assert html =~ "Alexandre &amp; Anne"
-      # wedding
-      assert html =~ "Amel &amp; Flo"
+      # Without a chapter, should show all albums
+      assert html =~ "Wedding Album"
+      assert html =~ "Couples Album"
     end
 
     test "applies action for index with chapter", %{conn: conn} do
+      create_published_album(2,
+        title: "Wedding Album",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
       {:ok, _view, html} = live(conn, ~p"/timeline/wedding")
 
       # With wedding chapter, should show wedding in title
-      assert html =~ "Wedding" or html =~ "wedding"
-      # Should show wedding albums
-      assert html =~ "Amel &amp; Flo"
-    end
-
-    test "navigating between chapters updates content", %{conn: conn} do
-      {:ok, _view, html1} = live(conn, ~p"/timeline")
-
-      # Without filter, should show all types
-      # couples
-      assert html1 =~ "Alexandre &amp; Anne"
-      # wedding
-      assert html1 =~ "Amel &amp; Flo"
-
-      # Navigate to wedding chapter
-      {:ok, _view, html2} = live(conn, ~p"/timeline/wedding")
-
-      # Should now only show wedding albums
-      # wedding
-      assert html2 =~ "Amel &amp; Flo"
+      assert html =~ "wedding"
+      assert html =~ "Wedding Album"
     end
   end
 

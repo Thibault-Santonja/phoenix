@@ -94,6 +94,7 @@ defmodule Portfolio.Auth.Events do
     - `magic_link_id` - Unique identifier of the magic link
     - `email` - Email address of the user requesting authentication
     - `token` - The magic link token (hashed in database)
+    - `short_code` - Short code (6 characters) visible in URL
     - `requested_at` - Timestamp when the magic link was requested
     - `expires_at` - Timestamp when the magic link will expire
 
@@ -105,13 +106,14 @@ defmodule Portfolio.Auth.Events do
     - Implement rate limiting
     """
 
-    @enforce_keys [:magic_link_id, :email, :token, :requested_at, :expires_at]
-    defstruct [:magic_link_id, :email, :token, :requested_at, :expires_at]
+    @enforce_keys [:magic_link_id, :email, :token, :short_code, :requested_at, :expires_at]
+    defstruct [:magic_link_id, :email, :token, :short_code, :requested_at, :expires_at]
 
     @type t :: %__MODULE__{
             magic_link_id: Ecto.UUID.t(),
             email: String.t(),
             token: String.t(),
+            short_code: String.t(),
             requested_at: DateTime.t(),
             expires_at: DateTime.t()
           }

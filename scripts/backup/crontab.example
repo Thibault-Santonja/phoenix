@@ -1,0 +1,75 @@
+# Portfolio Backup Cron Configuration
+#
+# Copy this file to set up automated backups
+#
+# Installation:
+#   1. Copy to your crontab: crontab -e
+#   2. Add these lines (adjust paths as needed)
+#   3. Ensure scripts are executable: chmod +x scripts/backup/*.sh
+#
+# Environment variables should be set in:
+#   - /etc/environment (system-wide)
+#   - ~/.profile or ~/.bashrc (user-specific)
+#   - Or inline in crontab (see examples below)
+
+# ============================================================================
+# Daily Backups (Production)
+# ============================================================================
+
+# PostgreSQL backup - Every day at 2:00 AM
+0 2 * * * cd /path/to/portfolio && DATABASE_URL="postgresql://user:pass@localhost/db" ./scripts/backup/backup-postgres.sh production >> /var/log/portfolio/backup-postgres.log 2>&1
+
+# Photos backup - Every day at 3:00 AM
+0 3 * * * cd /path/to/portfolio && ./scripts/backup/backup-photos.sh production >> /var/log/portfolio/backup-photos.log 2>&1
+
+# ============================================================================
+# Weekly Backups to S3 (Optional)
+# ============================================================================
+
+# PostgreSQL to S3 - Every Sunday at 4:00 AM
+0 4 * * 0 cd /path/to/portfolio && DATABASE_URL="postgresql://user:pass@localhost/db" BACKUP_S3_BUCKET="my-backups-bucket" ./scripts/backup/backup-postgres.sh production >> /var/log/portfolio/backup-postgres-s3.log 2>&1
+
+# Photos to S3 - Every Sunday at 5:00 AM
+0 5 * * 0 cd /path/to/portfolio && BACKUP_S3_BUCKET="my-backups-bucket" ./scripts/backup/backup-photos.sh production >> /var/log/portfolio/backup-photos-s3.log 2>&1
+
+# ============================================================================
+# Retention Management
+# ============================================================================
+
+# Keep local backups for 30 days (configured in scripts via BACKUP_RETENTION_DAYS)
+# S3 backups should use S3 lifecycle policies for cost optimization
+
+# ============================================================================
+# Monitoring Recommendations
+# ============================================================================
+
+# 1. Set up log rotation for backup logs:
+#    /etc/logrotate.d/portfolio-backups
+
+# 2. Monitor backup completion:
+#    tail -f /var/log/portfolio/backup-*.log
+
+# 3. Alert on backup failures:
+#    Configure monitoring tool (e.g., Monit, Nagios) to check log files
+
+# 4. Test restore procedures regularly:
+#    ./scripts/backup/restore-postgres.sh backups/postgres/latest.sql.gz
+#    ./scripts/backup/restore-photos.sh backups/photos/latest.tar.gz --merge
+
+# ============================================================================
+# Environment Variables Reference
+# ============================================================================
+
+# Required:
+#   DATABASE_URL            - PostgreSQL connection string
+#
+# Optional:
+#   PHOTOS_DIR             - Photos directory (default: priv/static/uploads/photos)
+#   BACKUP_DIR             - Backup output directory (default: ./backups)
+#   BACKUP_RETENTION_DAYS  - Days to keep backups (default: 30)
+#   BACKUP_S3_BUCKET       - S3 bucket for remote backups
+#
+# AWS (if using S3):
+#   AWS_ACCESS_KEY_ID      - AWS access key
+#   AWS_SECRET_ACCESS_KEY  - AWS secret key
+#   AWS_DEFAULT_REGION     - AWS region (e.g., eu-west-1)

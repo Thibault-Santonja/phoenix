@@ -1,5 +1,6 @@
 defmodule Portfolio.Photography.EventHandlers.PhotoUploadedHandlerTest do
   use Portfolio.DataCase, async: true
+  use Oban.Testing, repo: Portfolio.Repo
 
   alias Portfolio.Photography.EventHandlers.PhotoUploadedHandler
   alias Portfolio.Photography.Events.PhotoUploaded

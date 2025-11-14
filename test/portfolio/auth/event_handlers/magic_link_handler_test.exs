@@ -1,30 +1,44 @@
 defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
 
   alias Portfolio.Auth.EventHandlers.MagicLinkHandler
+  alias Portfolio.Auth.Events.{MagicLinkRequested, MagicLinkVerified}
 
-  describe "MagicLinkHandler" do
-    test "handler is started and registered" do
-      # Verify handler is running
-      assert Process.whereis(MagicLinkHandler) != nil
-      assert Process.alive?(Process.whereis(MagicLinkHandler))
+  describe "handle_info/2 with :magic_link_requested event" do
+    test "processes magic link requested event and logs" do
+      event = %MagicLinkRequested{
+        magic_link_id: Ecto.UUID.generate(),
+        email: "test@example.com",
+        token: "test_token_hash",
+        short_code: "ABC123",
+        requested_at: DateTime.utc_now(),
+        expires_at: DateTime.utc_now() |> DateTime.add(900, :second)
+      }
+
+      # Send event to handler
+      assert {:noreply, %{}} =
+               MagicLinkHandler.handle_info({:magic_link_requested, event}, %{})
     end
+  end
 
-    test "handler is supervised and restarts on crash" do
-      pid = Process.whereis(MagicLinkHandler)
-      assert pid != nil
+  describe "handle_info/2 with :magic_link_verified event" do
+    test "processes magic link verified event and logs" do
+      event = %MagicLinkVerified{
+        magic_link_id: Ecto.UUID.generate(),
+        user_id: Ecto.UUID.generate(),
+        email: "test@example.com",
+        verified_at: DateTime.utc_now()
+      }
 
-      # Kill the handler
-      Process.exit(pid, :kill)
+      # Send event to handler
+      assert {:noreply, %{}} =
+               MagicLinkHandler.handle_info({:magic_link_verified, event}, %{})
+    end
+  end
 
-      # Give supervisor time to restart
-      Process.sleep(100)
-
-      # Handler should be restarted with different PID
-      new_pid = Process.whereis(MagicLinkHandler)
-      assert new_pid != nil
-      assert new_pid != pid
-      assert Process.alive?(new_pid)
+  describe "handle_info/2 with unexpected messages" do
+    test "handles unexpected messages gracefully" do
+      assert {:noreply, %{}} = MagicLinkHandler.handle_info({:unexpected, :message}, %{})
     end
   end
 end

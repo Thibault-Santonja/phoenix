@@ -8,7 +8,8 @@ defmodule PortfolioWeb.UserAuth do
   import Phoenix.Component
   import Phoenix.LiveView
 
-  alias Portfolio.Auth
+  alias PortfolioWeb.AuthConfig
+  alias PortfolioWeb.AuthHelpers
 
   @doc """
   Hook `on_mount` pour gérer l'authentification dans les LiveViews.
@@ -52,8 +53,8 @@ defmodule PortfolioWeb.UserAuth do
     else
       socket =
         socket
-        |> put_flash(:error, "Vous devez être connecté pour accéder à cette page.")
-        |> redirect(to: "/login")
+        |> put_flash(:error, AuthConfig.unauthenticated_message())
+        |> redirect(to: AuthConfig.login_path())
 
       {:halt, socket}
     end
@@ -63,7 +64,7 @@ defmodule PortfolioWeb.UserAuth do
     socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
-      {:halt, redirect(socket, to: "/admin")}
+      {:halt, redirect(socket, to: AuthConfig.authenticated_path())}
     else
       {:cont, socket}
     end
@@ -73,23 +74,16 @@ defmodule PortfolioWeb.UserAuth do
   defp mount_current_user(socket, session) do
     # IMPORTANT: Utiliser une clé string "session_token" car Phoenix convertit
     # les clés de session en strings lors du passage à LiveView
-    case session["session_token"] do
+    session_token = session["session_token"]
+
+    case AuthHelpers.fetch_user_from_session_token(session_token) do
       nil ->
         assign(socket, :current_user, nil)
 
-      session_token ->
-        case Auth.get_session_by_token(session_token) do
-          nil ->
-            assign(socket, :current_user, nil)
-
-          user_session ->
-            # Mettre à jour l'activité de la session
-            Auth.update_session_activity(user_session)
-
-            socket
-            |> assign(:current_user, user_session.user)
-            |> assign(:current_session, user_session)
-        end
+      {user, user_session} ->
+        socket
+        |> assign(:current_user, user)
+        |> assign(:current_session, user_session)
     end
   end
 end

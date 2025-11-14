@@ -65,30 +65,50 @@ defmodule Portfolio.RateLimiter do
     {limit, period} = Map.fetch!(@rate_limits, action)
     bucket_key = build_bucket_key(action, identifier)
 
-    case Hammer.check_rate(bucket_key, period, limit) do
-      {:allow, count} ->
-        remaining = limit - count
+    start_time = System.monotonic_time()
 
-        Logger.debug("Rate limit check passed",
-          action: action,
-          identifier: identifier,
-          remaining: remaining
-        )
+    result =
+      case Hammer.check_rate(bucket_key, period, limit) do
+        {:allow, count} ->
+          remaining = limit - count
 
-        {:allow, remaining}
+          Logger.debug("Rate limit check passed",
+            action: action,
+            identifier: identifier,
+            remaining: remaining
+          )
 
-      {:deny, _limit} ->
-        # Calculate retry_after based on the oldest entry in the bucket
-        retry_after = period
+          {:allow, remaining}
 
-        Logger.warning("Rate limit exceeded",
-          action: action,
-          identifier: identifier,
-          retry_after_ms: retry_after
-        )
+        {:deny, _limit} ->
+          # Calculate retry_after based on the oldest entry in the bucket
+          retry_after = period
 
-        {:deny, retry_after}
-    end
+          Logger.warning("Rate limit exceeded",
+            action: action,
+            identifier: identifier,
+            retry_after_ms: retry_after
+          )
+
+          {:deny, retry_after}
+      end
+
+    # Emit telemetry event
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :rate_limiter, :check],
+      %{duration: duration},
+      %{
+        action: action,
+        identifier: identifier,
+        result: elem(result, 0),
+        remaining: if(elem(result, 0) == :allow, do: elem(result, 1), else: nil),
+        retry_after_ms: if(elem(result, 0) == :deny, do: elem(result, 1), else: nil)
+      }
+    )
+
+    result
   end
 
   @doc """
@@ -105,6 +125,150 @@ defmodule Portfolio.RateLimiter do
   def reset(action, identifier) when is_atom(action) and is_binary(identifier) do
     bucket_key = build_bucket_key(action, identifier)
     Hammer.delete_buckets(bucket_key)
+    :ok
+  end
+
+  @doc """
+  Resets all rate limit counters.
+
+  Useful for test isolation to ensure rate limit state doesn't bleed between tests.
+
+  ## Examples
+
+      iex> reset_all()
+      :ok
+  """
+  @spec reset_all() :: :ok
+  def reset_all do
+    # Clear all Hammer ETS buckets by deleting all objects from all Hammer tables
+    # Hammer.Backend.ETS uses multiple ETS tables, we need to clear them all
+    try do
+      # List all ETS tables and find Hammer tables
+      :ets.all()
+      |> Enum.filter(fn table ->
+        try do
+          info = :ets.info(table)
+          name = Keyword.get(info, :name, "")
+          name == Hammer.ETS or String.contains?(to_string(name), "hammer")
+        rescue
+          _ -> false
+        end
+      end)
+      |> Enum.each(fn table ->
+        try do
+          :ets.delete_all_objects(table)
+        rescue
+          _ -> :ok
+        end
+      end)
+    rescue
+      _ -> :ok
+    end
+
+    :ok
+  end
+
+  @doc """
+  Resets rate limit counters for specific actions only.
+
+  Useful for tests that need to preserve rate limit state for some actions
+  while resetting others.
+
+  ## Examples
+
+      iex> reset_actions([:magic_link_request, :login_attempt])
+      :ok
+  """
+  @spec reset_actions([action()]) :: :ok
+  def reset_actions(actions) when is_list(actions) do
+    try do
+      :ets.all()
+      |> Enum.filter(fn table ->
+        try do
+          info = :ets.info(table)
+          name = Keyword.get(info, :name, "")
+          name == Hammer.ETS or String.contains?(to_string(name), "hammer")
+        rescue
+          _ -> false
+        end
+      end)
+      |> Enum.each(fn table ->
+        try do
+          # Get all objects and filter by action
+          :ets.tab2list(table)
+          |> Enum.each(fn {key, _value} ->
+            # Keys are like: "rate_limit:magic_link_request:user@example.com"
+            key_str = to_string(key)
+
+            should_delete =
+              Enum.any?(actions, fn action ->
+                String.contains?(key_str, "rate_limit:#{action}:")
+              end)
+
+            if should_delete do
+              :ets.delete(table, key)
+            end
+          end)
+        rescue
+          _ -> :ok
+        end
+      end)
+    rescue
+      _ -> :ok
+    end
+
+    :ok
+  end
+
+  @doc """
+  Resets all rate limit counters except for specific actions.
+
+  Useful for tests that need to preserve rate limit buildup for specific
+  actions while resetting everything else.
+
+  ## Examples
+
+      iex> reset_all_except([:magic_link_request])
+      :ok
+  """
+  @spec reset_all_except([action()]) :: :ok
+  def reset_all_except(actions) when is_list(actions) do
+    try do
+      :ets.all()
+      |> Enum.filter(fn table ->
+        try do
+          info = :ets.info(table)
+          name = Keyword.get(info, :name, "")
+          name == Hammer.ETS or String.contains?(to_string(name), "hammer")
+        rescue
+          _ -> false
+        end
+      end)
+      |> Enum.each(fn table ->
+        try do
+          # Get all objects and filter by action
+          :ets.tab2list(table)
+          |> Enum.each(fn {key, _value} ->
+            # Keys are like: "rate_limit:magic_link_request:user@example.com"
+            key_str = to_string(key)
+
+            should_keep =
+              Enum.any?(actions, fn action ->
+                String.contains?(key_str, "rate_limit:#{action}:")
+              end)
+
+            if not should_keep do
+              :ets.delete(table, key)
+            end
+          end)
+        rescue
+          _ -> :ok
+        end
+      end)
+    rescue
+      _ -> :ok
+    end
+
     :ok
   end
 

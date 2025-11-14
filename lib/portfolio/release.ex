@@ -17,6 +17,9 @@ defmodule Portfolio.Release do
       /app/bin/portfolio eval "Portfolio.Release.migrate_and_bootstrap"
   """
 
+  alias Portfolio.Auth.User
+  alias Portfolio.Repo
+
   @app :portfolio
 
   @doc """
@@ -61,17 +64,7 @@ defmodule Portfolio.Release do
         end)
 
       user ->
-        # If user exists but is not admin, promote them
-        if user.role != :admin do
-          user
-          |> User.admin_changeset(%{role: :admin})
-          |> Repo.update!()
-          |> then(fn updated_user ->
-            IO.puts("✓ User #{updated_user.email} promoted to admin")
-          end)
-        else
-          IO.puts("✓ Admin user already exists: #{user.email}")
-        end
+        ensure_user_is_admin(user)
     end
   end
 
@@ -89,6 +82,25 @@ defmodule Portfolio.Release do
 
   defp load_app do
     Application.load(@app)
+  end
+
+  # Assure que l'utilisateur a le rôle admin
+  defp ensure_user_is_admin(user) do
+    if user.role != :admin do
+      promote_user_to_admin(user)
+    else
+      IO.puts("✓ Admin user already exists: #{user.email}")
+    end
+  end
+
+  # Promeut un utilisateur au rôle admin
+  defp promote_user_to_admin(user) do
+    user
+    |> User.admin_changeset(%{role: :admin})
+    |> Repo.update!()
+    |> then(fn updated_user ->
+      IO.puts("✓ User #{updated_user.email} promoted to admin")
+    end)
   end
 
   defp start_repo do

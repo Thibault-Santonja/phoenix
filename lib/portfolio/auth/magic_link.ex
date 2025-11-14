@@ -18,6 +18,7 @@ defmodule Portfolio.Auth.MagicLink do
           user_id: Ecto.UUID.t(),
           user: User.t() | Ecto.Association.NotLoaded.t(),
           token: String.t(),
+          short_code: String.t() | nil,
           expires_at: DateTime.t(),
           used_at: DateTime.t() | nil,
           inserted_at: NaiveDateTime.t() | nil
@@ -27,6 +28,7 @@ defmodule Portfolio.Auth.MagicLink do
     belongs_to :user, User
 
     field :token, :string
+    field :short_code, :string
     field :expires_at, :utc_datetime
     field :used_at, :utc_datetime
 
@@ -39,9 +41,11 @@ defmodule Portfolio.Auth.MagicLink do
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(magic_link, attrs) do
     magic_link
-    |> cast(attrs, [:user_id, :token, :expires_at])
-    |> validate_required([:user_id, :token, :expires_at])
+    |> cast(attrs, [:user_id, :token, :short_code, :expires_at])
+    |> validate_required([:user_id, :token, :short_code, :expires_at])
+    |> validate_length(:short_code, is: 6)
     |> unique_constraint(:token)
+    |> unique_constraint(:short_code)
     |> foreign_key_constraint(:user_id)
   end
 

@@ -17,6 +17,7 @@ defmodule PortfolioWeb.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: PortfolioWeb.Gettext
 
+  alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
 
   # Import verified routes for ~p sigil
@@ -79,7 +80,7 @@ defmodule PortfolioWeb.CoreComponents do
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
                   class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
-                  aria-label={gettext("close")}
+                  aria-label={gettext("components.modal.close")}
                 >
                   <.icon name="hero-x-mark-solid" class="h-5 w-5" />
                 </button>
@@ -133,7 +134,11 @@ defmodule PortfolioWeb.CoreComponents do
         {@title}
       </p>
       <p class="mt-2 text-sm leading-5">{msg}</p>
-      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
+      <button
+        type="button"
+        class="group absolute top-1 right-1 p-2"
+        aria-label={gettext("components.flash.close")}
+      >
         <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
@@ -153,29 +158,29 @@ defmodule PortfolioWeb.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
-      <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
+      <.flash kind={:info} title={gettext("components.flash.success")} flash={@flash} />
+      <.flash kind={:error} title={gettext("components.flash.error")} flash={@flash} />
       <.flash
         id="client-error"
         kind={:error}
-        title={gettext("We can't find the internet")}
+        title={gettext("components.flash.no_internet")}
         phx-disconnected={show(".phx-client-error #client-error")}
         phx-connected={hide("#client-error")}
         hidden
       >
-        {gettext("Attempting to reconnect")}
+        {gettext("components.flash.reconnecting")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
       <.flash
         id="server-error"
         kind={:error}
-        title={gettext("Something went wrong!")}
+        title={gettext("components.flash.server_error")}
         phx-disconnected={show(".phx-server-error #server-error")}
         phx-connected={hide("#server-error")}
         hidden
       >
-        {gettext("Hang in there while we get back on track")}
+        {gettext("components.flash.server_error_message")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
@@ -290,7 +295,7 @@ defmodule PortfolioWeb.CoreComponents do
   attr :errors, :list, default: []
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
-  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :options, :list, doc: "the options to pass to Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
   attr :rest, :global,
@@ -311,7 +316,7 @@ defmodule PortfolioWeb.CoreComponents do
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+        Form.normalize_value("checkbox", assigns[:value])
       end)
 
     ~H"""
@@ -346,7 +351,7 @@ defmodule PortfolioWeb.CoreComponents do
         {@rest}
       >
         <option :if={@prompt} value="">{@prompt}</option>
-        {Phoenix.HTML.Form.options_for_select(@options, @value)}
+        {Form.options_for_select(@options, @value)}
       </select>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -485,7 +490,7 @@ defmodule PortfolioWeb.CoreComponents do
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>
             <th :if={@action != []} class="relative p-0 pb-4">
-              <span class="sr-only">{gettext("Actions")}</span>
+              <span class="sr-only">{gettext("components.table.actions")}</span>
             </th>
           </tr>
         </thead>

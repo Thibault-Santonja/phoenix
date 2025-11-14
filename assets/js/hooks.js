@@ -563,3 +563,94 @@ export const PhotoSortable = {
     }
   },
 };
+
+export const RateLimitCountdown = {
+  mounted() {
+    const retryAfter = parseInt(this.el.dataset.retryAfter, 10);
+    const display = document.getElementById("countdown-display");
+
+    if (!display || !retryAfter) return;
+
+    let remaining = retryAfter;
+
+    const updateDisplay = () => {
+      const minutes = Math.floor(remaining / 60);
+      const seconds = remaining % 60;
+
+      if (minutes > 0) {
+        display.textContent = `${minutes}min ${seconds}s`;
+      } else {
+        display.textContent = `${seconds}s`;
+      }
+    };
+
+    updateDisplay();
+
+    this.interval = setInterval(() => {
+      remaining--;
+
+      if (remaining <= 0) {
+        clearInterval(this.interval);
+        window.location.reload();
+      } else {
+        updateDisplay();
+      }
+    }, 1000);
+  },
+
+  destroyed() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  },
+};
+
+export const MagicLinkExpiration = {
+  mounted() {
+    const expiresIn = parseInt(this.el.dataset.expiresIn, 10);
+    const display = document.getElementById("magic-link-countdown");
+
+    if (!display || !expiresIn) return;
+
+    let remaining = expiresIn;
+
+    const updateDisplay = () => {
+      const minutes = Math.floor(remaining / 60);
+      const seconds = remaining % 60;
+
+      if (minutes > 0) {
+        display.textContent = `${minutes}min ${seconds}s`;
+      } else if (seconds > 0) {
+        display.textContent = `${seconds}s`;
+      } else {
+        display.textContent = "expiré";
+        display.parentElement.parentElement.parentElement.classList.remove(
+          "bg-green-50",
+        );
+        display.parentElement.parentElement.parentElement.classList.add(
+          "bg-red-50",
+        );
+        display.parentElement.querySelector("p").innerHTML =
+          "Le lien de connexion a expiré. Veuillez demander un nouveau lien.";
+      }
+    };
+
+    updateDisplay();
+
+    this.interval = setInterval(() => {
+      remaining--;
+
+      if (remaining < 0) {
+        clearInterval(this.interval);
+      } else {
+        updateDisplay();
+      }
+    }, 1000);
+  },
+
+  destroyed() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  },
+};

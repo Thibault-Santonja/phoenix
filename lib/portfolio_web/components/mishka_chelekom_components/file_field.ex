@@ -139,7 +139,7 @@ defmodule PortfolioWeb.Components.FileField do
           <div
             class="upload-item border rounded relative p-3"
             role="group"
-            aria-label={gettext("Uploading %{file}", file: entry.client_name)}
+            aria-label={gettext("mishka.file_field.uploading", file: entry.client_name)}
           >
             <div class="flex justify-around gap-3">
               <.icon name="hero-document-arrow-up" class="size-8" />
@@ -154,7 +154,7 @@ defmodule PortfolioWeb.Components.FileField do
 
                 <.progress value={entry.progress} color={@color} size="extra_small" />
                 <span class="sr-only">
-                  {gettext("Uploading %{file}: %{progress} percent",
+                  {gettext("mishka.file_field.uploading_progress",
                     file: entry.client_name,
                     progress: entry.progress
                   )}
@@ -166,7 +166,7 @@ defmodule PortfolioWeb.Components.FileField do
               type="button"
               phx-click="cancel-upload"
               phx-value-ref={entry.ref}
-              aria-label={gettext("Cancel upload for %{file}", file: entry.client_name)}
+              aria-label={gettext("mishka.file_field.cancel_upload", file: entry.client_name)}
               class="absolute top-2 right-2 text-custome-black-100/60 hover:text-custome-black-100"
             >
               <.icon name="hero-x-mark" class="size-4" />
@@ -236,7 +236,7 @@ defmodule PortfolioWeb.Components.FileField do
           <div>
             <div
               role="group"
-              aria-label={gettext("Uploading %{file}", file: entry.client_name)}
+              aria-label={gettext("mishka.file_field.uploading", file: entry.client_name)}
               class="relative"
             >
               <div class="rounded w-24 h-24 overflow-hidden">
@@ -249,7 +249,7 @@ defmodule PortfolioWeb.Components.FileField do
                 type="button"
                 phx-click="cancel-upload"
                 phx-value-ref={entry.ref}
-                aria-label={gettext("Cancel upload for %{file}", file: entry.client_name)}
+                aria-label={gettext("mishka.file_field.cancel_upload", file: entry.client_name)}
                 class="bg-black/30 rounded p-px text-white flex justify-center items-center absolute top-2 right-2 z-10"
               >
                 <.icon name="hero-x-mark" class="size-4" />
@@ -261,7 +261,9 @@ defmodule PortfolioWeb.Components.FileField do
                 class="absolute inset-0 bg-black/25 flex justify-center items-center"
               >
                 <.spinner color="base" />
-                <span class="sr-only">{gettext("Uploading %{file}", file: entry.client_name)}</span>
+                <span class="sr-only">
+                  {gettext("mishka.file_field.uploading", file: entry.client_name)}
+                </span>
               </div>
             </div>
             <%= for err <- upload_errors(@upload_error, entry) do %>

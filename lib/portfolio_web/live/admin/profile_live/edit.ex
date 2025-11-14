@@ -29,7 +29,7 @@ defmodule PortfolioWeb.Admin.ProfileLive.Edit do
 
       {:ok,
        socket
-       |> assign(:page_title, "Mon profil")
+       |> assign(:page_title, gettext("admin.profile.title"))
        |> assign(:user, user)
        |> assign(:sessions, sessions)
        |> assign(:current_session, current_session)
@@ -38,7 +38,7 @@ defmodule PortfolioWeb.Admin.ProfileLive.Edit do
       # Si pas d'utilisateur connecté, rediriger vers login
       {:ok,
        socket
-       |> put_flash(:error, "Vous devez être connecté")
+       |> put_flash(:error, gettext("admin.profile.login_required"))
        |> redirect(to: ~p"/login")}
     end
   end
@@ -49,7 +49,7 @@ defmodule PortfolioWeb.Admin.ProfileLive.Edit do
       {:ok, user} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Profil mis à jour avec succès")
+         |> put_flash(:info, gettext("admin.profile.update_success"))
          |> assign(:user, user)
          |> assign(:form, to_form(Auth.change_user(user)))}
 
@@ -65,7 +65,7 @@ defmodule PortfolioWeb.Admin.ProfileLive.Edit do
 
     {:noreply,
      socket
-     |> put_flash(:info, "Session révoquée avec succès")
+     |> put_flash(:info, gettext("admin.profile.session_revoked"))
      |> assign(:sessions, Auth.list_user_sessions(socket.assigns.user.id))}
   end
 
@@ -79,7 +79,7 @@ defmodule PortfolioWeb.Admin.ProfileLive.Edit do
 
     {:noreply,
      socket
-     |> put_flash(:info, "#{count} session(s) révoquée(s)")
+     |> put_flash(:info, gettext("admin.profile.sessions_revoked", count: count))
      |> assign(:sessions, Auth.list_user_sessions(user.id))}
   end
 end

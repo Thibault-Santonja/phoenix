@@ -29,11 +29,19 @@ config :swoosh, :api_client, false
 # Configure base URL for magic links in tests
 config :portfolio, :base_url, "http://localhost:4002"
 
+# Skip MX validation in most tests to avoid network dependencies
+# Can be overridden in specific tests that need to test MX validation
+config :portfolio, :skip_mx_validation, true
+
+# Disable event handlers in test to avoid DB ownership issues with Ecto.Sandbox
+# Event handlers run in separate processes and cannot access the test's DB connection
+config :portfolio, :start_event_handlers, false
+
 # Configure from email
 config :portfolio, :from_email, "noreply@portfolio.test"
 
-# Print only warnings and errors during test
-config :logger, level: :warning
+# Print only errors during test (suppress warnings and info for cleaner output)
+config :logger, level: :error
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime

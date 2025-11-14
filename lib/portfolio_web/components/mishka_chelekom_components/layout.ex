@@ -31,7 +31,7 @@ defmodule PortfolioWeb.Components.Layout do
 
   ## Examples
 
-  ```elixir
+  ```heex
   <.flex direction="col" gap="medium">
     <div>Item 1</div>
     <div>Item 2</div>
@@ -40,6 +40,7 @@ defmodule PortfolioWeb.Components.Layout do
   <.flex justify="center" align="center" class="h-32 bg-gray-100">
     <div class="bg-pink-300 p-2 rounded">Centered</div>
   </.flex>
+  ```
   """
   @doc type: :component
 
@@ -132,7 +133,7 @@ defmodule PortfolioWeb.Components.Layout do
 
   ## Examples
 
-  ```elixir
+  ```heex
   <.grid cols="three" gap="medium">
     <div>Item 1</div>
     <div>Item 2</div>
@@ -145,6 +146,7 @@ defmodule PortfolioWeb.Components.Layout do
     <div class="bg-green-300 p-2 rounded">Grid Item</div>
     <div class="bg-yellow-300 p-2 rounded">Grid Item</div>
   </.grid>
+  ```
   """
 
   @doc type: :component

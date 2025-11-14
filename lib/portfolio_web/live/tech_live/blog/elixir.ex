@@ -21,6 +21,9 @@ defmodule PortfolioWeb.TechLive.Blog.Elixir do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, gettext("The tech blog") <> " • " <> gettext("Elixir"))
+    |> assign(
+      :page_title,
+      gettext("layouts.tech.header") <> " • " <> gettext("tech.blog.elixir.elixir")
+    )
   end
 end

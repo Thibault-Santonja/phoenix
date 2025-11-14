@@ -77,7 +77,7 @@ defmodule Portfolio.Photography.DomainEventsTest do
     end
 
     test "does not publish event if photo creation fails" do
-      album = create_album()
+      _album = create_album()
 
       # Invalid attrs - missing required album_id will cause failure
       {:error, _changeset} =

@@ -1,25 +1,25 @@
 defmodule Portfolio.Auth.Mailer do
   @moduledoc """
-  Module responsable de l'envoi des emails d'authentification via magic links.
+  Module responsible for sending authentication emails via magic links.
   """
 
   import Swoosh.Email
   alias Portfolio.Auth.{MagicLink, User}
 
   @doc """
-  Envoie un email contenant le magic link à l'utilisateur.
+  Sends an email containing the magic link to the user.
 
   ## Parameters
-    - user: L'utilisateur à qui envoyer l'email
-    - magic_link: Le magic link contenant le token de connexion
+    - user: The user to send the email to
+    - magic_link: The magic link containing the login token
 
   ## Returns
-    - {:ok, _} si l'email a été envoyé avec succès
-    - {:error, reason} en cas d'erreur
+    - `{:ok, _}` if the email was sent successfully
+    - `{:error, reason}` in case of error
   """
   @spec send_magic_link_email(User.t(), MagicLink.t()) :: {:ok, term()} | {:error, term()}
   def send_magic_link_email(%User{} = user, %MagicLink{} = magic_link) do
-    magic_link_url = generate_magic_link_url(magic_link.token)
+    magic_link_url = generate_magic_link_url(magic_link)
 
     new()
     |> to({user.name || user.email, user.email})
@@ -78,10 +78,12 @@ defmodule Portfolio.Auth.Mailer do
   end
 
   # Génère l'URL complète du magic link
-  defp generate_magic_link_url(token) do
+  # Utilise le short_code (6 caractères) au lieu du token complet pour plus de sécurité
+  # Le token reste caché et sera soumis via POST
+  defp generate_magic_link_url(magic_link) do
     # En développement, on utilise localhost:4000
     # En production, cela devrait être configuré via l'environnement
     base_url = Application.get_env(:portfolio, :base_url, "http://localhost:4000")
-    "#{base_url}/auth/magic/#{token}"
+    "#{base_url}/auth/verify?code=#{magic_link.short_code}"
   end
 end

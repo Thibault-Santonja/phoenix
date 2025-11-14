@@ -89,12 +89,14 @@ defmodule PortfolioTest.Fixtures.AuthFixtures do
     used_at = Keyword.get(attrs, :used_at)
 
     token = :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false)
+    short_code = generate_short_code()
 
     magic_link =
       %Auth.MagicLink{}
       |> Auth.MagicLink.changeset(%{
         user_id: user.id,
         token: token,
+        short_code: short_code,
         expires_at: expires_at,
         used_at: used_at
       })
@@ -106,6 +108,13 @@ defmodule PortfolioTest.Fixtures.AuthFixtures do
     else
       magic_link
     end
+  end
+
+  defp generate_short_code do
+    :crypto.strong_rand_bytes(4)
+    |> Base.encode32(padding: false)
+    |> String.slice(0..5)
+    |> String.upcase()
   end
 
   @doc """
@@ -221,6 +230,40 @@ defmodule PortfolioTest.Fixtures.AuthFixtures do
     # Request and verify magic link
     {:ok, magic_link} = Auth.request_magic_link(email)
     Auth.verify_magic_link(magic_link.token)
+  end
+
+  @doc """
+  Registers and logs in a user for testing authenticated LiveView pages.
+
+  Creates a user, creates a session, and sets up the connection with a unique IP
+  to avoid rate limiting issues during tests.
+
+  ## Options
+
+  Same as `create_user/1`
+
+  ## Examples
+
+      setup :register_and_log_in_user
+
+      test "displays content", %{conn: conn, user: user} do
+        # conn is authenticated with unique IP
+        # user is the authenticated user
+      end
+  """
+  def register_and_log_in_user(%{conn: conn} = context) do
+    attrs = Map.get(context, :user_attrs, [])
+    user = create_user(attrs)
+    session = create_session(user: user)
+
+    # Assign unique IP to avoid rate limiting
+    octet = 1 + rem(System.unique_integer([:positive]), 254)
+    conn = %{conn | remote_ip: {127, 0, 0, octet}}
+
+    # Set session token in conn
+    conn = Plug.Test.init_test_session(conn, %{"session_token" => session.token})
+
+    %{conn: conn, user: user, session: session}
   end
 
   # Private helpers

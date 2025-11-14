@@ -172,7 +172,7 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
 
     test "published albums appear on timeline", %{conn: _conn} do
       # Create published album with photos
-      album =
+      _album =
         create_published_album(3,
           title: "Wedding 2024",
           type: :wedding,

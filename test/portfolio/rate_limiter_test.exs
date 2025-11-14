@@ -135,4 +135,87 @@ defmodule Portfolio.RateLimiterTest do
       assert verify_period < magic_link_period
     end
   end
+
+  describe "telemetry events" do
+    test "émet un événement telemetry quand la requête est autorisée" do
+      identifier = "telemetry-allow-#{System.unique_integer([:positive])}"
+
+      # Attacher un handler de test
+      ref = :telemetry_test.attach_event_handlers(self(), [[:portfolio, :rate_limiter, :check]])
+
+      # Faire une requête
+      assert {:allow, 4} = RateLimiter.check_rate(:magic_link_request, identifier)
+
+      # Vérifier que l'événement a été émis
+      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, %{duration: duration}, metadata}
+
+      assert is_integer(duration)
+      assert duration > 0
+
+      assert metadata.action == :magic_link_request
+      assert metadata.identifier == identifier
+      assert metadata.result == :allow
+      assert metadata.remaining == 4
+      assert metadata.retry_after_ms == nil
+
+      :telemetry.detach("telemetry_test-portfolio.rate_limiter.check")
+    end
+
+    test "émet un événement telemetry quand la requête est refusée" do
+      identifier = "telemetry-deny-#{System.unique_integer([:positive])}"
+
+      # Utiliser toutes les requêtes
+      for _ <- 1..5 do
+        RateLimiter.check_rate(:magic_link_request, identifier)
+      end
+
+      # Attacher un handler de test
+      ref = :telemetry_test.attach_event_handlers(self(), [[:portfolio, :rate_limiter, :check]])
+
+      # Faire une requête qui sera refusée
+      assert {:deny, retry_after} = RateLimiter.check_rate(:magic_link_request, identifier)
+
+      # Vérifier que l'événement a été émis
+      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, %{duration: duration}, metadata}
+
+      assert is_integer(duration)
+      assert duration > 0
+
+      assert metadata.action == :magic_link_request
+      assert metadata.identifier == identifier
+      assert metadata.result == :deny
+      assert metadata.remaining == nil
+      assert metadata.retry_after_ms == retry_after
+      assert is_integer(metadata.retry_after_ms)
+      assert metadata.retry_after_ms > 0
+
+      :telemetry.detach("telemetry_test-portfolio.rate_limiter.check")
+    end
+
+    test "émet des événements pour différentes actions" do
+      identifier = "telemetry-actions-#{System.unique_integer([:positive])}"
+
+      ref = :telemetry_test.attach_event_handlers(self(), [[:portfolio, :rate_limiter, :check]])
+
+      # Test magic_link_request
+      RateLimiter.check_rate(:magic_link_request, identifier)
+
+      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, _measurements, metadata}
+      assert metadata.action == :magic_link_request
+
+      # Test login_attempt
+      RateLimiter.check_rate(:login_attempt, identifier)
+
+      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, _measurements, metadata}
+      assert metadata.action == :login_attempt
+
+      # Test magic_link_verify
+      RateLimiter.check_rate(:magic_link_verify, identifier)
+
+      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, _measurements, metadata}
+      assert metadata.action == :magic_link_verify
+
+      :telemetry.detach("telemetry_test-portfolio.rate_limiter.check")
+    end
+  end
 end

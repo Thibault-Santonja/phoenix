@@ -85,12 +85,12 @@ defmodule PortfolioWeb.Photography.IndexLiveTest do
   describe "format_chapter_title/1" do
     test "returns translated title for known chapters" do
       assert Index.format_chapter_title("amvcc") == "AMVCC"
-      assert Index.format_chapter_title("music") == "Concerts & Music"
-      assert Index.format_chapter_title("street") == "Street Photography"
+      assert Index.format_chapter_title("music") == "Concerts & Musique"
+      assert Index.format_chapter_title("street") == "Photographie de rue"
     end
 
     test "returns 'Gallery' for unknown chapter" do
-      assert Index.format_chapter_title("unknown") == "Gallery"
+      assert Index.format_chapter_title("unknown") == "Galerie"
     end
   end
 end
