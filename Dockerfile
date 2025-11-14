@@ -8,13 +8,13 @@
 # - Health check for container orchestration
 # ============================================================================
 
-# For Kamal deployment
-LABEL service=portfolio
-
 # ============================================================================
 # Stage 1: Builder
 # ============================================================================
-FROM hexpm/elixir:1.18.0-erlang-27.2-alpine-3.21.3 AS builder
+FROM hexpm/elixir:1.18.3-erlang-27.3-alpine-3.21.3 AS builder
+
+# For Kamal deployment
+LABEL service=portfolio
 
 # Install build dependencies
 RUN apk add --no-cache \
@@ -53,8 +53,7 @@ COPY config config
 COPY assets assets
 
 # Compile assets
-RUN npm run --prefix assets deploy
-RUN mix phx.digest
+RUN mix assets.deploy
 
 # Compile application
 RUN mix compile
