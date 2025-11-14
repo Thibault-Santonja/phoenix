@@ -60,6 +60,57 @@ defmodule Portfolio.Photography.Repositories.AlbumRepositoryTest do
 
       assert albums == []
     end
+
+    test "orders published albums by date descending automatically" do
+      # Create albums with different dates
+      album_oldest =
+        insert_album(%{
+          title: "Oldest Album",
+          type: :wedding,
+          published: true,
+          date_prise_vue: ~D[2022-01-15]
+        })
+
+      album_newest =
+        insert_album(%{
+          title: "Newest Album",
+          type: :couples,
+          published: true,
+          date_prise_vue: ~D[2024-06-20]
+        })
+
+      album_middle =
+        insert_album(%{
+          title: "Middle Album",
+          type: :landscape,
+          published: true,
+          date_prise_vue: ~D[2023-03-10]
+        })
+
+      # Unpublished album should not be included
+      _unpublished =
+        insert_album(%{
+          title: "Unpublished",
+          type: :wedding,
+          published: false,
+          date_prise_vue: ~D[2025-01-01]
+        })
+
+      # List published albums
+      albums = AlbumRepository.list(published: true)
+
+      # Should return 3 albums (unpublished excluded)
+      assert length(albums) == 3
+
+      # Should be ordered by date descending (newest first)
+      assert Enum.at(albums, 0).id == album_newest.id
+      assert Enum.at(albums, 1).id == album_middle.id
+      assert Enum.at(albums, 2).id == album_oldest.id
+
+      # Verify dates are in descending order
+      dates = Enum.map(albums, & &1.date_prise_vue)
+      assert dates == [~D[2024-06-20], ~D[2023-03-10], ~D[2022-01-15]]
+    end
   end
 
   describe "list/1 with order_by" do

@@ -323,6 +323,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   defp apply_filters(query, [{:published, true} | rest]) do
     query
     |> AlbumQuery.published()
+    |> AlbumQuery.order_by_date_desc()
     |> apply_filters(rest)
   end
 
