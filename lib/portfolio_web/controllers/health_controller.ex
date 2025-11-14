@@ -96,25 +96,21 @@ defmodule PortfolioWeb.HealthController do
 
   # Check database connectivity with a simple query
   defp check_database do
-    try do
-      # Simple query that doesn't hit any table (fast)
-      Repo.query!("SELECT 1")
-      "ok"
-    rescue
-      _ -> "error"
-    end
+    # Simple query that doesn't hit any table (fast)
+    Repo.query!("SELECT 1")
+    "ok"
+  rescue
+    _ -> "error"
   end
 
   # Check if Oban is running
   defp check_oban do
-    try do
-      # Check if Oban supervisor is alive
-      case Process.whereis(Oban) do
-        nil -> "not_running"
-        _pid -> "ok"
-      end
-    rescue
-      _ -> "error"
+    # Check if Oban supervisor is alive
+    case Process.whereis(Oban) do
+      nil -> "not_running"
+      _pid -> "ok"
     end
+  rescue
+    _ -> "error"
   end
 end

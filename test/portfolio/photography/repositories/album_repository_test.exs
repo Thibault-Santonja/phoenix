@@ -60,7 +60,9 @@ defmodule Portfolio.Photography.Repositories.AlbumRepositoryTest do
 
       assert albums == []
     end
+  end
 
+  describe "list/1 with published filter and ordering" do
     test "orders published albums by date descending automatically" do
       # Create albums with different dates
       album_oldest =

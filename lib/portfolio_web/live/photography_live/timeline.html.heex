@@ -1,9 +1,13 @@
-<nav class={[
-  "sticky top-0 z-10",
-  "bg-white/70 dark:bg-black/70 backdrop-blur-md",
-  "flex items-center",
-  "px-4 py-2 text-sm"
-]}>
+<nav
+  id="timeline-nav"
+  class={[
+    "sticky top-0 z-10",
+    "bg-white/70 dark:bg-black/70 backdrop-blur-md",
+    "flex items-center",
+    "px-4 py-2 text-sm"
+  ]}
+  phx-hook="SmoothScroll"
+>
   <h1 class="flex flex-col items-end group">
     <a href={~p"/"}>
       {gettext("photography.brand_name")}
@@ -13,7 +17,7 @@
     </a>
   </h1>
   <div class="grow flex justify-end gap-4">
-    <%= for year <- Enum.sort(@years) do %>
+    <%= for year <- Enum.sort(@years, :desc) do %>
       <a
         href={"#year-#{year}"}
         data-anchor-year
@@ -82,8 +86,9 @@
     id={dom_id}
     phx-hook="YearTrigger"
     data-year={album.date_prise_vue.year}
+    data-album-year-anchor={"year-#{album.date_prise_vue.year}"}
     class={[
-      "bg-gray-300/20 dark:bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl",
+      "bg-gray-300/20 dark:bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl scroll-mt-20",
       "col-span-2 lg:col-span-3",
       Enum.random(["sm:col-start-1", "sm:col-start-2"]),
       Enum.random(["lg:col-start-1", "lg:col-start-2"])

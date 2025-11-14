@@ -64,11 +64,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
 
   describe "Timeline - Pagination and Lazy Loading" do
     test "initially loads first page of albums (20)", %{conn: conn} do
-      # Create 25 albums to test pagination
+      # Create 25 albums to test pagination (dates in descending order so Album 1 appears first)
       for i <- 1..25 do
         create_published_album(1,
           title: "Album #{i}",
-          date_prise_vue: Date.add(~D[2024-01-01], i),
+          date_prise_vue: Date.add(~D[2024-01-01], 26 - i),
           type: :wedding
         )
       end
@@ -115,11 +115,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     end
 
     test "load_more event loads next page", %{conn: conn} do
-      # Create 25 albums
+      # Create 25 albums (dates in descending order so Album 1 appears first)
       for i <- 1..25 do
         create_published_album(1,
           title: "Album #{i}",
-          date_prise_vue: Date.add(~D[2024-01-01], i),
+          date_prise_vue: Date.add(~D[2024-01-01], 26 - i),
           type: :wedding
         )
       end
@@ -140,11 +140,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     end
 
     test "multiple load_more events work correctly", %{conn: conn} do
-      # Create 50 albums (2.5 pages)
+      # Create 50 albums (2.5 pages, dates in descending order so Album 1 appears first)
       for i <- 1..50 do
         create_published_album(1,
           title: "Album #{i}",
-          date_prise_vue: Date.add(~D[2024-01-01], i),
+          date_prise_vue: Date.add(~D[2024-01-01], 51 - i),
           type: :wedding
         )
       end
@@ -165,20 +165,20 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     end
 
     test "pagination respects chapter filter", %{conn: conn} do
-      # Create 25 wedding albums
+      # Create 25 wedding albums (dates in descending order, starting from March)
       for i <- 1..25 do
         create_published_album(1,
           title: "Wedding #{i}",
-          date_prise_vue: Date.add(~D[2024-01-01], i),
+          date_prise_vue: Date.add(~D[2024-03-01], 26 - i),
           type: :wedding
         )
       end
 
-      # Create 25 couples albums
+      # Create 25 couples albums (dates in descending order, starting from January)
       for i <- 1..25 do
         create_published_album(1,
           title: "Couples #{i}",
-          date_prise_vue: Date.add(~D[2024-01-01], i),
+          date_prise_vue: Date.add(~D[2024-01-01], 26 - i),
           type: :couples
         )
       end
@@ -568,6 +568,103 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert view |> element("a[href='#year-2024']") |> has_element?()
     end
 
+    test "year anchor elements exist in DOM for navigation", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2023",
+        date_prise_vue: ~D[2023-06-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Album 2024",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
+      {:ok, view, _html} = live(conn, ~p"/timeline")
+
+      # Check that elements with year anchor data attributes exist for smooth scrolling
+      assert view |> element("[data-album-year-anchor='year-2023']") |> has_element?()
+      assert view |> element("[data-album-year-anchor='year-2024']") |> has_element?()
+    end
+
+    test "navigation has SmoothScroll hook", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/timeline")
+
+      # Navigation should have SmoothScroll hook for smooth scrolling
+      assert view |> element("nav[phx-hook='SmoothScroll']") |> has_element?()
+      assert view |> element("#timeline-nav") |> has_element?()
+    end
+
+    test "year anchors enable smooth scrolling to albums", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2022",
+        date_prise_vue: ~D[2022-01-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Album 2023",
+        date_prise_vue: ~D[2023-06-20],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Album 2024",
+        date_prise_vue: ~D[2024-12-10],
+        type: :wedding
+      )
+
+      {:ok, view, _html} = live(conn, ~p"/timeline")
+
+      # Each year should have an anchor data attribute on at least one album
+      assert view |> element("[data-album-year-anchor='year-2022']") |> has_element?()
+      assert view |> element("[data-album-year-anchor='year-2023']") |> has_element?()
+      assert view |> element("[data-album-year-anchor='year-2024']") |> has_element?()
+
+      # Each year should have a navigation link
+      assert view |> element("a[href='#year-2022']") |> has_element?()
+      assert view |> element("a[href='#year-2023']") |> has_element?()
+      assert view |> element("a[href='#year-2024']") |> has_element?()
+    end
+
+    test "year anchors have scroll offset class", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2024",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
+      {:ok, _view, html} = live(conn, ~p"/timeline")
+
+      # Albums should have scroll-mt-20 class to avoid sticky header overlap
+      assert html =~ ~s(scroll-mt-20)
+      assert html =~ ~s(data-album-year-anchor="year-2024")
+    end
+
+    test "years in navigation are sorted descending", %{conn: conn} do
+      create_published_album(2,
+        title: "Album 2022",
+        date_prise_vue: ~D[2022-06-15],
+        type: :wedding
+      )
+
+      create_published_album(2,
+        title: "Album 2024",
+        date_prise_vue: ~D[2024-06-15],
+        type: :wedding
+      )
+
+      {:ok, _view, html} = live(conn, ~p"/timeline")
+
+      # Find the positions of the year links in the HTML
+      pos_2024 = html |> String.split(~s(href="#year-2024")) |> Enum.at(0) |> String.length()
+      pos_2022 = html |> String.split(~s(href="#year-2022")) |> Enum.at(0) |> String.length()
+
+      # 2024 should appear before 2022 (descending order)
+      assert pos_2024 < pos_2022
+    end
+
     test "albums have YearTrigger hook with year data", %{conn: conn} do
       create_published_album(2,
         title: "Album 2024",
@@ -858,11 +955,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     end
 
     test "handles exactly 21 albums (one over page boundary)", %{conn: conn} do
-      # Create exactly 21 albums
+      # Create exactly 21 albums (dates in descending order)
       for i <- 1..21 do
         create_published_album(1,
           title: "Album #{i}",
-          date_prise_vue: Date.add(~D[2024-01-01], i),
+          date_prise_vue: Date.add(~D[2024-01-01], 22 - i),
           type: :wedding
         )
       end
@@ -941,11 +1038,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     end
 
     test "handles very large dataset efficiently", %{conn: conn} do
-      # Create 100 albums to test performance
+      # Create 100 albums to test performance (dates in descending order)
       for i <- 1..100 do
         create_published_album(1,
           title: "Album #{i}",
-          date_prise_vue: Date.add(~D[2024-01-01], i),
+          date_prise_vue: Date.add(~D[2024-01-01], 101 - i),
           type: :wedding
         )
       end
@@ -999,11 +1096,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
 
   describe "Timeline - Performance and Optimization" do
     test "uses offset-based pagination correctly", %{conn: conn} do
-      # Create 45 albums (more than 2 pages)
+      # Create 45 albums (more than 2 pages, dates in descending order)
       for i <- 1..45 do
         create_published_album(1,
           title: "Album #{i}",
-          date_prise_vue: Date.add(~D[2024-01-01], i),
+          date_prise_vue: Date.add(~D[2024-01-01], 46 - i),
           type: :wedding
         )
       end

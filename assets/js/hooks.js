@@ -461,7 +461,17 @@ export const SmoothScroll = {
     this.handleClick = (e) => {
       e.preventDefault();
       const href = e.currentTarget.getAttribute("href");
-      const target = document.querySelector(href);
+
+      // Try to find element by ID first (standard anchor)
+      let target = document.querySelector(href);
+
+      // If not found and it's a year anchor (#year-XXXX), find first album with that year
+      if (!target && href.startsWith("#year-")) {
+        const yearAnchor = href.substring(1); // Remove the #
+        target = document.querySelector(
+          `[data-album-year-anchor="${yearAnchor}"]`,
+        );
+      }
 
       if (target) {
         target.scrollIntoView({
