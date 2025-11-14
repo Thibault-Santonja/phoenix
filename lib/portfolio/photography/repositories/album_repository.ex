@@ -367,6 +367,38 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   end
 
   @doc """
+  Counts albums with optional filters.
+
+  ## Options
+
+  - `:published` - Filter by publication status (boolean)
+
+  ## Examples
+
+      iex> count()
+      42
+
+      iex> count(published: true)
+      25
+
+      iex> count(published: false)
+      17
+  """
+  @spec count(keyword()) :: non_neg_integer()
+  def count(opts \\ []) do
+    query = Album
+
+    query =
+      case Keyword.get(opts, :published) do
+        true -> where(query, [a], a.published == true)
+        false -> where(query, [a], a.published == false)
+        nil -> query
+      end
+
+    Repo.aggregate(query, :count)
+  end
+
+  @doc """
   Compte le nombre total d'albums.
 
   ## Exemples

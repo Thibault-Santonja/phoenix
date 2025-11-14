@@ -160,7 +160,7 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
     case Repo.get_by(User, email: email) do
       nil ->
         # Production: block auto-creation (anti-enumeration)
-        if Mix.env() == :prod do
+        if production_env?() do
           # Return special marker instead of error to prevent enumeration
           {:ok, {:user_not_found, email}}
         else
@@ -171,6 +171,13 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
       user ->
         {:ok, user}
     end
+  end
+
+  # Check if running in production environment
+  # Uses application config to allow test overrides
+  defp production_env? do
+    env = Application.get_env(:portfolio, :env, Mix.env())
+    env == :prod
   end
 
   # Creates a new user and emits the event

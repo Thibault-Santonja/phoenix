@@ -46,17 +46,12 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
   end
 
   defp load_statistics do
-    albums = Photography.list_albums()
-    published_albums = Enum.filter(albums, & &1.published)
-
-    # Optimisation: une seule requête SQL au lieu de N requêtes
-    total_photos = Photography.count_all_photos()
-
+    # Optimization: Use COUNT queries instead of loading all albums into memory
     %{
-      total_albums: length(albums),
-      published_albums: length(published_albums),
-      draft_albums: length(albums) - length(published_albums),
-      total_photos: total_photos,
+      total_albums: Photography.count_all_albums(),
+      published_albums: Photography.count_published_albums(),
+      draft_albums: Photography.count_draft_albums(),
+      total_photos: Photography.count_all_photos(),
       total_users: Auth.count_users()
     }
   end

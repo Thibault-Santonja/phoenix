@@ -68,6 +68,11 @@ config :portfolio, :admin,
   # Number of albums to display per page in admin interface
   albums_per_page: 30
 
+# Configure public timeline
+config :portfolio, :timeline,
+  # Number of albums to load per page in public timeline (lazy loading)
+  albums_per_page: 20
+
 # Configure file uploads
 config :portfolio, :uploads,
   base_path: "priv/static/uploads",

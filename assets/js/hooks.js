@@ -654,3 +654,36 @@ export const MagicLinkExpiration = {
     }
   },
 };
+
+export const InfiniteScroll = {
+  mounted() {
+    this.pending = false;
+
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && !this.pending) {
+          this.pending = true;
+          this.pushEvent("load_more", {}, () => {
+            this.pending = false;
+          });
+        }
+      },
+      {
+        root: null,
+        // Trigger 1200px before reaching the marker (approximately 2-3 albums)
+        // Similar to Instagram/Twitter strategy for smooth infinite scroll
+        rootMargin: "1200px",
+        threshold: 0,
+      },
+    );
+
+    this.observer.observe(this.el);
+  },
+
+  destroyed() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  },
+};
