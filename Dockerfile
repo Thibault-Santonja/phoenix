@@ -1,52 +1,116 @@
-FROM ubuntu:noble
+# ============================================================================
+# Multi-stage Dockerfile for Production
+# ============================================================================
+# Optimized for size, security, and reproducibility
+# - Alpine Linux for minimal image size (~50-80MB vs ~250MB Ubuntu)
+# - Multi-stage build for clean separation of build/runtime dependencies
+# - Non-root user for security
+# - Health check for container orchestration
+# ============================================================================
 
-ARG DEBIAN_FRONTEND=noninteractive
-
-# For Kamal deployment using --skip-push argument
+# For Kamal deployment
 LABEL service=portfolio
 
-# Set environment variables for locale settings
-ENV SHELL=/bin/bash
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US:en
-ENV LC_ALL=en_US.UTF-8
-ENV PHX_SERVER=true
+# ============================================================================
+# Stage 1: Builder
+# ============================================================================
+FROM hexpm/elixir:1.18.0-erlang-27.2-alpine-3.21.3 AS builder
 
-# Set the working directory inside the container
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    git \
+    nodejs \
+    npm \
+    python3 \
+    vips-dev \
+    vips-tools \
+    perl-image-exiftool
+
+# Set build ENV
+ENV MIX_ENV=prod
+
+# Create app directory
 WORKDIR /app
 
-# Change ownership of /app to the "nobody" user
-# Update the package index, upgrade packages, install required dependencies,
-# then clean up to reduce image size
-# Uncomment the locale in locale.gen and generate it
-RUN chown nobody /app && \
-    apt-get update -y && \
-    apt-get upgrade -y && \
-    apt-get install -y \
-    bash \
-    libstdc++6 \
+# Install hex and rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+# Copy mix files
+COPY mix.exs mix.lock ./
+RUN mix deps.get --only prod
+RUN mix deps.compile
+
+# Copy assets files
+COPY assets/package*.json assets/
+RUN npm --prefix assets ci --progress=false --no-audit --loglevel=error
+
+# Copy application code
+COPY priv priv
+COPY lib lib
+COPY config config
+COPY assets assets
+
+# Compile assets
+RUN npm run --prefix assets deploy
+RUN mix phx.digest
+
+# Compile application
+RUN mix compile
+
+# Build release
+RUN mix release
+
+# ============================================================================
+# Stage 2: Runtime
+# ============================================================================
+FROM alpine:3.21 AS runtime
+
+# Install runtime dependencies
+RUN apk add --no-cache \
     openssl \
-    libncurses6 \
-    locales \
-    ca-certificates \
-    libvips42 \
-    libvips-tools \
-    exiftool && \
-    apt-get clean && \
-    rm -f /var/lib/apt/lists/*_* && \
-    sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen
+    ncurses-libs \
+    libstdc++ \
+    libgcc \
+    bash \
+    vips \
+    vips-tools \
+    perl-image-exiftool \
+    ca-certificates
 
-# Copy the Phoenix release into the image and set ownership to "nobody"
-COPY --chown=nobody:root ./_build/prod/rel/portfolio/ ./
+# Create non-root user
+RUN addgroup -g 1000 portfolio && \
+    adduser -D -u 1000 -G portfolio portfolio
 
-# Open Phoenix port (4000 by default)
+# Set working directory
+WORKDIR /app
+
+# Copy release from builder
+COPY --from=builder --chown=portfolio:portfolio /app/_build/prod/rel/portfolio ./
+
+# Create directories for uploads
+RUN mkdir -p /app/priv/static/uploads && \
+    chown -R portfolio:portfolio /app
+
+# Switch to non-root user
+USER portfolio
+
+# Set environment
+ENV MIX_ENV=prod \
+    PORT=4000 \
+    SHELL=/bin/bash \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    PHX_SERVER=true
+
+# Expose port
 EXPOSE 4000
 
-# Run the container as an unprivileged user for better security
-USER nobody
+# Health check (lightweight, fast endpoint)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider --timeout=2 http://localhost:4000/health || exit 1
 
-# Start the Phoenix server when the container starts
-SHELL ["bash", "-c"]
-# CMD ["/app/bin/server"]
+# Start command
 CMD ["/app/bin/portfolio", "start"]

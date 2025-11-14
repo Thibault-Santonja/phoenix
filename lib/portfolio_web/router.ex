@@ -83,9 +83,12 @@ defmodule PortfolioWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  # Health check endpoint (no authentication required)
+  # Health check endpoints (no authentication required)
   scope "/", PortfolioWeb do
+    pipe_through :api
+
     get "/health", HealthController, :index
+    get "/health/ready", HealthController, :ready
   end
 
   scope "/", PortfolioWeb, host: "amvcc." do
