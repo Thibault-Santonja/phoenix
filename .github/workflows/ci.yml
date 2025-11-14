@@ -8,21 +8,13 @@ on:
     branches: [main]
 permissions:
   contents: read
+  pull-requests: read
 env:
   SHELL: /bin/bash
   DOCKER_IMAGE: "thibaultsan/portfolio"
 jobs:
-  tools:
-    name: TOOLS
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up tools
-        uses: jdx/mise-action@v2
   lint:
     name: LINT
-    needs: [tools]
     runs-on: ubuntu-24.04
     env:
       MIX_ENV: dev
@@ -31,16 +23,26 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up tools
         uses: jdx/mise-action@v2
-      - name: Cache
+      - name: Cache Elixir dependencies
         uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/.tool-versions') }}
           restore-keys: |
-            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
-            ${{ env.MIX_ENV }}-mise-
+            ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            assets/node_modules
+            ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
       - name: Install dependencies
         run: mix deps.get
       - name: Compile without warnings
@@ -53,47 +55,99 @@ jobs:
         run: mix hex.audit
       - name: Deps audit
         run: mix deps.audit
-      - name: Run credo
-        run: mix credo
-      - name: Run sobelow
+      - name: Run credo (strict mode)
+        run: mix credo --strict
+      - name: Run sobelow (security)
         run: mix sobelow --config
+
+  dependency-review:
+    name: DEPENDENCY REVIEW
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+
   test:
     name: TEST
-    needs: [tools]
     runs-on: ubuntu-24.04
     env:
       MIX_ENV: test
-    # services:
-    #   postgres:
-    #     image: postgis/postgis:17-3.5
-    #     env:
-    #       POSTGRES_PASSWORD: postgres
-    #     options: >-
-    #       --health-cmd pg_isready
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
-    #     ports:
-    #       - 5432:5432
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/portfolio_test
+
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: portfolio_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up tools
         uses: jdx/mise-action@v2
-      - name: Cache
+
+      - name: Cache Elixir dependencies
         uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/.tool-versions') }}
           restore-keys: |
-            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
-            ${{ env.MIX_ENV }}-mise-
+            ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-
+
       - name: Install dependencies
-        run: mix deps.get
-      - name: Run tests
-        run: mix test --max-failures=1 --color
+        run: mix deps.get --only test
+
+      - name: Compile (test env)
+        run: mix compile --warnings-as-errors
+
+      - name: Setup database
+        run: mix ecto.setup
+
+      - name: Run tests with coverage
+        run: |
+          mix test \
+            --max-failures=1 \
+            --color \
+            --cover \
+            --slowest 10 \
+            --warnings-as-errors
+
+      - name: Generate coverage report
+        if: always()
+        run: mix coveralls.json
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./cover/excoveralls.json
+          fail_ci_if_error: false
+
+      - name: Upload test failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failures
+          path: _build/test/lib/portfolio/.mix_test_failures
+          retention-days: 7
   build:
     name: BUILD
     needs: [lint, test]
@@ -108,22 +162,38 @@ jobs:
         uses: jdx/mise-action@v2
         with:
           cache_key_prefix: mise-${{ runner.os }}
-      - name: Cache
+      - name: Cache Elixir dependencies
         uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/.tool-versions') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
-            ${{ runner.os }}-${{ env.MIX_ENV }}-mise-
+            ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-${{ env.MIX_ENV }}-elixir-
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            assets/node_modules
+            ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
       - name: Install web dependencies
         run: mise run assets:install
       - name: Install backend dependencies
         run: mix deps.get --only prod
-      - name: Build
-        run: MIX_ENV=${{ env.MIX_ENV }} mix do assets.setup, assets.deploy, compile --warnings-as-errors, release --overwrite
+      - name: Build release
+        run: |
+          MIX_ENV=${{ env.MIX_ENV }} mix do \
+            assets.setup, \
+            assets.deploy, \
+            compile --warnings-as-errors, \
+            release --overwrite
+
       - name: Docker meta
         if: ${{ contains(github.ref, 'refs/tags/') }}
         uses: docker/metadata-action@v5
@@ -133,6 +203,8 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest
       - name: Set up docker buildx
         if: ${{ contains(github.ref, 'refs/tags/') }}
         id: buildx
