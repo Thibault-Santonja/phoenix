@@ -89,6 +89,8 @@ defmodule Portfolio.Photography.Queries.AlbumQuery do
   @doc """
   Orders albums by date descending (most recent first).
 
+  When dates are equal, orders by inserted_at descending (most recently created first).
+
   ## Examples
 
       iex> AlbumQuery.base() |> AlbumQuery.order_by_date_desc()
@@ -97,7 +99,7 @@ defmodule Portfolio.Photography.Queries.AlbumQuery do
   """
   @spec order_by_date_desc(Ecto.Query.t()) :: Ecto.Query.t()
   def order_by_date_desc(query) do
-    order_by(query, [album: a], desc: a.date_prise_vue)
+    order_by(query, [album: a], desc: a.date_prise_vue, desc: a.inserted_at)
   end
 
   @doc """

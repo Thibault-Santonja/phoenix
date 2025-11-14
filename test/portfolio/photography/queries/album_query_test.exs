@@ -247,10 +247,6 @@ defmodule Portfolio.Photography.Queries.AlbumQueryTest do
           title: "A #{System.unique_integer([:positive])}"
         )
 
-      # Small delay to ensure different inserted_at timestamps
-      # Increased to 100ms for more reliable test execution
-      Process.sleep(100)
-
       album2 =
         create_album(
           date_prise_vue: ~D[2024-01-15],
@@ -265,13 +261,16 @@ defmodule Portfolio.Photography.Queries.AlbumQueryTest do
 
       # Both should be returned with same date
       assert length(albums) == 2
+
       # When dates are equal, order by inserted_at desc (most recent first)
-      # album2 was created after album1, so it should be first
+      # Verify both albums are present
       album_ids = Enum.map(albums, & &1.id)
-      assert album2.id in album_ids
       assert album1.id in album_ids
-      # Verify the first one has inserted_at >= second one
-      assert hd(albums).inserted_at >= Enum.at(albums, 1).inserted_at
+      assert album2.id in album_ids
+
+      # Verify ordering is by inserted_at desc - first album should have >= inserted_at than second
+      [first_album, second_album] = albums
+      assert first_album.inserted_at >= second_album.inserted_at
     end
   end
 
