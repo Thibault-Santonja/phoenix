@@ -60,6 +60,10 @@ defmodule PortfolioWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :xml do
+    plug :accepts, ["xml"]
+  end
+
   # Pipeline pour l'interface admin avec authentification (pour les controllers)
   pipeline :require_authenticated_admin do
     plug :accepts, ["html"]
@@ -196,6 +200,13 @@ defmodule PortfolioWeb.Router do
     get "/amvcc", PageController, :subdomain_redirect
     get "/photo", PageController, :subdomain_redirect
     get "/tech", PageController, :subdomain_redirect
+  end
+
+  # SEO endpoints
+  scope "/", PortfolioWeb do
+    pipe_through :xml
+
+    get "/sitemap.xml", SitemapController, :index
   end
 
   # Other scopes may use custom stacks.

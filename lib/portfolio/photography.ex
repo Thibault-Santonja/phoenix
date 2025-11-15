@@ -308,6 +308,31 @@ defmodule Portfolio.Photography do
   end
 
   @doc """
+  Liste tous les albums publiés (liste plate pour sitemap, etc.).
+
+  Cette fonction retourne une liste plate de tous les albums publiés,
+  utile pour la génération de sitemaps et autres opérations SEO.
+
+  ## Options
+
+  - `:preload` - Associations à précharger (défaut: aucune)
+
+  ## Exemples
+
+      iex> list_published_albums()
+      [%Album{}, %Album{}]
+
+      iex> list_published_albums(preload: [:photos])
+      [%Album{photos: [...]}, ...]
+  """
+  @spec list_published_albums(keyword()) :: [Album.t()]
+  def list_published_albums(opts \\ []) do
+    list_published_albums_by_year(opts)
+    |> Map.values()
+    |> List.flatten()
+  end
+
+  @doc """
   Publie un album en le rendant visible publiquement.
 
   Délègue au AlbumPublicationService pour orchestrer l'opération complète
