@@ -91,7 +91,7 @@
           "-z-10 ml-auto object-contain",
           "opacity-0 duration-1000 ease-in-out translate-y-8"
         ]}
-        alt={@project.title}
+        alt={Map.get(@project, :alt_text, @project.title)}
         loading="lazy"
         decoding="async"
         data-nimg="1"
@@ -132,7 +132,7 @@
           <button phx-click="show_project" phx-value-project={index} class="size-full">
             <img
               class="size-full object-cover"
-              alt={project.title}
+              alt={Map.get(project, :alt_text, project.title)}
               src={project.photo_url}
               loading="lazy"
               decoding="async"

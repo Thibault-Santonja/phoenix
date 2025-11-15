@@ -11,12 +11,12 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:256
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:268
 #, elixir-autogen, elixir-format
 msgid "A Supervisor is a special process whose job is to monitor and restart child processes when they fail. This design promotes high availability and fault isolation by ensuring that failures are contained and automatically recovered from."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:128
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "A `GenServer` is a generic server process — a behavior module provided by Elixir that helps you encapsulate state, handle messages, and manage synchronous or asynchronous operations."
 msgstr ""
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:325
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:337
 #, elixir-autogen, elixir-format
 msgid "An OTP Application typically defines a supervision tree and is started by the BEAM runtime when your project boots. This pattern enables you to structure your code as modular and resilient components, ideal for long-running services like web servers, messaging queues, or background job processors."
 msgstr ""
@@ -61,28 +61,28 @@ msgstr ""
 msgid "As a street photographer, I’m drawn to the evolving life of cities — the interplay between architecture, infrastructure, and the quiet rhythm of human presence. My camera becomes a way to observe, feel, and preserve these fragile moments of everyday life."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:49
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "As applications scale across cores, nodes, and even data centers, Elixir’s lightweight processes and message-passing model allow developers to manage concurrency naturally, without the complexity of traditional threading models."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:52
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "As part of building and maintaining a reliable LiveView site, a solid CI pipeline is essential."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:76
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:244
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:246
 #, elixir-autogen, elixir-format
 msgid "At the Seigneurie de Coucy, our reconstruction work is based on the most recent research into medieval history, archaeology and the anthropology of practices."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:70
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:82
 #, elixir-autogen, elixir-format
 msgid "At the heart of Elixir lies the BEAM — the Erlang virtual machine — purpose-built for running thousands to millions of lightweight processes simultaneously."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:319
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:331
 #, elixir-autogen, elixir-format
 msgid "At the heart of every Elixir project lies an OTP Application — a standardized way to package, configure, and run an Elixir system. An OTP Application is more than a module or a set of functions: it's a self-contained unit of behavior that defines how your app starts, supervises its processes, and integrates with other applications."
 msgstr ""
@@ -92,7 +92,7 @@ msgstr ""
 msgid "At the same time, I’m drawn to the strength and majesty of the earth itself — mountains that command silence, forests that pulse with life, skies that stretch far beyond us. These landscapes are not just scenery; they are alive, ancient, and essential. They remind us of scale, of time, of fragility and force."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:58
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "At the time of writing, the app doesn’t rely on a database like Postgres, but we’ve left support commented out for future expansion."
 msgstr ""
@@ -112,7 +112,7 @@ msgstr ""
 msgid "Back"
 msgstr "Back"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:55
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Below, I’ll walk you through the CI setup we use for this site, which is built with Phoenix (Elixir), and deployed using Kamal (another article will be write on it !) and Docker."
 msgstr ""
@@ -122,7 +122,7 @@ msgstr ""
 msgid "Beyond the events, my lens seeks the gestures of dedication — the early morning preparations, the camaraderie around a fire, the quiet pride in historical transmission. These fleeting moments, often invisible to the public, are the beating heart of the association. They embody a spirit of generosity, intergenerational exchange, and resilience."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:209
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:213
 #, elixir-autogen, elixir-format
 msgid "By caching mix and build artifacts per tool version and environment, we also save time on repeat CI runs:"
 msgstr ""
@@ -132,7 +132,7 @@ msgstr ""
 msgid "China holds a deeply personal place in my life. I’ve lived there, studied there, loved there. Part of my family still resides in China, and every return is filled with emotion — echoes both old and new. This vast, multifaceted country continues to amaze me with the richness of its traditions, the strength of its contrasts, and the quiet beauty found in the gestures of daily life."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:369
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:371
 #, elixir-autogen, elixir-format
 msgid "Choreographed fights in armour, martial demonstrations and presentation of the knight's equipment."
 msgstr ""
@@ -147,12 +147,12 @@ msgstr ""
 msgid "Clothes XIVc in western Europe"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Colours vary according to social status, with natural dyes: woad for blue, madder for red, etc."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:338
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:344
 #, elixir-autogen, elixir-format
 msgid "Compared to solutions like Fly.io, which abstract away the infrastructure, Kamal gives you full control while keeping the workflow efficient and reproducible."
 msgstr ""
@@ -162,17 +162,17 @@ msgstr ""
 msgid "Couple photography, as I practice it, is rooted in real life — a walk through the woods, a shared coffee, a quiet moment in a familiar place. My approach is discreet, respectful, and deeply human. I try to capture tenderness, connection, the gestures of daily life — everything that makes a relationship unique. These are not frozen memories, but living fragments, sincere and shared."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:405
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:407
 #, elixir-autogen, elixir-format
 msgid "Demonstration of the minting of coins on lead or tin blanks. Presentation of the economic, political and symbolic role of money in medieval society. Explanation of the right to mint, the figures represented on coins (lords, kings, bishops), and the places where money was produced."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:442
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:444
 #, elixir-autogen, elixir-format
 msgid "Discover secular and ecclesiastical instruments from the XIVᵉ century through sound demonstrations."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:319
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:325
 #, elixir-autogen, elixir-format
 msgid "Docker-native: builds and deploys containers without needing additional orchestration tools."
 msgstr ""
@@ -187,32 +187,32 @@ msgstr ""
 msgid "Each animation is developed from reliable historical sources: excavations, archives, iconography, and objects kept in museums. We cross-reference these sources to recreate as accurately as possible the gestures, objects, clothing and practices of the XIVᵉ century."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:111
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:123
 #, elixir-autogen, elixir-format
 msgid "Each call to `spawn/1` creates a new process in less time and memory than a typical thread. These processes are entirely managed by the BEAM, offering fault isolation, parallelism, and scalability."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:82
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:94
 #, elixir-autogen, elixir-format
 msgid "Each process runs in a preemptively scheduled environment with its own heap and stack. The BEAM schedules these processes in small reductions (units of execution) and guarantees fairness, allowing responsive systems even under high load."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:331
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:337
 #, elixir-autogen, elixir-format
 msgid "Easy rollback and redeploy with simple commands like `kamal deploy` or `kamal rollback`."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:133
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:135
 #, elixir-autogen, elixir-format
 msgid "Edit the generated files under config/deploy to match your app, domain, and VPS settings. Define environment variables, ports, and Docker image name."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:634
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:636
 #, elixir-autogen, elixir-format
 msgid "Educational activities on medieval society, its structures and everyday practices."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:214
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:226
 #, elixir-autogen, elixir-format
 msgid "Elixir handles large volumes of incoming data efficiently, with GenServers maintaining state and processing in parallel."
 msgstr ""
@@ -222,22 +222,22 @@ msgstr ""
 msgid "Elixir is a functional and concurrent programming language built on top of the Erlang VM (BEAM), which was designed from the ground up for building scalable and fault-tolerant systems. In a world increasingly reliant on distributed, real-time applications, Elixir's model is more relevant than ever. This article explores why Elixir stands out for concurrent software development, how its runtime operates, and how developers can build reliable and performant systems using tools like GenServer, Supervisors, and OTP applications."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:44
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "Elixir is built on the Erlang VM (BEAM), which was designed from the start to support massive concurrency, fault-tolerant systems, and high availability — qualities that are becoming non-negotiable in modern web services, real-time applications, and distributed platforms."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:393
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:407
 #, elixir-autogen, elixir-format
 msgid "Elixir's strength lies in its concurrency model, fault-tolerant design, and its ability to scale efficiently for IO-heavy, distributed applications. However, it's important to understand that Elixir — running on the BEAM — is not optimized for raw CPU-intensive computation."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:196
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:208
 #, elixir-autogen, elixir-format
 msgid "Elixir’s concurrency model isn’t just theoretically sound — it solves real problems at scale. Thanks to BEAM and abstractions like GenServer, Elixir excels in building systems that are highly available, fault-tolerant, and concurrent by default."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:224
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:230
 #, elixir-autogen, elixir-format
 msgid "Environment variables that are safe to commit (e.g. hostname, database URL)."
 msgstr ""
@@ -257,17 +257,17 @@ msgstr ""
 msgid "Filter options"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:368
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:380
 #, elixir-autogen, elixir-format
 msgid "For example, a cluster of OTP applications can coordinate work across nodes, balance load, or recover from partial failures — making Elixir a powerful choice for building distributed systems, microservices, and globally available APIs."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:233
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:245
 #, elixir-autogen, elixir-format
 msgid "For instance, Discord originally used Elixir to reduce latency and improve reliability for millions of concurrent voice connections. Elixir helped them simplify complexity without sacrificing performance."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:286
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:292
 #, elixir-autogen, elixir-format
 msgid "For the moment, I haven't pipelined the deployment. To avoid rebuilding the image and push the build image directly into the CI, Kamal offers these options:"
 msgstr ""
@@ -287,12 +287,12 @@ msgstr ""
 msgid "Go to slide %{index}"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:94
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "Here's an example of spawning thousands of processes in Elixir — a common pattern, thanks to the BEAM's efficiency."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:139
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Here's how I configured Kamal for my own Phoenix project deployed to a Hetzner VPS using Docker and PostgreSQL."
 msgstr ""
@@ -357,92 +357,92 @@ msgstr ""
 msgid "I photograph the behind-the-scenes, the quiet before the big moments, the details that are often forgotten. A wrinkled dress, shoes kicked off, sunlight on a bare neck. I love that gentle tension between the intimate and the shared, between fragility and joy. My aim is not to create perfect images, but honest ones — true to you, your energy, and the bond that unites you."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:358
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:362
 #, elixir-autogen, elixir-format
 msgid "If a Git tag is pushed, it also builds and pushes a Docker image to Docker Hub using the configured secrets."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:246
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:252
 #, elixir-autogen, elixir-format
 msgid "If needed, builds the image remotely to match your server architecture (e.g. amd64)."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:350
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:356
 #, elixir-autogen, elixir-format
 msgid "If you're looking for a straightforward and self-hosted deployment solution for Elixir Phoenix apps, Kamal is a fantastic choice."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:459
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:463
 #, elixir-autogen, elixir-format
 msgid "If you’re building a Phoenix LiveView site without a database, this is a good baseline."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:344
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:346
 #, elixir-autogen, elixir-format
 msgid "Immersive, interactive activities in reconstructed costumes on the historic site."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:433
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:449
 #, elixir-autogen, elixir-format
 msgid "In an upcoming article, we'll dive into Phoenix, LiveView, and how Elixir enables real-time, interactive web applications — with less JavaScript and more reliability."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:122
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:126
 #, elixir-autogen, elixir-format
 msgid "In both local development and CI, this ensures everyone — and every job — uses the same versions."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:296
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:308
 #, elixir-autogen, elixir-format
 msgid "In this example, MyApp.Supervisor starts a MyApp.Worker GenServer. If that worker crashes, the supervisor restarts it automatically, using the :one_for_one strategy. Other strategies include :one_for_all and :rest_for_one, depending on how processes are related."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:40
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "In this guide, I'll talk about how to deploy a Phoenix (Elixir) app to a VPS using Kamal, a deployment tool developed by the team behind Ruby on Rails. Kamal provides a simple and powerful way to deploy containerized apps over SSH with Docker."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:134
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:146
 #, elixir-autogen, elixir-format
 msgid "It abstracts away the message-passing boilerplate and encourages a consistent architecture. Using `GenServer`, developers can focus on application logic while relying on proven patterns for reliability and supervision."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:231
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:235
 #, elixir-autogen, elixir-format
 msgid "It ensures consistency across development and CI by aligning the tool versions defined in"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:311
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:315
 #, elixir-autogen, elixir-format
 msgid "It ensures the application behaves as expected."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:355
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:359
 #, elixir-autogen, elixir-format
 msgid "It uses production settings to ensure that the compiled output matches what will be deployed."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:54
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:66
 #, elixir-autogen, elixir-format
 msgid "Its supervision trees make applications self-healing and resilient by design — a vital feature for systems that require near-zero downtime, like messaging platforms, IoT backends, and fintech applications."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:298
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:304
 #, elixir-autogen, elixir-format
 msgid "Kamal is a great choice for Phoenix developers who want a fast, reliable deployment pipeline without complex orchestration. Combined with Docker and a VPS like Hetzner, it provides full control over your stack."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:278
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:284
 #, elixir-autogen, elixir-format
 msgid "Kamal will build the Docker image, push it, connect to your VPS, and deploy the containers. Use Kamal commands like"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:105
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:108
 #, elixir-autogen, elixir-format
 msgid "Laws restricted the use of certain materials and colours to prevent ostentation among the non-noble."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:220
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Libraries like Oban use GenServer and supervision trees to manage job queues, retries, and scheduling reliably."
 msgstr ""
@@ -462,17 +462,17 @@ msgstr ""
 msgid "Logo"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:59
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Looking ahead, the shift toward decentralized and reactive systems (edge computing, AI coordination, live dashboards) plays directly into Elixir’s strengths — positioning it as one of the most future-proof choices for scalable, concurrent software."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:165
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "Mise also lets you define CLI tasks, so you can standardize common workflows like setup, cleanups, and deployment helpers."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:113
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:117
 #, elixir-autogen, elixir-format
 msgid "Mise is a modern version manager that supports multiple languages and tools — similar to asdf, but faster and easier to configure."
 msgstr ""
@@ -513,17 +513,17 @@ msgstr ""
 msgid "New Album"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:362
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:374
 #, elixir-autogen, elixir-format
 msgid "OTP Applications can easily be combined and deployed across nodes in a distributed system. With node-to-node communication, you can scale horizontally and delegate tasks between different physical or virtual machines."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:60
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "Once a functional app base has been created (in the case of an Elixir / Phoenix app, a simple `mix phx.new my_app` will suffice), it needs to be containerised. Kamal will need a container to deploy on the VPS. This container may not be hosted on Docker Hub, but in my case it is. By default, Phoenix offers a Docker file, which can be generated with the command `mix phx gen.release --docker`, which may do the trick. In my case I preferred to make a new one. An Elixir app is easy to containerise, so I took advantage!"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:250
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:262
 #, elixir-autogen, elixir-format
 msgid "One of the core strengths of the BEAM is its philosophy of « let it crash » Instead of trying to prevent every possible failure, Elixir encourages writing small, isolated processes that can fail safely — and then be automatically restarted. This is where Supervisors come into play."
 msgstr ""
@@ -538,12 +538,12 @@ msgstr ""
 msgid "Our aim is not just to show objects, but to understand the uses, gestures, customs and social values of the Picardy Middle Ages, in order to give new meaning to the objects and their context."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:344
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:350
 #, elixir-autogen, elixir-format
 msgid "Overall, Kamal bridges the gap between manual server management and fully managed platforms, providing a great balance of simplicity, power, and transparency."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:376
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:390
 #, elixir-autogen, elixir-format
 msgid "Phoenix web servers, job processing platforms like Oban, and chat systems all leverage OTP applications behind the scenes. Each application encapsulates its logic, dependencies, and supervision trees, making them easy to compose and maintain."
 msgstr ""
@@ -563,37 +563,37 @@ msgstr ""
 msgid "Photographing in China, for me, is not about capturing exoticism or postcard scenes, but about entering—humbly—a world that feels both close and distant. I look for silences, laughter, habits, the invisible threads that weave everyday life. Morning markets, shared meals, slow walks through old neighborhoods. In alleyways and on sidewalks, I’m drawn to the quiet poetry I love in street photography — a fleeting solitude, an unexpected light, a passing glance. Each image is an attempt to preserve something honest, without noise or artifice."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:232
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:238
 #, elixir-autogen, elixir-format
 msgid "Points to a secret .env file (not committed) used for sensitive data like SECRET_KEY_BASE."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:314
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:318
 #, elixir-autogen, elixir-format
 msgid "PostgreSQL is commented out for now because the project does not currently require a database, but the configuration is ready for future use."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:514
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:516
 #, elixir-autogen, elixir-format
 msgid "Presentation of XIVᵉ century gastronomy through utensils and recipes, based on archaeological sources."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:478
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:480
 #, elixir-autogen, elixir-format
 msgid "Presentation of an armed village militia that ensured the security of medieval rural communities."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:308
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:310
 #, elixir-autogen, elixir-format
 msgid "Presentation of clothing, sewing techniques and related trades (tailor, dyer) in XIVᵉ century Picardy."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:208
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:220
 #, elixir-autogen, elixir-format
 msgid "Processes are lightweight and isolated, making Elixir ideal for handling thousands of concurrent users. Phoenix Channels make real-time communication trivial."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:143
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:149
 #, elixir-autogen, elixir-format
 msgid "Pèlerinage de vie humaine"
 msgstr ""
@@ -603,17 +603,17 @@ msgstr ""
 msgid "Rate %{count} star"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:602
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:604
 #, elixir-autogen, elixir-format
 msgid "Reconstruction of a camp with furniture, kitchen, games and XIVᵉ type costumes."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:550
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:552
 #, elixir-autogen, elixir-format
 msgid "Reconstruction of a hostelry, an essential place of welcome and exchange in medieval society."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:324
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:330
 #, elixir-autogen, elixir-format
 msgid "Remote builder support: useful when your local architecture differs from the server (e.g., M1 Mac to amd64 VPS)."
 msgstr ""
@@ -634,7 +634,7 @@ msgstr ""
 msgid "Street photography, for me, is a way to witness time, humanity, and space converging. Each image is a silent dialogue — between place and person, solitude and movement, memory and moment."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:302
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:314
 #, elixir-autogen, elixir-format
 msgid "Supervision trees are hierarchical structures of supervisors and workers, forming a resilient system where localized errors don’t bring down the entire application."
 msgstr ""
@@ -644,37 +644,37 @@ msgstr ""
 msgid "Taiwan is a country I hold close to my heart. There’s a singular gentleness to life here — a subtle blend of Chinese heritage and Japanese influence, especially felt in Taipei, in the architecture, the habits, the quiet rhythm of the days. The country has preserved its traditions, its temples, and a kind of everyday spirituality. It is both ancient and modern, vibrant and serene."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:226
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:238
 #, elixir-autogen, elixir-format
 msgid "Thanks to the underlying Erlang VM, Elixir applications handle high throughput with low latency, even under heavy load."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:419
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:433
 #, elixir-autogen, elixir-format
 msgid "Thanks to tools like Rustler or NIFs (Native Implemented Functions), you can strike a balance: keep your business logic and resilience in Elixir, while offloading the most CPU-heavy logic to native code."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:352
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:356
 #, elixir-autogen, elixir-format
 msgid "The BUILD job compiles the application, builds the assets, and generates a release."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:252
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:256
 #, elixir-autogen, elixir-format
 msgid "The LINT job enforces code quality and security rules. It checks for formatting, unused dependencies, security vulnerabilities, and stylistic issues."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:352
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:364
 #, elixir-autogen, elixir-format
 msgid "The MyApp.Application module defines the entry point of your application. When deployed, this module ensures that your system starts in a predictable, fault-tolerant way using the supervision tree."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:33
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "The clothing worn by a member of the “middle class” - a well-to-do craftsman, merchant, cleric or small-town notable - reflects his or her social status, the materials available locally, sumptuary laws and the fashions of the day."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:200
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:204
 #, elixir-autogen, elixir-format
 msgid "The name of your app/service, consistent with your Docker image and Elixir project."
 msgstr ""
@@ -685,28 +685,28 @@ msgid "There is a deep humanity in the way people inhabit cities. I aim to captu
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:173
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:296
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:332
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:357
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:393
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:429
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:466
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:502
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:538
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:999
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1012
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1025
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1038
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1051
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1064
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1077
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1090
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1103
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1116
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1129
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1142
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1155
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1168
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:298
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:334
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:359
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:395
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:431
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:468
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:504
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:540
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1001
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1014
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1027
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1040
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1053
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1066
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1079
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1092
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1105
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1118
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1131
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1144
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1157
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1170
 #, elixir-autogen, elixir-format
 msgid "Thibault San - photography for La Seigneurie de Coucy at Seigneuriales de Coucy"
 msgstr ""
@@ -716,22 +716,22 @@ msgstr ""
 msgid "Thibault Santonja"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:179
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:191
 #, elixir-autogen, elixir-format
 msgid "This `Counter` module starts a process with an initial value, supports incrementing it asynchronously via `cast`, and retrieving the current value with `call`."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:88
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "This architecture also enables hot code swapping, letting you update parts of your system in production without stopping the application — a critical advantage for systems that require continuous availability."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:427
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:443
 #, elixir-autogen, elixir-format
 msgid "This article focused on the foundations of Elixir and the BEAM, but there's even more power waiting in the Elixir ecosystem. The Phoenix Framework builds on top of these concepts to provide a full-featured, scalable web development platform."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:264
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:270
 #, elixir-autogen, elixir-format
 msgid "This file should be kept out of version control. Kamal will read it and inject the variables into the container."
 msgstr ""
@@ -741,17 +741,17 @@ msgstr ""
 msgid "This is a deeply human form of photography — where you can feel the breath of a place, the presence of its people, the memory of a history. My gaze is that of someone who knows, and who is still learning — with respect, patience, and tenderness."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:382
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:396
 #, elixir-autogen, elixir-format
 msgid "This modularity is one of the reasons why Elixir systems are considered easy to reason about — even as they scale to millions of users."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:456
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:460
 #, elixir-autogen, elixir-format
 msgid "This setup gives us confidence in code quality and makes production releases seamless."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:203
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:207
 #, elixir-autogen, elixir-format
 msgid "This speeds up builds, avoids mismatched versions, and keeps CI mirrors of local dev environments."
 msgstr ""
@@ -761,7 +761,7 @@ msgstr ""
 msgid "Through composition and light, I try to reveal the quiet power of nature — and our place within it. Not as rulers, not as outsiders, but as part of a larger story. My landscape work is about presence, memory, and respect. A way to reconnect with the world we too often overlook."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:270
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:272
 #, elixir-autogen, elixir-format
 msgid "Through our events, we bring to life the everyday gestures, trades, skills and traditions of the period, offering visitors a living immersion in medieval life."
 msgstr ""
@@ -776,32 +776,32 @@ msgstr ""
 msgid "Time:"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:399
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:413
 #, elixir-autogen, elixir-format
 msgid "To handle performance-critical operations, many teams combine Elixir with native code written in Rust or C. One of the most famous examples is Discord, which replaced certain parts of its Elixir stack with Rust-based components to improve performance, while keeping the benefits of Elixir for the rest of the system."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:310
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:316
 #, elixir-autogen, elixir-format
 msgid "Unlike manual deployments that require repetitive steps, or Ansible that adds a layer of complexity, Kamal offers a modern, Ruby-based deployment tool that is simple, transparent, and Docker-native."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:76
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "Unlike traditional operating system threads, BEAM processes are extremely lightweight and isolated: they don’t share memory and communicate only via message passing. This model eliminates entire classes of concurrency bugs such as race conditions and deadlocks."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:185
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:197
 #, elixir-autogen, elixir-format
 msgid "Using GenServer encourages fault-tolerant and well-organized concurrent code, especially when combined with Elixir's supervision trees."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:304
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:310
 #, elixir-autogen, elixir-format
 msgid "Using Kamal to deploy a Phoenix application has significantly simplified the process compared to traditional methods like manual SSH setup, Ansible playbooks, or even some PaaS solutions."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:116
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "Using a single configuration file (`mise.toml`), you can define the exact versions of tools like Elixir, Erlang, Ruby, and even JavaScript runtimes like Bun."
 msgstr ""
@@ -811,7 +811,7 @@ msgstr ""
 msgid "We bring medieval collections, knowledge and lifestyles to life in a documented way. This process of reconstruction is a tool for transmission, education and historical sensitivity."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:576
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:578
 #, elixir-autogen, elixir-format
 msgid "We offer different animation formats to adapt to all contexts. In each configuration, we reveal the richness of daily life in the XIVᵉ century."
 msgstr ""
@@ -826,22 +826,22 @@ msgstr ""
 msgid "What I love in Taiwan are the streets — their calm energy. Beneath the arcades, people cook, knit, read, work. There’s steam, slow gestures, quiet conversations, laughter. The warm, humid climate wraps everything in a soft, diffuse light. Nature is spectacular: mountains, hot springs, rice fields, dense forests. And of course, the Oolong — this rich, fragrant tea, sipped under a tree or at a modest table, in a silence that soothes the soul."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:239
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:251
 #, elixir-autogen, elixir-format
 msgid "Whether you’re building a scalable SaaS backend, real-time app, or processing pipeline, Elixir provides the tools to keep things simple and resilient."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:122
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:134
 #, elixir-autogen, elixir-format
 msgid "While Elixir allows you to spawn raw processes using `spawn/1`, it also offers powerful abstractions like `GenServer` for building robust, concurrent systems with clear structure."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:308
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:320
 #, elixir-autogen, elixir-format
 msgid "With supervision trees, Elixir apps gracefully recover from runtime failures, making them ideal for systems that require high availability, like banking platforms, messaging services, and distributed web applications."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:143
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:149
 #, elixir-autogen, elixir-format
 msgid "XIVth century"
 msgstr ""
@@ -851,22 +851,22 @@ msgstr ""
 msgid "Your browser does not support the video tag."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:50
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:52
 #, elixir-autogen, elixir-format
 msgid "a kind of high sock. Pieces of fabric (wool, sometimes lined) covering the legs, attached to the waistband of braies."
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:44
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:46
 #, elixir-autogen, elixir-format
 msgid "a loose-fitting pair of linen boxer shorts, held at the waist by a cord and worn under the sock."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:256
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:260
 #, elixir-autogen, elixir-format
 msgid "and"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:96
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "branch"
 msgstr ""
@@ -879,12 +879,12 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:56
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:58
 #, elixir-autogen, elixir-format
 msgid "fitted tunic that can be buttoned from the collar to the waist, worn over a shirt and reaching down to the knees for men and to the feet for women."
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:72
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "for CI, which gives us clean, isolated environments and good integration with Docker Hub and versioned releases."
 msgstr ""
@@ -894,65 +894,45 @@ msgstr ""
 msgid "go to album"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "linen"
 msgstr ""
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:169
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "link"
 msgstr ""
 
-#: lib/portfolio_web/controllers/auth_controller.ex:40
+#: lib/portfolio_web/controllers/auth_controller.ex:77
 #, elixir-autogen, elixir-format
 msgid "auth.login.session_error"
 msgstr "Error creating session."
 
-#: lib/portfolio_web/controllers/auth_controller.ex:35
+#: lib/portfolio_web/controllers/auth_controller.ex:72
 #, elixir-autogen, elixir-format
 msgid "auth.login.success"
 msgstr "Login successful! Welcome %{email}"
 
-#: lib/portfolio_web/controllers/auth_controller.ex:82
+#: lib/portfolio_web/controllers/auth_controller.ex:119
 #, elixir-autogen, elixir-format
 msgid "auth.logout.success"
 msgstr "Logout successful."
 
-#: lib/portfolio_web/controllers/auth_controller.ex:56
+#: lib/portfolio_web/controllers/auth_controller.ex:93
 #, elixir-autogen, elixir-format
 msgid "auth.magic_link.already_used"
 msgstr "This login link has already been used. Please request a new one."
 
-#: lib/portfolio_web/controllers/auth_controller.ex:51
+#: lib/portfolio_web/controllers/auth_controller.ex:88
 #, elixir-autogen, elixir-format
 msgid "auth.magic_link.expired"
 msgstr "This login link has expired. Please request a new one."
 
-#: lib/portfolio_web/controllers/auth_controller.ex:46
+#: lib/portfolio_web/controllers/auth_controller.ex:83
 #, elixir-autogen, elixir-format
 msgid "auth.magic_link.invalid"
 msgstr "Invalid login link."
-
-#: lib/portfolio_web/controllers/auth_html/magic_link_landing.html.heex:6
-#, elixir-autogen, elixir-format
-msgid "auth.magic_link.verifying"
-msgstr "Verifying your login link"
-
-#: lib/portfolio_web/controllers/auth_html/magic_link_landing.html.heex:8
-#, elixir-autogen, elixir-format
-msgid "auth.magic_link.please_wait"
-msgstr "Please wait while we verify your identity..."
-
-#: lib/portfolio_web/controllers/auth_html/magic_link_landing.html.heex:23
-#, elixir-autogen, elixir-format
-msgid "auth.magic_link.processing"
-msgstr "Processing..."
-
-#: lib/portfolio_web/controllers/auth_html/magic_link_landing.html.heex:33
-#, elixir-autogen, elixir-format
-msgid "auth.magic_link.click_to_continue"
-msgstr "Click here to continue"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.ex:45
 #, elixir-autogen, elixir-format
@@ -965,35 +945,35 @@ msgstr "%{count} photo(s) restarted successfully"
 msgid "admin.dashboard.title"
 msgstr "Dashboard"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:104
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:99
 #, elixir-autogen, elixir-format
 msgid "time.day"
 msgid_plural "time.days"
 msgstr[0] "%{count} day"
 msgstr[1] "%{count} days"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:100
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:95
 #, elixir-autogen, elixir-format
 msgid "time.hour"
 msgid_plural "time.hours"
 msgstr[0] "%{count} hour"
 msgstr[1] "%{count} hours"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:96
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:91
 #, elixir-autogen, elixir-format
 msgid "time.minute"
 msgid_plural "time.minutes"
 msgstr[0] "%{count} minute"
 msgstr[1] "%{count} minutes"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:108
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:103
 #, elixir-autogen, elixir-format
 msgid "time.month"
 msgid_plural "time.months"
 msgstr[0] "%{count} month"
 msgstr[1] "%{count} months"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:92
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:87
 #, elixir-autogen, elixir-format
 msgid "time.second"
 msgid_plural "time.seconds"
@@ -1032,42 +1012,33 @@ msgstr "My Profile"
 msgid "admin.profile.update_success"
 msgstr "Profile updated successfully"
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:110
+#: lib/portfolio_web/live/admin/user_live/index.ex:151
 #, elixir-autogen, elixir-format
 msgid "admin.users.delete_error"
 msgstr "Error deleting user"
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:102
+#: lib/portfolio_web/live/admin/user_live/index.ex:143
 #, elixir-autogen, elixir-format
 msgid "admin.users.delete_success"
 msgstr "User deleted successfully"
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:122
+#: lib/portfolio_web/live/admin/user_live/index.ex:173
 #, elixir-autogen, elixir-format
 msgid "admin.users.sessions_revoked"
 msgstr "%{count} session(s) revoked successfully"
 
-msgid "admin.users.magic_link_sent"
-msgstr "Magic link sent to %{email}"
-
-msgid "admin.users.magic_link_rate_limit"
-msgstr "Too many attempts. Please try again in a few minutes"
-
-msgid "admin.users.magic_link_error"
-msgstr "Error sending magic link"
-
-#: lib/portfolio_web/live/admin/user_live/index.ex:21
+#: lib/portfolio_web/live/admin/user_live/index.ex:29
 #: lib/portfolio_web/live/admin/user_live/index.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "admin.users.title"
 msgstr "User Management"
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:72
+#: lib/portfolio_web/live/admin/user_live/index.ex:99
 #, elixir-autogen, elixir-format
 msgid "admin.users.update_error"
 msgstr "Error updating user"
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:65
+#: lib/portfolio_web/live/admin/user_live/index.ex:89
 #, elixir-autogen, elixir-format
 msgid "admin.users.update_success"
 msgstr "User updated successfully"
@@ -1154,126 +1125,126 @@ msgstr "Albums"
 msgid "admin.albums.upload_error"
 msgstr "Upload error: %{reason}"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:157
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:173
 #: lib/portfolio_web/live/admin/album_live/index.ex:215
 #: lib/portfolio_web/live/photography_live/index.ex:61
 #, elixir-autogen, elixir-format
 msgid "album.type.china"
 msgstr "China"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:148
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:164
 #: lib/portfolio_web/live/admin/album_live/index.ex:206
 #: lib/portfolio_web/live/photography_live/index.ex:62
 #, elixir-autogen, elixir-format
 msgid "album.type.couples"
 msgstr "Couples"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:151
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:167
 #: lib/portfolio_web/live/admin/album_live/index.ex:209
 #: lib/portfolio_web/live/photography_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "album.type.events"
 msgstr "Events"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:158
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:174
 #: lib/portfolio_web/live/admin/album_live/index.ex:216
 #: lib/portfolio_web/live/photography_live/index.ex:64
 #, elixir-autogen, elixir-format
 msgid "album.type.japan"
 msgstr "Japan"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:152
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:168
 #: lib/portfolio_web/live/admin/album_live/index.ex:210
 #: lib/portfolio_web/live/photography_live/index.ex:65
 #, elixir-autogen, elixir-format
 msgid "album.type.landscape"
 msgstr "Landscape"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:150
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:166
 #: lib/portfolio_web/live/admin/album_live/index.ex:208
 #, elixir-autogen, elixir-format
 msgid "album.type.motherhood"
 msgstr "Motherhood"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:154
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:170
 #: lib/portfolio_web/live/admin/album_live/index.ex:212
 #, elixir-autogen, elixir-format
 msgid "album.type.music"
 msgstr "Music"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:155
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:171
 #: lib/portfolio_web/live/admin/album_live/index.ex:213
 #: lib/portfolio_web/live/photography_live/index.ex:68
 #, elixir-autogen, elixir-format
 msgid "album.type.reenactment"
 msgstr "Reenactment"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:153
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:169
 #: lib/portfolio_web/live/admin/album_live/index.ex:211
 #, elixir-autogen, elixir-format
 msgid "album.type.street"
 msgstr "Street"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:159
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:175
 #: lib/portfolio_web/live/admin/album_live/index.ex:217
 #: lib/portfolio_web/live/photography_live/index.ex:70
 #, elixir-autogen, elixir-format
 msgid "album.type.taiwan"
 msgstr "Taiwan"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:149
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:165
 #: lib/portfolio_web/live/admin/album_live/index.ex:207
 #: lib/portfolio_web/live/photography_live/index.ex:71
 #, elixir-autogen, elixir-format
 msgid "album.type.wedding"
 msgstr "Wedding"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:75
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:91
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.cancel"
 msgstr "Cancel"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:72
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:87
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.create"
 msgstr "Create Album"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:116
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:132
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.create_success"
 msgstr "Album created successfully"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:47
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:50
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.description"
 msgstr "Description"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:57
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:67
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.end_date"
 msgstr "End date (optional)"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:49
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:54
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.location"
 msgstr "Location"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:68
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:81
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.published"
 msgstr "Published"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:64
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:74
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.reference_link"
 msgstr "Reference link"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:72
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:88
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.save"
 msgstr "Save Changes"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:71
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:85
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.saving"
 msgstr "Saving..."
@@ -1283,7 +1254,7 @@ msgstr "Saving..."
 msgid "admin.albums.form.select_type"
 msgstr "Select a type"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:52
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:60
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.start_date"
 msgstr "Start date"
@@ -1308,7 +1279,7 @@ msgstr "Title"
 msgid "admin.albums.form.type"
 msgstr "Type"
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:131
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:147
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.update_success"
 msgstr "Album updated successfully"
@@ -1329,17 +1300,17 @@ msgstr "Concerts & Music"
 msgid "photography.gallery"
 msgstr "Gallery"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:9
+#: lib/portfolio_web/live/photography_live/gallery.ex:10
 #, elixir-autogen, elixir-format
 msgid "photography.gallery.china_title"
 msgstr "A title in China"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:15
+#: lib/portfolio_web/live/photography_live/gallery.ex:16
 #, elixir-autogen, elixir-format
 msgid "photography.gallery.japan_title"
 msgstr "This title Japan"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:21
+#: lib/portfolio_web/live/photography_live/gallery.ex:22
 #, elixir-autogen, elixir-format
 msgid "photography.gallery.taiwan_title"
 msgstr "A Taiwan title"
@@ -1349,8 +1320,8 @@ msgstr "A Taiwan title"
 msgid "photography.motherhood_families"
 msgstr "Motherhood & Families"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:90
-#: lib/portfolio_web/live/photography_live/gallery.ex:113
+#: lib/portfolio_web/live/photography_live/gallery.ex:96
+#: lib/portfolio_web/live/photography_live/gallery.ex:119
 #: lib/portfolio_web/live/photography_live/index.ex:57
 #, elixir-autogen, elixir-format
 msgid "photography.page_title"
@@ -1367,12 +1338,12 @@ msgstr "Show more"
 msgid "photography.street_photography"
 msgstr "Street Photography"
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:68
+#: lib/portfolio_web/live/photography_live/timeline.ex:91
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.gallery_prefix"
 msgstr "Photographies gallery - "
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:64
+#: lib/portfolio_web/live/photography_live/timeline.ex:87
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.title"
 msgstr "Photographies timeline gallery"
@@ -1432,7 +1403,7 @@ msgstr "The tech blog is under construction — come back soon for articles on E
 msgid "tech.blog.welcome"
 msgstr "Welcome to Thibault's dev blog"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:41
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:43
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.add_photos"
 msgstr "Add Photos"
@@ -1442,141 +1413,141 @@ msgstr "Add Photos"
 msgid "admin.albums.edit.album_information"
 msgstr "Album Information"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:127
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.album_photos_count"
 msgstr "Album Photos (%{count})"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:99
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:158
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:399
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:101
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:162
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:413
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.cancel"
 msgstr "Cancel"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:69
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.choose_files"
 msgstr "Choose files"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:281
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:290
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.delete_button"
 msgstr "Delete"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:278
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:286
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.delete_photo_confirm"
 msgstr "Are you sure you want to delete this photo?"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:283
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:293
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.deleting"
 msgstr "Deleting..."
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:76
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:78
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.drag_drop"
 msgstr "or drag and drop"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:272
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:280
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.edit_button"
 msgstr "Edit"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:328
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:338
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.edit_photo_modal"
 msgstr "Edit Photo"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:235
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:243
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.failed"
 msgstr "Failed"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:79
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.file_format_info"
 msgstr "PNG, JPG, JPEG, WEBP up to 10MB (max 20 files)"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:370
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:380
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photo_date_taken"
 msgstr "Date taken"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:241
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:335
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:249
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:345
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photo_default_alt"
 msgstr "Photo"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:360
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:370
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photo_description_label"
 msgstr "Description"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:362
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:372
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photo_description_placeholder"
 msgstr "Photo description"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:378
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:388
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photo_published"
 msgstr "Published"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:351
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:361
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photo_title_label"
 msgstr "Title"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:352
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:362
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photo_title_placeholder"
 msgstr "Photo title"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:28
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photos_section"
 msgstr "Photos"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:30
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:32
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.photos_section_description"
 msgstr "Manage the photos in this album."
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:229
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:237
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.processing"
 msgstr "Processing..."
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:149
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:153
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.reorder"
 msgstr "Reorder"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:182
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.reorder_instructions"
 msgstr "Drag and drop photos to reorder them. The first photo will be used as the cover image."
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:263
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:271
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.retry"
 msgstr "Retry"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:391
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:402
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.save_button"
 msgstr "Save"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:165
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:170
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.save_order"
 msgstr "Save Order"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:166
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:392
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:173
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:405
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.saving"
 msgstr "Saving..."
@@ -1586,92 +1557,92 @@ msgstr "Saving..."
 msgid "admin.albums.edit.title"
 msgstr "Edit Album"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:111
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.upload_count"
 msgstr "Upload %{count} photo(s)"
 
-#: lib/portfolio_web/live/admin/album_live/edit.html.heex:114
+#: lib/portfolio_web/live/admin/album_live/edit.html.heex:118
 #, elixir-autogen, elixir-format
 msgid "admin.albums.edit.uploading"
 msgstr "Uploading..."
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:176
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:180
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.actions"
 msgstr "Actions"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:276
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:283
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.albums_count"
 msgstr "albums"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:145
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:149
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.column_date"
 msgstr "Date"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:157
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:161
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.column_photos"
 msgstr "Photos"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:169
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:173
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.column_published"
 msgstr "Published"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:121
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.column_title"
 msgstr "Title"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:133
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:137
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.column_type"
 msgstr "Type"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:103
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:107
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.create_album"
 msgstr "Create an Album"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:232
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:237
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.delete"
 msgstr "Delete"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:229
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:233
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.delete_confirm"
 msgstr "Are you sure you want to delete this album?"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:234
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:240
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.deleting"
 msgstr "Deleting..."
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:223
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:227
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.edit"
 msgstr "Edit"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:39
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:41
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.filter_all"
 msgstr "All"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:71
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.filter_drafts"
 msgstr "Drafts"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:27
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:28
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.filter_label"
 msgstr "Filter:"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:55
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.filter_published"
 msgstr "Published"
@@ -1681,34 +1652,34 @@ msgstr "Published"
 msgid "admin.albums.index.new_album"
 msgstr "New Album"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:265
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:326
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:271
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:333
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.next"
 msgstr "Next"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:94
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.no_albums"
 msgstr "No albums"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:96
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.no_albums_hint"
 msgstr "Start by creating a new album."
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:275
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:282
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.of"
 msgstr "of"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:257
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:291
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:263
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:298
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.previous"
 msgstr "Previous"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:272
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:278
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.showing"
 msgstr "Showing"
@@ -1723,7 +1694,7 @@ msgstr "List of all photo albums in the portfolio"
 msgid "admin.albums.index.title"
 msgstr "Albums"
 
-#: lib/portfolio_web/live/admin/album_live/index.html.heex:273
+#: lib/portfolio_web/live/admin/album_live/index.html.heex:280
 #, elixir-autogen, elixir-format
 msgid "admin.albums.index.to"
 msgstr "to"
@@ -1828,191 +1799,191 @@ msgstr "Software crafter"
 msgid "home.welcome"
 msgstr "Welcome to my digital workshop"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:322
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:358
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.actions.create_album"
 msgstr "Create Album"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:323
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:359
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.actions.create_album_desc"
 msgstr "Add a new album to your portfolio"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:313
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:349
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.actions.manage_albums"
 msgstr "Manage Albums"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:314
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:350
 #, elixir-autogen, elixir-format
 msgid "admin.dashboard.actions.manage_albums_desc"
 msgstr "Create, edit, or delete albums"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:331
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:367
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.actions.my_profile"
 msgstr "Dashboard"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:332
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:368
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.actions.my_profile_desc"
 msgstr "Dashboard"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:286
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:316
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.failed_photos.album"
 msgstr "Album: %{title}"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:270
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:300
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.failed_photos.retry_all"
 msgstr "Retry all"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:289
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:321
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.failed_photos.time_ago"
 msgstr "%{hours}h ago"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:262
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:290
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.failed_photos.title"
 msgstr "Failed Photos (%{count})"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:297
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:331
 #, elixir-autogen, elixir-format
 msgid "admin.dashboard.failed_photos.view_album"
 msgstr "View album"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:117
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:124
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.image_processing"
 msgstr "Image Processing"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:347
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:386
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.info.account_email"
 msgstr "Account Email"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:359
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:402
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.info.created_on"
 msgstr "Created on"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:365
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:410
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.info.last_updated"
 msgstr "Last updated"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:351
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:392
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.info.role"
 msgstr "Role"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:342
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:379
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.information"
 msgstr "Information"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:175
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:190
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.processing.completed"
 msgstr "Completed"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:187
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:204
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.processing.failed"
 msgstr "Failed"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:130
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "admin.dashboard.processing.pending"
 msgstr "Pending"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:163
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:176
 #, elixir-autogen, elixir-format
 msgid "admin.dashboard.processing.processing"
 msgstr "Processing"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:122
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:131
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.processing.status"
 msgstr "Processing Status"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:196
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:215
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.processing.total"
 msgstr "Total"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:308
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:343
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.quick_actions"
 msgstr "Quick Actions"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:17
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:18
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.statistics"
 msgstr "Statistics"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:73
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:77
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.stats.draft_albums"
 msgstr "Draft Albums"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:63
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:65
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:82
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:84
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:69
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:86
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:90
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.stats.of_total"
 msgstr "of total"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:54
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:56
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.stats.published_albums"
 msgstr "Published Albums"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:22
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:24
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.stats.total_albums"
 msgstr "Total Albums"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:45
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:47
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.stats.total_photos"
 msgstr "Total Photos"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:92
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:98
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.stats.users"
 msgstr "Users"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:30
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:100
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:32
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:106
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.stats.view_list"
 msgstr "View list"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:218
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:242
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.storage.capacity"
 msgstr "%{capacity} GB"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:247
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:273
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.storage.oldest_pending"
 msgstr "Oldest pending photo: %{hours}h"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:211
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:234
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.storage.space_used"
 msgstr "Space used: %{used} GB of %{capacity} GB"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:250
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:276
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.storage.time_ago"
 msgstr "%{hours}h"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:207
+#: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:228
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.dashboard.storage.title"
 msgstr "Storage Used"
@@ -2022,12 +1993,12 @@ msgstr "Storage Used"
 msgid "admin.dashboard.welcome"
 msgstr "Welcome, %{email}"
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:93
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "admin.photos.empty.message"
 msgstr "No photos found for this filter."
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:91
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:92
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.photos.empty.title"
 msgstr "No photos"
@@ -2042,24 +2013,24 @@ msgstr "All"
 msgid "admin.photos.filter_label"
 msgstr "Filter by album:"
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:115
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:166
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:117
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:169
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.photos.pagination.next"
 msgstr "Next"
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:124
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:126
 #, elixir-autogen, elixir-format
 msgid "admin.photos.pagination.of"
 msgstr "of"
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:123
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "admin.photos.pagination.page"
 msgstr "Page"
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:107
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:134
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:109
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:137
 #, elixir-autogen, elixir-format
 msgid "admin.photos.pagination.previous"
 msgstr "Previous"
@@ -2079,162 +2050,157 @@ msgstr "List of all photos in the portfolio (%{count} photo(s))"
 msgid "admin.profile.account_information"
 msgstr "Account Information"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:20
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:24
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.email_label"
 msgstr "Email"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:25
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:29
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.email_readonly"
 msgstr "Email cannot be changed. Contact an administrator if needed."
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:36
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:42
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.member_since"
 msgstr "Member since"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:13
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:15
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.name_label"
 msgstr "Name"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:13
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "admin.profile.name_placeholder"
 msgstr "Your name"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:30
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:35
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.role_label"
 msgstr "Role"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:45
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:51
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.save"
 msgstr "Save"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:46
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:52
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.saving"
 msgstr "Saving..."
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:78
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:89
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.current"
 msgstr "Current session"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:85
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:97
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.last_activity"
 msgstr "Last activity: %{date}"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:62
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:71
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.logging_out"
 msgstr "Logging out..."
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:61
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:68
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.logout_all"
 msgstr "Log out all other sessions"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:69
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:79
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.no_sessions"
 msgstr "No active sessions"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:97
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:110
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.revoke"
 msgstr "Revoke"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:58
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:64
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.revoke_all_confirm"
 msgstr "Are you sure you want to log out all other sessions?"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:94
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:106
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.revoke_confirm"
 msgstr "Are you sure you want to revoke this session?"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:98
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:113
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.revoking"
 msgstr "Revoking..."
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:81
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:93
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.session"
 msgstr "Session"
 
-#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:54
+#: lib/portfolio_web/live/admin/profile_live/edit.html.heex:60
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.profile.sessions.title"
 msgstr "Active Sessions"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:256
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:264
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.delete.cancel"
 msgstr "Cancel"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:234
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:242
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.delete.confirm"
 msgstr "Are you sure you want to delete the user %{email}? This action is irreversible."
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:249
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:257
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.delete.delete_button"
 msgstr "Delete"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:230
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:238
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.delete.title"
 msgstr "Delete User"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:201
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:209
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.edit.cancel"
 msgstr "Cancel"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:144
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:145
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.edit.email"
 msgstr "Email"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:150
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:152
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.edit.name"
 msgstr "Name"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:190
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:198
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.edit.revoke_sessions"
 msgstr "Revoke all sessions"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:174
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:176
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.edit.role_admin"
 msgstr "Admin"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:163
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:165
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.edit.role_label"
 msgstr "Role"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:177
-#, elixir-autogen, elixir-format, fuzzy
-msgid "admin.users.edit.role_superadmin"
-msgstr "Superadmin"
-
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:171
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:173
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.edit.role_user"
 msgstr "User"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:207
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:215
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.edit.save"
 msgstr "Save"
@@ -2244,27 +2210,27 @@ msgstr "Save"
 msgid "admin.users.edit.title"
 msgstr "Edit User"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:282
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:290
 #, elixir-autogen, elixir-format
 msgid "admin.users.empty.message"
 msgstr "There are no users in the system."
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:280
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:288
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.empty.title"
 msgstr "No users"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:317
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:326
 #, elixir-autogen, elixir-format
 msgid "admin.users.stats.administrators"
 msgstr "Administrators"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:334
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:345
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.stats.regular_users"
 msgstr "Users"
 
-#: lib/portfolio_web/live/admin/user_live/index.html.heex:300
+#: lib/portfolio_web/live/admin/user_live/index.html.heex:308
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.users.stats.total"
 msgstr "Total Users"
@@ -2374,82 +2340,83 @@ msgstr "Thibault San Photography - Event photography used as background"
 msgid "photography.alt.wedding"
 msgstr "Thibault San Photography - Wedding photography used as background"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:103
+#: lib/portfolio_web/live/photography_live/gallery.ex:109
 #: lib/portfolio_web/live/photography_live/index.html.heex:169
 #: lib/portfolio_web/live/photography_live/index.html.heex:170
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.brand"
 msgstr "Thibault San Photography"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:9
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:13
 #, elixir-autogen, elixir-format
 msgid "photography.brand_name"
 msgstr "Thibault Santonja"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:206
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:219
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.empty_message"
 msgstr "I am so sorry but at the moment, this portfolio gallery is empty"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:184
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:196
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:203
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.empty_title"
 msgstr "Empty portfolio chapter"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:10
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:221
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:15
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:234
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.home"
 msgstr "Home"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:155
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:169
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.show_more"
 msgstr "Show more"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:134
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:149
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.website"
 msgstr "Website"
 
-#: lib/portfolio_web/components/core_components.ex:137
-#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:135
+#: lib/portfolio_web/components/core_components.ex:140
+#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:138
 #, elixir-autogen, elixir-format
 msgid "components.flash.close"
 msgstr "Close"
 
-#: lib/portfolio_web/components/core_components.ex:158
-#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:182
+#: lib/portfolio_web/components/core_components.ex:162
+#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:186
 #, elixir-autogen, elixir-format
 msgid "components.flash.error"
 msgstr "Error!"
 
-#: lib/portfolio_web/components/core_components.ex:162
-#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:191
+#: lib/portfolio_web/components/core_components.ex:166
+#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:195
 #, elixir-autogen, elixir-format
 msgid "components.flash.no_internet"
 msgstr "We can't find the internet"
 
-#: lib/portfolio_web/components/core_components.ex:167
-#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:197
+#: lib/portfolio_web/components/core_components.ex:171
+#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:201
 #, elixir-autogen, elixir-format
 msgid "components.flash.reconnecting"
 msgstr "Attempting to reconnect"
 
-#: lib/portfolio_web/components/core_components.ex:174
-#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:205
+#: lib/portfolio_web/components/core_components.ex:178
+#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:209
 #, elixir-autogen, elixir-format
 msgid "components.flash.server_error"
 msgstr "Something went wrong!"
 
-#: lib/portfolio_web/components/core_components.ex:179
-#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:211
+#: lib/portfolio_web/components/core_components.ex:183
+#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:215
 #, elixir-autogen, elixir-format
 msgid "components.flash.server_error_message"
 msgstr "Hang in there while we get back on track"
 
-#: lib/portfolio_web/components/core_components.ex:157
-#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:175
+#: lib/portfolio_web/components/core_components.ex:161
+#: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:179
 #, elixir-autogen, elixir-format
 msgid "components.flash.success"
 msgstr "Success!"
@@ -2459,17 +2426,17 @@ msgstr "Success!"
 msgid "components.modal.close"
 msgstr "Close"
 
-#: lib/portfolio_web/components/core_components.ex:489
+#: lib/portfolio_web/components/core_components.ex:493
 #, elixir-autogen, elixir-format
 msgid "components.table.actions"
 msgstr "Actions"
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:36
+#: lib/portfolio_web/components/layouts/photography.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.description"
 msgstr "Photography portfolio by Thibault Santonja – Landscapes, historical reenactments, portraits and personal projects."
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:41
+#: lib/portfolio_web/components/layouts/photography.html.heex:36
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.og_description"
 msgstr "Discover Thibault San's photography portfolio – Landscapes, living history, portraits and visual work."
@@ -2479,22 +2446,22 @@ msgstr "Discover Thibault San's photography portfolio – Landscapes, living his
 msgid "layouts.photography.title"
 msgstr "Thibault San Photography – Portfolio & Gallery"
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:50
+#: lib/portfolio_web/components/layouts/photography.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.twitter_description"
 msgstr "Discover Thibault San's photography portfolio – Landscapes, living history, portraits and visual work."
 
-#: lib/portfolio_web/components/layouts/root.html.heex:27
+#: lib/portfolio_web/components/layouts/root.html.heex:25
 #, elixir-autogen, elixir-format
 msgid "layouts.root.description"
 msgstr "Thibault Santonja's portfolio – Developer, photographer and history enthusiast."
 
-#: lib/portfolio_web/components/layouts/root.html.heex:38
+#: lib/portfolio_web/components/layouts/root.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "layouts.root.og_description"
 msgstr "Discover my work in software development, photography and historical reenactment."
 
-#: lib/portfolio_web/components/layouts/root.html.heex:34
+#: lib/portfolio_web/components/layouts/root.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "layouts.root.og_title"
 msgstr "Thibault Santonja – Portfolio"
@@ -2504,30 +2471,30 @@ msgstr "Thibault Santonja – Portfolio"
 msgid "layouts.root.title"
 msgstr "Thibault Santonja – Portfolio & Projects"
 
-#: lib/portfolio_web/components/layouts/root.html.heex:50
+#: lib/portfolio_web/components/layouts/root.html.heex:36
 #, elixir-autogen, elixir-format
 msgid "layouts.root.twitter_description"
 msgstr "Discover my work in software development, photography and historical reenactment."
 
-#: lib/portfolio_web/components/layouts/root.html.heex:46
+#: lib/portfolio_web/components/layouts/root.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "layouts.root.twitter_title"
 msgstr "Thibault Santonja – Portfolio"
 
-#: lib/portfolio_web/components/layouts/tech.html.heex:26
+#: lib/portfolio_web/components/layouts/tech.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "layouts.tech.description"
 msgstr "Thibault Santonja's technical blog sharing deep insights and experiments on software craftsmanship, Elixir, Phoenix, deployment, and modern developer tools."
 
-#: lib/portfolio_web/components/layouts/tech.html.heex:64
+#: lib/portfolio_web/components/layouts/tech.html.heex:55
 #: lib/portfolio_web/live/tech_live/blog/ci.ex:22
-#: lib/portfolio_web/live/tech_live/blog/elixir.ex:24
-#: lib/portfolio_web/live/tech_live/blog/kamal.ex:22
+#: lib/portfolio_web/live/tech_live/blog/elixir.ex:26
+#: lib/portfolio_web/live/tech_live/blog/kamal.ex:24
 #, elixir-autogen, elixir-format
 msgid "layouts.tech.header"
 msgstr "The tech blog"
 
-#: lib/portfolio_web/components/layouts/tech.html.heex:31
+#: lib/portfolio_web/components/layouts/tech.html.heex:26
 #, elixir-autogen, elixir-format
 msgid "layouts.tech.og_description"
 msgstr "Explore articles and experimentations on Elixir, Phoenix, deployment, and modern software development practices."
@@ -2537,88 +2504,88 @@ msgstr "Explore articles and experimentations on Elixir, Phoenix, deployment, an
 msgid "layouts.tech.title"
 msgstr "Thibault Santonja – Tech & craft blog"
 
-#: lib/portfolio_web/components/layouts/tech.html.heex:40
+#: lib/portfolio_web/components/layouts/tech.html.heex:32
 #, elixir-autogen, elixir-format
 msgid "layouts.tech.twitter_description"
 msgstr "Explore articles and experimentations on Elixir, Phoenix, deployment, and modern software development practices."
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:35
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:33
 #, elixir-autogen, elixir-format, fuzzy
 msgid "layouts.amvcc.description"
 msgstr "Thibault Santonja for Seigneurie de Coucy (AMVCC) – 14th-century reenactments, events and living history, with passion, rigor and humanity."
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:185
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:172
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.contact_title"
 msgstr "Contact information"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:165
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:152
 #, elixir-autogen, elixir-format, fuzzy
 msgid "layouts.amvcc.footer.description"
 msgstr "Dedicated to reconstructing the medieval history of the XIVᵉ, through rigorous research and mediation activities to the widest possible audience."
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:153
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:154
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:140
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.logo_alt"
 msgstr "Thibault San Photography for La Seigneurie de Coucy"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:170
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:157
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.phone"
 msgstr "Phone number"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:160
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:147
 #, elixir-autogen, elixir-format, fuzzy
 msgid "layouts.amvcc.footer.tagline"
 msgstr "Let's bring History to life!"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:178
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:165
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.website"
 msgstr "Official website"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:87
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.header.title"
 msgstr "La Seigneurie de Coucy"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:93
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.about"
 msgstr "About"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:110
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.blog"
 msgstr "Blog"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:122
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:109
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.clothes"
 msgstr "Clothes"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:98
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.events"
 msgstr "Events"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:103
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:90
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.gallery"
 msgstr "Gallery"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:127
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:114
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.shoes"
 msgstr "Shoes"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:43
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:35
 #, elixir-autogen, elixir-format, fuzzy
 msgid "layouts.amvcc.og_description"
 msgstr "Thibault Santonja for Seigneurie de Coucy – Discover the AMVCC's reenactments, events and publications, bringing the 14th century to life with passion and authenticity."
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:39
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.og_title"
 msgstr "Seigneurie de Coucy — 14th-Century Living History"
@@ -2628,12 +2595,12 @@ msgstr "Seigneurie de Coucy — 14th-Century Living History"
 msgid "layouts.amvcc.title"
 msgstr "Thibault Santonja – La Seigneurie de Coucy"
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:58
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:44
 #, elixir-autogen, elixir-format, fuzzy
 msgid "layouts.amvcc.twitter_description"
 msgstr "Bringing the 14th century to life — The AMVCC's Seigneurie de Coucy shares the past through reenactments, events and research."
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:54
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:43
 #, elixir-autogen, elixir-format, fuzzy
 msgid "layouts.amvcc.twitter_title"
 msgstr "Seigneurie de Coucy — 14th-Century Living History"
@@ -2646,7 +2613,7 @@ msgstr "Cancel upload for %{file}"
 
 #: lib/portfolio_web/components/mishka_chelekom_components/file_field.ex:142
 #: lib/portfolio_web/components/mishka_chelekom_components/file_field.ex:239
-#: lib/portfolio_web/components/mishka_chelekom_components/file_field.ex:264
+#: lib/portfolio_web/components/mishka_chelekom_components/file_field.ex:265
 #, elixir-autogen, elixir-format
 msgid "mishka.file_field.uploading"
 msgstr "Uploading %{file}"
@@ -2701,8 +2668,8 @@ msgstr "Copy failed"
 msgid "mishka.clipboard.copy_to_clipboard"
 msgstr "Copy to clipboard"
 
-#: lib/portfolio_web/components/mishka_chelekom_components/combobox.ex:338
-#: lib/portfolio_web/components/mishka_chelekom_components/combobox.ex:526
+#: lib/portfolio_web/components/mishka_chelekom_components/combobox.ex:334
+#: lib/portfolio_web/components/mishka_chelekom_components/combobox.ex:522
 #, elixir-autogen, elixir-format
 msgid "mishka.combobox.nothing_found"
 msgstr "Nothing found!"
@@ -2737,163 +2704,163 @@ msgstr "Minimize sidebar"
 msgid "mishka.spinner.loading"
 msgstr "Loading..."
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.and"
 msgstr "and"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:66
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.chaperon_desc"
 msgstr "cap with a long point (liripipe) and sometimes a short cape (patte)."
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:65
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:67
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.chaperon_title"
 msgstr "The chaperon"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:72
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:75
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.cotte_title"
 msgstr "The cotte or cotehardie"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:55
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.cotte_title_fr"
 msgstr "La cotte ou cotehardie"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:121
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:126
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.illustration_of"
 msgstr "Illustration of"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:22
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:112
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:24
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:116
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.illustrations_title"
 msgstr "Illustrations"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:98
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.jewellery"
 msgstr "Small items of jewellery such as rings and crosses"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:97
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.knife"
 msgstr "Personal knife"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:95
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:98
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.leather_belt"
 msgstr "Leather belt with buckles or decorative plates"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:85
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.made_of"
 msgstr "The clothes are mainly made of"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:43
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:45
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.pantsuits_title"
 msgstr "The pantsuits"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:96
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.purse"
 msgstr "Purse hanging from your belt"
 
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:6
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:31
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:33
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.section_1_title"
 msgstr "1. Basic Garments"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:10
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:83
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:11
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.section_2_title"
 msgstr "2. Materials and Colors"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:14
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:93
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:16
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.section_3_title"
 msgstr "3. Accessories"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:18
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:103
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:20
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.section_4_title"
 msgstr "4. Sumptuary Laws"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:40
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.shirt_desc"
 msgstr "bleached linen or hemp, with long sleeves, worn next to the skin."
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:39
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:41
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.shirt_title"
 msgstr "The shirt"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:121
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:127
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.source_berry"
 msgstr "Très Riches Heures du Duc de Berry"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:122
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:128
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.source_berry_date"
 msgstr "beginning of XV century"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:154
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.source_pont_croix"
 msgstr "Reenactment at Pont-Croix 1358"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:133
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:139
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.source_ratisbonne"
 msgstr "Ratisbonne"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:132
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:138
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.source_weltchronik"
 msgstr "Weltchronik"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:26
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:160
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:28
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:166
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.sources_title"
 msgstr "Sources"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:62
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.surcot_desc"
 msgstr "loose-fitting, often sleeveless, worn to go out."
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:61
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.surcot_title"
 msgstr "The surcot"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:73
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.veil_desc"
 msgstr "for women, covering the hair, often tied under the chin."
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:76
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.veil_title"
 msgstr "The veil"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:86
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.wool"
 msgstr "wool"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:77
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.clothes.worn_on_headdress"
 msgstr "worn on the headdress, floating or wrapped around the head"
@@ -2919,17 +2886,17 @@ msgstr "Show more"
 msgid "amvcc.blog.index.title"
 msgstr "Our blog post"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:69
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.shoes.shoes_desc"
 msgstr "leather, often with a pointed toe."
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:69
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.shoes.shoes_title"
 msgstr "The shoes"
 
-#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:49
+#: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:51
 #, elixir-autogen, elixir-format
 msgid "amvcc.blog.shoes.slippers_title"
 msgstr "The slippers"
@@ -2939,7 +2906,7 @@ msgstr "The slippers"
 msgid "amvcc.blog.shoes.title"
 msgstr "Shoes XIVc in western Europe"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:220
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:222
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.about.accessible_history"
 msgstr "Bringing history to life and making it accessible to all audiences"
@@ -2954,12 +2921,12 @@ msgstr "Based on historical source and archeology"
 msgid "amvcc.index.about.combining_rigour"
 msgstr "Combining academic rigour and audience engagement to bring history to life."
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:229
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:231
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.about.community_approach"
 msgstr "A community-based approach"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:231
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:233
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.about.involving_public"
 msgstr "Involving the public through hands-on experience"
@@ -2969,7 +2936,7 @@ msgstr "Involving the public through hands-on experience"
 msgid "amvcc.index.about.promoting_historians"
 msgstr "Promoting the work of historians"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:267
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:269
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.about.reconstructing_life"
 msgstr "Reconstructing daily life"
@@ -2994,77 +2961,77 @@ msgstr "Our approach"
 msgid "amvcc.index.about.understanding_practices"
 msgstr "Understanding uses and practices"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:401
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:403
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.accounting"
 msgstr "Ordinary accounting"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:282
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:284
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.animations"
 msgstr "Animations"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:210
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:212
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.based_on_research"
 msgstr "Each activity is based on historical research"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:598
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:600
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.campment"
 msgstr "Campment life"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:630
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:632
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.conferences"
 msgstr "Conferences & mediation"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:340
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:342
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.costume_walk"
 msgstr "Costume walk"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:510
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:512
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.cuisine"
 msgstr "Cuisine médiévale"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:365
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:367
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.fight_demo"
 msgstr "Fight demonstrations"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:572
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:574
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.formats_title"
 msgstr "Our animation formats"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:474
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:476
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.guard_rounds"
 msgstr "Guard rounds"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:546
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:548
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.medieval_inn"
 msgstr "Medieval Inn"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:304
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:306
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.mode_textile"
 msgstr "Mode and textile"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:438
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:440
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.music"
 msgstr "Music and instruments"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:208
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:209
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.research_badge"
 msgstr "Based on research"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:240
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:242
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.animations.title"
 msgstr "Our animations and shows"
@@ -3084,29 +3051,29 @@ msgstr "Let's meet us"
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:12
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:13
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:177
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:300
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:336
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:361
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:397
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:433
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:470
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:506
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:542
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:965
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1003
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1016
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1029
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1042
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1055
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1068
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1081
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1094
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1107
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1120
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1133
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1146
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1159
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:1172
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:302
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:338
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:363
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:399
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:435
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:472
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:508
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:544
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:967
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1005
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1018
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1031
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1044
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1057
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1070
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1083
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1096
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1109
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1122
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1135
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1148
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1161
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:1174
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.hero.photo_alt"
 msgstr "Thibault San Photography for La Seigneurie de Coucy"
@@ -3116,12 +3083,12 @@ msgstr "Thibault San Photography for La Seigneurie de Coucy"
 msgid "amvcc.index.hero.subtitle"
 msgstr "Medieval re-enactment troupe"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:259
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:261
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.photo_alt.seigneuriales"
 msgstr "Photographie AMVCC - Seigneuriales de Coucy"
 
-#: lib/portfolio_web/live/amvcc_live/index.html.heex:260
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:262
 #, elixir-autogen, elixir-format
 msgid "amvcc.index.photo_alt.seigneurie"
 msgstr "Photographie AMVCC - la Seigneurie de Coucy"
@@ -3146,23 +3113,23 @@ msgstr "Experience years"
 msgid "amvcc.index.stats.members"
 msgstr "Members"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:262
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:266
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.are_used_to_ensure_the_codebase_stays_clean_and"
 msgstr "are used to ensure the codebase stays clean and secure."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:37
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:349
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:39
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:353
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.build"
 msgstr "Build"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:440
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:444
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.builds_and_pushes_the_image_using"
 msgstr "Builds and pushes the image using"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:436
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:440
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.builds_the_phoenix_release_with_static_assets"
 msgstr "Builds the Phoenix release with static assets"
@@ -3177,242 +3144,242 @@ msgstr "CI"
 msgid "tech.blog.ci.continuous_integration_for_a_phoenix_liveview"
 msgstr "Continuous Integration for a Phoenix LiveView Site (Without Postgres)"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:14
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:129
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:15
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:133
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.defined_tool_versions"
 msgstr "Defined Tool Versions"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:43
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:428
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:46
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:432
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.docker_image_release"
 msgstr "Docker Image Release"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:437
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:441
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.generates_docker_metadata_and_tags"
 msgstr "Generates Docker metadata and tags"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:194
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.in_the_ci_we_use_the_official"
 msgstr "In the CI, we use the official"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:25
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:219
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:27
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:223
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.job_overview"
 msgstr "Job Overview"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:31
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:249
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:33
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:253
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.lint"
 msgstr "Lint"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:438
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:442
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.logs_into_docker_hub_using_secrets"
 msgstr "Logs into Docker Hub using secrets"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:20
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:190
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:22
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:194
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.mise_in_ci"
 msgstr "Mise in CI"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:125
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.no_more_surprises_between_your_machine_and_github"
 msgstr "No more surprises between your machine and GitHub Actions!"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:95
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:99
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.on_any_push_to_the"
 msgstr "On any push to the"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:432
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:436
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.on_each_tagged_commit_the_workflow"
 msgstr "On each tagged commit, the workflow:"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:102
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.on_pull_requests_targeting"
 msgstr "On pull requests targeting"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:17
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:161
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:19
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:165
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.reusable_tasks"
 msgstr "Reusable Tasks"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:34
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:307
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:36
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:311
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.test"
 msgstr "Test"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:92
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.the_ci_pipeline_runs_automatically"
 msgstr "The CI pipeline runs automatically:"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:223
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:227
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.the_workflow_defines_four_jobs_lets_dig_into_these"
 msgstr "The workflow defines four jobs. Let's dig into these !"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:168
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:172
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.these_tasks_are_great_for_onboarding_and"
 msgstr "These tasks are great for onboarding and automation."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:230
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:234
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.this_job_initializes_the_ci_environment_by"
 msgstr "This job initializes the CI environment by installing all required tools using"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:310
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:314
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.this_job_runs_the_test_suite_with"
 msgstr "This job runs the test suite with"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:141
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.this_setup_guarantees_consistent_runtime"
 msgstr "This setup guarantees consistent runtime environments:"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:202
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:206
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.to_install_and_cache_these_tools_quickly"
 msgstr "to install and cache these tools quickly."
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:28
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:227
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:30
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:231
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.tools"
 msgstr "Tools"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:255
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:259
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.tools_like"
 msgstr "Tools like"
 
 #: lib/portfolio_web/live/tech_live/blog/ci.html.heex:8
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:78
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:82
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.triggers"
 msgstr "Triggers"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:64
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:68
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.we_use"
 msgstr "We use"
 
 #: lib/portfolio_web/live/tech_live/blog/ci.html.heex:11
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:109
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:113
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.ci.what_is_mise"
 msgstr "What is Mise?"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:100
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:104
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.when_a_new_tag_is_pushed_used_for_docker_image"
 msgstr "When a new tag is pushed (used for Docker image release)"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:462
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:466
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci.when_youre_ready_to_enable_postgres_the"
 msgstr "When you're ready to enable Postgres, the foundation is already there."
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:41
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.1_why_elixir_is_powerful_for_today_and_tomorrow"
 msgstr "1. Why Elixir is Powerful for today and tomorrow usages"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:11
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.1_why_elixir_is_really_powerful"
 msgstr "1. Why Elixir is really powerful"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:15
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:17
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.elixir.2_what_is_the_beam_machine"
 msgstr "2. What is the BEAM machine"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:67
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.2_what_is_the_beam_understanding_the_virtual"
 msgstr "2. What Is the BEAM? Understanding the Virtual Machine Behind Elixir"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:119
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.3_what_is_a_genserver_concurrency_with_abstraction"
 msgstr "3. What Is a GenServer? Concurrency with Abstraction"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:19
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.3_what_is_genserver_and_concurrency"
 msgstr "3. What is GenServer and concurrency"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:23
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:28
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.4_real_world_use_cases_for_genserver"
 msgstr "4. Real-world use cases for GenServer"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:193
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:205
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.4_real_world_use_cases_why_elixir_shines_in"
 msgstr "4. Real-World Use Cases: Why Elixir Shines in Production"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:247
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:259
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.5_supervisors_building_fault_tolerant_systems"
 msgstr "5. Supervisors: Building Fault-Tolerant Systems"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:27
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.5_what_is_a_supervisor_and_fault_tolerance"
 msgstr "5. What is a Supervisor and fault tolerance"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:31
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:40
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.elixir.6_what_is_an_otp_application"
 msgstr "6. What is an OTP application"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:316
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:328
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.6_what_is_an_otp_application_building_scalable"
 msgstr "6. What is an OTP Application? Building Scalable and Distributed Systems"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:225
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:237
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.elixir.apis_at_scale"
 msgstr "APIs at scale"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:219
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:231
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.elixir.background_processing"
 msgstr "Background processing"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:207
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:219
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.elixir.chat_applications"
 msgstr "Chat applications"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:35
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:46
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.conclusion_and_performance_considerations"
 msgstr "Conclusion and performance considerations"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:390
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:404
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.conclusion_performance_interoperability_and_whats"
 msgstr "Conclusion: Performance, Interoperability, and What's Next"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.ex:24
+#: lib/portfolio_web/live/tech_live/blog/elixir.ex:26
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.elixir.elixir"
 msgstr "Elixir"
@@ -3422,81 +3389,81 @@ msgstr "Elixir"
 msgid "tech.blog.elixir.elixirs_concurrency_model"
 msgstr "Elixir's Concurrency Model"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:202
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:214
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.here_are_some_concrete_examples_of_where_elixir"
 msgstr "Here are some concrete examples of where Elixir shines:"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:139
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.here_is_a_minimal_example_of_a_genserver"
 msgstr "Here is a minimal example of a GenServer implementation:"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:213
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:225
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.elixir.iot_and_telemetry"
 msgstr "IoT and telemetry"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:424
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:439
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.looking_ahead_phoenix_and_the_web"
 msgstr "Looking Ahead: Phoenix and the Web"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:358
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:370
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir.otp_applications_in_distributed_systems"
 msgstr "OTP Applications in Distributed Systems"
 
-#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:373
+#: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:386
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.elixir.used_in_production_systems"
 msgstr "Used in Production Systems"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:145
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.51_sample_kamalyml"
 msgstr "5.1 Sample kamal.yml"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:186
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:189
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.52_explanation"
 msgstr "5.2 Explanation"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:256
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:262
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.53_example_envsecret"
 msgstr "5.3 Example .env.secret"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:50
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:52
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.a_dockerfile_for_the_app"
 msgstr "A Dockerfile for the app"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:52
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.a_domain_name_managed_by_cloudflare_or_similar"
 msgstr "A domain name managed by Cloudflare or similar"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:51
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.a_vps_with_ssh_access_eg_hetzner"
 msgstr "A VPS with SSH access (e.g. Hetzner)"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:49
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:51
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.an_application_to_deploy"
 msgstr "An application to deploy"
 
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:47
-#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:452
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:32
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:295
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:51
+#: lib/portfolio_web/live/tech_live/blog/ci.html.heex:456
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:34
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:301
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.conclusion"
 msgstr "Conclusion"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:24
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:125
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:26
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:127
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.configuring_kamal"
 msgstr "Configuring Kamal"
@@ -3506,140 +3473,188 @@ msgstr "Configuring Kamal"
 msgid "tech.blog.kamal.deploying_a_phoenix_app_with_kamal_and_docker_on"
 msgstr "Deploying a Phoenix App with Kamal and Docker on a VPS"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:28
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:270
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:30
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:276
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.deployment"
 msgstr "Deployment"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:193
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:197
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.explanation"
 msgstr "Explanation"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:208
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:212
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.full_docker_image_name_hosted_on_github_container"
 msgstr "Full Docker image name, hosted on GitHub Container Registry in this case."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:20
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:112
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:22
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:114
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.installing_kamal"
 msgstr "Installing Kamal"
 
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:8
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:37
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:39
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.introduction"
 msgstr "Introduction"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:121
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:123
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.its_easy_and_straight_forward"
 msgstr "It's easy and straight forward !"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.ex:22
+#: lib/portfolio_web/live/tech_live/blog/kamal.ex:24
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.kamal"
 msgstr "Kamal"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:192
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:196
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.line"
 msgstr "Line"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:317
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:323
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.minimal_configuration_a_single_kamalyml_file"
 msgstr "Minimal configuration: a single kamal.yml file controls everything."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:328
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:334
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.no_vendor_lock_in_works_with_any_vps_or_cloud"
 msgstr "No vendor lock-in: works with any VPS or cloud provider."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:273
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:279
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.once_configured_deploy_your_app_with"
 msgstr "Once configured, deploy your app with:"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:16
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:57
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:17
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:59
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.preparing_your_app"
 msgstr "Preparing Your App"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:213
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:218
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.public_ip_address_of_your_vps"
 msgstr "Public IP address of your VPS."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:240
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:246
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.registry_credentials_for_pushing_images_github"
 msgstr "Registry credentials for pushing images (GitHub, DockerHub, etc.)."
 
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:12
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:46
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:48
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.requirements"
 msgstr "Requirements"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:53
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.ruby_31_for_kamal"
 msgstr "Ruby >= 3.1 (for Kamal)"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:329
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:335
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.secure_secrets_management_easily_handles_private"
 msgstr "Secure secrets management: easily handles private .env files."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:218
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:224
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.ssh_user_on_the_vps_typically_deploy_or_root"
 msgstr "SSH user on the VPS, typically 'deploy' or 'root'."
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:115
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:117
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.to_install_kamal_follow_the_doc_using_rubygems"
 msgstr "To install Kamal, follow the doc using RubyGems:"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:128
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:130
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal.use_kamal_to_initialize_your_deployment"
 msgstr "Use Kamal to initialize your deployment configuration:"
 
-#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:315
+#: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:321
 #, elixir-autogen, elixir-format, fuzzy
 msgid "tech.blog.kamal.why_kamal"
 msgstr "Why Kamal?"
 
-#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex
-msgid "admin.ip_whitelist.title"
-msgstr "IP Whitelist"
-
-#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex
-msgid "admin.ip_whitelist.new"
-msgstr "New IP"
-
-#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex
-msgid "admin.ip_whitelist.edit"
-msgstr "Edit IP"
-
-#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex
-msgid "admin.ip_whitelist.delete_success"
-msgstr "IP removed from whitelist"
-
-#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex
-msgid "admin.ip_whitelist.delete_error"
-msgstr "IP not found"
-
-#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:76
+#, elixir-autogen, elixir-format
 msgid "admin.ip_whitelist.add_success"
 msgstr "IP added to whitelist successfully"
 
-#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex:56
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.delete_error"
+msgstr "IP not found"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex:52
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.delete_success"
+msgstr "IP removed from whitelist"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex:42
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.edit"
+msgstr "Edit IP"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex:36
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.new"
+msgstr "New IP"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.ex:30
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.title"
+msgstr "IP Whitelist"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:89
+#, elixir-autogen, elixir-format
 msgid "admin.ip_whitelist.update_success"
 msgstr "IP updated successfully"
+
+#: lib/portfolio_web/live/admin/user_live/index.ex:204
+#, elixir-autogen, elixir-format
+msgid "admin.users.magic_link_error"
+msgstr "Error sending magic link"
+
+#: lib/portfolio_web/live/admin/user_live/index.ex:194
+#, elixir-autogen, elixir-format
+msgid "admin.users.magic_link_sent"
+msgstr "Magic link sent to %{email}"
+
+#: lib/portfolio_web/live/admin/user_live/index.ex:199
+#, elixir-autogen, elixir-format
+msgid "admin.users.user_not_found"
+msgstr ""
+
+#: lib/portfolio_web/controllers/auth_html/magic_link_landing.html.heex:56
+#, elixir-autogen, elixir-format
+msgid "auth.magic_link.click_to_continue"
+msgstr "Click here to continue"
+
+#: lib/portfolio_web/controllers/auth_html/magic_link_landing.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "auth.magic_link.please_wait"
+msgstr "Please wait while we verify your identity..."
+
+#: lib/portfolio_web/controllers/auth_html/magic_link_landing.html.heex:46
+#, elixir-autogen, elixir-format
+msgid "auth.magic_link.processing"
+msgstr "Processing..."
+
+#: lib/portfolio_web/controllers/auth_html/magic_link_landing.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "auth.magic_link.verifying"
+msgstr "Verifying your login link"
+
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:146
+#: lib/portfolio_web/live/amvcc_live/index.html.heex:985
+#, elixir-autogen, elixir-format
+msgid "amvcc.index.photo_alt.illumination_teaching"
+msgstr "14th century illumination depicting medieval teaching - historical manuscript"

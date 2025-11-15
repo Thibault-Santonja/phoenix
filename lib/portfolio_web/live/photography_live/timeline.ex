@@ -17,6 +17,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
   """
 
   use PortfolioWeb, :live_view
+  import PortfolioWeb.SEO.ImageHelpers
 
   alias Portfolio.Photography
 

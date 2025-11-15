@@ -1,6 +1,7 @@
 defmodule PortfolioWeb.PhotographyLive.Gallery do
   use PortfolioWeb, :live_view
   import PortfolioWeb.Components.ThemeButton
+  import PortfolioWeb.SEO.ImageHelpers
 
   alias Portfolio.Photography
 
@@ -49,7 +50,12 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
         %{
           title: photo.title || album.title,
           description: photo.description || album.description || "",
-          photo_url: photo.file_path
+          photo_url: photo.file_path,
+          # Add alt text for SEO
+          alt_text: generate_alt_text(photo, album),
+          # Keep references for potential future use
+          photo: photo,
+          album: album
         }
       end)
     end

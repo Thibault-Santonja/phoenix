@@ -1,9 +1,18 @@
 # See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+#
+# This is a photography portfolio - images should be indexed by search engines
+# for maximum discoverability and SEO benefits
 
 User-agent: *
-Disallow: /images/
+# Allow all images - critical for photography portfolio SEO
+Allow: /images/
+
+# Block admin and development areas
 Disallow: /admin/
 Disallow: /dev/
+
+# Allow all other public content
 Allow: /
 
+# Sitemap for better indexing
 Sitemap: https://thibaultsan.com/sitemap.xml

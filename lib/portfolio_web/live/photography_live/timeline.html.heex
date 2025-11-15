@@ -108,6 +108,7 @@
         <img
           :if={cover_photo = List.first(album.photos)}
           src={cover_photo.file_path}
+          alt={generate_album_cover_alt(album)}
           srcset={[
             "#{cover_photo.file_path}?w=320&q=75 320w",
             "#{cover_photo.file_path}?w=640&q=75 640w",
@@ -199,6 +200,7 @@
     <section class="lg:grid lg:grid-cols-5">
       <img
         src="/images/photography/landscape.webp"
+        alt={gettext("photography.timeline.empty_title")}
         class={[
           "object-cover w-full rounded-lg mb-4",
           "max-h-120",
