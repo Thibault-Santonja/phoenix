@@ -18,6 +18,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
 
   use PortfolioWeb, :live_view
   import PortfolioWeb.SEO.ImageHelpers
+  import PortfolioWeb.SEO.SchemaHelpers
 
   alias Portfolio.Photography
 
@@ -31,12 +32,16 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     # Load list of years for navigation (lightweight query)
     years = Photography.list_published_years()
 
+    # Generate breadcrumb schema for timeline
+    breadcrumb_json = generate_timeline_breadcrumb_schema()
+
     socket =
       socket
       |> assign(:years, years)
       |> assign(:page, 1)
       |> assign(:has_more, true)
       |> assign(:albums_loaded, 0)
+      |> assign(:breadcrumb_json, breadcrumb_json)
       |> stream(:albums, [])
 
     # Load initial page of albums if connected
@@ -138,5 +143,14 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
 
   defp format_date_range(date_debut, date_fin) do
     "#{Date.to_iso8601(date_debut)} - #{Date.to_iso8601(date_fin)}"
+  end
+
+  defp generate_timeline_breadcrumb_schema do
+    breadcrumbs = [
+      %{name: "Home", url: "https://photo.thibaultsan.com"},
+      %{name: "Timeline", url: "https://photo.thibaultsan.com/timeline"}
+    ]
+
+    breadcrumb_schema(breadcrumbs)
   end
 end

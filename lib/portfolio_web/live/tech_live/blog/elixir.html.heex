@@ -1,3 +1,13 @@
+<%!-- Article Schema.org JSON-LD for SEO --%>
+<script :if={@article_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@article_json) %>
+</script>
+
+<%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+<script :if={@breadcrumb_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+</script>
+
 <.blog_article
   title={gettext("tech.blog.elixir.elixirs_concurrency_model")}
   overview={

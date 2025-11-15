@@ -709,7 +709,7 @@ Si DDD s'avère inadapté (peu probable) :
 
 Conférences :
 - VoxxedDays Geneva 2024 - Présentations DDD
-- Devoxx Paris 2024 - Talks architecture
+- Devoxx Paris - Talks architecture
 
 Influence professionnelle :
 - Aurore Jeremie - Mentor DDD ayant démontré valeur en production
@@ -722,7 +722,7 @@ Documentation projet connexe :
 
 ## Notes
 
-### État Actuel (Novembre 2024)
+### État Actuel (Novembre 2025)
 
 **Bounded Contexts implémentés:**
 -  Photography (Album, Photographie, Projet aggregates)

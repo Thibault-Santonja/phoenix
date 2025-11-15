@@ -73,24 +73,22 @@ defmodule PortfolioWeb.SitemapController do
   end
 
   defp static_urls(base_url) do
-    cond do
-      # Main homepage - simple, points to subdomains
-      String.contains?(base_url, "thibaultsan.com") and
-        not String.contains?(base_url, "photo.") and
-        not String.contains?(base_url, "amvcc.") and
-          not String.contains?(base_url, "tech.") ->
-        [
-          %{
-            loc: base_url,
-            lastmod: Date.utc_today(),
-            changefreq: "weekly",
-            priority: "1.0"
-          }
-        ]
-
+    # Main homepage - simple, points to subdomains
+    if String.contains?(base_url, "thibaultsan.com") and
+         not String.contains?(base_url, "photo.") and
+         not String.contains?(base_url, "amvcc.") and
+         not String.contains?(base_url, "tech.") do
+      [
+        %{
+          loc: base_url,
+          lastmod: Date.utc_today(),
+          changefreq: "weekly",
+          priority: "1.0"
+        }
+      ]
+    else
       # Other subdomains don't have static pages in sitemap
-      true ->
-        []
+      []
     end
   end
 

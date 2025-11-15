@@ -4,6 +4,16 @@
     <%= Phoenix.HTML.raw(@schema_json) %>
   </script>
 
+  <%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+  <script :if={@breadcrumb_json} type="application/ld+json">
+    <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+  </script>
+
+  <%!-- Per-album meta description for SEO --%>
+  <meta :if={@meta_description} name="description" content={@meta_description} />
+  <meta :if={@meta_description} property="og:description" content={@meta_description} />
+  <meta :if={@meta_description} name="twitter:description" content={@meta_description} />
+
   <nav class={[
     "sticky top-0 px-4",
     "flex-none flex items-center",

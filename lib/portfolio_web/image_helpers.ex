@@ -60,6 +60,8 @@ defmodule PortfolioWeb.ImageHelpers do
   attr :rest, :global
 
   def responsive_image(assigns) do
+    assigns = assign(assigns, :dimensions, extract_dimensions(assigns.photo))
+
     ~H"""
     <%= if @photo.processing_status == "completed" && map_size(@photo.variants) > 0 do %>
       <img
@@ -67,6 +69,8 @@ defmodule PortfolioWeb.ImageHelpers do
         srcset={image_srcset(@photo)}
         sizes={@sizes}
         alt={@alt || @photo.title || @photo.original_filename}
+        width={@dimensions.width}
+        height={@dimensions.height}
         class={@class}
         loading={@loading}
         decoding="async"
@@ -77,6 +81,8 @@ defmodule PortfolioWeb.ImageHelpers do
       <img
         src={@photo.file_path}
         alt={@alt || @photo.title || @photo.original_filename}
+        width={@dimensions.width}
+        height={@dimensions.height}
         class={@class}
         loading={@loading}
         decoding="async"
@@ -157,4 +163,39 @@ defmodule PortfolioWeb.ImageHelpers do
   end
 
   def thumbnail_url(%Photo{file_path: file_path}), do: file_path
+
+  @doc """
+  Extracts image dimensions from EXIF data or provides default values.
+
+  Returns a map with width and height keys. Attempts to extract dimensions
+  from EXIF data first, falls back to variant configuration, or returns nil
+  to allow browser to determine dimensions.
+
+  ## Examples
+
+      iex> photo = %Photo{exif_data: %{"ImageWidth" => 1920, "ImageHeight" => 1080}}
+      iex> ImageHelpers.extract_dimensions(photo)
+      %{width: 1920, height: 1080}
+
+      iex> photo = %Photo{exif_data: %{}}
+      iex> ImageHelpers.extract_dimensions(photo)
+      %{width: nil, height: nil}
+  """
+  @spec extract_dimensions(Photo.t()) :: %{width: integer() | nil, height: integer() | nil}
+  def extract_dimensions(%Photo{exif_data: exif_data}) when is_map(exif_data) do
+    width = exif_data["ImageWidth"] || exif_data["PixelWidth"] || exif_data["ExifImageWidth"]
+    height = exif_data["ImageHeight"] || exif_data["PixelHeight"] || exif_data["ExifImageHeight"]
+
+    %{
+      width: parse_dimension(width),
+      height: parse_dimension(height)
+    }
+  end
+
+  def extract_dimensions(_photo), do: %{width: nil, height: nil}
+
+  # Parse dimension value to integer, handling various formats
+  defp parse_dimension(value) when is_integer(value), do: value
+  defp parse_dimension(value) when is_binary(value), do: String.to_integer(value)
+  defp parse_dimension(_), do: nil
 end

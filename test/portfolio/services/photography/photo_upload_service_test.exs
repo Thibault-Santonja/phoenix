@@ -77,7 +77,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
       # Second upload with same file should fail due to unique hash constraint
       # and should rollback the file upload
       assert {:error, changeset} = PhotoUploadService.execute(album.slug, uploads)
-      assert changeset.errors[:hash] != nil
+      assert Keyword.has_key?(changeset.errors, :hash)
 
       # Only first photo should exist in database
       photos = Photography.list_photos_by_album(album.id)

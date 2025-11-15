@@ -71,6 +71,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
 
     # Generate Schema.org JSON-LD for SEO
     schema_json = generate_gallery_schema(chapter, data)
+    breadcrumb_json = generate_breadcrumb_schema(chapter)
 
     {
       :ok,
@@ -81,6 +82,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       |> assign(pictures: Enum.count(data))
       |> assign(project_id: 0)
       |> assign(schema_json: schema_json)
+      |> assign(breadcrumb_json: breadcrumb_json)
     }
   end
 
@@ -107,21 +109,25 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
 
   defp apply_action(socket, :index, %{"project" => id}) do
     project = get_data(socket.assigns.data, id)
+    album_description = extract_album_description(socket.assigns.data)
 
     socket
     |> assign(
       :page_title,
       gettext("photography.brand") <> " - #{socket.assigns.chapter} - #{project.title}"
     )
+    |> assign(:meta_description, album_description)
     |> assign(project: project)
     |> assign(project_id: id)
   end
 
   defp apply_action(socket, :index, _params) do
     id = "0"
+    album_description = extract_album_description(socket.assigns.data)
 
     socket
     |> assign(:page_title, gettext("photography.page_title") <> " - #{socket.assigns.chapter}")
+    |> assign(:meta_description, album_description)
     |> assign(project: get_data(socket.assigns.data, id))
     |> assign(project_id: id)
   end
@@ -143,6 +149,32 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       url = "https://photo.thibaultsan.com/#{chapter}"
 
       image_gallery_schema(album, photos, url)
+    end
+  end
+
+  defp generate_breadcrumb_schema(nil), do: nil
+
+  defp generate_breadcrumb_schema(chapter) do
+    breadcrumbs = [
+      %{name: "Home", url: "https://photo.thibaultsan.com"},
+      %{name: "Timeline", url: "https://photo.thibaultsan.com/timeline"},
+      %{name: String.capitalize(chapter), url: "https://photo.thibaultsan.com/#{chapter}"}
+    ]
+
+    breadcrumb_schema(breadcrumbs)
+  end
+
+  defp extract_album_description(data) when data == @default_data do
+    gettext("layouts.photography.description")
+  end
+
+  defp extract_album_description(data) do
+    if Enum.empty?(data) or not Map.has_key?(List.first(data), :album) do
+      gettext("layouts.photography.description")
+    else
+      first_item = List.first(data)
+      album = first_item.album
+      album.description || album.title || gettext("layouts.photography.description")
     end
   end
 end

@@ -1,3 +1,13 @@
+<%!-- Article Schema.org JSON-LD for SEO --%>
+<script :if={@article_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@article_json) %>
+</script>
+
+<%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+<script :if={@breadcrumb_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+</script>
+
 <section class="border-tech-base-300 bg-tech-base-100 mx-auto rounded-lg border px-6 py-12 shadow-lg md:px-[3rem] md:m-[5rem]">
   <h1 class="text-tech-primary text-balance mb-16 text-center text-3xl font-thin uppercase">
     {gettext("tech.blog.ci.continuous_integration_for_a_phoenix_liveview")}

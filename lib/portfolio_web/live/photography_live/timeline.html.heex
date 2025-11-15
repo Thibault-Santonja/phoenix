@@ -1,3 +1,8 @@
+<%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+<script :if={@breadcrumb_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+</script>
+
 <nav
   id="timeline-nav"
   class={[

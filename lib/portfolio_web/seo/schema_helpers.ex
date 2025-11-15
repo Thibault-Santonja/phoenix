@@ -209,6 +209,83 @@ defmodule PortfolioWeb.SEO.SchemaHelpers do
     Jason.encode!(schema)
   end
 
+  @doc """
+  Generates FAQ Schema.org JSON-LD for frequently asked questions.
+
+  ## Parameters
+  - `faqs` - List of %{question: "...", answer: "..."} maps
+
+  ## Example
+      faqs = [
+        %{question: "What is Elixir?", answer: "Elixir is a functional programming language..."},
+        %{question: "Why use Phoenix?", answer: "Phoenix is a web framework..."}
+      ]
+      faq_schema(faqs)
+  """
+  def faq_schema(faqs) when is_list(faqs) do
+    main_entity =
+      Enum.map(faqs, fn faq ->
+        %{
+          "@type" => "Question",
+          "name" => faq.question,
+          "acceptedAnswer" => %{
+            "@type" => "Answer",
+            "text" => faq.answer
+          }
+        }
+      end)
+
+    schema = %{
+      "@context" => "https://schema.org",
+      "@type" => "FAQPage",
+      "mainEntity" => main_entity
+    }
+
+    Jason.encode!(schema)
+  end
+
+  @doc """
+  Generates How-To Schema.org JSON-LD for step-by-step guides.
+
+  ## Parameters
+  - `name` - Name of the how-to guide
+  - `description` - Description of what the guide teaches
+  - `steps` - List of %{name: "Step name", text: "Step description"} maps
+  - `total_time` - Optional ISO 8601 duration (e.g., "PT30M" for 30 minutes)
+
+  ## Example
+      steps = [
+        %{name: "Install Elixir", text: "Run asdf install elixir 1.14"},
+        %{name: "Create project", text: "Run mix phx.new my_app"}
+      ]
+      how_to_schema("Deploy Phoenix", "Learn to deploy Phoenix apps", steps, "PT1H")
+  """
+  def how_to_schema(name, description, steps, total_time \\ nil) when is_list(steps) do
+    step_items =
+      steps
+      |> Enum.with_index(1)
+      |> Enum.map(fn {step, position} ->
+        %{
+          "@type" => "HowToStep",
+          "position" => position,
+          "name" => step.name,
+          "text" => step.text
+        }
+      end)
+
+    schema =
+      %{
+        "@context" => "https://schema.org",
+        "@type" => "HowTo",
+        "name" => name,
+        "description" => description,
+        "step" => step_items
+      }
+      |> maybe_add_total_time(total_time)
+
+    Jason.encode!(schema)
+  end
+
   # Private helper functions
 
   defp build_image_url(file_path) do
@@ -279,5 +356,11 @@ defmodule PortfolioWeb.SEO.SchemaHelpers do
       true ->
         nil
     end
+  end
+
+  defp maybe_add_total_time(schema, nil), do: schema
+
+  defp maybe_add_total_time(schema, total_time) when is_binary(total_time) do
+    Map.put(schema, "totalTime", total_time)
   end
 end
