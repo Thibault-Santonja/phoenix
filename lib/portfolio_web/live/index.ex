@@ -5,6 +5,7 @@ defmodule PortfolioWeb.Live.Index do
   This module handles the initial entry point into the digital workshop.
   """
   use PortfolioWeb, :live_view
+  import PortfolioWeb.SEO.SchemaHelpers
 
   @impl true
   def mount(_, session, socket) do
@@ -12,7 +13,10 @@ defmodule PortfolioWeb.Live.Index do
     locale = session["locale"] || "fr"
     Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
-    {:ok, socket}
+    # Add Schema.org structured data for homepage
+    schema_json = website_schema()
+
+    {:ok, assign(socket, schema_json: schema_json)}
   end
 
   @impl true

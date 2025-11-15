@@ -2,6 +2,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   use PortfolioWeb, :live_view
   import PortfolioWeb.Components.ThemeButton
   import PortfolioWeb.SEO.ImageHelpers
+  import PortfolioWeb.SEO.SchemaHelpers
 
   alias Portfolio.Photography
 
@@ -68,6 +69,9 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
     Gettext.put_locale(PortfolioWeb.Gettext, language)
     data = get_album_photos(chapter)
 
+    # Generate Schema.org JSON-LD for SEO
+    schema_json = generate_gallery_schema(chapter, data)
+
     {
       :ok,
       socket
@@ -76,6 +80,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       |> assign(data: data)
       |> assign(pictures: Enum.count(data))
       |> assign(project_id: 0)
+      |> assign(schema_json: schema_json)
     }
   end
 
@@ -122,4 +127,22 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   end
 
   defp get_data(data, id), do: Enum.at(data, String.to_integer(id))
+
+  defp generate_gallery_schema(nil, _data), do: nil
+
+  defp generate_gallery_schema(_chapter, data) when data == @default_data, do: nil
+
+  defp generate_gallery_schema(chapter, data) do
+    # Extract album and photos from the data
+    if Enum.empty?(data) or not Map.has_key?(List.first(data), :album) do
+      nil
+    else
+      first_item = List.first(data)
+      album = first_item.album
+      photos = Enum.map(data, & &1.photo)
+      url = "https://photo.thibaultsan.com/#{chapter}"
+
+      image_gallery_schema(album, photos, url)
+    end
+  end
 end
