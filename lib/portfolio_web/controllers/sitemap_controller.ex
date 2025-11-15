@@ -49,59 +49,91 @@ defmodule PortfolioWeb.SitemapController do
   defp generate_sitemap do
     base_url = PortfolioWeb.Endpoint.url()
 
+    # Only include relevant URLs based on subdomain
     urls =
-      static_urls(base_url) ++
-        photography_urls(base_url) ++
-        amvcc_urls() ++
-        tech_urls()
+      cond do
+        String.contains?(base_url, "photo.") ->
+          # Photo subdomain: only photography content
+          photography_urls(base_url)
+
+        String.contains?(base_url, "amvcc.") ->
+          # AMVCC subdomain: only AMVCC content
+          amvcc_urls()
+
+        String.contains?(base_url, "tech.") ->
+          # Tech subdomain: only tech blog content
+          tech_urls()
+
+        true ->
+          # Main domain: homepage only
+          static_urls(base_url)
+      end
 
     build_xml(urls)
   end
 
   defp static_urls(base_url) do
-    [
-      # Homepage
-      %{
-        loc: base_url,
-        lastmod: Date.utc_today(),
-        changefreq: "weekly",
-        priority: "1.0",
-        alternates: [
-          %{hreflang: "fr", href: base_url},
-          %{hreflang: "en", href: base_url},
-          %{hreflang: "fr-FR", href: base_url},
-          %{hreflang: "fr-CH", href: base_url},
-          %{hreflang: "fr-BE", href: base_url}
+    cond do
+      # Main homepage - simple, points to subdomains
+      String.contains?(base_url, "thibaultsan.com") and
+        not String.contains?(base_url, "photo.") and
+        not String.contains?(base_url, "amvcc.") and
+          not String.contains?(base_url, "tech.") ->
+        [
+          %{
+            loc: base_url,
+            lastmod: Date.utc_today(),
+            changefreq: "weekly",
+            priority: "1.0"
+          }
         ]
-      }
-    ]
+
+      # Other subdomains don't have static pages in sitemap
+      true ->
+        []
+    end
   end
 
   defp photography_urls(base_url) do
-    photo_base = String.replace(base_url, "://", "://photo.")
+    # For photo subdomain, use current URL. Otherwise, build photo subdomain URL
+    photo_base =
+      if String.contains?(base_url, "photo.") do
+        base_url
+      else
+        String.replace(base_url, "://", "://photo.")
+      end
+
+    # Hreflang alternates for France, Switzerland, Belgium targeting
+    photo_alternates = [
+      %{hreflang: "fr", href: photo_base},
+      %{hreflang: "fr-FR", href: photo_base},
+      %{hreflang: "fr-CH", href: photo_base},
+      %{hreflang: "fr-BE", href: photo_base},
+      %{hreflang: "en", href: photo_base},
+      %{hreflang: "x-default", href: photo_base}
+    ]
 
     static_photo_urls = [
       %{
         loc: photo_base,
         lastmod: Date.utc_today(),
         changefreq: "weekly",
-        priority: "0.9",
-        alternates: [
-          %{hreflang: "fr", href: photo_base},
-          %{hreflang: "en", href: photo_base}
-        ]
+        priority: "1.0",
+        alternates: photo_alternates
       },
       %{
         loc: "#{photo_base}/gallery",
         lastmod: Date.utc_today(),
         changefreq: "daily",
-        priority: "0.9"
+        priority: "0.9",
+        alternates: photo_alternates
       },
       %{
         loc: "#{photo_base}/timeline",
         lastmod: Date.utc_today(),
         changefreq: "daily",
-        priority: "0.8"
+        priority: "0.8",
+        alternates: photo_alternates
       }
     ]
 
@@ -123,25 +155,29 @@ defmodule PortfolioWeb.SitemapController do
   defp amvcc_urls do
     amvcc_base = "https://amvcc.thibaultsan.com"
 
+    # Hreflang for France-focused (Picardy), Belgium, Switzerland
+    amvcc_alternates = [
+      %{hreflang: "fr", href: amvcc_base},
+      %{hreflang: "fr-FR", href: amvcc_base},
+      %{hreflang: "fr-BE", href: amvcc_base},
+      %{hreflang: "fr-CH", href: amvcc_base},
+      %{hreflang: "x-default", href: amvcc_base}
+    ]
+
     [
       %{
         loc: amvcc_base,
         lastmod: Date.utc_today(),
         changefreq: "weekly",
-        priority: "0.8",
-        alternates: [
-          %{hreflang: "fr", href: amvcc_base},
-          %{hreflang: "en", href: amvcc_base},
-          %{hreflang: "fr-FR", href: amvcc_base},
-          %{hreflang: "fr-CH", href: amvcc_base},
-          %{hreflang: "fr-BE", href: amvcc_base}
-        ]
+        priority: "1.0",
+        alternates: amvcc_alternates
       },
       %{
         loc: "#{amvcc_base}/blog",
         lastmod: Date.utc_today(),
         changefreq: "monthly",
-        priority: "0.7"
+        priority: "0.8",
+        alternates: amvcc_alternates
       },
       %{
         loc: "#{amvcc_base}/blog/vetements",
@@ -161,25 +197,45 @@ defmodule PortfolioWeb.SitemapController do
   defp tech_urls do
     tech_base = "https://tech.thibaultsan.com"
 
+    # Hreflang for tech: Geneva > Paris > Switzerland > France > Europe
+    # Priority: fr-CH (Geneva) > fr-FR (Paris) > en (international)
+    tech_alternates = [
+      %{hreflang: "fr-CH", href: tech_base},
+      %{hreflang: "fr", href: tech_base},
+      %{hreflang: "fr-FR", href: tech_base},
+      %{hreflang: "en", href: tech_base},
+      %{hreflang: "de-CH", href: tech_base},
+      %{hreflang: "x-default", href: tech_base}
+    ]
+
     [
-      %{loc: tech_base, lastmod: Date.utc_today(), changefreq: "weekly", priority: "0.7"},
+      %{
+        loc: tech_base,
+        lastmod: Date.utc_today(),
+        changefreq: "weekly",
+        priority: "1.0",
+        alternates: tech_alternates
+      },
       %{
         loc: "#{tech_base}/blog/ci",
         lastmod: Date.utc_today(),
         changefreq: "monthly",
-        priority: "0.6"
+        priority: "0.8",
+        alternates: tech_alternates
       },
       %{
         loc: "#{tech_base}/blog/kamal",
         lastmod: Date.utc_today(),
         changefreq: "monthly",
-        priority: "0.6"
+        priority: "0.8",
+        alternates: tech_alternates
       },
       %{
         loc: "#{tech_base}/blog/elixir",
         lastmod: Date.utc_today(),
         changefreq: "monthly",
-        priority: "0.6"
+        priority: "0.8",
+        alternates: tech_alternates
       }
     ]
   end
