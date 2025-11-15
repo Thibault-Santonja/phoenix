@@ -207,6 +207,7 @@ defmodule PortfolioWeb.Router do
     pipe_through :xml
 
     get "/sitemap.xml", SitemapController, :index
+    get "/image-sitemap.xml", ImageSitemapController, :index
   end
 
   # Other scopes may use custom stacks.

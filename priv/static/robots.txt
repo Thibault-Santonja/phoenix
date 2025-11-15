@@ -14,5 +14,6 @@ Disallow: /dev/
 # Allow all other public content
 Allow: /
 
-# Sitemap for better indexing
+# Sitemaps for better indexing
 Sitemap: https://thibaultsan.com/sitemap.xml
+Sitemap: https://thibaultsan.com/image-sitemap.xml
