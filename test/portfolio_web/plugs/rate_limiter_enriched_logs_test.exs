@@ -7,17 +7,12 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
   alias PortfolioWeb.Plugs.RateLimiterPlug
 
   setup do
-    # Set logger level to :warning to capture warning logs
-    previous_level = Logger.level()
-    Logger.configure(level: :warning)
-
     # Reset all rate limiters to ensure clean state
     RateLimiter.reset_all()
 
     on_exit(fn ->
       # Clean up after test
       RateLimiter.reset_all()
-      Logger.configure(level: previous_level)
     end)
 
     :ok
@@ -37,7 +32,7 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
 
       # Make 11 requests to exceed the limit
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -61,7 +56,7 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -84,7 +79,7 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -108,7 +103,7 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -131,7 +126,7 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -165,7 +160,7 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
         opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
         log =
-          capture_log(fn ->
+          capture_log([level: :warning], fn ->
             for _ <- 1..11 do
               conn = RateLimiterPlug.call(conn, opts)
               if conn.halted, do: :ok
