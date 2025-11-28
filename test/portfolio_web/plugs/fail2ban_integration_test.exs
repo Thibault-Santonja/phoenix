@@ -13,17 +13,12 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
   alias PortfolioWeb.Plugs.RateLimiterPlug
 
   setup do
-    # Set logger level to :warning to capture warning logs
-    previous_level = Logger.level()
-    Logger.configure(level: :warning)
-
     # Reset all rate limiters to ensure clean state
     RateLimiter.reset_all()
 
     on_exit(fn ->
       # Clean up after test
       RateLimiter.reset_all()
-      Logger.configure(level: previous_level)
     end)
 
     :ok
@@ -41,7 +36,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -77,7 +72,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -100,7 +95,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       opts = RateLimiterPlug.init(action: :magic_link_request, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..6 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -126,7 +121,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -152,7 +147,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       opts = RateLimiterPlug.init(action: :magic_link_verify, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -187,7 +182,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
         opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
         log =
-          capture_log(fn ->
+          capture_log([level: :warning], fn ->
             # Trigger rate limit (10 allowed, 11th should log)
             Enum.each(1..11, fn _ ->
               test_conn =
@@ -226,7 +221,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
         {limit, _period} = RateLimiter.limit(action)
 
         log =
-          capture_log(fn ->
+          capture_log([level: :warning], fn ->
             for _ <- 1..(limit + 1) do
               conn = RateLimiterPlug.call(conn, opts)
               if conn.halted, do: :ok
@@ -252,7 +247,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           for _ <- 1..11 do
             conn = RateLimiterPlug.call(conn, opts)
             if conn.halted, do: :ok
@@ -273,7 +268,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
       log =
-        capture_log(fn ->
+        capture_log([level: :warning], fn ->
           # Trigger multiple violations
           for _ <- 1..15 do
             conn = RateLimiterPlug.call(conn, opts)

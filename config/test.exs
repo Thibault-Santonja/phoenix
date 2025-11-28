@@ -44,8 +44,9 @@ config :portfolio, :auto_refresh_ip_whitelist, false
 # Configure from email
 config :portfolio, :from_email, "noreply@portfolio.test"
 
-# Disable all logging during tests for cleaner output
-config :logger, level: :none
+# Set logger level to warning to allow capture_log to work properly
+# Log output is still suppressed by ExUnit unless capture_log is used
+config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
