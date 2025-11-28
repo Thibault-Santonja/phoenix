@@ -52,7 +52,7 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
   @impl true
   def init(_opts) do
     # Subscribe to album_published events
-    DomainEvents.subscribe(:album_published)
+    _ = DomainEvents.subscribe(:album_published)
     Logger.info("AlbumPublishedHandler started and subscribed to :album_published events")
     {:ok, %{}}
   end
@@ -68,7 +68,7 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
     )
 
     # Invalidate CDN cache asynchronously
-    Task.start(fn -> invalidate_cdn_cache(event) end)
+    _ = Task.start(fn -> invalidate_cdn_cache(event) end)
 
     # Clear application cache
     clear_albums_cache()
@@ -125,8 +125,8 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
     cache_key_without_photos = {:published_albums_by_year, []}
     cache_key_with_photos = {:published_albums_by_year, [:photos]}
 
-    Cachex.del(:portfolio_cache, cache_key_without_photos)
-    Cachex.del(:portfolio_cache, cache_key_with_photos)
+    _ = Cachex.del(:portfolio_cache, cache_key_without_photos)
+    _ = Cachex.del(:portfolio_cache, cache_key_with_photos)
 
     Logger.debug("Albums cache invalidated (targeted keys)")
     :ok

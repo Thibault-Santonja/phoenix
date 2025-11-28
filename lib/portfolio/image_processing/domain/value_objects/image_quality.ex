@@ -47,7 +47,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
       iex> ImageQuality.new!(0)
       ** (ArgumentError) Invalid quality: must be between 1 and 100
   """
-  @spec new!(integer()) :: t()
+  @spec new!(integer()) :: 1..100
   def new!(quality) do
     case new(quality) do
       {:ok, q} ->
@@ -84,7 +84,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
       iex> ImageQuality.min()
       1
   """
-  @spec min() :: pos_integer()
+  @spec min() :: 1
   def min, do: @min_quality
 
   @doc """
@@ -95,7 +95,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
       iex> ImageQuality.max()
       100
   """
-  @spec max() :: pos_integer()
+  @spec max() :: 100
   def max, do: @max_quality
 
   @doc """

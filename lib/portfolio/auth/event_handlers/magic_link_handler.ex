@@ -53,8 +53,8 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandler do
   @impl true
   def init(_opts) do
     # Subscribe to both magic link events
-    DomainEvents.subscribe(:magic_link_requested)
-    DomainEvents.subscribe(:magic_link_verified)
+    :ok = DomainEvents.subscribe(:magic_link_requested)
+    :ok = DomainEvents.subscribe(:magic_link_verified)
 
     Logger.info(
       "MagicLinkHandler started and subscribed to :magic_link_requested and :magic_link_verified events"

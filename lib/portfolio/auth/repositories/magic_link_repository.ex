@@ -146,7 +146,7 @@ defmodule Portfolio.Auth.Repositories.MagicLinkRepository do
       {:error, %Ecto.Changeset{}}
   """
   @spec insert(map()) :: {:ok, MagicLink.t()} | {:error, Ecto.Changeset.t()}
-  def insert(attrs) do
+  def insert(attrs) when is_map(attrs) do
     %MagicLink{}
     |> MagicLink.changeset(attrs)
     |> Repo.insert()

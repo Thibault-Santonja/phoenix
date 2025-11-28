@@ -52,7 +52,7 @@ defmodule Portfolio.Auth.SessionCleaner do
 
   @impl true
   def handle_info(:cleanup, state) do
-    perform_cleanup()
+    _result = perform_cleanup()
     schedule_cleanup()
     {:noreply, state}
   end

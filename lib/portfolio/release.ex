@@ -28,9 +28,12 @@ defmodule Portfolio.Release do
   def migrate do
     load_app()
 
-    for repo <- repos() do
-      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
-    end
+    _results =
+      for repo <- repos() do
+        {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+      end
+
+    :ok
   end
 
   @doc """
@@ -81,7 +84,8 @@ defmodule Portfolio.Release do
   # Private helpers
 
   defp load_app do
-    Application.load(@app)
+    _ = Application.load(@app)
+    :ok
   end
 
   # Assure que l'utilisateur a le rôle admin
@@ -105,11 +109,14 @@ defmodule Portfolio.Release do
 
   defp start_repo do
     IO.puts("Starting Repo...")
-    {:ok, _} = Application.ensure_all_started(:ssl)
+    _ = Application.ensure_all_started(:ssl)
 
-    for repo <- repos() do
-      {:ok, _} = repo.start_link(pool_size: 2)
-    end
+    _results =
+      for repo <- repos() do
+        {:ok, _} = repo.start_link(pool_size: 2)
+      end
+
+    :ok
   end
 
   defp repos do

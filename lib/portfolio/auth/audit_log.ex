@@ -58,9 +58,9 @@ defmodule Portfolio.Auth.AuditLog do
   alias Portfolio.Auth.User
 
   @type t :: %__MODULE__{
-          id: Ecto.UUID.t(),
-          action: String.t(),
-          resource_type: String.t(),
+          id: Ecto.UUID.t() | nil,
+          action: String.t() | nil,
+          resource_type: String.t() | nil,
           resource_id: Ecto.UUID.t() | nil,
           changes: map(),
           metadata: map(),
@@ -68,7 +68,7 @@ defmodule Portfolio.Auth.AuditLog do
           performed_by: User.t() | Ecto.Association.NotLoaded.t(),
           ip_address: String.t() | nil,
           user_agent: String.t() | nil,
-          inserted_at: DateTime.t()
+          inserted_at: DateTime.t() | nil
         }
 
   @primary_key {:id, :binary_id, autogenerate: true}

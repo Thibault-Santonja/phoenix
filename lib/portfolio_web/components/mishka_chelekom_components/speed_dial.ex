@@ -194,7 +194,7 @@ defmodule PortfolioWeb.Components.SpeedDial do
           ]}
         />
         <span :if={is_nil(@icon)} class={@trigger_content[:class]}>{@trigger_content}</span>
-        <span class="sr-only">{gettext("Open actions menu")}</span>
+        <span class="sr-only">{gettext("mishka.speed_dial.open_menu")}</span>
       </button>
     </div>
     """

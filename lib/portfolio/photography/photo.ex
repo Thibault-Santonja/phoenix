@@ -57,7 +57,7 @@ defmodule Portfolio.Photography.Photo do
 
   @type t :: %__MODULE__{
           id: Ecto.UUID.t() | nil,
-          album_id: Ecto.UUID.t(),
+          album_id: Ecto.UUID.t() | nil,
           album: Album.t() | Ecto.Association.NotLoaded.t() | nil,
           title: String.t() | nil,
           description: String.t() | nil,
@@ -65,8 +65,8 @@ defmodule Portfolio.Photography.Photo do
           display_order: integer(),
           taken_at: Date.t() | nil,
           published: boolean(),
-          original_filename: String.t(),
-          file_path: String.t(),
+          original_filename: String.t() | nil,
+          file_path: String.t() | nil,
           hash: String.t() | nil,
           mime_type: String.t() | nil,
           exif_data: map(),

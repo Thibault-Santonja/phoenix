@@ -211,7 +211,7 @@ defmodule Mix.Tasks.MigrateLegacyAlbums do
 
   defp compute_file_hash(file_path) do
     file_path
-    |> File.stream!([], 2048)
+    |> File.stream!(2048)
     |> Enum.reduce(:crypto.hash_init(:sha256), fn chunk, acc ->
       :crypto.hash_update(acc, chunk)
     end)

@@ -109,7 +109,6 @@ defmodule Portfolio.Services.Service do
       #         AlbumRepository.update(album, %{published: true})
       #       end
       #     )
-      @spec with_telemetry(list(), map(), (-> term())) :: term()
       defp with_telemetry(event_name, metadata, fun)
            when is_list(event_name) and is_map(metadata) and is_function(fun, 0) do
         start_time = System.monotonic_time()

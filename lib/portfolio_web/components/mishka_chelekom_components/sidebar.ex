@@ -155,7 +155,7 @@ defmodule PortfolioWeb.Components.Sidebar do
             phx-click={JS.exec(@on_hide, "phx-remove", to: "##{@id}")}
           >
             <.icon name="hero-x-mark" class={@close_icon_class} />
-            <span class="sr-only">{gettext("Close menu")}</span>
+            <span class="sr-only">{gettext("mishka.sidebar.close_menu")}</span>
           </button>
         </div>
 

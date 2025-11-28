@@ -14,7 +14,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.New do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:page_title, gettext("New Album"))
+     |> assign(:page_title, gettext("admin.albums.new.title"))
      |> assign(:album, %Album{})}
   end
 
@@ -37,7 +37,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.New do
         <.live_component
           module={FormComponent}
           id="new-album-form"
-          title={gettext("New Album")}
+          title={gettext("admin.albums.new.title")}
           action={:new}
           album={@album}
         />

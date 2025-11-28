@@ -105,7 +105,7 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
   """
   @spec list(keyword()) :: [User.t()]
   def list(opts \\ []) do
-    User
+    from(u in User)
     |> apply_filters(opts)
     |> Repo.all()
   end

@@ -307,7 +307,7 @@ defmodule PortfolioWeb.Components.Carousel do
         id={"#{@id}-carousel-indicator-#{indicator_item}"}
         data-indicator-index={"#{indicator_item}"}
         class="carousel-indicator"
-        aria-label={gettext("Go to slide %{index}", index: indicator_item)}
+        aria-label={gettext("mishka.carousel.go_to_slide", index: indicator_item)}
       />
     </div>
     """

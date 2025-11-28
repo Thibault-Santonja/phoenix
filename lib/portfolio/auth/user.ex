@@ -16,7 +16,7 @@ defmodule Portfolio.Auth.User do
 
   @type t :: %__MODULE__{
           id: Ecto.UUID.t() | nil,
-          email: String.t(),
+          email: String.t() | nil,
           name: String.t() | nil,
           role: atom(),
           magic_links: [MagicLink.t()] | Ecto.Association.NotLoaded.t(),

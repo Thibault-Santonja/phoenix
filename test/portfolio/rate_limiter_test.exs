@@ -87,6 +87,76 @@ defmodule Portfolio.RateLimiterTest do
     end
   end
 
+  describe "reset_all/0" do
+    test "returns :ok and does not crash" do
+      # Use some rate limits first
+      identifier = "reset-all-#{System.unique_integer([:positive])}"
+      RateLimiter.check_rate(:magic_link_request, identifier)
+      RateLimiter.check_rate(:login_attempt, identifier)
+
+      # Reset all should return :ok without crashing
+      assert :ok = RateLimiter.reset_all()
+    end
+
+    test "handles empty state gracefully" do
+      # Should not fail even if no rate limits exist
+      assert :ok = RateLimiter.reset_all()
+    end
+  end
+
+  describe "reset_actions/1" do
+    test "returns :ok for valid action list" do
+      identifier = "reset-actions-#{System.unique_integer([:positive])}"
+      RateLimiter.check_rate(:magic_link_request, identifier)
+
+      assert :ok = RateLimiter.reset_actions([:magic_link_request])
+    end
+
+    test "handles empty list gracefully" do
+      assert :ok = RateLimiter.reset_actions([])
+    end
+
+    test "handles multiple actions" do
+      identifier = "reset-multi-#{System.unique_integer([:positive])}"
+      RateLimiter.check_rate(:magic_link_request, identifier)
+      RateLimiter.check_rate(:login_attempt, identifier)
+
+      assert :ok = RateLimiter.reset_actions([:magic_link_request, :login_attempt])
+    end
+
+    test "handles all known actions" do
+      assert :ok =
+               RateLimiter.reset_actions([
+                 :magic_link_request,
+                 :magic_link_verify,
+                 :login_attempt
+               ])
+    end
+  end
+
+  describe "reset_all_except/1" do
+    test "returns :ok for valid action list" do
+      identifier = "reset-except-#{System.unique_integer([:positive])}"
+      RateLimiter.check_rate(:magic_link_request, identifier)
+      RateLimiter.check_rate(:login_attempt, identifier)
+
+      assert :ok = RateLimiter.reset_all_except([:magic_link_request])
+    end
+
+    test "handles empty list" do
+      assert :ok = RateLimiter.reset_all_except([])
+    end
+
+    test "handles all actions preserved" do
+      assert :ok =
+               RateLimiter.reset_all_except([
+                 :magic_link_request,
+                 :magic_link_verify,
+                 :login_attempt
+               ])
+    end
+  end
+
   describe "limit/1" do
     test "returns configured limit for magic_link_request" do
       {limit, period} = RateLimiter.limit(:magic_link_request)

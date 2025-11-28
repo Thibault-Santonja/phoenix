@@ -161,7 +161,7 @@ defmodule Portfolio.ImageConfig do
       iex> Portfolio.ImageConfig.default_variant()
       :medium
   """
-  @spec default_variant() :: variant_name()
+  @spec default_variant() :: :medium
   def default_variant do
     :medium
   end

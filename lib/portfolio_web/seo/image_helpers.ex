@@ -81,14 +81,26 @@ defmodule PortfolioWeb.SEO.ImageHelpers do
 
   defp extract_location_from_exif(exif_data) when is_map(exif_data) do
     # Try to extract location in order of specificity
-    city = Map.get(exif_data, "City")
-    state = Map.get(exif_data, "State") || Map.get(exif_data, "Province")
-    country = Map.get(exif_data, "Country")
+    # Normalize empty strings to nil
+    city = normalize_exif_value(Map.get(exif_data, "City"))
+    state = normalize_exif_value(Map.get(exif_data, "State") || Map.get(exif_data, "Province"))
+    country = normalize_exif_value(Map.get(exif_data, "Country"))
 
     build_location_string(city, state, country)
   end
 
   defp extract_location_from_exif(_), do: nil
+
+  defp normalize_exif_value(nil), do: nil
+  defp normalize_exif_value(""), do: nil
+
+  defp normalize_exif_value(value) when is_binary(value),
+    do: String.trim(value) |> normalize_trimmed()
+
+  defp normalize_exif_value(_), do: nil
+
+  defp normalize_trimmed(""), do: nil
+  defp normalize_trimmed(value), do: value
 
   defp build_location_string(nil, nil, nil), do: nil
   defp build_location_string(city, nil, nil), do: city

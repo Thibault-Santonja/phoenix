@@ -117,7 +117,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
          |> assign(:album, updated_album)
          |> put_flash(:info, gettext("admin.albums.photo_deleted"))}
 
-      {:error, reason} ->
+      {:error, _failed_operation, reason, _changes_so_far} ->
         {:noreply,
          socket
          |> put_flash(:error, gettext("admin.albums.delete_photo_error", reason: inspect(reason)))}

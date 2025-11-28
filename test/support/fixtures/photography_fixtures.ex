@@ -115,6 +115,11 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
     processing_status = Keyword.get(attrs, :processing_status, "pending")
     variants = Keyword.get(attrs, :variants)
 
+    hash =
+      Keyword.get_lazy(attrs, :hash, fn ->
+        :crypto.strong_rand_bytes(32) |> Base.encode16(case: :lower)
+      end)
+
     params =
       %{
         album_id: album.id,
@@ -122,7 +127,8 @@ defmodule PortfolioTest.Fixtures.PhotographyFixtures do
         original_filename: original_filename,
         display_order: display_order,
         published: published,
-        processing_status: processing_status
+        processing_status: processing_status,
+        hash: hash
       }
       |> maybe_add(:title, title)
       |> maybe_add(:description, description)

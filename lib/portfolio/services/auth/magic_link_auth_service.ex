@@ -144,7 +144,7 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
         })
 
         # Send email with magic link
-        Mailer.send_magic_link_email(user, magic_link)
+        _email_result = Mailer.send_magic_link_email(user, magic_link)
 
         {:ok, magic_link}
 

@@ -45,11 +45,13 @@ defmodule Portfolio.Auth.IPWhitelistService do
     # Create the table only if it doesn't exist
     case :ets.whereis(@cache_table) do
       :undefined ->
-        :ets.new(@cache_table, [:set, :public, :named_table, read_concurrency: true])
+        _ = :ets.new(@cache_table, [:set, :public, :named_table, read_concurrency: true])
+        :ok
 
       _tid ->
         # Table already exists, just clear the cache for testing
-        :ets.delete_all_objects(@cache_table)
+        _ = :ets.delete_all_objects(@cache_table)
+        :ok
     end
 
     # Only auto-refresh from database in non-test environments
@@ -96,19 +98,17 @@ defmodule Portfolio.Auth.IPWhitelistService do
   @spec add_to_whitelist(map(), Ecto.UUID.t()) ::
           {:ok, IPWhitelist.t()} | {:error, Ecto.Changeset.t()}
   def add_to_whitelist(attrs, created_by_id) do
-    # Normalize keys to atoms to avoid mixed keys
+    # Ensure string keys for Ecto.Changeset.cast/3
     attrs =
       attrs
       |> Enum.map(fn {k, v} -> {to_string(k), v} end)
       |> Map.new()
       |> Map.put("created_by_id", created_by_id)
 
-    result =
-      %IPWhitelist{}
-      |> IPWhitelist.changeset(attrs)
-      |> Repo.insert()
-
-    case result do
+    %IPWhitelist{}
+    |> IPWhitelist.changeset(attrs)
+    |> Repo.insert()
+    |> case do
       {:ok, entry} ->
         Logger.info("IP added to whitelist",
           ip: entry.ip_address,
@@ -118,8 +118,8 @@ defmodule Portfolio.Auth.IPWhitelistService do
         refresh_cache()
         {:ok, entry}
 
-      {:error, _changeset} = error ->
-        error
+      {:error, changeset} ->
+        {:error, changeset}
     end
   end
 

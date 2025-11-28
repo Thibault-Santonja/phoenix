@@ -35,7 +35,7 @@ defmodule PortfolioWeb.ConnCase do
     Portfolio.DataCase.setup_sandbox(tags)
 
     # Clear cache before each test to avoid interference
-    Cachex.clear(:portfolio_cache)
+    _ = Cachex.clear(:portfolio_cache)
 
     # Handle rate limiter reset based on tags
     case tags do

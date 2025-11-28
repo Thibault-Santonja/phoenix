@@ -48,25 +48,30 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
   def execute(%Album{} = album, opts \\ []) do
     user_id = Keyword.get(opts, :user_id)
 
-    with_telemetry(
-      [:portfolio, :services, :album_publication, :executed],
-      %{album_id: album.id, user_id: user_id},
-      fn ->
-        # Use Ecto.Multi for atomic database operations only
-        # Cache and events are handled after successful transaction
-        with {:ok, album} <- update_album_atomically(album),
-             :ok <- invalidate_albums_cache(),
-             :ok <- emit_publication_event(album, user_id) do
-          {:ok, album}
-        else
-          {:error, changeset} when is_struct(changeset, Ecto.Changeset) ->
-            {:error, changeset}
+    start_time = System.monotonic_time()
 
-          {:error, reason} ->
-            {:error, reason}
-        end
+    result =
+      with {:ok, album} <- update_album_atomically(album),
+           :ok <- invalidate_albums_cache(),
+           :ok <- emit_publication_event(album, user_id) do
+        {:ok, album}
+      else
+        {:error, changeset} when is_struct(changeset, Ecto.Changeset) ->
+          {:error, changeset}
+
+        {:error, reason} ->
+          {:error, reason}
       end
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:portfolio, :services, :album_publication, :executed],
+      %{duration: duration},
+      %{result: elem(result, 0), album_id: album.id, user_id: user_id}
     )
+
+    result
   end
 
   # Atomically update album published status in database
@@ -89,8 +94,8 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
 
   # Invalidate all caches related to published albums
   defp invalidate_albums_cache do
-    Cachex.del(:portfolio_cache, {:published_albums_by_year, []})
-    Cachex.del(:portfolio_cache, {:published_albums_by_year, [:photos]})
+    {:ok, _} = Cachex.del(:portfolio_cache, {:published_albums_by_year, []})
+    {:ok, _} = Cachex.del(:portfolio_cache, {:published_albums_by_year, [:photos]})
     :ok
   end
 end

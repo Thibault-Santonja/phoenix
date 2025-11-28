@@ -131,7 +131,7 @@ defmodule PortfolioWeb.Components.Rating do
                 />
               <% end %>
             </svg>
-            <span class="sr-only">{gettext("Rate %{count} star", count: item)}</span>
+            <span class="sr-only">{gettext("mishka.rating.rate_star", count: item)}</span>
           </button>
         <% else %>
           <svg

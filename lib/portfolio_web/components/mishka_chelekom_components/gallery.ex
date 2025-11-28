@@ -187,7 +187,7 @@ defmodule PortfolioWeb.Components.Gallery do
       <div
         class={["filter-buttons mb-4 flex flex-wrap gap-2", @filters_wrapper_class]}
         role="group"
-        aria-label={gettext("Filter options")}
+        aria-label={gettext("mishka.gallery.filter_options")}
       >
         <div :if={not Enum.member?(@filters, @default_filter)}>
           <div :if={@filter != []}>

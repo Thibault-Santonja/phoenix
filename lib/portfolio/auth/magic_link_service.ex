@@ -231,7 +231,10 @@ defmodule Portfolio.Auth.MagicLinkService do
   end
 
   # Émet les métriques telemetry pour la vérification
-  @spec emit_verification_telemetry(integer(), {:ok, term()} | {:error, term()}) :: :ok
+  @spec emit_verification_telemetry(
+          integer(),
+          {:ok, Portfolio.Auth.User.t()} | {:error, :invalid_token | :expired | :already_used}
+        ) :: :ok
   defp emit_verification_telemetry(start_time, result) do
     duration = System.monotonic_time() - start_time
 

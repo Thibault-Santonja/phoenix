@@ -50,7 +50,7 @@ defmodule PortfolioWeb.AuthConfig do
   @doc """
   Liste des rôles ayant accès à l'administration.
   """
-  @spec admin_roles() :: [atom()]
+  @spec admin_roles() :: [:admin, ...]
   def admin_roles, do: [:admin]
 
   @doc """
@@ -64,8 +64,10 @@ defmodule PortfolioWeb.AuthConfig do
       iex> AuthConfig.admin_role?(:user)
       false
   """
-  @spec admin_role?(atom()) :: boolean()
+  @spec admin_role?(atom() | nil) :: boolean()
   def admin_role?(role) when is_atom(role) do
     role in admin_roles()
   end
+
+  def admin_role?(_), do: false
 end

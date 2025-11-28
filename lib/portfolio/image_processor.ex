@@ -128,7 +128,14 @@ defmodule Portfolio.ImageProcessor do
         large: %{width: 1920, quality: 90, format: :avif, effort: 6}
       }
   """
-  @spec variants() :: %{variant() => variant_config()}
+  @spec variants() :: %{
+          atom() => %{
+            width: pos_integer(),
+            quality: pos_integer(),
+            format: :webp | :avif | :jpeg,
+            effort: pos_integer()
+          }
+        }
   def variants do
     ImageConfig.variants()
   end

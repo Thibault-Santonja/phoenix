@@ -164,7 +164,7 @@ defmodule Portfolio.Workers.ImageVariantWorker do
     # This is optional - the worker can complete successfully even if the photo
     # is not in the database (e.g., during testing or standalone usage)
     case Photography.get_photo(photo_id) do
-      nil ->
+      {:error, :not_found} ->
         Logger.info("Photo not in database, variants generated successfully",
           photo_id: photo_id,
           variant_count: map_size(variants)
@@ -172,7 +172,7 @@ defmodule Portfolio.Workers.ImageVariantWorker do
 
         :ok
 
-      photo ->
+      {:ok, photo} ->
         attrs = %{
           variants: variants,
           processing_status: :completed
@@ -213,7 +213,7 @@ defmodule Portfolio.Workers.ImageVariantWorker do
     # This is optional - failures can still be logged even if the photo
     # is not in the database (e.g., during testing or standalone usage)
     case Photography.get_photo(photo_id) do
-      nil ->
+      {:error, :not_found} ->
         Logger.warning("Photo not in database",
           photo_id: photo_id,
           reason: :photo_not_found
@@ -221,7 +221,7 @@ defmodule Portfolio.Workers.ImageVariantWorker do
 
         :ok
 
-      photo ->
+      {:ok, photo} ->
         attrs = %{
           processing_status: :failed,
           processing_error: Atom.to_string(reason)

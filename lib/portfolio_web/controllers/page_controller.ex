@@ -1,4 +1,8 @@
 defmodule PortfolioWeb.PageController do
+  @moduledoc """
+  Controller for static pages and subdomain redirections.
+  """
+
   use PortfolioWeb, :controller
 
   def home(conn, _params) do

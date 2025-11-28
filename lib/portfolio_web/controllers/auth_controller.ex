@@ -104,15 +104,16 @@ defmodule PortfolioWeb.AuthController do
     # Supprimer le token de session de la base de données
     session_token = get_session(conn, :session_token)
 
-    if session_token do
-      # Invalider le cache de la session
-      Cachex.del(:portfolio_cache, {:session, session_token})
+    _ =
+      if session_token do
+        # Invalider le cache de la session
+        _ = Cachex.del(:portfolio_cache, {:session, session_token})
 
-      case Auth.get_session_by_token(session_token) do
-        nil -> :ok
-        session -> Auth.delete_session(session)
+        case Auth.get_session_by_token(session_token) do
+          nil -> :ok
+          session -> _ = Auth.delete_session(session)
+        end
       end
-    end
 
     conn
     |> clear_session()

@@ -44,8 +44,8 @@ config :portfolio, :auto_refresh_ip_whitelist, false
 # Configure from email
 config :portfolio, :from_email, "noreply@portfolio.test"
 
-# Print only errors during test (suppress warnings and info for cleaner output)
-config :logger, level: :error
+# Disable all logging during tests for cleaner output
+config :logger, level: :none
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime

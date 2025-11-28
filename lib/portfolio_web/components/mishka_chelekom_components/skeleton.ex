@@ -80,7 +80,7 @@ defmodule PortfolioWeb.Components.Skeleton do
       ]}
       {@rest}
     >
-      <span class="sr-only">{gettext("Loading...")}</span>
+      <span class="sr-only">{gettext("mishka.skeleton.loading")}</span>
     </div>
     """
   end

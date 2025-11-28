@@ -45,7 +45,7 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
   @impl true
   def store_photo(upload, _opts \\ []) do
     with {:ok, hash} <- compute_hash(upload.path),
-         photo_id <- String.slice(hash, 0, 8),
+         photo_id = String.slice(hash, 0, 8),
          {:ok, dest_path} <- build_destination_path(photo_id, upload),
          :ok <- ensure_directory_exists(dest_path),
          :ok <- copy_file(upload.path, dest_path),
@@ -189,13 +189,12 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
   @spec compute_hash(String.t()) :: {:ok, String.t()} | {:error, term()}
   defp compute_hash(file_path) do
     hash =
-      File.stream!(file_path, [], 2048)
+      File.stream!(file_path, 2048)
       |> Enum.reduce(:crypto.hash_init(:sha256), fn chunk, acc ->
         :crypto.hash_update(acc, chunk)
       end)
       |> :crypto.hash_final()
       |> Base.encode16(case: :lower)
-      |> String.slice(0, 8)
 
     {:ok, hash}
   rescue
@@ -283,7 +282,8 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
     end
   end
 
-  @spec ensure_directory_exists(String.t()) :: :ok | {:error, term()}
+  @spec ensure_directory_exists(String.t()) ::
+          :ok | {:error, :directory_creation_failed | :invalid_path}
   defp ensure_directory_exists(file_path) do
     dir = Path.dirname(file_path)
 
@@ -318,7 +318,8 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
     end
   end
 
-  @spec verify_file_integrity(String.t(), String.t()) :: :ok | {:error, term()}
+  @spec verify_file_integrity(String.t(), String.t()) ::
+          :ok | {:error, :integrity_check_failed | :integrity_verification_failed}
   defp verify_file_integrity(file_path, expected_hash) do
     case compute_hash(file_path) do
       {:ok, actual_hash} ->
@@ -332,14 +333,14 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
           )
 
           # Delete corrupted file
-          File.rm(file_path)
+          _ = File.rm(file_path)
           {:error, :integrity_check_failed}
         end
 
       {:error, reason} ->
         Logger.error("Failed to verify file integrity", file_path: file_path, reason: reason)
         # Delete potentially corrupted file
-        File.rm(file_path)
+        _ = File.rm(file_path)
         {:error, :integrity_verification_failed}
     end
   end

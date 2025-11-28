@@ -163,7 +163,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
              |> put_flash(:info, gettext("admin.albums.delete_success"))
              |> assign(:albums, reload_albums(socket))}
 
-          {:error, _reason} ->
+          {:error, _failed_operation, _reason, _changes_so_far} ->
             {:noreply,
              socket
              |> put_flash(:error, gettext("admin.albums.delete_error"))}
