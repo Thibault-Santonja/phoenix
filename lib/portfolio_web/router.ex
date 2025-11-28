@@ -1,4 +1,11 @@
 defmodule PortfolioWeb.Router do
+  @moduledoc """
+  Phoenix router for the Portfolio application.
+
+  Defines pipelines for different subdomains (photography, tech, amvcc)
+  and routes for public pages, authentication, and admin dashboard.
+  """
+
   use PortfolioWeb, :router
 
   pipeline :amvcc do

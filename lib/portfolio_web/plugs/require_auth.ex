@@ -6,6 +6,8 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
   import Plug.Conn
   import Phoenix.Controller
 
+  require Logger
+
   alias PortfolioWeb.AuthConfig
   alias PortfolioWeb.AuthHelpers
 
@@ -50,6 +52,13 @@ defmodule PortfolioWeb.Plugs.RequireAuth do
 
     case AuthHelpers.fetch_user_from_session_token(session_token) do
       nil ->
+        if session_token do
+          Logger.debug("Session token invalid or expired",
+            token_prefix: String.slice(session_token, 0, 8),
+            path: conn.request_path
+          )
+        end
+
         conn
         |> clear_session()
         |> assign(:current_user, nil)

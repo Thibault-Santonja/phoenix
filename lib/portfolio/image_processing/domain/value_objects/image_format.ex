@@ -49,7 +49,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat do
       iex> ImageFormat.all()
       [:webp, :avif, :jpeg]
   """
-  @spec all() :: [t()]
+  @spec all() :: [:webp | :avif | :jpeg, ...]
   def all, do: @valid_formats
 
   @doc """

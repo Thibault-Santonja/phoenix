@@ -10,7 +10,7 @@ defmodule PortfolioWeb.TechLive.Blog.Elixir do
   @impl true
   def mount(_, session, socket) do
     locale = session["locale"] || "fr"
-    Gettext.put_locale(PortfolioWeb.Gettext, locale)
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     # Generate article schema for SEO
     article_json = generate_elixir_article_schema()

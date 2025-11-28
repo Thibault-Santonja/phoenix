@@ -24,10 +24,13 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
 
   @albums_per_page Application.compile_env(:portfolio, [:timeline, :albums_per_page], 20)
 
+  # Valid album types for chapter filtering (must match Album.@album_types)
+  @valid_chapter_types ~w(couples wedding motherhood events landscape street music reenactment amvcc china japan taiwan)
+
   @impl true
   def mount(_, session, socket) do
     locale = session["locale"] || "fr"
-    Gettext.put_locale(PortfolioWeb.Gettext, locale)
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     # Load list of years for navigation (lightweight query)
     years = Photography.list_published_years()
@@ -109,7 +112,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     ]
 
     opts =
-      if chapter_filter do
+      if chapter_filter && chapter_filter in @valid_chapter_types do
         Keyword.put(opts, :type, String.to_existing_atom(chapter_filter))
       else
         opts

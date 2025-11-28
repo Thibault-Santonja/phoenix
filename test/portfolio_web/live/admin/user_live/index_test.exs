@@ -163,4 +163,196 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
       assert updated_user.role == :admin
     end
   end
+
+  describe "Edit modal" do
+    test "opens edit modal for user", %{conn: conn} do
+      other_user = create_user(email: "edit@example.com", role: :user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Open edit modal
+      html =
+        view
+        |> element(~s(button[phx-click="open_edit_modal"][phx-value-user-id="#{other_user.id}"]))
+        |> render_click()
+
+      # Modal should be visible
+      assert html =~ "edit@example.com" or html =~ "Modifier"
+    end
+
+    test "closes edit modal", %{conn: conn} do
+      other_user = create_user(email: "close@example.com", role: :user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Open modal
+      view
+      |> element(~s(button[phx-click="open_edit_modal"][phx-value-user-id="#{other_user.id}"]))
+      |> render_click()
+
+      # Close modal
+      html = render_click(view, "close_edit_modal", %{})
+
+      # Modal content should not be visible (form should be closed)
+      refute has_element?(view, "form[phx-submit=\"save_user\"]")
+      assert html =~ "close@example.com"
+    end
+
+    test "handles save with invalid role", %{conn: conn} do
+      other_user = create_user(email: "invalid@example.com", role: :user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Open modal
+      view
+      |> element(~s(button[phx-click="open_edit_modal"][phx-value-user-id="#{other_user.id}"]))
+      |> render_click()
+
+      # Try to submit with original role (no change)
+      html =
+        view
+        |> form("form[phx-submit=\"save_user\"]", %{user: %{role: "user"}})
+        |> render_submit()
+
+      # Should succeed (no actual change)
+      assert html =~ "Utilisateur mis à jour" or html =~ "invalid@example.com"
+    end
+  end
+
+  describe "Delete user" do
+    test "confirms delete action", %{conn: conn} do
+      other_user = create_user(email: "delete@example.com", role: :user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Trigger confirm delete
+      html = render_click(view, "confirm_delete", %{"user-id" => other_user.id})
+
+      # Should show confirmation
+      assert html =~ "delete@example.com"
+    end
+
+    test "cancels delete action", %{conn: conn} do
+      other_user = create_user(email: "cancel@example.com", role: :user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Confirm delete
+      render_click(view, "confirm_delete", %{"user-id" => other_user.id})
+
+      # Cancel delete
+      html = render_click(view, "cancel_delete", %{})
+
+      # User should still exist
+      assert html =~ "cancel@example.com"
+      assert {:ok, _} = Auth.get_user(other_user.id)
+    end
+
+    test "deletes user successfully", %{conn: conn} do
+      other_user = create_user(email: "deleted@example.com", role: :user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Delete user
+      html = render_click(view, "delete_user", %{"user-id" => other_user.id})
+
+      # Should show success message
+      assert html =~ "Utilisateur supprimé" or html =~ "supprimé avec succès"
+
+      # User should be deleted
+      assert {:error, :not_found} = Auth.get_user(other_user.id)
+    end
+
+    test "updates statistics after delete", %{conn: conn} do
+      _user1 = create_user(email: "stat1@example.com", role: :user)
+      user2 = create_user(email: "stat2@example.com", role: :user)
+
+      {:ok, view, html} = live(conn, ~p"/admin/users")
+
+      # Initial count should be 3
+      assert html =~ "3"
+
+      # Delete one user
+      render_click(view, "delete_user", %{"user-id" => user2.id})
+
+      # Count should now be 2
+      html = render(view)
+      assert html =~ "2"
+    end
+  end
+
+  describe "Revoke sessions" do
+    test "revokes all user sessions", %{conn: conn} do
+      other_user = create_user(email: "revoke@example.com", role: :user)
+      # Create some sessions
+      {:ok, _session1} = Auth.create_session(other_user)
+      {:ok, _session2} = Auth.create_session(other_user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Revoke sessions
+      html = render_click(view, "revoke_sessions", %{"user-id" => other_user.id})
+
+      # Should show success message with count
+      assert html =~ "session" or html =~ "révoquée"
+    end
+
+    test "handles user with no sessions", %{conn: conn} do
+      other_user = create_user(email: "nosession@example.com", role: :user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Revoke sessions (should handle 0 sessions gracefully)
+      html = render_click(view, "revoke_sessions", %{"user-id" => other_user.id})
+
+      # Should show success message
+      assert html =~ "0" or html =~ "session"
+    end
+  end
+
+  describe "Send magic link" do
+    test "sends magic link successfully", %{conn: conn} do
+      other_user = create_user(email: "magic@example.com", role: :user)
+
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Send magic link
+      html = render_click(view, "send_magic_link", %{"user-id" => other_user.id})
+
+      # Should show success message
+      assert html =~ "magic@example.com" or html =~ "Magic link"
+    end
+  end
+
+  describe "IP address handling" do
+    test "handles missing IP address gracefully", %{conn: conn} do
+      # The test connection doesn't have peer_data
+      {:ok, _view, html} = live(conn, ~p"/admin/users")
+
+      # Page should still load
+      assert html =~ "Gestion des utilisateurs"
+    end
+  end
+
+  describe "Filter navigation" do
+    test "removes filter when clicking all users", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/users?filter=admin")
+
+      # Click on all users link (first one is the stat card)
+      view
+      |> element("a[href=\"/admin/users\"]", "Total")
+      |> render_click()
+
+      assert_patched(view, ~p"/admin/users")
+    end
+
+    test "filter persists across page refresh", %{conn: conn} do
+      _user = create_user(email: "persist@example.com", role: :user)
+
+      {:ok, _view, html} = live(conn, ~p"/admin/users?filter=user")
+
+      # Should show regular users
+      assert html =~ "persist@example.com"
+    end
+  end
 end

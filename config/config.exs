@@ -227,7 +227,9 @@ config :logger, :console,
     :referer,
     :potential_bot,
     # CDN metadata
-    :message
+    :message,
+    # Session metadata
+    :token_prefix
   ]
 
 # Use Jason for JSON parsing in Phoenix

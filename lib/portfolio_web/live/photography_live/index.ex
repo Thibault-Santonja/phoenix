@@ -6,7 +6,7 @@ defmodule PortfolioWeb.PhotographyLive.Index do
   def mount(params, session, socket) do
     chapter = Map.get(params, "chapter", nil)
     language = Map.get(params, "hl", session["locale"] || "fr")
-    Gettext.put_locale(PortfolioWeb.Gettext, language)
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, language)
 
     {
       :ok,

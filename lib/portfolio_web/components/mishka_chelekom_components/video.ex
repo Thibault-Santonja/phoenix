@@ -135,7 +135,7 @@ defmodule PortfolioWeb.Components.Video do
         default={track.default}
       />
 
-      {gettext("Your browser does not support the video tag.")}
+      {gettext("mishka.video.not_supported")}
     </video>
     """
   end

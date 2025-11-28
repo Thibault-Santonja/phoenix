@@ -36,7 +36,7 @@ defmodule PortfolioWeb.AuthHelpers do
         fresh_session = Auth.reload_user(session)
 
         # Mettre à jour l'activité de la session
-        update_session_activity_async(fresh_session)
+        _ = update_session_activity_async(fresh_session)
 
         {fresh_session.user, fresh_session}
     end
@@ -81,9 +81,9 @@ defmodule PortfolioWeb.AuthHelpers do
   # Met à jour l'activité de la session de manière asynchrone en production
   defp update_session_activity_async(session) do
     if Mix.env() == :test do
-      Auth.update_session_activity(session)
+      _ = Auth.update_session_activity(session)
     else
-      Task.start(fn -> Auth.update_session_activity(session) end)
+      _ = Task.start(fn -> Auth.update_session_activity(session) end)
     end
   end
 end

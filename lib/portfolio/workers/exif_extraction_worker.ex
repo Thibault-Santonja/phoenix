@@ -76,36 +76,34 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
   # Private Functions
   # =============================================================================
 
-  @spec extract_and_update_exif(Photography.Photo.t()) ::
+  @spec extract_and_update_exif(Portfolio.Photography.Photo.t()) ::
           :ok | {:cancel, String.t()} | {:error, term()}
   defp extract_and_update_exif(photo) do
     file_path = build_absolute_path(photo.file_path)
 
-    case File.exists?(file_path) do
-      true ->
-        case extract_exif_data(file_path) do
-          {:ok, exif_data} ->
-            update_photo_with_exif(photo, exif_data)
+    if File.exists?(file_path) do
+      case extract_exif_data(file_path) do
+        {:ok, exif_data} ->
+          update_photo_with_exif(photo, exif_data)
 
-          {:error, reason} ->
-            Logger.warning("Failed to extract EXIF data",
-              photo_id: photo.id,
-              file_path: file_path,
-              reason: inspect(reason)
-            )
+        {:error, reason} ->
+          Logger.warning("Failed to extract EXIF data",
+            photo_id: photo.id,
+            file_path: file_path,
+            reason: inspect(reason)
+          )
 
-            # Transient error - allow retry
-            {:error, reason}
-        end
+          # Transient error - allow retry
+          {:error, reason}
+      end
+    else
+      Logger.warning("Photo file not found",
+        photo_id: photo.id,
+        file_path: file_path
+      )
 
-      false ->
-        Logger.warning("Photo file not found",
-          photo_id: photo.id,
-          file_path: file_path
-        )
-
-        # Permanent error - cancel job
-        {:cancel, "File not found"}
+      # Permanent error - cancel job
+      {:cancel, "File not found"}
     end
   end
 
@@ -117,22 +115,12 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
     Path.join([priv_dir, "static", file_path])
   end
 
-  @spec extract_exif_data(String.t()) :: {:ok, map()} | {:error, term()}
   defp extract_exif_data(file_path) do
-    # Use Exiftool.execute with -json flag for structured output
-    case Exiftool.execute(["-json", file_path]) do
-      {:ok, json_string} when is_binary(json_string) ->
-        case Jason.decode(json_string) do
-          {:ok, [exif_map | _]} when is_map(exif_map) ->
-            parsed = parse_relevant_exif(exif_map)
-            {:ok, parsed}
-
-          {:ok, _} ->
-            {:error, :invalid_exif_format}
-
-          {:error, reason} ->
-            {:error, reason}
-        end
+    # Use Exiftool.execute to get structured EXIF data
+    case Exiftool.execute([file_path]) do
+      {:ok, exif_map} when is_map(exif_map) ->
+        parsed = parse_relevant_exif(exif_map)
+        {:ok, parsed}
 
       {:error, reason} ->
         {:error, reason}
@@ -147,7 +135,6 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
       {:error, :exiftool_exception}
   end
 
-  @spec parse_relevant_exif(map()) :: map()
   defp parse_relevant_exif(raw_exif) do
     # Extract only relevant EXIF fields for photography
     %{}
@@ -175,7 +162,6 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
     |> maybe_add(:gps_longitude, parse_gps_coordinate(raw_exif["GPSLongitude"]))
   end
 
-  @spec maybe_add(map(), atom(), any()) :: map()
   defp maybe_add(map, _key, nil), do: map
   defp maybe_add(map, _key, ""), do: map
   defp maybe_add(map, key, value), do: Map.put(map, key, value)
@@ -268,18 +254,7 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
     # Simple regex to extract degrees, minutes, seconds
     case Regex.run(~r/(\d+)\s*deg\s*(\d+)'\s*([\d.]+)"?\s*([NSEW])?/, dms_string) do
       [_, degrees, minutes, seconds | direction] ->
-        deg = String.to_float(degrees)
-        min = String.to_float(minutes)
-        sec = String.to_float(seconds)
-
-        decimal = deg + min / 60.0 + sec / 3600.0
-
-        # Apply negative for South and West
-        case direction do
-          ["S"] -> -decimal
-          ["W"] -> -decimal
-          _ -> decimal
-        end
+        convert_dms_to_decimal(degrees, minutes, seconds, direction)
 
       _ ->
         nil
@@ -288,10 +263,48 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
     _ -> nil
   end
 
-  @spec update_photo_with_exif(Photography.Photo.t(), map()) :: :ok | {:error, term()}
+  @spec convert_dms_to_decimal(String.t(), String.t(), String.t(), [String.t()]) ::
+          float() | nil
+  defp convert_dms_to_decimal(degrees, minutes, seconds, direction) do
+    deg = parse_number(degrees)
+    min = parse_number(minutes)
+    sec = parse_number(seconds)
+
+    if valid_dms_bounds?(deg, min, sec) do
+      decimal = deg + min / 60.0 + sec / 3600.0
+      apply_direction_sign(decimal, direction)
+    else
+      nil
+    end
+  end
+
+  @spec apply_direction_sign(float(), [String.t()]) :: float()
+  defp apply_direction_sign(decimal, ["S"]), do: -decimal
+  defp apply_direction_sign(decimal, ["W"]), do: -decimal
+  defp apply_direction_sign(decimal, _), do: decimal
+
+  @spec parse_number(String.t()) :: float() | nil
+  defp parse_number(str) do
+    case Float.parse(str) do
+      {num, _} -> num
+      :error -> String.to_integer(str) * 1.0
+    end
+  rescue
+    _ -> nil
+  end
+
+  @spec valid_dms_bounds?(float() | nil, float() | nil, float() | nil) :: boolean()
+  defp valid_dms_bounds?(deg, min, sec) do
+    is_number(deg) and is_number(min) and is_number(sec) and
+      deg >= 0 and deg <= 180 and
+      min >= 0 and min < 60 and
+      sec >= 0 and sec < 60
+  end
+
+  @spec update_photo_with_exif(Portfolio.Photography.Photo.t(), map()) :: :ok | {:error, term()}
   defp update_photo_with_exif(photo, exif_data) do
     # Merge new EXIF data with existing exif_data JSON field
-    merged_exif = Map.merge(photo.exif_data || %{}, exif_data)
+    merged_exif = Map.merge(photo.exif_data, exif_data)
 
     # Build update attributes for dedicated columns
     attrs =

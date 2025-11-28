@@ -202,7 +202,7 @@ defmodule PortfolioWeb.Components.Stepper do
     <button
       id={@id}
       role="listitem"
-      aria-label={gettext("Step %{number}: %{title}", number: @step_number, title: @title)}
+      aria-label={gettext("mishka.stepper.step_label", number: @step_number, title: @title)}
       aria-disabled={!@clickable}
       aria-current={@step == "current" && "step"}
       class={[
@@ -277,7 +277,7 @@ defmodule PortfolioWeb.Components.Stepper do
     <button
       id={@id}
       role="listitem"
-      aria-label={gettext("Step %{number}: %{title}", number: @step_number, title: @title)}
+      aria-label={gettext("mishka.stepper.step_label", number: @step_number, title: @title)}
       aria-disabled={!@clickable}
       aria-current={@step == "current" && "step"}
       class={[

@@ -15,11 +15,11 @@ defmodule Portfolio.Auth.MagicLink do
 
   @type t :: %__MODULE__{
           id: Ecto.UUID.t() | nil,
-          user_id: Ecto.UUID.t(),
+          user_id: Ecto.UUID.t() | nil,
           user: User.t() | Ecto.Association.NotLoaded.t(),
-          token: String.t(),
+          token: String.t() | nil,
           short_code: String.t() | nil,
-          expires_at: DateTime.t(),
+          expires_at: DateTime.t() | nil,
           used_at: DateTime.t() | nil,
           inserted_at: NaiveDateTime.t() | nil
         }

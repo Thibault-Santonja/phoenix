@@ -60,7 +60,8 @@ defmodule Portfolio.RateLimiter do
       iex> check_rate(:magic_link_request, "spammer@example.com")
       {:deny, 3540000}  # ~59 minutes
   """
-  @spec check_rate(action(), rate_identifier()) :: result()
+  @spec check_rate(action(), rate_identifier()) ::
+          {:allow, non_neg_integer()} | {:deny, non_neg_integer()}
   def check_rate(action, identifier) when is_atom(action) and is_binary(identifier) do
     {limit, period} = Map.fetch!(@rate_limits, action)
     bucket_key = build_bucket_key(action, identifier)
@@ -124,7 +125,7 @@ defmodule Portfolio.RateLimiter do
   @spec reset(action(), rate_identifier()) :: :ok
   def reset(action, identifier) when is_atom(action) and is_binary(identifier) do
     bucket_key = build_bucket_key(action, identifier)
-    Hammer.delete_buckets(bucket_key)
+    _result = Hammer.delete_buckets(bucket_key)
     :ok
   end
 

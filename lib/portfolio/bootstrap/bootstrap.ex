@@ -99,8 +99,10 @@ defmodule Portfolio.Bootstrap do
   """
   @spec repo_ready?() :: boolean()
   def repo_ready? do
-    Repo.query("SELECT 1")
-    true
+    case Repo.query("SELECT 1") do
+      {:ok, _} -> true
+      {:error, _} -> false
+    end
   rescue
     _ -> false
   end

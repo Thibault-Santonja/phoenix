@@ -68,7 +68,7 @@ defmodule Portfolio.Auth do
 
   Délégué à `Portfolio.Auth.UserService.get_user/1`.
   """
-  @spec get_user(Ecto.UUID.t()) :: User.t() | nil
+  @spec get_user(Ecto.UUID.t()) :: {:ok, User.t()} | {:error, :not_found}
   defdelegate get_user(id), to: UserService
 
   @doc """
@@ -181,7 +181,7 @@ defmodule Portfolio.Auth do
 
   Délégué à `Portfolio.Auth.MagicLinkService.get_magic_link_by_short_code/1`.
   """
-  @spec get_magic_link_by_short_code(String.t()) :: MagicLink.t() | nil
+  @spec get_magic_link_by_short_code(String.t()) :: {:ok, MagicLink.t()} | {:error, :not_found}
   defdelegate get_magic_link_by_short_code(short_code), to: MagicLinkService
 
   # =============================================================================

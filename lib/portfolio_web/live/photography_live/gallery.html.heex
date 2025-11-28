@@ -21,8 +21,10 @@
   ]}>
     <h1 class="flex flex-col items-end group">
       <a href={~p"/"}>
-        {gettext("Thibault Santonja")}
-        <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
+        {gettext("photography.author_name")}
+        <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">
+          {gettext("navigation.home")}
+        </p>
       </a>
     </h1>
     <div class="grow flex justify-end gap-4">
@@ -87,7 +89,7 @@
           >
           </path>
         </svg>
-        {gettext("Back")}
+        {gettext("navigation.back")}
       </button>
     </header>
 
@@ -126,7 +128,7 @@
         "text-right text-xs",
         "opacity-20 group-hover:opacity-100 duration-300"
       ]}>
-        {gettext("go to album")} ({String.to_integer(@project_id) + 1} - {@pictures})
+        {gettext("photography.go_to_album")} ({String.to_integer(@project_id) + 1} - {@pictures})
       </span>
     </a>
   </section>

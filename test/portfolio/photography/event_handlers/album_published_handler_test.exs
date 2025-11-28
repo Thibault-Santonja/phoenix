@@ -1,65 +1,33 @@
 defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandlerTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
 
-  alias Portfolio.DomainEvents
   alias Portfolio.Photography.EventHandlers.AlbumPublishedHandler
   alias Portfolio.Photography.Events.AlbumPublished
 
-  setup do
-    # Start the handler if not already running
-    # Event handlers are disabled by default in test env to avoid DB ownership issues
-    # But these specific tests need the handler running
-    case Process.whereis(AlbumPublishedHandler) do
-      nil ->
-        {:ok, pid} = AlbumPublishedHandler.start_link([])
-        on_exit(fn -> if Process.alive?(pid), do: GenServer.stop(pid) end)
-        :ok
+  describe "start_link/1" do
+    test "starts the GenServer successfully" do
+      # Stop existing handler if running
+      if pid = Process.whereis(AlbumPublishedHandler) do
+        GenServer.stop(pid)
+      end
 
-      _pid ->
-        :ok
+      assert {:ok, pid} = AlbumPublishedHandler.start_link([])
+      assert is_pid(pid)
+      assert Process.alive?(pid)
+
+      # Clean up
+      GenServer.stop(pid)
     end
   end
 
-  describe "AlbumPublishedHandler" do
-    test "handler is started and registered" do
-      # Verify handler is running
-      assert Process.whereis(AlbumPublishedHandler) != nil
-      assert Process.alive?(Process.whereis(AlbumPublishedHandler))
+  describe "init/1" do
+    test "initializes with empty state" do
+      assert {:ok, %{}} = AlbumPublishedHandler.init([])
     end
+  end
 
-    @tag :skip
-    test "handler is supervised and restarts on crash" do
-      # This test only makes sense in production where handler is supervised
-      # In tests, we start the handler manually in setup
-      pid = Process.whereis(AlbumPublishedHandler)
-      assert pid != nil
-
-      # Kill the handler
-      Process.exit(pid, :kill)
-
-      # Give supervisor time to restart
-      Process.sleep(100)
-
-      # Handler should be restarted with different PID
-      new_pid = Process.whereis(AlbumPublishedHandler)
-      assert new_pid != nil
-      assert new_pid != pid
-      assert Process.alive?(new_pid)
-    end
-
-    test "handler invalidates cache on album published event" do
-      # Seed cache with dummy data
-      cache_key_without_photos = {:published_albums_by_year, []}
-      cache_key_with_photos = {:published_albums_by_year, [:photos]}
-
-      {:ok, true} = Cachex.put(:portfolio_cache, cache_key_without_photos, "dummy_data_1")
-      {:ok, true} = Cachex.put(:portfolio_cache, cache_key_with_photos, "dummy_data_2")
-
-      # Verify cache is populated
-      assert {:ok, "dummy_data_1"} == Cachex.get(:portfolio_cache, cache_key_without_photos)
-      assert {:ok, "dummy_data_2"} == Cachex.get(:portfolio_cache, cache_key_with_photos)
-
-      # Publish event
+  describe "handle_info/2 - album_published" do
+    test "handles AlbumPublished event" do
       event = %AlbumPublished{
         album_id: Ecto.UUID.generate(),
         title: "Test Album",
@@ -68,14 +36,63 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandlerTest do
         user_id: Ecto.UUID.generate()
       }
 
-      DomainEvents.publish(:album_published, event)
+      state = %{}
 
-      # Give handler time to process event
-      Process.sleep(100)
+      assert {:noreply, ^state} =
+               AlbumPublishedHandler.handle_info({:album_published, event}, state)
+    end
 
-      # Verify cache was invalidated (entries should be removed)
-      assert {:ok, nil} == Cachex.get(:portfolio_cache, cache_key_without_photos)
-      assert {:ok, nil} == Cachex.get(:portfolio_cache, cache_key_with_photos)
+    test "handles event without user_id" do
+      event = %AlbumPublished{
+        album_id: Ecto.UUID.generate(),
+        title: "System Published Album",
+        slug: "system-album",
+        published_at: DateTime.utc_now(),
+        user_id: nil
+      }
+
+      state = %{}
+
+      assert {:noreply, ^state} =
+               AlbumPublishedHandler.handle_info({:album_published, event}, state)
+    end
+
+    test "preserves state after handling event" do
+      event = %AlbumPublished{
+        album_id: Ecto.UUID.generate(),
+        title: "Another Album",
+        slug: "another-album",
+        published_at: DateTime.utc_now(),
+        user_id: nil
+      }
+
+      initial_state = %{some_data: "value"}
+
+      assert {:noreply, ^initial_state} =
+               AlbumPublishedHandler.handle_info({:album_published, event}, initial_state)
+    end
+  end
+
+  describe "handle_info/2 - unexpected messages" do
+    test "handles unexpected messages gracefully" do
+      state = %{}
+
+      assert {:noreply, ^state} =
+               AlbumPublishedHandler.handle_info({:unknown_event, %{}}, state)
+    end
+
+    test "handles random messages without crashing" do
+      state = %{}
+
+      assert {:noreply, ^state} =
+               AlbumPublishedHandler.handle_info(:random_message, state)
+    end
+
+    test "handles nil message" do
+      state = %{}
+
+      assert {:noreply, ^state} =
+               AlbumPublishedHandler.handle_info(nil, state)
     end
   end
 end

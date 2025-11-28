@@ -112,7 +112,7 @@ defmodule Portfolio.DomainEvents do
       # Process will now receive messages like:
       # {:album_published, %AlbumPublished{...}}
   """
-  @spec subscribe(atom()) :: :ok | {:error, term()}
+  @spec subscribe(atom()) :: :ok | {:error, {:already_registered, pid()}}
   def subscribe(event_type) when is_atom(event_type) do
     PubSub.subscribe(@pubsub, topic(event_type))
   end

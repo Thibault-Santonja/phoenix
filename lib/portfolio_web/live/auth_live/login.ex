@@ -19,7 +19,7 @@ defmodule PortfolioWeb.AuthLive.Login do
 
     {:ok,
      socket
-     |> assign(:page_title, "Connexion Admin")
+     |> assign(:page_title, gettext("auth.login.page_title"))
      |> assign(:form, to_form(changeset))
      |> assign(:link_sent, false)
      |> assign(:retry_after, nil)
@@ -54,7 +54,7 @@ defmodule PortfolioWeb.AuthLive.Login do
          socket
          |> assign(:link_sent, true)
          |> assign(:retry_after, nil)
-         |> put_flash(:info, "Un lien de connexion a été envoyé à #{email}")}
+         |> put_flash(:info, gettext("auth.login.link_sent", email: email))}
 
       {:error, {:rate_limit_exceeded, retry_after}} ->
         {:noreply,
@@ -62,7 +62,7 @@ defmodule PortfolioWeb.AuthLive.Login do
          |> assign(:retry_after, retry_after)
          |> put_flash(
            :error,
-           "Trop de tentatives. Veuillez patienter #{format_retry_after(retry_after)} avant de réessayer."
+           gettext("auth.login.rate_limit_exceeded", time: format_retry_after(retry_after))
          )}
 
       {:error, :user_not_found} ->
@@ -72,18 +72,21 @@ defmodule PortfolioWeb.AuthLive.Login do
          socket
          |> assign(:link_sent, true)
          |> assign(:retry_after, nil)
-         |> put_flash(:info, "Un lien de connexion a été envoyé à #{email}")}
+         |> put_flash(:info, gettext("auth.login.link_sent", email: email))}
 
       {:error, _changeset} ->
         {:noreply,
          socket
          |> assign(:retry_after, nil)
-         |> put_flash(:error, "Impossible d'envoyer le lien. Vérifiez votre adresse email.")}
+         |> put_flash(:error, gettext("auth.login.send_error"))}
     end
   end
 
-  defp format_retry_after(seconds) when seconds < 60, do: "#{seconds} secondes"
-  defp format_retry_after(seconds), do: "#{div(seconds, 60)} minutes"
+  defp format_retry_after(seconds) when seconds < 60,
+    do: gettext("auth.login.seconds", count: seconds)
+
+  defp format_retry_after(seconds),
+    do: gettext("auth.login.minutes", count: div(seconds, 60))
 
   # Schema for email validation using embedded schema
   defmodule EmailForm do
@@ -99,8 +102,8 @@ defmodule PortfolioWeb.AuthLive.Login do
     def changeset(form, attrs) do
       form
       |> cast(attrs, [:email])
-      |> validate_required([:email], message: "L'email est requis")
-      |> validate_format(:email, @email_regex, message: "L'email doit être valide")
+      |> validate_required([:email])
+      |> validate_format(:email, @email_regex)
     end
   end
 

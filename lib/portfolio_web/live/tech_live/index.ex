@@ -5,7 +5,7 @@ defmodule PortfolioWeb.TechLive.Index do
   @impl true
   def mount(_, session, socket) do
     locale = session["locale"] || "fr"
-    Gettext.put_locale(PortfolioWeb.Gettext, locale)
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     {:ok, socket}
   end

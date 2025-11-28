@@ -97,7 +97,7 @@ defmodule PortfolioWeb.HealthController do
   # Check database connectivity with a simple query
   defp check_database do
     # Simple query that doesn't hit any table (fast)
-    Repo.query!("SELECT 1")
+    _ = Repo.query!("SELECT 1")
     "ok"
   rescue
     _ -> "error"

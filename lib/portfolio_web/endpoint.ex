@@ -1,4 +1,11 @@
 defmodule PortfolioWeb.Endpoint do
+  @moduledoc """
+  Phoenix endpoint for the Portfolio web application.
+
+  Configures session handling, static file serving, websockets,
+  security headers (CSP, HSTS, X-Frame-Options), and rate limiting.
+  """
+
   use Phoenix.Endpoint, otp_app: :portfolio
 
   # The session will be stored in the cookie and signed,

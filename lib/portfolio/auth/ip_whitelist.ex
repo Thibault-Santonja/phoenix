@@ -79,7 +79,7 @@ defmodule Portfolio.Auth.IPWhitelist do
       iex> changeset(%IPWhitelist{}, %{ip_address: "invalid"})
       %Ecto.Changeset{valid?: false}
   """
-  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  @spec changeset(t() | %__MODULE__{}, map()) :: Ecto.Changeset.t()
   def changeset(ip_whitelist, attrs) do
     ip_whitelist
     |> cast(attrs, [:ip_address, :description, :created_by_id])
@@ -93,7 +93,7 @@ defmodule Portfolio.Auth.IPWhitelist do
   @doc """
   Changeset for updating (does not allow changing the IP).
   """
-  @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
+  @spec update_changeset(t() | %__MODULE__{}, map()) :: Ecto.Changeset.t()
   def update_changeset(ip_whitelist, attrs) do
     ip_whitelist
     |> cast(attrs, [:description])

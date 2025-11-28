@@ -68,12 +68,12 @@ defmodule Portfolio.Photography.Album do
 
   @type t :: %__MODULE__{
           id: Ecto.UUID.t() | nil,
-          title: String.t(),
-          slug: String.t(),
-          type: atom(),
+          title: String.t() | nil,
+          slug: String.t() | nil,
+          type: atom() | nil,
           description: String.t() | nil,
           location: String.t() | nil,
-          date_prise_vue: Date.t(),
+          date_prise_vue: Date.t() | nil,
           date_fin_prise_vue: Date.t() | nil,
           published: boolean(),
           reference_link: String.t() | nil,

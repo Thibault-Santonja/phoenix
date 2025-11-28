@@ -532,14 +532,14 @@ defmodule Portfolio.Photography do
   ## Exemples
 
       iex> reprocess_photo(photo)
-      {:ok, %Oban.Job{}}
+      {:ok, %Photo{}}
   """
-  @spec reprocess_photo(Photo.t()) :: {:ok, Oban.Job.t()} | {:error, term()}
+  @spec reprocess_photo(Photo.t()) :: {:ok, Photo.t()} | {:error, term()}
   def reprocess_photo(%Photo{id: photo_id} = photo) do
     alias Portfolio.Workers.ImageVariantWorker
 
-    with {:ok, updated_photo} <- update_photo(photo, %{processing_status: "pending"}) do
-      ImageVariantWorker.enqueue(photo_id)
+    with {:ok, updated_photo} <- update_photo(photo, %{processing_status: "pending"}),
+         {:ok, _job} <- ImageVariantWorker.enqueue(photo_id) do
       {:ok, updated_photo}
     end
   end
@@ -782,7 +782,6 @@ defmodule Portfolio.Photography do
   # Extrait les métadonnées du résultat pour telemetry
   defp result_metadata({:ok, _}), do: %{result: :ok}
   defp result_metadata({:error, _}), do: %{result: :error}
-  defp result_metadata(_), do: %{}
 
   # Invalide tous les caches liés aux albums publiés
   #
@@ -794,8 +793,8 @@ defmodule Portfolio.Photography do
   #
   # Note: La suppression d'album (delete_album/1) est gérée par AlbumDeletionService
   defp invalidate_albums_cache do
-    Cachex.del(:portfolio_cache, cache_key(:published_albums_by_year, []))
-    Cachex.del(:portfolio_cache, cache_key(:published_albums_by_year, [:photos]))
+    _ = Cachex.del(:portfolio_cache, cache_key(:published_albums_by_year, []))
+    _ = Cachex.del(:portfolio_cache, cache_key(:published_albums_by_year, [:photos]))
     :ok
   end
 
@@ -823,7 +822,21 @@ defmodule Portfolio.Photography do
       iex> list_album_types()
       [:couples, :wedding, :motherhood, :events, :landscape, :street, :music, :reenactment, :amvcc, :china, :japan, :taiwan]
   """
-  @spec list_album_types() :: [atom()]
+  @spec list_album_types() :: [
+          :couples
+          | :wedding
+          | :motherhood
+          | :events
+          | :landscape
+          | :street
+          | :music
+          | :reenactment
+          | :amvcc
+          | :china
+          | :japan
+          | :taiwan,
+          ...
+        ]
   def list_album_types do
     [
       :couples,

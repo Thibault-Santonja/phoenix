@@ -42,7 +42,7 @@ defmodule PortfolioWeb.ImageSitemapController do
     case Cachex.get(:app_cache, :image_sitemap) do
       {:ok, nil} ->
         sitemap = generate_image_sitemap()
-        Cachex.put(:app_cache, :image_sitemap, sitemap, ttl: :timer.seconds(@cache_ttl))
+        _ = Cachex.put(:app_cache, :image_sitemap, sitemap, ttl: :timer.seconds(@cache_ttl))
         sitemap
 
       {:ok, cached_sitemap} ->

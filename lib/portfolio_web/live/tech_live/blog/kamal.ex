@@ -8,7 +8,7 @@ defmodule PortfolioWeb.TechLive.Blog.Kamal do
   @impl true
   def mount(_, session, socket) do
     locale = session["locale"] || "fr"
-    Gettext.put_locale(PortfolioWeb.Gettext, locale)
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     # Generate article schema for SEO
     article_json = generate_kamal_article_schema()

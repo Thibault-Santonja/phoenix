@@ -97,10 +97,13 @@ defmodule Portfolio.Auth.AuditLogger do
       user_agent: Keyword.get(opts, :user_agent)
     }
 
-    %AuditLog{}
-    |> AuditLog.changeset(attrs)
-    |> Repo.insert()
-    |> tap(&log_result/1)
+    result =
+      %AuditLog{}
+      |> AuditLog.changeset(attrs)
+      |> Repo.insert()
+
+    log_result(result)
+    result
   end
 
   @doc """

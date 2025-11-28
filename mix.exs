@@ -112,14 +112,17 @@ defmodule Portfolio.MixProject do
       {:cachex, "~> 3.6"},
       {:exiftool, "~> 0.2"},
       {:vix, "~> 0.26"},
-      # For CI and Documentation
+      # For CI, Documentation and Code Quality
       {:ex_doc, "~> 0.34", only: [:dev, :test], runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
-      {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false},
+      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:doctor, "~> 0.22", only: [:dev, :test], runtime: false},
+      {:ex_check, "~> 0.16", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
+      {:stream_data, "~> 1.1", only: [:dev, :test]},
       {:benchee, "~> 1.3", only: :dev},
       {:benchee_html, "~> 1.0", only: :dev}
     ]
@@ -146,14 +149,6 @@ defmodule Portfolio.MixProject do
         "tailwind portfolio --minify",
         "esbuild portfolio --minify",
         "phx.digest"
-      ],
-      precommit: [
-        "format --check-formatted",
-        "credo --strict",
-        "test",
-        "deps.audit",
-        "sobelow --config",
-        "docs"
       ]
     ]
   end

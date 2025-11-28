@@ -44,7 +44,6 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
       iex> execute("invalid-album", [upload])
       {:error, :album_not_found}
   """
-  @spec execute(String.t(), [map()], keyword()) :: {:ok, [map()]} | {:error, term()}
   def execute(album_slug, uploads, opts \\ []) when is_list(uploads) do
     count = length(uploads)
 

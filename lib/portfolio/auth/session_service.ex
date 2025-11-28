@@ -69,9 +69,10 @@ defmodule Portfolio.Auth.SessionService do
     case result do
       {:ok, session} ->
         session_with_raw_token = %{session | token: raw_token}
-        handle_session_creation({:ok, session_with_raw_token}, user)
+        publish_session_created_event(session_with_raw_token, user)
+        {:ok, session_with_raw_token}
 
-      error ->
+      {:error, _changeset} = error ->
         error
     end
   end
@@ -337,25 +338,13 @@ defmodule Portfolio.Auth.SessionService do
       end
 
     cache_key = {:session, hashed_token}
-    Cachex.del(:portfolio_cache, cache_key)
+    _ = Cachex.del(:portfolio_cache, cache_key)
     :ok
   end
 
   # =============================================================================
   # Private Functions - Session Creation
   # =============================================================================
-
-  # Handles session creation result and emits the event
-  @spec handle_session_creation(
-          {:ok, UserSession.t()} | {:error, Ecto.Changeset.t()},
-          User.t()
-        ) :: {:ok, UserSession.t()} | {:error, Ecto.Changeset.t()}
-  defp handle_session_creation({:ok, session}, user) do
-    publish_session_created_event(session, user)
-    {:ok, session}
-  end
-
-  defp handle_session_creation(error, _user), do: error
 
   # Publishes the session creation event
   @spec publish_session_created_event(UserSession.t(), User.t()) :: :ok
@@ -384,12 +373,10 @@ defmodule Portfolio.Auth.SessionService do
   # =============================================================================
 
   # Validates that a session is not expired, otherwise deletes it
-  @spec validate_session_not_expired(UserSession.t() | nil) :: UserSession.t() | nil
-  defp validate_session_not_expired(nil), do: nil
-
+  @spec validate_session_not_expired(UserSession.t()) :: UserSession.t() | nil
   defp validate_session_not_expired(session) do
     if UserSession.expired?(session) do
-      delete_session(session)
+      _ = delete_session(session)
       nil
     else
       session

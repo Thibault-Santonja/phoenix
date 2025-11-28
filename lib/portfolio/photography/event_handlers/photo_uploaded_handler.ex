@@ -54,8 +54,14 @@ defmodule Portfolio.Photography.EventHandlers.PhotoUploadedHandler do
   @impl true
   def init(_opts) do
     # Subscribe to photo_uploaded events
-    DomainEvents.subscribe(:photo_uploaded)
-    Logger.info("PhotoUploadedHandler started and subscribed to :photo_uploaded events")
+    case DomainEvents.subscribe(:photo_uploaded) do
+      :ok ->
+        Logger.info("PhotoUploadedHandler started and subscribed to :photo_uploaded events")
+
+      {:error, {:already_registered, _pid}} ->
+        Logger.warning("PhotoUploadedHandler already subscribed to :photo_uploaded events")
+    end
+
     {:ok, %{}}
   end
 

@@ -11,7 +11,7 @@ defmodule PortfolioWeb.Live.Index do
   def mount(_, session, socket) do
     # Récupérer la locale de la session, avec fallback sur "fr" si nil
     locale = session["locale"] || "fr"
-    Gettext.put_locale(PortfolioWeb.Gettext, locale)
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     # Add Schema.org structured data for homepage
     schema_json = website_schema()

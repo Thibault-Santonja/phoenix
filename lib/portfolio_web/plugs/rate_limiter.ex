@@ -21,6 +21,8 @@ defmodule PortfolioWeb.Plugs.RateLimiter do
   import Plug.Conn
   import Phoenix.Controller
 
+  alias PortfolioWeb.Plugs.IPUtils
+
   @behaviour Plug
 
   @default_limit 100
@@ -41,7 +43,7 @@ defmodule PortfolioWeb.Plugs.RateLimiter do
          not Application.get_env(:portfolio, :enable_rate_limiting_in_tests, false) do
       conn
     else
-      ip = get_remote_ip(conn)
+      ip = IPUtils.get_ip_address(conn)
       limit = opts.limit
       window = opts.window
 
@@ -69,13 +71,13 @@ defmodule PortfolioWeb.Plugs.RateLimiter do
     case Cachex.get(:portfolio_cache, cache_key) do
       {:ok, nil} ->
         # Première requête de cette IP dans la fenêtre
-        Cachex.put(:portfolio_cache, cache_key, 1, ttl: window_ms)
+        _result = Cachex.put(:portfolio_cache, cache_key, 1, ttl: window_ms)
         :ok
 
       {:ok, count} ->
         if count < limit do
           # Incrémente le compteur (retourne la nouvelle valeur)
-          Cachex.incr(:portfolio_cache, cache_key)
+          _result = Cachex.incr(:portfolio_cache, cache_key)
           :ok
         else
           # Limite dépassée
@@ -85,27 +87,6 @@ defmodule PortfolioWeb.Plugs.RateLimiter do
       _error ->
         # En cas d'erreur cache, on laisse passer (fail open)
         :ok
-    end
-  end
-
-  # Extrait l'IP distante de la connexion
-  # Prend en compte les headers X-Forwarded-For pour les proxies
-  @spec get_remote_ip(Plug.Conn.t()) :: String.t()
-  defp get_remote_ip(conn) do
-    # En production, utiliser X-Forwarded-For si derrière un proxy
-    case get_req_header(conn, "x-forwarded-for") do
-      [ip | _] ->
-        # Prendre la première IP de la liste (client réel)
-        ip
-        |> String.split(",")
-        |> List.first()
-        |> String.trim()
-
-      [] ->
-        # Fallback sur l'IP de la connexion
-        conn.remote_ip
-        |> :inet.ntoa()
-        |> to_string()
     end
   end
 end

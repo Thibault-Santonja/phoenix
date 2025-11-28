@@ -1,4 +1,11 @@
 defmodule PortfolioWeb.Telemetry do
+  @moduledoc """
+  Telemetry supervisor for the Portfolio application.
+
+  Defines metrics for photography operations, authentication events,
+  rate limiting, Phoenix endpoints, and VM statistics.
+  """
+
   use Supervisor
   import Telemetry.Metrics
 
@@ -8,7 +15,7 @@ defmodule PortfolioWeb.Telemetry do
 
   @impl true
   def init(_arg) do
-    attach_handlers()
+    :ok = attach_handlers()
 
     children = [
       # Telemetry poller will execute the given period measurements
@@ -135,40 +142,47 @@ defmodule PortfolioWeb.Telemetry do
   end
 
   defp attach_handlers do
-    :telemetry.attach(
-      "portfolio-photography-album-created",
-      [:portfolio, :photography, :album, :created],
-      &__MODULE__.handle_album_created/4,
-      nil
-    )
+    :ok =
+      :telemetry.attach(
+        "portfolio-photography-album-created",
+        [:portfolio, :photography, :album, :created],
+        &__MODULE__.handle_album_created/4,
+        nil
+      )
 
-    :telemetry.attach(
-      "portfolio-photography-photos-uploaded",
-      [:portfolio, :photography, :photos, :uploaded],
-      &__MODULE__.handle_photos_uploaded/4,
-      nil
-    )
+    :ok =
+      :telemetry.attach(
+        "portfolio-photography-photos-uploaded",
+        [:portfolio, :photography, :photos, :uploaded],
+        &__MODULE__.handle_photos_uploaded/4,
+        nil
+      )
 
-    :telemetry.attach(
-      "portfolio-auth-magic-link-requested",
-      [:portfolio, :auth, :magic_link, :requested],
-      &__MODULE__.handle_magic_link_requested/4,
-      nil
-    )
+    :ok =
+      :telemetry.attach(
+        "portfolio-auth-magic-link-requested",
+        [:portfolio, :auth, :magic_link, :requested],
+        &__MODULE__.handle_magic_link_requested/4,
+        nil
+      )
 
-    :telemetry.attach(
-      "portfolio-auth-magic-link-verified",
-      [:portfolio, :auth, :magic_link, :verified],
-      &__MODULE__.handle_magic_link_verified/4,
-      nil
-    )
+    :ok =
+      :telemetry.attach(
+        "portfolio-auth-magic-link-verified",
+        [:portfolio, :auth, :magic_link, :verified],
+        &__MODULE__.handle_magic_link_verified/4,
+        nil
+      )
 
-    :telemetry.attach(
-      "portfolio-rate-limiter-check",
-      [:portfolio, :rate_limiter, :check],
-      &__MODULE__.handle_rate_limiter_check/4,
-      nil
-    )
+    :ok =
+      :telemetry.attach(
+        "portfolio-rate-limiter-check",
+        [:portfolio, :rate_limiter, :check],
+        &__MODULE__.handle_rate_limiter_check/4,
+        nil
+      )
+
+    :ok
   end
 
   def handle_album_created(_event, %{duration: duration}, %{result: result}, _config) do

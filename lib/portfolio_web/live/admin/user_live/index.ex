@@ -15,6 +15,9 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
 
   on_mount PortfolioWeb.LiveAuth
 
+  # Valid roles for user role changes (must match User schema)
+  @valid_roles ~w(admin user)
+
   @impl true
   def mount(_params, _session, socket) do
     # Stocker l'IP address dans les assigns pour l'audit logging
@@ -71,16 +74,19 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
     case Auth.update_user_as_admin(edit_user, user_params, current_user_id: current_user_id) do
       {:ok, updated_user} ->
         # Log audit si le rôle a changé
-        if user_params["role"] && to_string(edit_user.role) != user_params["role"] do
-          AuditLogger.log_user_role_changed(
-            updated_user,
-            old_role: edit_user.role,
-            new_role: String.to_existing_atom(user_params["role"]),
-            performed_by_id: current_user_id,
-            ip_address: socket.assigns.ip_address,
-            metadata: %{"via" => "admin_interface"}
-          )
-        end
+        new_role = user_params["role"]
+
+        _audit_result =
+          if new_role && to_string(edit_user.role) != new_role && new_role in @valid_roles do
+            AuditLogger.log_user_role_changed(
+              updated_user,
+              old_role: edit_user.role,
+              new_role: String.to_existing_atom(new_role),
+              performed_by_id: current_user_id,
+              ip_address: socket.assigns.ip_address,
+              metadata: %{"via" => "admin_interface"}
+            )
+          end
 
         users = load_users(socket.assigns.filter)
 
@@ -123,12 +129,13 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
     case Auth.delete_user(user) do
       {:ok, deleted_user} ->
         # Log audit de la suppression
-        AuditLogger.log_user_deleted(
-          deleted_user,
-          performed_by_id: current_user_id,
-          ip_address: socket.assigns.ip_address,
-          metadata: %{"via" => "admin_interface"}
-        )
+        _audit_result =
+          AuditLogger.log_user_deleted(
+            deleted_user,
+            performed_by_id: current_user_id,
+            ip_address: socket.assigns.ip_address,
+            metadata: %{"via" => "admin_interface"}
+          )
 
         users = load_users(socket.assigns.filter)
 
@@ -160,13 +167,14 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
     {count, _} = Auth.delete_all_user_sessions(user)
 
     # Log audit de la révocation
-    AuditLogger.log_sessions_revoked(
-      user,
-      session_count: count,
-      performed_by_id: current_user_id,
-      ip_address: socket.assigns.ip_address,
-      metadata: %{"via" => "admin_interface"}
-    )
+    _audit_result =
+      AuditLogger.log_sessions_revoked(
+        user,
+        session_count: count,
+        performed_by_id: current_user_id,
+        ip_address: socket.assigns.ip_address,
+        metadata: %{"via" => "admin_interface"}
+      )
 
     {:noreply,
      socket
@@ -182,12 +190,13 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
     case Auth.request_magic_link_as_admin(user.email) do
       {:ok, _magic_link} ->
         # Log audit de l'envoi
-        AuditLogger.log_magic_link_sent(
-          user,
-          performed_by_id: current_user_id,
-          ip_address: socket.assigns.ip_address,
-          metadata: %{"via" => "admin_interface", "bypass_rate_limit" => true}
-        )
+        _audit_result =
+          AuditLogger.log_magic_link_sent(
+            user,
+            performed_by_id: current_user_id,
+            ip_address: socket.assigns.ip_address,
+            metadata: %{"via" => "admin_interface", "bypass_rate_limit" => true}
+          )
 
         {:noreply,
          socket
