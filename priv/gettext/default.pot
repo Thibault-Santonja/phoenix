@@ -3632,7 +3632,7 @@ msgstr ""
 msgid "mishka.gallery.filter_options"
 msgstr ""
 
-#: lib/portfolio_web/components/mishka_chelekom_components/navbar.ex:186
+#: lib/portfolio_web/components/mishka_chelekom_components/navbar.ex:190
 #, elixir-autogen, elixir-format
 msgid "mishka.navbar.logo"
 msgstr ""
@@ -3673,12 +3673,12 @@ msgstr ""
 msgid "mishka.video.not_supported"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:90
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:92
 #, elixir-autogen, elixir-format
 msgid "navigation.back"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:25
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:26
 #, elixir-autogen, elixir-format
 msgid "navigation.home"
 msgstr ""
@@ -3688,7 +3688,7 @@ msgstr ""
 msgid "photography.author_name"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:129
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "photography.go_to_album"
 msgstr ""
