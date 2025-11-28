@@ -151,9 +151,9 @@ jobs:
       - run: mix ecto.create
       - run: mix ecto.migrate
 
-      # Run tests with coverage
+      # Run tests with coverage (minimum_coverage in coveralls.json enforces threshold)
       - name: Run tests with coverage
-        run: mix coveralls.json --max-failures=1
+        run: mix coveralls.json
 
       # Upload coverage to Codecov (optional but recommended)
       - name: Upload coverage to Codecov
@@ -162,16 +162,6 @@ jobs:
           files: cover/excoveralls.json
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      # Check minimum coverage threshold
-      - name: Check coverage threshold
-        run: |
-          COVERAGE=$(cat cover/excoveralls.json | jq '.coverage_percentage')
-          echo "Coverage: $COVERAGE%"
-          if (( $(echo "$COVERAGE < 85" | bc -l) )); then
-            echo "::error::Coverage $COVERAGE% is below 85% threshold"
-            exit 1
-          fi
 
   build:
     name: BUILD
