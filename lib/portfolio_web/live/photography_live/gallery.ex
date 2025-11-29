@@ -1,4 +1,10 @@
 defmodule PortfolioWeb.PhotographyLive.Gallery do
+  @moduledoc """
+  LiveView for displaying photo galleries and albums.
+
+  Handles navigation through photo collections, supporting album-based organization
+  with SEO-optimized Schema.org structured data and breadcrumb navigation.
+  """
   use PortfolioWeb, :live_view
   import PortfolioWeb.Components.ThemeButton
   import PortfolioWeb.SEO.ImageHelpers
@@ -132,7 +138,14 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
     |> assign(project_id: id)
   end
 
-  defp get_data(data, id), do: Enum.at(data, String.to_integer(id))
+  defp get_data(data, id) when is_binary(id) do
+    case Integer.parse(id) do
+      {idx, ""} when idx >= 0 -> Enum.at(data, idx) || List.first(data)
+      _ -> List.first(data)
+    end
+  end
+
+  defp get_data(data, _id), do: List.first(data)
 
   defp generate_gallery_schema(nil, _data), do: nil
 
