@@ -47,7 +47,13 @@
     <link rel="icon" type="image/x-icon" href="/images/photography/logo.webp" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
 
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    <script
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={~p"/assets/app.js"}
+      nonce={assigns[:csp_nonce]}
+    >
     </script>
   </head>
   <body id="tech" class="bg-tech-base-200 w-screen font-light">

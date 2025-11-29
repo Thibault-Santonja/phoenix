@@ -11,6 +11,7 @@ defmodule PortfolioWeb.Router do
   pipeline :amvcc do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug PortfolioWeb.Plugs.CSPNonce
     plug :fetch_live_flash
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :amvcc}
     plug :protect_from_forgery
@@ -21,6 +22,7 @@ defmodule PortfolioWeb.Router do
   pipeline :photography do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug PortfolioWeb.Plugs.CSPNonce
     plug :fetch_live_flash
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :photography}
     plug :protect_from_forgery
@@ -31,6 +33,7 @@ defmodule PortfolioWeb.Router do
   pipeline :tech do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug PortfolioWeb.Plugs.CSPNonce
     plug :fetch_live_flash
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :tech}
     plug :protect_from_forgery
@@ -41,6 +44,7 @@ defmodule PortfolioWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug PortfolioWeb.Plugs.CSPNonce
     plug :fetch_live_flash
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
     plug :protect_from_forgery
@@ -54,6 +58,7 @@ defmodule PortfolioWeb.Router do
   pipeline :auth_pages do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug PortfolioWeb.Plugs.CSPNonce
     plug :fetch_live_flash
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
     plug :protect_from_forgery
@@ -75,6 +80,7 @@ defmodule PortfolioWeb.Router do
   pipeline :require_authenticated_admin do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug PortfolioWeb.Plugs.CSPNonce
     plug :fetch_live_flash
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
     plug :protect_from_forgery
@@ -88,6 +94,7 @@ defmodule PortfolioWeb.Router do
   pipeline :admin_live do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug PortfolioWeb.Plugs.CSPNonce
     plug :fetch_live_flash
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :root}
     plug :protect_from_forgery
@@ -100,6 +107,13 @@ defmodule PortfolioWeb.Router do
 
     get "/health", HealthController, :index
     get "/health/ready", HealthController, :ready
+  end
+
+  # CSP violation report endpoint
+  scope "/api", PortfolioWeb do
+    pipe_through :api
+
+    post "/csp-report", CSPReportController, :report
   end
 
   scope "/", PortfolioWeb, host: "amvcc." do

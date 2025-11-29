@@ -1,4 +1,10 @@
 defmodule PortfolioWeb.TechLive.Index do
+  @moduledoc """
+  LiveView for the tech blog landing page.
+
+  Displays a list of technical articles and blog posts about software development,
+  DevOps, and other engineering topics.
+  """
   use PortfolioWeb, :live_view
   import PortfolioWeb.Components.ArticleCard
 
