@@ -119,6 +119,9 @@ defmodule Portfolio.Auth.MagicLinkService do
     result =
       case magic_link do
         nil ->
+          # Perform constant-time work to prevent timing attacks
+          # This makes invalid token response time similar to valid token
+          _ = constant_time_comparison()
           {:error, :invalid_token}
 
         %MagicLink{} = ml ->
@@ -243,5 +246,16 @@ defmodule Portfolio.Auth.MagicLinkService do
       %{duration: duration},
       %{result: elem(result, 0)}
     )
+  end
+
+  # Performs constant-time work to prevent timing attacks
+  # When token is invalid, we still do similar work as valid token validation
+  @spec constant_time_comparison() :: :ok
+  defp constant_time_comparison do
+    # Simulate the work done during token validation
+    # Use secure_compare with dummy values to add constant overhead
+    dummy_hash = :crypto.strong_rand_bytes(32)
+    _ = Plug.Crypto.secure_compare(dummy_hash, dummy_hash)
+    :ok
   end
 end

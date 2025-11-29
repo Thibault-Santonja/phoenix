@@ -29,6 +29,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   """
 
+  # warn: false suppresses unused import warnings - query macros are used dynamically
   import Ecto.Query, warn: false
 
   alias Ecto.Multi
@@ -356,13 +357,18 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   end
 
   # Valide que toutes les photos de la liste appartiennent à l'album spécifié
-  defp validate_photos_belong_to_album(album_id, photo_ids) do
-    photos = list_by_album(album_id)
-    photo_ids_set = MapSet.new(photo_ids)
-    existing_ids_set = MapSet.new(Enum.map(photos, & &1.id))
+  # Utilise une requête SQL optimisée au lieu de charger toutes les photos
+  defp validate_photos_belong_to_album(_album_id, []), do: {:ok, []}
 
-    if MapSet.subset?(photo_ids_set, existing_ids_set) do
-      {:ok, photos}
+  defp validate_photos_belong_to_album(album_id, photo_ids) do
+    existing_count =
+      from(p in Photo,
+        where: p.album_id == ^album_id and p.id in ^photo_ids
+      )
+      |> Repo.aggregate(:count)
+
+    if existing_count == length(photo_ids) do
+      {:ok, photo_ids}
     else
       {:error, :invalid_photos}
     end

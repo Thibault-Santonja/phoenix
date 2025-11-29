@@ -251,14 +251,18 @@ defmodule Portfolio.Auth.EmailTypeTest do
 
   describe "integration with Ecto" do
     test "can be used as Ecto.Type" do
-      assert function_exported?(EmailType, :type, 0)
-      assert function_exported?(EmailType, :cast, 1)
-      assert function_exported?(EmailType, :load, 1)
-      assert function_exported?(EmailType, :dump, 1)
+      # Verify Ecto.Type callbacks are implemented by calling them directly
+      # rather than using function_exported? which may not work with @impl callbacks
+      assert EmailType.type() == :string
+      assert {:ok, _} = EmailType.cast("test@example.com")
+      assert {:ok, _} = EmailType.load("test@example.com")
+      assert {:ok, _} = EmailType.dump("test@example.com")
     end
 
     test "implements optional equal?/2 callback" do
-      assert function_exported?(EmailType, :equal?, 2)
+      # Verify equal?/2 works correctly
+      assert EmailType.equal?("test@example.com", "test@example.com")
+      refute EmailType.equal?("a@example.com", "b@example.com")
     end
   end
 end

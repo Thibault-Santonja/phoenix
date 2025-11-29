@@ -54,7 +54,7 @@ defmodule Portfolio.Photography.Queries.AlbumQuery do
 
   """
   @spec by_type(Ecto.Query.t(), String.t() | atom()) :: Ecto.Query.t()
-  def by_type(query, type) do
+  def by_type(query, type) when is_binary(type) or is_atom(type) do
     where(query, [album: a], a.type == ^type)
   end
 
@@ -252,7 +252,7 @@ defmodule Portfolio.Photography.Queries.AlbumQuery do
 
   """
   @spec where_date_between(Ecto.Query.t(), Date.t(), Date.t()) :: Ecto.Query.t()
-  def where_date_between(query, start_date, end_date) do
+  def where_date_between(query, %Date{} = start_date, %Date{} = end_date) do
     where(query, [album: a], a.date_prise_vue >= ^start_date and a.date_prise_vue <= ^end_date)
   end
 end

@@ -27,6 +27,7 @@ defmodule Portfolio.Auth.SessionService do
   alias Portfolio.Auth.Repositories.SessionRepository
   alias Portfolio.Auth.{User, UserSession}
   alias Portfolio.DomainEvents
+  alias Portfolio.RateLimiter
 
   # =============================================================================
   # Creation Functions
@@ -53,8 +54,21 @@ defmodule Portfolio.Auth.SessionService do
       iex> create_session(nil)
       ** (FunctionClauseError) no function clause matching
   """
-  @spec create_session(User.t()) :: {:ok, UserSession.t()} | {:error, Ecto.Changeset.t()}
+  @spec create_session(User.t()) ::
+          {:ok, UserSession.t()} | {:error, Ecto.Changeset.t()} | {:error, :rate_limit_exceeded}
   def create_session(%User{} = user) do
+    # Rate limit session creation to prevent DoS via unlimited sessions
+    case RateLimiter.check_rate(:session_creation, user.id) do
+      {:deny, _retry_after} ->
+        {:error, :rate_limit_exceeded}
+
+      {:allow, _remaining} ->
+        do_create_session(user)
+    end
+  end
+
+  @spec do_create_session(User.t()) :: {:ok, UserSession.t()} | {:error, Ecto.Changeset.t()}
+  defp do_create_session(%User{} = user) do
     raw_token = generate_token()
 
     result =
@@ -324,21 +338,20 @@ defmodule Portfolio.Auth.SessionService do
   # Private Functions - Cache Invalidation
   # =============================================================================
 
-  # Invalidates session cache by its token
-  # The token can be plaintext or hashed (we hash it systematically since
-  # the cache key always uses the token hash)
+  # Invalidates session cache by token (raw or hashed)
+  # The cache key always uses the hashed token
+  # We hash the token to ensure consistency regardless of input format
   @spec invalidate_session_cache(String.t()) :: :ok
-  defp invalidate_session_cache(token) do
-    # If the token is 64 hex characters, it's already a hash, otherwise hash it
-    hashed_token =
-      if String.length(token) == 64 and String.match?(token, ~r/^[0-9a-f]+$/) do
-        token
-      else
-        UserSession.hash_token_value(token)
-      end
-
+  defp invalidate_session_cache(token) when is_binary(token) do
+    # Hash the token - if it's already hashed, we get a different hash
+    # but that's OK because we also try the original as a hash
+    hashed_token = UserSession.hash_token_value(token)
     cache_key = {:session, hashed_token}
     _ = Cachex.del(:portfolio_cache, cache_key)
+
+    # Also try with the token directly as hash (for sessions from DB)
+    cache_key_direct = {:session, token}
+    _ = Cachex.del(:portfolio_cache, cache_key_direct)
     :ok
   end
 

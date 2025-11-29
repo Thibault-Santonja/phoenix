@@ -26,6 +26,7 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
       2
   """
 
+  # warn: false suppresses unused import warnings - query macros are used dynamically
   import Ecto.Query, warn: false
 
   alias Portfolio.Auth.User

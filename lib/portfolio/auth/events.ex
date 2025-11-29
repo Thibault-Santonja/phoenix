@@ -93,26 +93,29 @@ defmodule Portfolio.Auth.Events do
 
     - `magic_link_id` - Unique identifier of the magic link
     - `email` - Email address of the user requesting authentication
-    - `token` - The magic link token (hashed in database)
     - `short_code` - Short code (6 characters) visible in URL
     - `requested_at` - Timestamp when the magic link was requested
     - `expires_at` - Timestamp when the magic link will expire
 
+    ## Security Note
+
+    The plaintext token is intentionally NOT included in this event
+    to prevent accidental logging or exposure of sensitive authentication data.
+    Event consumers should not need the raw token.
+
     ## Use Cases
 
-    - Send authentication email to user
-    - Log authentication attempts
+    - Log authentication attempts (without token)
     - Track login request metrics
     - Implement rate limiting
     """
 
-    @enforce_keys [:magic_link_id, :email, :token, :short_code, :requested_at, :expires_at]
-    defstruct [:magic_link_id, :email, :token, :short_code, :requested_at, :expires_at]
+    @enforce_keys [:magic_link_id, :email, :short_code, :requested_at, :expires_at]
+    defstruct [:magic_link_id, :email, :short_code, :requested_at, :expires_at]
 
     @type t :: %__MODULE__{
             magic_link_id: Ecto.UUID.t(),
             email: String.t(),
-            token: String.t(),
             short_code: String.t(),
             requested_at: DateTime.t(),
             expires_at: DateTime.t()

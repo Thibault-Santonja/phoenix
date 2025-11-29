@@ -27,6 +27,7 @@ defmodule Portfolio.Auth.Repositories.SessionRepository do
       {10, nil}
   """
 
+  # warn: false suppresses unused import warnings - query macros are used dynamically
   import Ecto.Query, warn: false
 
   alias Portfolio.Auth.UserSession

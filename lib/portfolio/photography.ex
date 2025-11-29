@@ -23,7 +23,7 @@ defmodule Portfolio.Photography do
 
   - **Domain Layer** : Entités (Album, Photo), Services métier
   - **Application Layer** : Ce module (API publique, orchestration)
-  - **Infrastructure Layer** : Repositories, FileStorage
+  - **Infrastructure Layer** : Repositories, Storage (LocalStorage)
 
   ## Stratégie de Cache
 
@@ -464,7 +464,7 @@ defmodule Portfolio.Photography do
   Upload des photos dans un album en parallèle.
 
   Utilise Task.async_stream pour paralléliser les uploads et optimiser les performances.
-  Stocke les fichiers via FileStorage et crée les enregistrements en base.
+  Stocke les fichiers via LocalStorage et crée les enregistrements en base.
 
   Émet un événement telemetry `[:portfolio, :photography, :photos, :uploaded]` avec
   la durée, le nombre de photos, et le résultat de l'opération.

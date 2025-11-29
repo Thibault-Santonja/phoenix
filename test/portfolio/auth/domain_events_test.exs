@@ -22,9 +22,11 @@ defmodule Portfolio.Auth.DomainEventsTest do
       assert_receive {:magic_link_requested, %MagicLinkRequested{} = event}, 100
 
       # Verify event data
+      # Note: token is intentionally NOT included in the event for security reasons
+      # (prevents accidental logging of sensitive authentication tokens)
       assert event.magic_link_id == magic_link.id
       assert event.email == email
-      assert event.token == magic_link.token
+      assert event.short_code == magic_link.short_code
       assert %DateTime{} = event.requested_at
       assert %DateTime{} = event.expires_at
     end

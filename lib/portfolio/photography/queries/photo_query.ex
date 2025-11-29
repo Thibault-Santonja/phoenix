@@ -52,7 +52,7 @@ defmodule Portfolio.Photography.Queries.PhotoQuery do
 
   """
   @spec by_album(Ecto.Query.t(), Ecto.UUID.t()) :: Ecto.Query.t()
-  def by_album(query, album_id) do
+  def by_album(query, album_id) when is_binary(album_id) do
     where(query, [photo: p], p.album_id == ^album_id)
   end
 

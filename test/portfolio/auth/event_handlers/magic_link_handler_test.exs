@@ -28,10 +28,11 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
 
   describe "handle_info/2 - magic_link_requested" do
     test "handles MagicLinkRequested event" do
+      # Note: token is intentionally NOT included in the event for security reasons
+      # (prevents accidental logging of sensitive authentication tokens)
       event = %MagicLinkRequested{
         magic_link_id: Ecto.UUID.generate(),
         email: "test@example.com",
-        token: "test_token_abc123",
         short_code: "ABC123",
         requested_at: DateTime.utc_now(),
         expires_at: DateTime.utc_now() |> DateTime.add(900)
@@ -47,7 +48,6 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
       event = %MagicLinkRequested{
         magic_link_id: Ecto.UUID.generate(),
         email: "user@example.com",
-        token: "another_token_xyz",
         short_code: "XYZ789",
         requested_at: DateTime.utc_now(),
         expires_at: DateTime.utc_now() |> DateTime.add(900)

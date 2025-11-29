@@ -52,8 +52,14 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat do
   @spec all() :: [:webp | :avif | :jpeg, ...]
   def all, do: @valid_formats
 
+  # String representations of valid formats for pre-validation
+  @valid_format_strings Enum.map(@valid_formats, &Atom.to_string/1)
+
   @doc """
   Parse un format depuis une chaîne.
+
+  Validates the string against known formats BEFORE converting to atom,
+  avoiding potential atom table exhaustion from arbitrary user input.
 
   ## Exemples
 
@@ -65,14 +71,12 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat do
   """
   @spec from_string(String.t()) :: {:ok, t()} | {:error, :invalid_format}
   def from_string(str) when is_binary(str) do
-    format = String.to_existing_atom(str)
-
-    if valid?(format) do
-      {:ok, format}
+    # Validate string is a known format BEFORE converting to atom
+    # This prevents atom table exhaustion from arbitrary user input
+    if str in @valid_format_strings do
+      {:ok, String.to_existing_atom(str)}
     else
       {:error, :invalid_format}
     end
-  rescue
-    ArgumentError -> {:error, :invalid_format}
   end
 end

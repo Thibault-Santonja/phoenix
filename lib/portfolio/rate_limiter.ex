@@ -25,7 +25,7 @@ defmodule Portfolio.RateLimiter do
 
   require Logger
 
-  @type action :: :magic_link_request | :magic_link_verify | :login_attempt
+  @type action :: :magic_link_request | :magic_link_verify | :login_attempt | :session_creation
   @type rate_identifier :: String.t()
   @type result :: {:allow, remaining :: integer()} | {:deny, retry_after :: integer()}
 
@@ -36,7 +36,9 @@ defmodule Portfolio.RateLimiter do
     # 10 magic link verification attempts per 5 minutes per IP (prevents brute force)
     magic_link_verify: {10, :timer.minutes(5)},
     # 10 login attempts per hour per IP
-    login_attempt: {10, :timer.hours(1)}
+    login_attempt: {10, :timer.hours(1)},
+    # 20 session creations per hour per user (prevents DoS via unlimited sessions)
+    session_creation: {20, :timer.hours(1)}
   }
 
   @doc """

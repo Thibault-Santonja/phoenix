@@ -134,10 +134,10 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
     |> case do
       {:ok, %{magic_link: magic_link}} ->
         # Emit domain event
+        # Security: token intentionally omitted from event to prevent logging exposure
         DomainEvents.publish(:magic_link_requested, %MagicLinkRequested{
           magic_link_id: magic_link.id,
           email: user.email,
-          token: magic_link.token,
           short_code: magic_link.short_code,
           requested_at: magic_link.inserted_at,
           expires_at: magic_link.expires_at

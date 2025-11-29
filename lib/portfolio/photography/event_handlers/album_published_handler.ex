@@ -122,13 +122,27 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
   defp clear_albums_cache do
     # Clear specific Cachex keys for albums
     # Use targeted deletion instead of clear to preserve other cache entries
-    cache_key_without_photos = {:published_albums_by_year, []}
-    cache_key_with_photos = {:published_albums_by_year, [:photos]}
+    cache_keys = [
+      {:published_albums_by_year, []},
+      {:published_albums_by_year, [:photos]}
+    ]
 
-    _ = Cachex.del(:portfolio_cache, cache_key_without_photos)
-    _ = Cachex.del(:portfolio_cache, cache_key_with_photos)
+    results =
+      Enum.map(cache_keys, fn key ->
+        case Cachex.del(:portfolio_cache, key) do
+          {:ok, _} -> :ok
+          {:error, reason} -> {:error, key, reason}
+        end
+      end)
 
-    Logger.debug("Albums cache invalidated (targeted keys)")
+    errors = Enum.filter(results, &match?({:error, _, _}, &1))
+
+    if errors == [] do
+      Logger.debug("Albums cache invalidated (targeted keys)")
+    else
+      Logger.warning("Partial cache invalidation failure", errors: inspect(errors))
+    end
+
     :ok
   end
 end

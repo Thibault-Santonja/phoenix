@@ -56,7 +56,8 @@ defmodule Portfolio.Auth.MagicLinkServiceAdminTest do
 
     test "creates user in dev environment" do
       # Vérifier que nous sommes en environnement dev/test
-      assert Application.get_env(:portfolio, :env) in [:dev, :test]
+      # Note: Mix.env() returns the current environment (:test when running tests)
+      assert Mix.env() in [:dev, :test]
 
       # Utilisateur n'existe pas encore
       assert {:error, :not_found} =
@@ -102,9 +103,9 @@ defmodule Portfolio.Auth.MagicLinkServiceAdminTest do
       # Vérifier que l'événement a été émis (format sans :domain_event tag)
       assert_receive {:magic_link_requested, event}, 1000
 
+      # Note: token is intentionally NOT included in the event for security reasons
       assert event.magic_link_id == magic_link.id
       assert event.email == user.email
-      assert event.token == magic_link.token
       assert event.short_code == magic_link.short_code
     end
 

@@ -1,5 +1,6 @@
 defmodule Portfolio.Auth.AuditLoggerTest do
-  use Portfolio.DataCase, async: true
+  # async: false to avoid deadlocks with concurrent user creation in other tests
+  use Portfolio.DataCase, async: false
 
   import PortfolioTest.Fixtures.AuthFixtures
 

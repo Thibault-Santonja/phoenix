@@ -228,10 +228,16 @@ defmodule Portfolio.Auth.IPWhitelistService do
   end
 
   # Cache miss - refresh if auto-refresh is enabled
+  # Returns result directly without recursion to avoid stack depth issues
   defp handle_cache_miss(ip_address) do
     if Application.get_env(:portfolio, :auto_refresh_ip_whitelist, true) do
       refresh_cache()
-      whitelisted?(ip_address)
+
+      # Check directly in cache after refresh (no recursion)
+      case :ets.lookup(@cache_table, :whitelist) do
+        [{:whitelist, ips, _expires_at}] -> MapSet.member?(ips, ip_address)
+        [] -> false
+      end
     else
       # In test environment, cache is not auto-refreshed
       false
