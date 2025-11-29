@@ -68,34 +68,15 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
     # Utiliser le Photography context pour stocker les fichiers
     case Photography.upload_photos(album.slug, uploads) do
       {:ok, photos_metadata} ->
-        # Créer les photos dans la DB avec les métadonnées retournées et enqueue variant generation
-        Enum.each(photos_metadata, fn metadata ->
-          {:ok, _photo} =
-            Photography.create_photo(%{
-              album_id: album.id,
-              file_path: metadata.file_path,
-              hash: metadata.hash,
-              original_filename: metadata.original_filename,
-              display_order: length(album.photos),
-              processing_status: "pending"
-            })
-
-          # Enqueue background job to generate variants
-          ImageVariantWorker.enqueue(metadata.photo_id)
-        end)
+        results = Enum.map(photos_metadata, &create_photo_from_metadata(&1, album))
+        {successes, failures} = Enum.split_with(results, &match?({:ok, _}, &1))
 
         # Recharger l'album avec les nouvelles photos
         updated_album = Photography.get_album!(album.id, preload: [:photos])
+        socket = assign(socket, :album, updated_album)
+        socket = flash_upload_result(socket, length(successes), length(failures))
 
-        {:noreply,
-         socket
-         |> assign(:album, updated_album)
-         |> put_flash(
-           :info,
-           gettext("admin.albums.photos_added",
-             count: length(photos_metadata)
-           )
-         )}
+        {:noreply, socket}
 
       {:error, reason} ->
         {:noreply,
@@ -238,5 +219,42 @@ defmodule PortfolioWeb.Admin.AlbumLive.Edit do
          socket
          |> put_flash(:error, gettext("admin.albums.reorder_error", reason: inspect(reason)))}
     end
+  end
+
+  # Private helpers
+
+  defp create_photo_from_metadata(metadata, album) do
+    attrs = %{
+      album_id: album.id,
+      file_path: metadata.file_path,
+      hash: metadata.hash,
+      original_filename: metadata.original_filename,
+      display_order: length(album.photos),
+      processing_status: "pending"
+    }
+
+    case Photography.create_photo(attrs) do
+      {:ok, photo} ->
+        _ = ImageVariantWorker.enqueue(photo.id)
+        {:ok, photo}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  defp flash_upload_result(socket, success_count, 0) do
+    put_flash(socket, :info, gettext("admin.albums.photos_added", count: success_count))
+  end
+
+  defp flash_upload_result(socket, success_count, failure_count) do
+    put_flash(
+      socket,
+      :warning,
+      gettext("admin.albums.photos_partial_success",
+        success: success_count,
+        failed: failure_count
+      )
+    )
   end
 end

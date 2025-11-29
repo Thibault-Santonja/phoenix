@@ -6,6 +6,8 @@ defmodule PortfolioWeb.Admin.PhotoLive.Index do
   - Visualiser toutes les photos
   - Filtrer par album
   - Paginer les résultats
+
+  Utilise LiveView streams pour une gestion mémoire optimisée (LV-006).
   """
 
   use PortfolioWeb, :live_view
@@ -23,7 +25,9 @@ defmodule PortfolioWeb.Admin.PhotoLive.Index do
      |> assign(:page_title, gettext("admin.photos.title"))
      |> assign(:page, 1)
      |> assign(:per_page, @photos_per_page)
-     |> assign(:album_filter, nil)}
+     |> assign(:album_filter, nil)
+     |> assign(:photos_empty?, true)
+     |> stream(:photos, [])}
   end
 
   @impl true
@@ -33,17 +37,18 @@ defmodule PortfolioWeb.Admin.PhotoLive.Index do
 
     photos = load_photos(page, socket.assigns.per_page, album_filter)
     total_photos = count_photos(album_filter)
-    total_pages = ceil(total_photos / socket.assigns.per_page)
+    total_pages = max(1, ceil(total_photos / socket.assigns.per_page))
     albums = Photography.list_albums()
 
     {:noreply,
      socket
      |> assign(:page, page)
      |> assign(:album_filter, album_filter)
-     |> assign(:photos, photos)
+     |> assign(:photos_empty?, Enum.empty?(photos))
      |> assign(:total_photos, total_photos)
      |> assign(:total_pages, total_pages)
-     |> assign(:albums, albums)}
+     |> assign(:albums, albums)
+     |> stream(:photos, photos, reset: true)}
   end
 
   defp load_photos(page, per_page, album_filter) do
