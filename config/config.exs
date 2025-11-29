@@ -229,7 +229,19 @@ config :logger, :console,
     # CDN metadata
     :message,
     # Session metadata
-    :token_prefix
+    :token_prefix,
+    # CSP report metadata
+    :document_uri,
+    :violated_directive,
+    :blocked_uri,
+    :source_file,
+    :line_number,
+    :column_number,
+    :original_policy,
+    :disposition,
+    :referrer,
+    :remote_ip,
+    :raw_params
   ]
 
 # Use Jason for JSON parsing in Phoenix

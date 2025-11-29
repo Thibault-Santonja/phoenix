@@ -9,7 +9,7 @@
 # ============================================================================
 # Stage 1: Builder
 # ============================================================================
-FROM hexpm/elixir:1.16.0-erlang-26.2.1-alpine-3.19.0 AS builder
+FROM hexpm/elixir:1.18.3-erlang-27.3-alpine-3.21.3 AS builder
 
 # Install build dependencies
 RUN apk add --no-cache \
@@ -20,7 +20,8 @@ RUN apk add --no-cache \
     python3 \
     postgresql-client \
     vips-dev \
-    vips-tools
+    vips-tools \
+    perl-image-exiftool
 
 # Set build ENV
 ENV MIX_ENV=prod
@@ -47,9 +48,8 @@ COPY lib lib
 COPY config config
 COPY assets assets
 
-# Compile assets
-RUN npm run --prefix assets deploy
-RUN mix phx.digest
+# Compile assets (aligned with production Dockerfile)
+RUN mix assets.deploy
 
 # Compile application
 RUN mix compile
@@ -60,7 +60,7 @@ RUN mix release
 # ============================================================================
 # Stage 2: Runtime
 # ============================================================================
-FROM alpine:3.19 AS runtime
+FROM alpine:3.21 AS runtime
 
 # Install runtime dependencies
 RUN apk add --no-cache \
@@ -68,9 +68,12 @@ RUN apk add --no-cache \
     ncurses-libs \
     libstdc++ \
     libgcc \
+    bash \
     postgresql-client \
     vips \
-    vips-tools
+    vips-tools \
+    perl-image-exiftool \
+    ca-certificates
 
 # Create non-root user
 RUN addgroup -g 1000 portfolio && \
@@ -94,16 +97,18 @@ USER portfolio
 # Expose port
 EXPOSE 4000
 
-# Health check
+# Health check (aligned with production - includes timeout)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider --timeout=2 http://localhost:4000/health || exit 1
 
-# Set environment
+# Set environment (aligned with production)
 ENV MIX_ENV=prod \
     PORT=4000 \
+    SHELL=/bin/bash \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8 \
+    PHX_SERVER=true
 
 # Start command
 CMD ["/app/bin/portfolio", "start"]

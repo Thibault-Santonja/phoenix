@@ -51,8 +51,39 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  database_url =
+    System.get_env("DATABASE_URL") ||
+      raise """
+      environment variable DATABASE_URL is missing.
+      For example: ecto://USER:PASS@HOST/DATABASE
+      """
+
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
+
+  # Database connection pool configuration
+  # POOL_SIZE: Number of connections in the pool (default: 10)
+  # QUEUE_TARGET: Target time for a connection to be checked out (ms, default: 50)
+  # QUEUE_INTERVAL: Interval for pool health checks (ms, default: 1000)
+  pool_size = String.to_integer(System.get_env("POOL_SIZE") || "10")
+
+  # IPv6 socket options if ECTO_IPV6 is set
+  socket_options = if System.get_env("ECTO_IPV6") == "true", do: [:inet6], else: []
+
+  # SSL configuration
+  ssl_enabled = System.get_env("DATABASE_SSL") == "true"
+
+  config :portfolio, Portfolio.Repo,
+    url: database_url,
+    pool_size: pool_size,
+    # Connection checkout queue settings for handling traffic spikes
+    queue_target: 50,
+    queue_interval: 1000,
+    # Socket options for connection reliability
+    socket_options: socket_options,
+    # SSL configuration (if DATABASE_SSL is set)
+    ssl: ssl_enabled,
+    ssl_opts: if(ssl_enabled, do: [verify: :verify_none], else: [])
 
   config :portfolio, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
