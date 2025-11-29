@@ -16,22 +16,29 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
     # Reset all rate limiters to ensure clean state
     RateLimiter.reset_all()
 
+    # Generate unique IP for this test to avoid conflicts
+    unique_octet = rem(:erlang.unique_integer([:positive]), 250) + 1
+    unique_ip = {10, 2, 0, unique_octet}
+
     on_exit(fn ->
       # Clean up after test
       RateLimiter.reset_all()
     end)
 
-    :ok
+    {:ok, unique_ip: unique_ip, unique_octet: unique_octet}
   end
 
   describe "fail2ban log format compatibility" do
-    test "rate limit logs match fail2ban filter pattern for IP identifier", %{conn: conn} do
+    test "rate limit logs match fail2ban filter pattern for IP identifier", %{
+      conn: conn,
+      unique_ip: unique_ip
+    } do
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
         |> put_req_header("user-agent", "Mozilla/5.0")
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
@@ -85,12 +92,17 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       assert log =~ ~r/ip=\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
     end
 
-    test "logs include action name for fail2ban action-specific filtering", %{conn: conn} do
+    test "logs include action name for fail2ban action-specific filtering", %{
+      conn: conn,
+      unique_ip: unique_ip
+    } do
+      ip_string = :inet.ntoa(unique_ip) |> to_string()
+
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
 
       opts = RateLimiterPlug.init(action: :magic_link_request, identifier: :ip)
 
@@ -104,10 +116,13 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
 
       # Should contain action name
       assert log =~ "Rate limit exceeded for magic_link_request"
-      assert log =~ "ip=192.168.1.1"
+      assert log =~ "ip=#{ip_string}"
     end
 
-    test "logs escape special characters in user-agent to prevent log injection", %{conn: conn} do
+    test "logs escape special characters in user-agent to prevent log injection", %{
+      conn: conn,
+      unique_ip: unique_ip
+    } do
       # Attempt log injection with newline and special characters
       malicious_agent = "Mozilla/5.0\nfake-log-entry: malicious"
 
@@ -116,7 +131,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
         |> put_req_header("user-agent", malicious_agent)
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
@@ -134,14 +149,20 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       refute log =~ "fake-log-entry: malicious\n"
     end
 
-    test "logs contain all required fields for fail2ban processing", %{conn: conn} do
+    test "logs contain all required fields for fail2ban processing", %{
+      conn: conn,
+      unique_octet: unique_octet
+    } do
+      test_ip = {203, 0, 113, unique_octet}
+      ip_string = :inet.ntoa(test_ip) |> to_string()
+
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
         |> put_req_header("user-agent", "curl/7.68.0")
         |> put_req_header("referer", "https://attacker.com")
-        |> Map.put(:remote_ip, {203, 0, 113, 42})
+        |> Map.put(:remote_ip, test_ip)
         |> Map.put(:request_path, "/auth/verify")
 
       opts = RateLimiterPlug.init(action: :magic_link_verify, identifier: :ip)
@@ -156,7 +177,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
 
       # Validate all required fields are present
       assert log =~ "Rate limit exceeded"
-      assert log =~ "ip=203.0.113.42"
+      assert log =~ "ip=#{ip_string}"
       assert log =~ ~s(user_agent="curl/7.68.0")
       assert log =~ ~s(referer="https://attacker.com")
       assert log =~ "path=/auth/verify"
@@ -204,17 +225,23 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       end
     end
 
-    test "logs from different actions can be distinguished", %{conn: conn} do
+    test "logs from different actions can be distinguished", %{
+      conn: conn,
+      unique_octet: unique_octet
+    } do
       actions = [:login_attempt, :magic_link_request, :magic_link_verify]
 
-      for action <- actions do
-        RateLimiter.reset(action, "192.168.1.1")
+      for {action, index} <- Enum.with_index(actions) do
+        # Use unique IP per action
+        test_ip = {10, 3, unique_octet, index}
+        ip_string = :inet.ntoa(test_ip) |> to_string()
+        RateLimiter.reset(action, ip_string)
 
         conn =
           conn
           |> Plug.Test.init_test_session(%{})
           |> fetch_flash()
-          |> Map.put(:remote_ip, {192, 168, 1, 1})
+          |> Map.put(:remote_ip, test_ip)
 
         opts = RateLimiterPlug.init(action: action, identifier: :ip)
 
@@ -230,19 +257,21 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
 
         # Each action should be identifiable in logs
         assert log =~ "Rate limit exceeded for #{action}"
-        assert log =~ "ip=192.168.1.1"
+        assert log =~ "ip=#{ip_string}"
       end
     end
   end
 
   describe "fail2ban log consistency" do
-    test "logs always include ip field even when empty", %{conn: conn} do
-      # Edge case: missing remote_ip
+    test "logs always include ip field even when empty", %{conn: conn, unique_octet: unique_octet} do
+      # Edge case: use unique IP
+      test_ip = {127, 0, 0, unique_octet}
+
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
-        |> Map.put(:remote_ip, {127, 0, 0, 1})
+        |> Map.put(:remote_ip, test_ip)
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
@@ -258,12 +287,15 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
       assert log =~ ~r/ip=\d+\.\d+\.\d+\.\d+/
     end
 
-    test "log format is consistent across multiple rate limit violations", %{conn: conn} do
+    test "log format is consistent across multiple rate limit violations", %{
+      conn: conn,
+      unique_ip: unique_ip
+    } do
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 

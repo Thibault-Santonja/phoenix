@@ -190,6 +190,66 @@ defmodule PortfolioWeb.EndpointConfigTest do
     end
   end
 
+  describe "CSP nonce configuration" do
+    test "endpoint generates CSP nonce" do
+      endpoint_source = File.read!("lib/portfolio_web/endpoint.ex")
+
+      assert endpoint_source =~ "generate_csp_nonce",
+             "Endpoint must generate CSP nonces"
+    end
+
+    test "CSP uses nonce-based script authorization" do
+      endpoint_source = File.read!("lib/portfolio_web/endpoint.ex")
+
+      assert endpoint_source =~ ~r/script-src 'self' 'nonce-/,
+             "CSP must use nonce-based script authorization"
+    end
+
+    test "CSP does not use unsafe-eval" do
+      endpoint_source = File.read!("lib/portfolio_web/endpoint.ex")
+
+      refute endpoint_source =~ "unsafe-eval",
+             "CSP must not use unsafe-eval for security"
+    end
+
+    test "CSP does not use unsafe-inline for scripts" do
+      endpoint_source = File.read!("lib/portfolio_web/endpoint.ex")
+
+      # Check that script-src doesn't contain unsafe-inline
+      # Note: style-src can still use unsafe-inline for Tailwind
+      refute endpoint_source =~ ~r/script-src[^;]*unsafe-inline/,
+             "CSP must not use unsafe-inline for scripts (nonce-based instead)"
+    end
+
+    test "CSP includes object-src none" do
+      endpoint_source = File.read!("lib/portfolio_web/endpoint.ex")
+
+      assert endpoint_source =~ "object-src 'none'",
+             "CSP must block object/embed/applet elements"
+    end
+
+    test "CSP includes upgrade-insecure-requests" do
+      endpoint_source = File.read!("lib/portfolio_web/endpoint.ex")
+
+      assert endpoint_source =~ "upgrade-insecure-requests",
+             "CSP must upgrade HTTP requests to HTTPS"
+    end
+
+    test "nonce is assigned to connection" do
+      endpoint_source = File.read!("lib/portfolio_web/endpoint.ex")
+
+      assert endpoint_source =~ "assign(:csp_nonce, nonce)",
+             "CSP nonce must be assigned to connection for templates"
+    end
+
+    test "nonce generation uses crypto strong random" do
+      endpoint_source = File.read!("lib/portfolio_web/endpoint.ex")
+
+      assert endpoint_source =~ ":crypto.strong_rand_bytes",
+             "CSP nonce must use cryptographically secure random generation"
+    end
+  end
+
   describe "configuration consistency" do
     test "all session configuration keys are present in config" do
       session_config = Application.get_env(:portfolio, :session)

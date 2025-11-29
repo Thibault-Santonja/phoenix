@@ -10,23 +10,29 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
     # Reset all rate limiters to ensure clean state
     RateLimiter.reset_all()
 
+    # Generate unique IP for this test to avoid conflicts
+    unique_ip = {10, 0, 0, :erlang.unique_integer([:positive]) |> rem(255)}
+
     on_exit(fn ->
       # Clean up after test
       RateLimiter.reset_all()
     end)
 
-    :ok
+    {:ok, unique_ip: unique_ip}
   end
 
   describe "enriched attack logs" do
     @tag skip_rate_limit_reset: [:login_attempt]
-    test "logs include user-agent when rate limit is exceeded", %{conn: conn} do
+    test "logs include user-agent when rate limit is exceeded", %{
+      conn: conn,
+      unique_ip: unique_ip
+    } do
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
         |> put_req_header("user-agent", "Mozilla/5.0 (suspicious bot)")
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
@@ -45,13 +51,13 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
     end
 
     @tag skip_rate_limit_reset: [:login_attempt]
-    test "logs include referer when rate limit is exceeded", %{conn: conn} do
+    test "logs include referer when rate limit is exceeded", %{conn: conn, unique_ip: unique_ip} do
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
         |> put_req_header("referer", "https://attacker.com/login")
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
@@ -69,12 +75,15 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
     end
 
     @tag skip_rate_limit_reset: [:login_attempt]
-    test "logs include IP address when rate limit is exceeded", %{conn: conn} do
+    test "logs include IP address when rate limit is exceeded", %{
+      conn: conn,
+      unique_ip: unique_ip
+    } do
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
@@ -88,16 +97,20 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
 
       assert log =~ "Rate limit exceeded"
       assert log =~ "ip"
-      assert log =~ "192.168.1.1"
+      # Check IP is logged (format: 10.0.0.X)
+      assert log =~ ~r/10\.0\.0\.\d+/
     end
 
     @tag skip_rate_limit_reset: [:login_attempt]
-    test "logs include request path when rate limit is exceeded", %{conn: conn} do
+    test "logs include request path when rate limit is exceeded", %{
+      conn: conn,
+      unique_ip: unique_ip
+    } do
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
         |> Map.put(:request_path, "/auth/login")
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
@@ -116,12 +129,12 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
     end
 
     @tag skip_rate_limit_reset: [:login_attempt]
-    test "logs missing user-agent as unknown", %{conn: conn} do
+    test "logs missing user-agent as unknown", %{conn: conn, unique_ip: unique_ip} do
       conn =
         conn
         |> Plug.Test.init_test_session(%{})
         |> fetch_flash()
-        |> Map.put(:remote_ip, {192, 168, 1, 1})
+        |> Map.put(:remote_ip, unique_ip)
 
       opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
@@ -147,15 +160,18 @@ defmodule PortfolioWeb.Plugs.RateLimiterEnrichedLogsTest do
         "bot"
       ]
 
-      for agent <- suspicious_agents do
-        RateLimiter.reset(:login_attempt, "192.168.1.1")
+      for {agent, index} <- Enum.with_index(suspicious_agents) do
+        # Use unique IP per agent to avoid rate limit conflicts
+        test_ip = {10, 1, 0, index}
+        ip_string = "10.1.0.#{index}"
+        RateLimiter.reset(:login_attempt, ip_string)
 
         conn =
           conn
           |> Plug.Test.init_test_session(%{})
           |> fetch_flash()
           |> put_req_header("user-agent", agent)
-          |> Map.put(:remote_ip, {192, 168, 1, 1})
+          |> Map.put(:remote_ip, test_ip)
 
         opts = RateLimiterPlug.init(action: :login_attempt, identifier: :ip)
 
