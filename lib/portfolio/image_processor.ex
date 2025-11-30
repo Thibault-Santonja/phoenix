@@ -5,6 +5,10 @@ defmodule Portfolio.ImageProcessor do
   This module provides functions to generate optimized WebP and AVIF variants from uploaded images,
   with configurable quality settings and smart resizing that preserves aspect ratios.
 
+  Note: This module provides a simple, direct API for image processing used by LocalStorage.
+  For DDD-style image processing with value objects and domain events, see the
+  `Portfolio.ImageProcessing` bounded context and its `VipsAdapter`.
+
   ## Features
 
   - WebP and AVIF format support with configurable quality and effort

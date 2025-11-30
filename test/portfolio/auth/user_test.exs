@@ -103,6 +103,35 @@ defmodule Portfolio.Auth.UserTest do
       assert "has already been taken" in errors_on(changeset).email
     end
 
+    test "checks email uniqueness with normalization (case insensitive)" do
+      _user = insert_user(email: "test@example.com")
+
+      # Uppercase version should be considered duplicate after normalization
+      changeset = User.changeset(%User{}, %{email: "TEST@EXAMPLE.COM", role: :admin})
+      assert {:error, changeset} = Repo.insert(changeset)
+      assert "has already been taken" in errors_on(changeset).email
+    end
+
+    test "checks email uniqueness with Gmail dot normalization" do
+      # Gmail ignores dots in the local part: john.doe@gmail.com == johndoe@gmail.com
+      _user = insert_user(email: "john.doe@gmail.com")
+
+      # Same email without dots should be considered duplicate
+      changeset = User.changeset(%User{}, %{email: "johndoe@gmail.com", role: :admin})
+      assert {:error, changeset} = Repo.insert(changeset)
+      assert "has already been taken" in errors_on(changeset).email
+    end
+
+    test "allows Gmail plus addressing as separate accounts" do
+      # Gmail + aliases are preserved for filtering purposes
+      # john@gmail.com and john+newsletter@gmail.com are treated as different addresses
+      _user = insert_user(email: "john@gmail.com")
+
+      # Email with +tag should be allowed as separate account
+      changeset = User.changeset(%User{}, %{email: "john+newsletter@gmail.com", role: :admin})
+      assert {:ok, _user} = Repo.insert(changeset)
+    end
+
     test "accepts optional name field" do
       changeset =
         User.changeset(%User{}, %{email: "test@example.com", role: :admin, name: "Test User"})
