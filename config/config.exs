@@ -90,9 +90,10 @@ config :portfolio, :file_storage, backend: Portfolio.Photography.Storage.LocalSt
 # - large: 1920px AVIF (Full HD, fullscreen display, superior quality)
 # Quality increases with size (75 -> 80 -> 85 -> 90) for professional portfolio
 # AVIF for large variant: 30-40% better compression + superior perceptual quality
+# Effort levels optimized for VPS (2 cores): lower effort on small variants for faster processing
 config :portfolio, :image_variants,
-  thumbnail: [width: 400, quality: 75, format: :webp, effort: 4],
-  small: [width: 768, quality: 80, format: :webp, effort: 4],
+  thumbnail: [width: 400, quality: 75, format: :webp, effort: 2],
+  small: [width: 768, quality: 80, format: :webp, effort: 2],
   medium: [width: 1280, quality: 85, format: :webp, effort: 4],
   large: [width: 1920, quality: 90, format: :avif, effort: 6]
 
