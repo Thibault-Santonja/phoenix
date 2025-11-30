@@ -38,6 +38,7 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
 
   alias Portfolio.ImageProcessor
   alias Portfolio.Photography.Storage.PhotoMetadata
+  alias Portfolio.Photography.Storage.StorageUtils
   alias Vix.Vips.Image
 
   require Logger
@@ -141,50 +142,13 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
     photos_dir = Path.join(base_path, "photos")
 
     if File.exists?(photos_dir) do
-      calculate_directory_size(photos_dir)
+      StorageUtils.calculate_directory_size(photos_dir)
     else
       0
     end
   end
 
   # Private functions
-
-  @spec calculate_directory_size(String.t()) :: non_neg_integer()
-  defp calculate_directory_size(dir_path) do
-    case File.ls(dir_path) do
-      {:ok, entries} ->
-        Enum.reduce(entries, 0, fn entry, acc ->
-          acc + calculate_entry_size(dir_path, entry)
-        end)
-
-      {:error, _reason} ->
-        0
-    end
-  end
-
-  # Calculate size of a single entry (file or directory)
-  defp calculate_entry_size(dir_path, entry) do
-    full_path = Path.join(dir_path, entry)
-
-    cond do
-      File.dir?(full_path) ->
-        calculate_directory_size(full_path)
-
-      File.regular?(full_path) ->
-        get_file_size(full_path)
-
-      true ->
-        0
-    end
-  end
-
-  # Get file size, returning 0 on error
-  defp get_file_size(file_path) do
-    case File.stat(file_path) do
-      {:ok, %{size: size}} -> size
-      {:error, _} -> 0
-    end
-  end
 
   @spec compute_hash(String.t()) :: {:ok, String.t()} | {:error, term()}
   defp compute_hash(file_path) do
@@ -262,12 +226,7 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
     end
   end
 
-  defp get_extension(mime_type) do
-    case MIME.extensions(mime_type) do
-      [ext | _] -> ext
-      [] -> "jpg"
-    end
-  end
+  defp get_extension(mime_type), do: StorageUtils.get_extension_for_mime(mime_type)
 
   defp get_image_dimensions(file_path) do
     case Image.new_from_file(file_path) do
