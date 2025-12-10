@@ -15,15 +15,10 @@ defmodule Portfolio.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: Mix.compilers(),
-      listeners: [Phoenix.CodeReloader],
+      listeners: if(Mix.env() == :dev, do: [Phoenix.CodeReloader], else: []),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test,
-        precommit: :test
-      ],
+      # Reduce parallel compilation to avoid ETS race conditions
+      elixirc_options: [warnings_as_errors: false],
       dialyzer: [
         plt_add_apps: [:ex_unit, :mix],
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
@@ -65,6 +60,19 @@ defmodule Portfolio.MixProject do
     ]
   end
 
+  # CLI configuration for preferred environments
+  def cli do
+    [
+      preferred_envs: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        precommit: :test
+      ]
+    ]
+  end
+
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
@@ -74,25 +82,26 @@ defmodule Portfolio.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:sourceror, "~> 1.8", only: [:dev, :test]},
-      {:tidewave, "~> 0.1", only: [:dev]},
+      {:sourceror, "~> 1.10", only: [:dev, :test]},
+      {:tidewave, "~> 0.5", only: [:dev]},
       {:mishka_chelekom, "~> 0.0", only: [:dev]},
-      {:live_debugger, "~> 0.2", only: [:dev]},
-      {:finch, "~> 0.13"},
-      {:oban, "~> 2.0"},
-      {:igniter, "~> 0.6", only: [:dev, :test]},
+      {:live_debugger, "~> 0.5", only: [:dev]},
+      {:finch, "~> 0.20"},
+      {:oban, "~> 2.20"},
+      {:igniter, "~> 0.7", only: [:dev, :test]},
       {:bcrypt_elixir, "~> 3.0"},
-      {:phoenix, "~> 1.8.0-rc.3", override: true},
-      {:phoenix_ecto, "~> 4.5"},
-      {:ecto_sql, "~> 3.10"},
+      {:phoenix, "~> 1.8.3", override: true},
+      {:phoenix_ecto, "~> 4.7"},
+      {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 4.1"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.0.9"},
+      {:phoenix_html, "~> 4.3"},
+      {:phoenix_live_reload, "~> 1.6", only: :dev},
+      {:phoenix_live_view, "~> 1.1"},
       {:floki, ">= 0.30.0", only: :test},
-      {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:esbuild, "~> 0.9", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
+      {:lazy_html, ">= 0.1.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.8.7"},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.4", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.1",
@@ -100,30 +109,31 @@ defmodule Portfolio.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:swoosh, "~> 1.16"},
+      {:swoosh, "~> 1.19"},
       {:req, "~> 0.5"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.26"},
-      {:jason, "~> 1.2"},
-      {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"},
-      {:hammer, "~> 6.2"},
-      {:cachex, "~> 3.6"},
+      {:gettext, "~> 1.0"},
+      {:jason, "~> 1.4"},
+      {:dns_cluster, "~> 0.2"},
+      {:bandit, "~> 1.8"},
+      {:hammer, "~> 7.1"},
+      {:fuse, "~> 2.5"},
+      {:cachex, "~> 4.1"},
       {:exiftool, "~> 0.2"},
-      {:vix, "~> 0.26"},
+      {:vix, "~> 0.35"},
       # For CI, Documentation and Code Quality
-      {:ex_doc, "~> 0.34", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.39", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
+      {:styler, "~> 1.10", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:doctor, "~> 0.22", only: [:dev, :test], runtime: false},
       {:ex_check, "~> 0.16", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
-      {:stream_data, "~> 1.1", only: [:dev, :test]},
-      {:benchee, "~> 1.3", only: :dev},
+      {:stream_data, "~> 1.2", only: [:dev, :test]},
+      {:benchee, "~> 1.5", only: :dev},
       {:benchee_html, "~> 1.0", only: :dev}
     ]
   end
