@@ -5,7 +5,10 @@ defmodule Portfolio.Application do
 
   use Application
 
+  import Cachex.Spec
+
   alias Portfolio.Auth.IPWhitelistService
+  alias Portfolio.ImageProcessing.CircuitBreaker
 
   @impl true
   def start(_type, _args) do
@@ -19,10 +22,17 @@ defmodule Portfolio.Application do
       {Finch, name: Portfolio.Finch},
       # Start Oban for background job processing
       {Oban, Application.fetch_env!(:portfolio, Oban)},
-      # Start Hammer for rate limiting
-      {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 2, cleanup_interval_ms: 60_000 * 10]},
-      # Start Cachex for caching
-      {Cachex, name: :portfolio_cache, limit: 1000},
+      # Start Hammer v7 for rate limiting
+      {Portfolio.RateLimiter, clean_period: :timer.minutes(10)},
+      # Start Cachex for caching with size limit (max 1000 entries)
+      {Cachex,
+       name: :portfolio_cache,
+       hooks: [
+         hook(
+           module: Cachex.Limit.Scheduled,
+           args: {1000, [], []}
+         )
+       ]},
       # Bootstrap admin user automatically (skipped in :test env)
       Portfolio.Bootstrap.Worker,
       # Start the session cleaner worker for periodic cleanup
@@ -51,6 +61,9 @@ defmodule Portfolio.Application do
 
     # Initialiser le cache IP whitelist après le démarrage
     IPWhitelistService.init_cache()
+
+    # Install circuit breaker for image processing
+    CircuitBreaker.install()
 
     result
   end

@@ -735,8 +735,8 @@ defmodule Portfolio.Photography do
            {:commit, result, ttl: :timer.hours(1)}
          end) do
       {:ok, albums} -> albums
-      {:commit, albums, _opts} -> albums
       {:commit, albums} -> albums
+      {:ignore, albums} -> albums
       {:error, _reason} -> fetch_published_albums_by_year(opts)
     end
   end
