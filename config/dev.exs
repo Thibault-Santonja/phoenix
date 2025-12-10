@@ -94,7 +94,3 @@ config :portfolio, :base_url, "http://localhost:4000"
 
 # Configure from email
 config :portfolio, :from_email, "noreply@portfolio.local"
-
-# Configure Hammer for rate limiting in dev
-config :hammer,
-  backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 2, cleanup_interval_ms: 60_000 * 10]}
