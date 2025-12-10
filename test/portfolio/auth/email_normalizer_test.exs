@@ -10,6 +10,8 @@ defmodule Portfolio.Auth.EmailNormalizerTest do
 
   alias Portfolio.Auth.EmailNormalizer
 
+  doctest EmailNormalizer
+
   describe "normalize/1" do
     test "converts email to lowercase" do
       assert EmailNormalizer.normalize("John.Doe@EXAMPLE.COM") == "john.doe@example.com"

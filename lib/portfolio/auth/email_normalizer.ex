@@ -46,13 +46,13 @@ defmodule Portfolio.Auth.EmailNormalizer do
 
   ## Examples
 
-      iex> normalize("John.Doe@Gmail.Com")
+      iex> EmailNormalizer.normalize("John.Doe@Gmail.Com")
       "johndoe@gmail.com"
 
-      iex> normalize("  user@example.com  ")
+      iex> EmailNormalizer.normalize("  user@example.com  ")
       "user@example.com"
 
-      iex> normalize(nil)
+      iex> EmailNormalizer.normalize(nil)
       nil
   """
   @spec normalize(String.t() | nil) :: String.t() | nil
@@ -71,13 +71,13 @@ defmodule Portfolio.Auth.EmailNormalizer do
 
   ## Examples
 
-      iex> gmail_domain?("gmail.com")
+      iex> EmailNormalizer.gmail_domain?("gmail.com")
       true
 
-      iex> gmail_domain?("googlemail.com")
+      iex> EmailNormalizer.gmail_domain?("googlemail.com")
       true
 
-      iex> gmail_domain?("yahoo.com")
+      iex> EmailNormalizer.gmail_domain?("yahoo.com")
       false
   """
   @spec gmail_domain?(String.t()) :: boolean()

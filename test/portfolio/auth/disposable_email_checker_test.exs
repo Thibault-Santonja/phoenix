@@ -7,6 +7,8 @@ defmodule Portfolio.Auth.DisposableEmailCheckerTest do
 
   alias Portfolio.Auth.DisposableEmailChecker
 
+  doctest DisposableEmailChecker
+
   describe "disposable?/1" do
     test "returns true for known disposable email domains" do
       assert DisposableEmailChecker.disposable?("user@10minutemail.com") == true

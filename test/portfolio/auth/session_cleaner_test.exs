@@ -11,12 +11,13 @@ defmodule Portfolio.Auth.SessionCleanerTest do
     test "deletes expired sessions" do
       user = create_user()
 
-      # Create an expired session by setting last_activity_at to 2 hours ago (default expiry is 1 hour)
+      # Create an expired session by setting last_activity_at to 3 hours ago
+      # (default expiry is 2 hours, so 3 hours is clearly expired)
       expired_session = %UserSession{
         user_id: user.id,
         token: "test-token-expired-#{System.unique_integer([:positive])}",
         last_activity_at:
-          DateTime.utc_now() |> DateTime.add(-7200, :second) |> DateTime.truncate(:second)
+          DateTime.utc_now() |> DateTime.add(-10_800, :second) |> DateTime.truncate(:second)
       }
 
       {:ok, expired_session} = Repo.insert(expired_session)
@@ -48,13 +49,13 @@ defmodule Portfolio.Auth.SessionCleanerTest do
     test "handles cleanup with multiple expired sessions" do
       user = create_user()
 
-      # Create multiple expired sessions
+      # Create multiple expired sessions (3+ hours ago, clearly expired)
       for i <- 1..3 do
         expired_session = %UserSession{
           user_id: user.id,
           token: "token-expired-#{i}-#{System.unique_integer([:positive])}",
           last_activity_at:
-            DateTime.add(DateTime.utc_now(), -7200 - i * 1000, :second)
+            DateTime.add(DateTime.utc_now(), -10_800 - i * 1000, :second)
             |> DateTime.truncate(:second)
         }
 
@@ -70,12 +71,12 @@ defmodule Portfolio.Auth.SessionCleanerTest do
     test "performs cleanup and reschedules" do
       user = create_user()
 
-      # Create an expired session
+      # Create an expired session (3 hours ago, clearly expired)
       expired_session = %UserSession{
         user_id: user.id,
         token: "expired-#{System.unique_integer([:positive])}",
         last_activity_at:
-          DateTime.add(DateTime.utc_now(), -7200, :second) |> DateTime.truncate(:second)
+          DateTime.add(DateTime.utc_now(), -10_800, :second) |> DateTime.truncate(:second)
       }
 
       {:ok, expired_session} = Repo.insert(expired_session)

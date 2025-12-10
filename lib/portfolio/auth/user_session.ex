@@ -54,8 +54,8 @@ defmodule Portfolio.Auth.UserSession do
 
   ## Exemples
 
-      iex> hash_token_value("raw_token_here")
-      "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+      iex> UserSession.hash_token_value("raw_token_here")
+      "8a4f54d1a143b3031b523b1f5b37254d1d99e3479d5d70a16090d360ad993dac"
   """
   @spec hash_token_value(String.t()) :: String.t()
   def hash_token_value(token) do

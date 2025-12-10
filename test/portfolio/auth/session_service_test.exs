@@ -536,9 +536,9 @@ defmodule Portfolio.Auth.SessionServiceTest do
     test "deletes sessions expired due to inactivity" do
       user = insert_user()
 
-      # Create expired session (2 hours old - default expiration is 1 hour)
+      # Create expired session (3 hours old - default expiration is 2 hours)
       expired_session =
-        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -2, :hour))
+        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -3, :hour))
 
       # Create valid session
       valid_session = insert_session(user, last_activity_at: DateTime.utc_now())
@@ -554,10 +554,10 @@ defmodule Portfolio.Auth.SessionServiceTest do
       user = insert_user()
 
       expired1 =
-        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -2, :hour))
+        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -3, :hour))
 
       expired2 =
-        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -3, :hour))
+        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -4, :hour))
 
       valid = insert_session(user, last_activity_at: DateTime.utc_now())
 
@@ -572,9 +572,9 @@ defmodule Portfolio.Auth.SessionServiceTest do
     test "does not delete sessions within expiration window" do
       user = insert_user()
 
-      # Session from 30 minutes ago should not be expired (1 hour default expiration)
+      # Session from 1 hour ago should not be expired (2 hours default expiration)
       recent_session =
-        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -30, :minute))
+        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -1, :hour))
 
       {_count, nil} = SessionService.delete_expired_sessions()
 
@@ -584,8 +584,8 @@ defmodule Portfolio.Auth.SessionServiceTest do
     test "returns count of deleted sessions" do
       user = insert_user()
 
-      insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -2, :hour))
       insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -3, :hour))
+      insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -4, :hour))
 
       {count, nil} = SessionService.delete_expired_sessions()
       assert count >= 2

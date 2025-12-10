@@ -3,6 +3,8 @@ defmodule Portfolio.Auth.ValueObjects.EmailTest do
 
   alias Portfolio.Auth.ValueObjects.Email
 
+  doctest Email
+
   describe "new/1" do
     test "creates valid email" do
       assert {:ok, email} = Email.new("user@example.com")

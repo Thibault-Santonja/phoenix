@@ -286,8 +286,9 @@ defmodule Portfolio.AuthTest do
     test "deletes sessions expired due to inactivity" do
       user = insert_user()
 
+      # Create expired session (3 hours old - default expiration is 2 hours)
       expired_session =
-        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -2, :hour))
+        insert_session(user, last_activity_at: DateTime.add(DateTime.utc_now(), -3, :hour))
 
       valid_session = insert_session(user, last_activity_at: DateTime.utc_now())
 

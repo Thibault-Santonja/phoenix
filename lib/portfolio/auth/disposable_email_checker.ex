@@ -72,13 +72,13 @@ defmodule Portfolio.Auth.DisposableEmailChecker do
 
   ## Examples
 
-      iex> disposable?("user@mailinator.com")
+      iex> DisposableEmailChecker.disposable?("user@mailinator.com")
       true
 
-      iex> disposable?("user@gmail.com")
+      iex> DisposableEmailChecker.disposable?("user@gmail.com")
       false
 
-      iex> disposable?(nil)
+      iex> DisposableEmailChecker.disposable?(nil)
       false
   """
   @spec disposable?(String.t() | nil) :: boolean()
@@ -107,10 +107,10 @@ defmodule Portfolio.Auth.DisposableEmailChecker do
 
   ## Examples
 
-      iex> extract_domain("user@example.com")
+      iex> DisposableEmailChecker.extract_domain("user@example.com")
       "example.com"
 
-      iex> extract_domain("invalid")
+      iex> DisposableEmailChecker.extract_domain("invalid")
       nil
   """
   @spec extract_domain(String.t() | nil) :: String.t() | nil
@@ -132,7 +132,7 @@ defmodule Portfolio.Auth.DisposableEmailChecker do
 
   ## Examples
 
-      iex> domains = disposable_domains()
+      iex> domains = DisposableEmailChecker.disposable_domains()
       iex> "mailinator.com" in domains
       true
   """

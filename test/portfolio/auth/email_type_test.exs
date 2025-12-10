@@ -3,6 +3,8 @@ defmodule Portfolio.Auth.EmailTypeTest do
 
   alias Portfolio.Auth.EmailType
 
+  doctest EmailType
+
   describe "type/0" do
     test "returns :string as the underlying database type" do
       assert EmailType.type() == :string
