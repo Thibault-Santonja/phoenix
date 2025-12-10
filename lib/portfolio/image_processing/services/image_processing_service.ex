@@ -21,6 +21,7 @@ defmodule Portfolio.ImageProcessing.Services.ImageProcessingService do
     ImageProcessingStarted
   }
 
+  alias Portfolio.ImageProcessing.CircuitBreaker
   alias Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification
   alias Portfolio.ImageProcessing.Infrastructure.VipsAdapter
 
@@ -59,9 +60,9 @@ defmodule Portfolio.ImageProcessing.Services.ImageProcessingService do
     # Émettre événement de début
     emit_processing_started(image, variant_specs)
 
-    # Pipeline de traitement
+    # Pipeline de traitement with circuit breaker protection
     with :ok <- VipsAdapter.ensure_output_directory(output_base_path),
-         {:ok, vix_image, dimensions} <- VipsAdapter.load_image(source_path) do
+         {:ok, vix_image, dimensions} <- load_image_with_circuit_breaker(source_path) do
       image = ProcessedImage.start_processing(image, dimensions)
 
       case process_all_variants(vix_image, variant_specs, image, dimensions) do
@@ -89,6 +90,32 @@ defmodule Portfolio.ImageProcessing.Services.ImageProcessingService do
   end
 
   # Private functions
+
+  # Wraps VipsAdapter.load_image with circuit breaker protection
+  @spec load_image_with_circuit_breaker(String.t()) ::
+          {:ok, Vix.Vips.Image.t(),
+           Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions.t()}
+          | {:error, term()}
+  defp load_image_with_circuit_breaker(source_path) do
+    case CircuitBreaker.call(fn -> VipsAdapter.load_image(source_path) end) do
+      {:ok, {vix_image, dimensions}} ->
+        {:ok, vix_image, dimensions}
+
+      {:ok, result} ->
+        # Handle the case where load_image returns {:ok, image, dims} directly
+        result
+
+      {:error, :circuit_blown} ->
+        Logger.error("Image processing circuit breaker open - service unavailable",
+          source_path: source_path
+        )
+
+        {:error, :service_unavailable}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
 
   # Charge les spécifications de variants depuis la configuration
   @spec load_variant_specifications() :: [VariantSpecification.t()]

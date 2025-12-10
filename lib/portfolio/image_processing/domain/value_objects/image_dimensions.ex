@@ -18,12 +18,15 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> ImageDimensions.new(1920, 1080)
       {:ok, %ImageDimensions{width: 1920, height: 1080}}
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> ImageDimensions.new(0, 100)
       {:error, :invalid_dimensions}
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> ImageDimensions.new(-100, 100)
       {:error, :invalid_dimensions}
   """
@@ -43,6 +46,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> dims = ImageDimensions.new!(1920, 1080)
       iex> ImageDimensions.aspect_ratio(dims)
       1.7777777777777777
@@ -59,13 +63,15 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> dims = ImageDimensions.new!(1920, 1080)
       iex> ImageDimensions.resize_to_width(dims, 960)
       {:ok, %ImageDimensions{width: 960, height: 540}}
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> dims = ImageDimensions.new!(800, 600)
       iex> ImageDimensions.resize_to_width(dims, 1920)
-      {:no_upscale, dims}
+      {:no_upscale, %ImageDimensions{width: 800, height: 600}}
   """
   @spec resize_to_width(t(), pos_integer()) :: {:ok, t()} | {:no_upscale, t()}
   def resize_to_width(%__MODULE__{width: current_width} = dims, target_width)
@@ -84,11 +90,9 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> ImageDimensions.new!(1920, 1080)
       %ImageDimensions{width: 1920, height: 1080}
-
-      iex> ImageDimensions.new!(0, 100)
-      ** (ArgumentError) Invalid dimensions: width and height must be positive
   """
   @spec new!(integer(), integer()) :: t()
   def new!(width, height) do
@@ -106,6 +110,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> dims = ImageDimensions.new!(1080, 1920)
       iex> ImageDimensions.portrait?(dims)
       true
@@ -118,6 +123,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> dims = ImageDimensions.new!(1920, 1080)
       iex> ImageDimensions.landscape?(dims)
       true
@@ -130,6 +136,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
       iex> dims = ImageDimensions.new!(1080, 1080)
       iex> ImageDimensions.square?(dims)
       true

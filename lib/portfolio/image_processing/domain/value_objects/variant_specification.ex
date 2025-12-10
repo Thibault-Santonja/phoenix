@@ -31,9 +31,11 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification
       iex> VariantSpecification.new(:thumbnail, 400, 75, :webp, 4)
       {:ok, %VariantSpecification{name: :thumbnail, width: 400, quality: 75, format: :webp, effort: 4}}
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification
       iex> VariantSpecification.new(:large, 1920, 150, :webp, 4)
       {:error, :invalid_quality}
   """
@@ -63,6 +65,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification
       iex> VariantSpecification.new!(:thumbnail, 400, 75, :webp, 4)
       %VariantSpecification{name: :thumbnail, width: 400, quality: 75, format: :webp, effort: 4}
   """
@@ -79,6 +82,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification
       iex> config = %{name: :thumbnail, width: 400, quality: 75, format: :webp, effort: 4}
       iex> VariantSpecification.from_config(config)
       {:ok, %VariantSpecification{name: :thumbnail, width: 400, quality: 75, format: :webp, effort: 4}}
@@ -95,6 +99,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification
       iex> spec = VariantSpecification.new!(:thumbnail, 400, 75, :webp, 4)
       iex> VariantSpecification.filename(spec)
       "thumbnail.webp"
@@ -109,6 +114,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification
       iex> spec = VariantSpecification.new!(:thumbnail, 400, 75, :webp, 4)
       iex> VariantSpecification.name(spec)
       :thumbnail

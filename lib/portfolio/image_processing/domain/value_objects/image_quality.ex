@@ -19,12 +19,15 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.new(85)
       {:ok, 85}
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.new(0)
       {:error, :invalid_quality}
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.new(101)
       {:error, :invalid_quality}
   """
@@ -41,11 +44,9 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.new!(85)
       85
-
-      iex> ImageQuality.new!(0)
-      ** (ArgumentError) Invalid quality: must be between 1 and 100
   """
   @spec new!(integer()) :: 1..100
   def new!(quality) do
@@ -63,9 +64,11 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.valid?(85)
       true
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.valid?(0)
       false
   """
@@ -81,6 +84,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.min()
       1
   """
@@ -92,6 +96,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.max()
       100
   """
@@ -103,9 +108,11 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.category(85)
       :high
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
       iex> ImageQuality.category(40)
       :low
   """

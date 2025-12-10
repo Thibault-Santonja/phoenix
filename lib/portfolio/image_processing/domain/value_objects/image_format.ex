@@ -15,9 +15,11 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat
       iex> ImageFormat.valid?(:webp)
       true
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat
       iex> ImageFormat.valid?(:png)
       false
   """
@@ -30,9 +32,11 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat
       iex> ImageFormat.extension(:webp)
       "webp"
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat
       iex> ImageFormat.extension(:jpeg)
       "jpg"
   """
@@ -46,6 +50,7 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat
       iex> ImageFormat.all()
       [:webp, :avif, :jpeg]
   """
@@ -63,9 +68,11 @@ defmodule Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat do
 
   ## Exemples
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat
       iex> ImageFormat.from_string("webp")
       {:ok, :webp}
 
+      iex> alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat
       iex> ImageFormat.from_string("invalid")
       {:error, :invalid_format}
   """

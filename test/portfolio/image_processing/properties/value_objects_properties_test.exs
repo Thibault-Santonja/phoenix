@@ -10,6 +10,7 @@ defmodule Portfolio.ImageProcessing.Properties.ValueObjectsPropertiesTest do
   alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageDimensions
   alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageFormat
   alias Portfolio.ImageProcessing.Domain.ValueObjects.ImageQuality
+  alias Portfolio.ImageProcessing.Domain.ValueObjects.VariantSpecification
 
   describe "ImageDimensions properties" do
     property "valid dimensions are always positive" do
@@ -219,6 +220,123 @@ defmodule Portfolio.ImageProcessing.Properties.ValueObjectsPropertiesTest do
         # Original should be unchanged (this tests Elixir's immutability)
         assert dims.width == width
         assert new_dims.width == width + 100
+      end
+    end
+  end
+
+  describe "VariantSpecification properties" do
+    # Generator for valid formats
+    defp valid_format_gen, do: member_of([:webp, :avif, :jpeg])
+
+    # Generator for valid effort based on format
+    defp valid_effort_gen(:webp), do: integer(0..6)
+    defp valid_effort_gen(:avif), do: integer(0..9)
+    defp valid_effort_gen(:jpeg), do: integer(0..9)
+
+    property "valid specifications preserve all values" do
+      check all(
+              width <- integer(1..5000),
+              quality <- integer(1..100),
+              format <- valid_format_gen(),
+              effort <- valid_effort_gen(format)
+            ) do
+        {:ok, spec} = VariantSpecification.new(:test_variant, width, quality, format, effort)
+
+        assert spec.name == :test_variant
+        assert spec.width == width
+        assert spec.quality == quality
+        assert spec.format == format
+        assert spec.effort == effort
+      end
+    end
+
+    property "invalid quality rejects specification" do
+      check all(
+              width <- integer(1..5000),
+              quality <- one_of([integer(-100..0), integer(101..200)]),
+              format <- valid_format_gen(),
+              effort <- integer(0..6)
+            ) do
+        assert {:error, :invalid_quality} =
+                 VariantSpecification.new(:test, width, quality, format, effort)
+      end
+    end
+
+    property "invalid width rejects specification" do
+      check all(
+              width <- one_of([constant(0), integer(-1000..-1)]),
+              quality <- integer(1..100),
+              format <- valid_format_gen()
+            ) do
+        assert {:error, :invalid_width} =
+                 VariantSpecification.new(:test, width, quality, format, 4)
+      end
+    end
+
+    property "invalid format rejects specification" do
+      check all(
+              width <- integer(1..5000),
+              quality <- integer(1..100),
+              format <- member_of([:png, :gif, :bmp, :tiff])
+            ) do
+        assert {:error, :invalid_format} =
+                 VariantSpecification.new(:test, width, quality, format, 4)
+      end
+    end
+
+    property "effort limits are format-specific" do
+      # WebP max effort is 6
+      check all(
+              width <- integer(1..1000),
+              quality <- integer(1..100),
+              effort <- integer(7..20)
+            ) do
+        assert {:error, :invalid_effort} =
+                 VariantSpecification.new(:test, width, quality, :webp, effort)
+      end
+    end
+
+    property "filename combines name and format extension" do
+      check all(
+              width <- integer(1..1000),
+              quality <- integer(1..100),
+              format <- valid_format_gen(),
+              effort <- valid_effort_gen(format)
+            ) do
+        {:ok, spec} = VariantSpecification.new(:my_variant, width, quality, format, effort)
+        filename = VariantSpecification.filename(spec)
+
+        assert String.starts_with?(filename, "my_variant.")
+        assert String.ends_with?(filename, ImageFormat.extension(format))
+      end
+    end
+
+    property "from_config is equivalent to new" do
+      check all(
+              width <- integer(1..1000),
+              quality <- integer(1..100),
+              format <- valid_format_gen(),
+              effort <- valid_effort_gen(format)
+            ) do
+        config = %{name: :test, width: width, quality: quality, format: format, effort: effort}
+
+        new_result = VariantSpecification.new(:test, width, quality, format, effort)
+        config_result = VariantSpecification.from_config(config)
+
+        assert new_result == config_result
+      end
+    end
+
+    property "new! raises for invalid input, succeeds for valid" do
+      check all(
+              width <- integer(1..1000),
+              quality <- integer(1..100),
+              format <- valid_format_gen(),
+              effort <- valid_effort_gen(format)
+            ) do
+        # Valid input should not raise
+        spec = VariantSpecification.new!(:test, width, quality, format, effort)
+        assert %VariantSpecification{} = spec
       end
     end
   end
