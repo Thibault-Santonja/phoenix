@@ -26,7 +26,7 @@ config :portfolio, PortfolioWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Portfolio.PubSub,
-  live_view: [signing_salt: "1FbtJcpx"]
+  live_view: [signing_salt: "dev-signing-salt-not-for-production"]
 
 # Configures the mailer
 #
@@ -211,6 +211,7 @@ config :logger, :console,
     :attempt,
     :max_attempts,
     :image_id,
+    :fuse_name,
     # Validation metadata
     :expected_hash,
     :actual_hash,
@@ -220,6 +221,7 @@ config :logger, :console,
     # Rate limiting metadata
     :action,
     :identifier,
+    :bucket_key,
     :retry_after_seconds,
     :retry_after_ms,
     :remaining,

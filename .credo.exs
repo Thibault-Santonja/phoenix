@@ -203,6 +203,7 @@
                :attempt,
                :max_attempts,
                :image_id,
+               :fuse_name,
                # Validation metadata
                :expected_hash,
                :actual_hash,
@@ -212,6 +213,7 @@
                # Rate limiting metadata
                :action,
                :identifier,
+               :bucket_key,
                :retry_after_seconds,
                :retry_after_ms,
                :remaining,
