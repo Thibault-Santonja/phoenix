@@ -16,6 +16,7 @@ defmodule Portfolio.Auth.UserService do
   """
 
   alias Portfolio.Auth.Repositories.UserRepository
+  alias Portfolio.Auth.SessionService
   alias Portfolio.Auth.User
 
   # =============================================================================
@@ -158,7 +159,38 @@ defmodule Portfolio.Auth.UserService do
   @spec update_user_as_admin(User.t(), map(), keyword()) ::
           {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def update_user_as_admin(user, attrs, opts \\ []) do
-    UserRepository.update_as_admin(user, attrs, opts)
+    old_role = user.role
+
+    case UserRepository.update_as_admin(user, attrs, opts) do
+      {:ok, updated_user} ->
+        # If role changed, invalidate all session caches to force fresh data reload
+        # This ensures role changes take effect immediately across all devices
+        # without logging the user out completely
+        if updated_user.role != old_role do
+          invalidate_user_session_caches(updated_user)
+        end
+
+        {:ok, updated_user}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  # Invalidates all session caches for a user without deleting the sessions
+  # This forces the next request to reload fresh user data from the database
+  # Note: session.token is already hashed (stored hashed in DB), matching the cache key format
+  @spec invalidate_user_session_caches(User.t()) :: :ok
+  defp invalidate_user_session_caches(user) do
+    sessions = SessionService.list_user_sessions(user.id)
+
+    Enum.each(sessions, fn session ->
+      # Cache key uses the hashed token (session.token is already hashed in DB)
+      cache_key = {:session, session.token}
+      _ = Cachex.del(:portfolio_cache, cache_key)
+    end)
+
+    :ok
   end
 
   @doc """

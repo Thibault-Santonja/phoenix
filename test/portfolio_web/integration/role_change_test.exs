@@ -81,8 +81,8 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
     end
 
     test "demoted user cannot access admin pages after role change", %{user: user} do
-      # NOTE: Admin routes are protected via on_mount: :ensure_authenticated
-      # This test verifies that role demotion is reflected in the session
+      # NOTE: Admin routes are protected via on_mount: :require_admin_role
+      # This test verifies that demoted users are redirected away from admin pages
 
       # First, promote user to admin
       assert {:ok, promoted_user} = update_user_role(user, :admin)
@@ -102,32 +102,34 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
       # Admin demotes user back to regular user
       assert {:ok, _demoted_user} = update_user_role(promoted_user, :user)
 
-      # User tries to access admin dashboard again
+      # User tries to access admin dashboard again - should be redirected
       conn2 =
         build_conn()
         |> Plug.Test.init_test_session(%{"session_token" => promoted_session.token})
         |> get(~p"/admin")
 
-      # Verify role is now :user (reloaded from DB)
-      assert html_response(conn2, 200)
-      assert conn2.assigns.current_user.role == :user
+      # Verify user is redirected (no longer has admin access)
+      assert redirected_to(conn2) == "/"
+
+      assert Phoenix.Flash.get(conn2.assigns.flash, :error) ==
+               "Accès réservé aux administrateurs."
     end
 
     test "promoted user can access admin pages after role change", %{user: user} do
-      # NOTE: Admin routes are protected via on_mount: :ensure_authenticated
-      # This test verifies that role changes are reflected in the session
+      # NOTE: Admin routes are protected via on_mount: :require_admin_role
+      # This test verifies that promoted users can access admin pages
 
       # Create session for regular user
       user_session = create_session(user: user)
 
-      # User makes initial request
+      # User makes initial request to admin - should be redirected (not admin yet)
       conn =
         build_conn()
         |> Plug.Test.init_test_session(%{"session_token" => user_session.token})
         |> get(~p"/admin")
 
-      # Verify user role is :user
-      assert conn.assigns.current_user.role == :user
+      # Verify user is redirected (not admin)
+      assert redirected_to(conn) == "/"
 
       # Admin promotes user to admin
       assert {:ok, _promoted_user} = update_user_role(user, :admin)
@@ -138,42 +140,43 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
         |> Plug.Test.init_test_session(%{"session_token" => user_session.token})
         |> get(~p"/admin")
 
-      # Verify role is now admin (reloaded from DB)
+      # Verify role is now admin (reloaded from DB) and can access admin
       assert html_response(conn2, 200)
       assert conn2.assigns.current_user.role == :admin
     end
 
-    test "role change reflected in LiveView session", %{user: user} do
-      # NOTE: Admin routes are protected via on_mount: :ensure_authenticated
+    test "role change reflected in LiveView session", %{admin: admin} do
+      # NOTE: Admin routes are protected via on_mount: :require_admin_role
       # This test verifies that role changes are reflected in LiveView sessions
 
-      # Create session for regular user
-      user_session = create_session(user: user)
+      # Create session for admin user
+      admin_session = create_session(user: admin)
 
-      # Mount a LiveView as regular user
+      # Mount a LiveView as admin user
       {:ok, _view, html} =
         build_conn()
-        |> Plug.Test.init_test_session(%{"session_token" => user_session.token})
+        |> Plug.Test.init_test_session(%{"session_token" => admin_session.token})
         |> live(~p"/admin/users")
 
       # Verify we can access the page (role check via render)
       assert html =~ "Gestion des utilisateurs"
 
-      # Admin promotes user
-      assert {:ok, _promoted_user} = update_user_role(user, :admin)
+      # Demote admin to user (simulating another admin doing this)
+      assert {:ok, _demoted_user} = update_user_role(admin, :user)
 
-      # Mount LiveView again with same session
-      {:ok, _view2, html2} =
+      # Mount LiveView again with same session - should be redirected
+      {:error, {:redirect, redirect_info}} =
         build_conn()
-        |> Plug.Test.init_test_session(%{"session_token" => user_session.token})
+        |> Plug.Test.init_test_session(%{"session_token" => admin_session.token})
         |> live(~p"/admin/users")
 
-      # Verify role is now admin (still can access, role reloaded from DB)
-      assert html2 =~ "Gestion des utilisateurs"
+      # Verify redirect to home with error
+      assert redirect_info.to == "/"
+      assert redirect_info.flash["error"] == "Accès réservé aux administrateurs."
 
       # Verify the actual role change happened in DB
-      {:ok, reloaded_user} = Auth.get_user(user.id)
-      assert reloaded_user.role == :admin
+      {:ok, reloaded_user} = Auth.get_user(admin.id)
+      assert reloaded_user.role == :user
     end
 
     test "concurrent role changes don't cause race conditions", %{user: user} do
