@@ -59,7 +59,8 @@ check_fail2ban_installed() {
 }
 
 create_log_directory() {
-    local log_dir=$(dirname "$LOG_PATH")
+    local log_dir
+    log_dir=$(dirname "$LOG_PATH")
 
     if [ ! -d "$log_dir" ]; then
         log_warn "Log directory $log_dir does not exist, creating it..."
@@ -98,8 +99,12 @@ install_jail() {
     log_info "Installing jail: $jail_dst"
 
     # Create temporary file with updated log path
-    local temp_jail=$(mktemp)
-    sed "s|logpath = /var/log/portfolio/\*.log|logpath = $LOG_PATH|g" "$jail_src" > "$temp_jail"
+    local temp_jail
+    temp_jail=$(mktemp)
+    # Escape special characters in LOG_PATH for sed replacement
+    local escaped_log_path
+    escaped_log_path=$(printf '%s\n' "$LOG_PATH" | sed 's/[\\&|]/\\&/g')
+    sed "s|logpath = /var/log/portfolio/\*.log|logpath = $escaped_log_path|g" "$jail_src" > "$temp_jail"
 
     cp "$temp_jail" "$jail_dst"
     chmod 644 "$jail_dst"
@@ -135,23 +140,29 @@ restart_fail2ban() {
 verify_jail() {
     log_info "Verifying portfolio jail is active..."
 
-    sleep 2  # Give fail2ban time to load the jail
+    local max_retries=10
+    local retry=0
 
-    if fail2ban-client status | grep -q "portfolio-rate-limit"; then
-        log_info "portfolio-rate-limit jail is active"
-        echo ""
-        fail2ban-client status portfolio-rate-limit
-    else
-        log_error "portfolio-rate-limit jail is not active"
-        log_warn "Check /var/log/fail2ban.log for errors"
-        exit 1
-    fi
+    while [ $retry -lt $max_retries ]; do
+        if fail2ban-client status | grep -q "portfolio-rate-limit"; then
+            log_info "portfolio-rate-limit jail is active"
+            echo ""
+            fail2ban-client status portfolio-rate-limit
+            return 0
+        fi
+        retry=$((retry + 1))
+        sleep 1
+    done
+
+    log_error "portfolio-rate-limit jail is not active (max retries exceeded)"
+    log_warn "Check /var/log/fail2ban.log for errors"
+    exit 1
 }
 
 test_filter() {
     log_info "Testing filter against sample log entry..."
 
-    local sample_log="[warning] Rate limit exceeded for login_request identifier: 192.168.1.100 retry_after_seconds: 300"
+    local sample_log='[warning] Rate limit exceeded for login_attempt ip=192.168.1.100 user_agent="Mozilla/5.0" referer="" path=/login potential_bot=false'
 
     if echo "$sample_log" | fail2ban-regex - /etc/fail2ban/filter.d/portfolio-rate-limit.conf | grep -q "1 hit(s)"; then
         log_info "Filter test passed - pattern matches correctly"
