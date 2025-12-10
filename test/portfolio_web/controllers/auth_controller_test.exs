@@ -2,7 +2,9 @@ defmodule PortfolioWeb.AuthControllerTest do
   use PortfolioWeb.ConnCase
 
   alias Portfolio.Auth
-  alias Portfolio.Auth.{MagicLink, User}
+  alias Portfolio.Auth.MagicLink
+  alias Portfolio.Auth.User
+  alias Portfolio.Auth.UserSession
   alias Portfolio.Repo
 
   setup do
@@ -151,10 +153,13 @@ defmodule PortfolioWeb.AuthControllerTest do
       user = insert_user()
       {:ok, session} = Auth.create_session(user)
 
+      # Le raw_token est retourné par create_session, session.token est hashé
+      raw_token = session.token
+
       # Simuler une session en cache (en prod uniquement, skip en test)
-      # En test le cache est skip automatiquement, donc on vérifie juste que
-      # Cachex.del est appelé sans erreur
-      cache_key = {:session, session.token}
+      # La clé de cache utilise le token hashé (cohérent avec auth_helpers.ex)
+      hashed_token = UserSession.hash_token_value(raw_token)
+      cache_key = {:session, hashed_token}
 
       # Mettre la session en cache manuellement pour le test
       Cachex.put(:portfolio_cache, cache_key, session)
@@ -162,9 +167,9 @@ defmodule PortfolioWeb.AuthControllerTest do
       # Vérifier que la session est en cache
       assert {:ok, ^session} = Cachex.get(:portfolio_cache, cache_key)
 
-      # Logout
+      # Logout (utilise le raw_token dans la session Plug)
       conn
-      |> init_test_session(%{session_token: session.token})
+      |> init_test_session(%{session_token: raw_token})
       |> delete(~p"/logout")
 
       # Vérifier que le cache a été invalidé
