@@ -3,6 +3,8 @@ defmodule Portfolio.Photography.ValueObjects.SlugTest do
 
   alias Portfolio.Photography.ValueObjects.Slug
 
+  doctest Slug
+
   describe "new/1" do
     test "creates valid slug from title" do
       assert {:ok, slug} = Slug.new("Paris 2024")

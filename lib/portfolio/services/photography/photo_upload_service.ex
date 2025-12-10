@@ -18,6 +18,8 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   alias Portfolio.Photography
   alias Portfolio.Repo
 
+  require Logger
+
   @impl true
   @doc """
   Uploads multiple photos in parallel to an album.
@@ -73,6 +75,19 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
 
   # Upload files in parallel without creating DB records yet
   defp upload_files_parallel(_album_slug, uploads, opts) do
+    max_size = get_max_file_size()
+
+    # Pre-validate file sizes before any I/O
+    case validate_upload_sizes(uploads, max_size) do
+      :ok ->
+        do_upload_files_parallel(uploads, opts)
+
+      {:error, {filename, size}} ->
+        {:error, {:file_too_large, filename, size, max_size}}
+    end
+  end
+
+  defp do_upload_files_parallel(uploads, opts) do
     max_concurrency = Keyword.get(opts, :max_concurrency, 4)
     timeout = Keyword.get(opts, :timeout, 30_000)
     ordered = Keyword.get(opts, :ordered, false)
@@ -152,10 +167,31 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   end
 
   # Delete uploaded files from storage in case of rollback
+  # Logs failures but always returns :ok since rollback is best-effort
   defp rollback_uploaded_files(photos_metadata) do
-    Enum.each(photos_metadata, fn metadata ->
-      storage().delete_photo(metadata.photo_id)
-    end)
+    failed_deletions =
+      photos_metadata
+      |> Enum.map(fn metadata ->
+        case storage().delete_photo(metadata.photo_id) do
+          :ok ->
+            nil
+
+          {:error, reason} ->
+            Logger.error("Rollback deletion failed",
+              photo_id: metadata.photo_id,
+              reason: inspect(reason)
+            )
+
+            metadata.photo_id
+        end
+      end)
+      |> Enum.reject(&is_nil/1)
+
+    if failed_deletions != [] do
+      Logger.error(
+        "Rollback incomplete - orphaned files may exist: #{inspect(failed_deletions)} (count: #{length(failed_deletions)})"
+      )
+    end
 
     :ok
   end
@@ -163,5 +199,26 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   defp storage do
     Application.get_env(:portfolio, :file_storage)[:backend] ||
       Portfolio.Photography.Storage.LocalStorage
+  end
+
+  # Validate file sizes before processing to prevent DOS attacks
+  defp validate_upload_sizes(uploads, max_size) do
+    Enum.reduce_while(uploads, :ok, fn upload, :ok ->
+      # Get file size without reading entire file
+      case File.stat(upload.path) do
+        {:ok, %{size: size}} when size > max_size ->
+          {:halt, {:error, {upload.client_name, size}}}
+
+        {:ok, _} ->
+          {:cont, :ok}
+
+        {:error, reason} ->
+          {:halt, {:error, reason}}
+      end
+    end)
+  end
+
+  defp get_max_file_size do
+    Application.get_env(:portfolio, :uploads)[:max_file_size] || 10_485_760
   end
 end

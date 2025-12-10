@@ -9,11 +9,6 @@ defmodule Portfolio.Photography.Storage.StorageUtils do
   Calculates the total size of a directory recursively.
 
   Returns 0 if the directory doesn't exist or can't be read.
-
-  ## Examples
-
-      iex> calculate_directory_size("/path/to/uploads")
-      1_234_567
   """
   @spec calculate_directory_size(String.t()) :: non_neg_integer()
   def calculate_directory_size(dir_path) do
@@ -35,11 +30,17 @@ defmodule Portfolio.Photography.Storage.StorageUtils do
 
   ## Examples
 
-      iex> get_extension_for_mime("image/jpeg")
+      iex> alias Portfolio.Photography.Storage.StorageUtils
+      iex> StorageUtils.get_extension_for_mime("image/jpeg")
       "jpg"
 
-      iex> get_extension_for_mime("image/png")
+      iex> alias Portfolio.Photography.Storage.StorageUtils
+      iex> StorageUtils.get_extension_for_mime("image/png")
       "png"
+
+      iex> alias Portfolio.Photography.Storage.StorageUtils
+      iex> StorageUtils.get_extension_for_mime("image/webp")
+      "webp"
   """
   @spec get_extension_for_mime(String.t()) :: String.t()
   def get_extension_for_mime(mime_type) do

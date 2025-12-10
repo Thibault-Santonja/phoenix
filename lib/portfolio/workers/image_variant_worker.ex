@@ -115,6 +115,22 @@ defmodule Portfolio.Workers.ImageVariantWorker do
           mark_photo_as_failed(photo_id, :corrupted_file)
           {:cancel, error}
 
+        {:error, :service_unavailable} ->
+          # Circuit breaker is open - retry later with snooze
+          Logger.warning("Image processing circuit breaker open - snoozing job",
+            photo_id: photo_id,
+            attempt: attempt
+          )
+
+          :telemetry.execute(
+            [:portfolio, :image, :processing, :exception],
+            %{},
+            %{photo_id: photo_id, reason: :circuit_breaker_open, will_retry: true}
+          )
+
+          # Snooze for 30 seconds to wait for circuit breaker to reset
+          {:snooze, 30}
+
         {:error, reason} = error ->
           # Transient error - retry
           Logger.warning("Image processing failed, will retry",

@@ -73,7 +73,9 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
   def delete_photo(photo_id) do
     photo_dir = build_photo_directory(photo_id)
 
-    if File.exists?(photo_dir) do
+    # Defense in depth: validate path safety before rm_rf
+    with :ok <- validate_path_safety(photo_dir),
+         true <- File.exists?(photo_dir) do
       case File.rm_rf(photo_dir) do
         {:ok, _files} ->
           Logger.info("Photo and variants deleted successfully", photo_id: photo_id)
@@ -88,8 +90,13 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
           {:error, reason}
       end
     else
-      Logger.warning("Attempted to delete non-existent photo", photo_id: photo_id)
-      :ok
+      {:error, :invalid_path} = error ->
+        Logger.error("Path traversal attempt in delete_photo", photo_id: photo_id)
+        error
+
+      false ->
+        Logger.warning("Attempted to delete non-existent photo", photo_id: photo_id)
+        :ok
     end
   end
 
