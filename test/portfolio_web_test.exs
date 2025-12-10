@@ -1,12 +1,11 @@
-defmodule PortfolioWeb do
+defmodule PortfolioWebTest do
   use PortfolioWeb.ConnCase
-  import Phoenix.LiveViewTest
 
   describe "SEO files" do
     test "GET /robots.txt", %{conn: conn} do
-      conn = get(conn, "/sitemap.xml")
+      conn = get(conn, "/robots.txt")
 
-      assert response_content_type(conn, :html)
+      assert response_content_type(conn, :text)
       assert response(conn, 200) =~ "User-agent: *"
     end
 
