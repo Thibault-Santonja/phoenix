@@ -29,9 +29,7 @@ let ScrollArea = {
     this.updateThumbBound = () => this.updateThumb();
     this.handleResizeBound = () => this.updateThumb();
 
-    if (this.viewport) {
-      this.viewport.addEventListener("scroll", this.updateThumbBound);
-    }
+    this.viewport.addEventListener("scroll", this.updateThumbBound);
     window.addEventListener("resize", this.handleResizeBound);
 
     if (this.thumbY) {
@@ -69,6 +67,14 @@ let ScrollArea = {
           : thumb.offsetWidth || 20;
       const maxScroll = contentSize - clientSize;
       const maxThumb = clientSize - thumbSize;
+
+      // Guard against divide-by-zero when thumb >= viewport
+      if (maxThumb <= 0) {
+        thumb.style.transform =
+          axis === "vertical" ? "translateY(0px)" : "translateX(0px)";
+        return;
+      }
+
       const pos = (scrollPos / maxScroll) * maxThumb;
       thumb.style.transform =
         axis === "vertical" ? `translateY(${pos}px)` : `translateX(${pos}px)`;
@@ -107,8 +113,6 @@ let ScrollArea = {
 
   onThumbYPointerDown(e) {
     e.preventDefault();
-    // Set dragging state to true for vertical thumb
-    this.isDraggingY = true;
     if (this.scrollbarY) {
       this.scrollbarY.style.visibility = "visible";
     }
@@ -127,6 +131,16 @@ let ScrollArea = {
     const thumbHeight = (this.thumbY && this.thumbY.offsetHeight) || 20;
     const maxScroll = scrollHeight - clientHeight;
     const maxThumb = clientHeight - thumbHeight;
+
+    // Guard against divide-by-zero when thumb >= viewport
+    if (maxThumb <= 0) {
+      this.viewport.scrollTop = Math.max(
+        0,
+        Math.min(this.startScrollTop, maxScroll),
+      );
+      return;
+    }
+
     const newScrollTop = Math.max(
       0,
       Math.min(this.startScrollTop + dy * (maxScroll / maxThumb), maxScroll),
@@ -135,8 +149,6 @@ let ScrollArea = {
   },
 
   onThumbYPointerUp() {
-    // Reset dragging state for vertical thumb
-    this.isDraggingY = false;
     if (this.scrollbarY) {
       this.scrollbarY.style.visibility = "";
     }
@@ -146,8 +158,6 @@ let ScrollArea = {
 
   onThumbXPointerDown(e) {
     e.preventDefault();
-    // Set dragging state to true for horizontal thumb
-    this.isDraggingX = true;
     if (this.scrollbarX) {
       this.scrollbarX.style.visibility = "visible";
     }
@@ -166,6 +176,16 @@ let ScrollArea = {
     const thumbWidth = (this.thumbX && this.thumbX.offsetWidth) || 20;
     const maxScroll = scrollWidth - clientWidth;
     const maxThumb = clientWidth - thumbWidth;
+
+    // Guard against divide-by-zero when thumb >= viewport
+    if (maxThumb <= 0) {
+      this.viewport.scrollLeft = Math.max(
+        0,
+        Math.min(this.startScrollLeft, maxScroll),
+      );
+      return;
+    }
+
     const newScrollLeft = Math.max(
       0,
       Math.min(this.startScrollLeft + dx * (maxScroll / maxThumb), maxScroll),
@@ -174,8 +194,6 @@ let ScrollArea = {
   },
 
   onThumbXPointerUp() {
-    // Reset dragging state for horizontal thumb
-    this.isDraggingX = false;
     if (this.scrollbarX) {
       this.scrollbarX.style.visibility = "";
     }
@@ -194,6 +212,26 @@ let ScrollArea = {
       "pointerdown",
       this.onThumbXPointerDownBound,
     );
+
+    // Disconnect ResizeObserver if present
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+
+    // Best-effort cleanup if a drag was in progress
+    if (this.boundThumbYPointerMove) {
+      document.removeEventListener("pointermove", this.boundThumbYPointerMove);
+    }
+    if (this.boundThumbYPointerUp) {
+      document.removeEventListener("pointerup", this.boundThumbYPointerUp);
+    }
+    if (this.boundThumbXPointerMove) {
+      document.removeEventListener("pointermove", this.boundThumbXPointerMove);
+    }
+    if (this.boundThumbXPointerUp) {
+      document.removeEventListener("pointerup", this.boundThumbXPointerUp);
+    }
   },
 };
 

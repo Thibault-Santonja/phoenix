@@ -58,7 +58,7 @@
         pointer-events: none;
         z-index: 100;
         opacity: calc(0.6 * var(--scanlines-opacity));
-        will-change: scanlinesopacity;
+        will-change: opacity;
         animation: scanlinesopacity 3s linear infinite;
 
         &:before {
@@ -93,9 +93,7 @@
     #gallery aside {
         /* display: none; */
         opacity: 0;
-        transition:
-            opacity,
-            cubic-bezier(0.25, 1, 0.5, 1) 0.3s;
+        transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     #gallery button:hover + aside,
@@ -104,15 +102,13 @@
     #gallery aside:active {
         /* display: block; */
         opacity: 1;
-        transition:
-            opacity,
-            cubic-bezier(0.25, 1, 0.5, 1) 0.8s;
+        transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     /* Display animation on link hover (only small or bigger screens)) */
     /* @media only screen and (min-width: 40rem) { */
     #gallery li {
-        font-size: 1.5rem (24px);
+        font-size: 1.5rem; /* 24px */
         line-height: calc(2 / 1.5);
     }
 
@@ -169,9 +165,8 @@
 
     #gallery li {
         transition:
-            font-size,
-            line-height,
-            cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
+            font-size 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+            line-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
     /*
     --------------------------------------------

@@ -18,10 +18,12 @@ export const AnimateThis = {
   mounted() {
     const [$logo] = utils.$(".logo.js");
     const [$button] = utils.$("#button");
-    let rotations = 0;
+    this.rotations = 0;
+    this.$logo = $logo;
+    this.$button = $button;
 
     // Created a bounce animation loop
-    animate(".logo.js", {
+    this.bounceAnimation = animate(".logo.js", {
       scale: [
         { to: 1.1, ease: "inOut(3)", duration: 200 },
         { to: 1, ease: createSpring({ stiffness: 300 }) },
@@ -31,34 +33,64 @@ export const AnimateThis = {
     });
 
     // Make the logo draggable around its center
-    createDraggable(".logo.js", {
+    this.draggable = createDraggable(".logo.js", {
       container: [0, 0, 0, 0],
       releaseEase: createSpring({ stiffness: 200 }),
     });
 
     // Animate logo rotation on click
-    const rotateLogo = () => {
-      rotations++;
-      $button.innerText = `rotations: ${rotations}`;
-      animate($logo, {
-        rotate: rotations * 360,
+    this.rotateLogo = () => {
+      this.rotations++;
+      this.$button.innerText = `rotations: ${this.rotations}`;
+      animate(this.$logo, {
+        rotate: this.rotations * 360,
         ease: "out(4)",
         duration: 1500,
       });
     };
 
-    $button.addEventListener("click", rotateLogo);
+    if ($button) {
+      $button.addEventListener("click", this.rotateLogo);
+    }
+  },
+
+  destroyed() {
+    if (this.$button && this.rotateLogo) {
+      this.$button.removeEventListener("click", this.rotateLogo);
+    }
+    if (this.bounceAnimation) {
+      this.bounceAnimation.pause();
+    }
+    if (this.draggable && typeof this.draggable.destroy === "function") {
+      this.draggable.destroy();
+      this.draggable = null;
+    }
   },
 };
 
 export const AnimateGallery = {
   mounted() {
     const debug = false;
-    const images = utils.$(".gallery__image");
-    const container = utils.$("follower");
-    let i = 0;
+    this.images = utils.$(".gallery__image");
+    const [container] = utils.$(".follower");
+    this.eventHandlers = [];
 
-    images.forEach(($image) => {
+    const animateImage = (el, from, to) => {
+      this.images
+        .filter((item) => item !== el)
+        .forEach(($image) => {
+          animate($image, {
+            opacity: [from, to],
+            ease: "out(6)",
+            duration: 500,
+          });
+        });
+    };
+
+    const hover = (el) => animateImage(el, 1, 0.4);
+    const unhover = (el) => animateImage(el, 0.4, 1);
+
+    this.images.forEach(($image, i) => {
       animate($image, {
         opacity: [0, 1],
         translateY: [100, 0],
@@ -67,50 +99,31 @@ export const AnimateGallery = {
         delay: i * 120,
         autoplay: onScroll({
           target: $image,
-          container: container, // $image.parentNode,
+          container: container,
           debug,
         }),
       });
 
-      $image.addEventListener(
-        "mouseenter",
-        function (e) {
-          hover(e.target);
-        },
-        false,
-      );
+      const mouseenterHandler = (e) => hover(e.target);
+      const mouseleaveHandler = (e) => unhover(e.target);
 
-      $image.addEventListener(
-        "mouseleave",
-        function (e) {
-          unhover(e.target);
-        },
-        false,
-      );
+      $image.addEventListener("mouseenter", mouseenterHandler, false);
+      $image.addEventListener("mouseleave", mouseleaveHandler, false);
 
-      i++;
+      this.eventHandlers.push({
+        element: $image,
+        mouseenter: mouseenterHandler,
+        mouseleave: mouseleaveHandler,
+      });
     });
+  },
 
-    function hover(el) {
-      animateImage(el, 1, 0.4);
-    }
-
-    function unhover(el) {
-      animateImage(el, 0.4, 1);
-    }
-
-    function animateImage(el, from, to) {
-      images
-        .filter(function (item) {
-          return item !== el;
-        })
-        .forEach(($image) => {
-          animate($image, {
-            opacity: [from, to],
-            ease: "out(6)",
-            duration: 500,
-          });
-        });
+  destroyed() {
+    if (this.eventHandlers) {
+      this.eventHandlers.forEach(({ element, mouseenter, mouseleave }) => {
+        element.removeEventListener("mouseenter", mouseenter);
+        element.removeEventListener("mouseleave", mouseleave);
+      });
     }
   },
 };
@@ -136,6 +149,7 @@ export const AnimateTimelineScroll = {
   mounted() {
     const timeline = this.el;
     const container = this.el.closest("#timeline_container") || window;
+    this.scrollContainer = container;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -165,7 +179,8 @@ export const AnimateTimelineScroll = {
 
   destroyed() {
     this.observer?.disconnect?.();
-    this.disableScrollSync(window); // clean up
+    this.disableScrollSync(this.scrollContainer || window);
+    this.scrollContainer = null;
   },
 
   enableScrollSync(timeline, container) {
@@ -199,71 +214,105 @@ export const AnimateTimelineScroll = {
 
 export const GalleryModal = {
   mounted() {
-    const modal = document.getElementById("image-modal");
-    const modalImage = document.getElementById("modal-image");
-    const backdrop = document.getElementById("modal-backdrop");
-    const transitionDuration = 150;
+    this.modal = document.getElementById("image-modal");
+    this.modalImage = document.getElementById("modal-image");
+    this.backdrop = document.getElementById("modal-backdrop");
+    this.transitionDuration = 150;
+    this.imageClickHandlers = [];
 
     document.querySelectorAll(".gallery__image img").forEach((img) => {
-      img.addEventListener("click", () => {
+      const clickHandler = () => {
         const src = img.getAttribute("data-full_image_src") || img.src;
-        modalImage.src = src;
-        modalImage.alt = img.alt || "";
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
+        this.modalImage.src = src;
+        this.modalImage.alt = img.alt || "";
+        this.modal.classList.remove("hidden");
+        this.modal.classList.add("flex");
 
         // Start zoom-in animation
         setTimeout(() => {
-          modalImage.classList.remove("scale-50", "opacity-0");
-          modalImage.classList.add("scale-100", "opacity-100");
-        }, transitionDuration);
-      });
+          this.modalImage.classList.remove("scale-50", "opacity-0");
+          this.modalImage.classList.add("scale-100", "opacity-100");
+        }, this.transitionDuration);
+      };
+
+      img.addEventListener("click", clickHandler);
+      this.imageClickHandlers.push({ element: img, handler: clickHandler });
     });
 
-    // Close modal on click outside or ESC
-    backdrop.addEventListener("click", () => {
-      modalImage.classList.remove("scale-100", "opacity-100");
-      modalImage.classList.add("scale-50", "opacity-0");
+    // Close modal on click outside
+    this.backdropClickHandler = () => {
+      this.modalImage.classList.remove("scale-100", "opacity-100");
+      this.modalImage.classList.add("scale-50", "opacity-0");
 
       setTimeout(() => {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-        modalImage.src = "";
-      }, transitionDuration);
+        this.modal.classList.add("hidden");
+        this.modal.classList.remove("flex");
+        this.modalImage.src = "";
+      }, this.transitionDuration);
+    };
+
+    if (this.backdrop) {
+      this.backdrop.addEventListener("click", this.backdropClickHandler);
+    }
+
+    // Close modal on ESC key
+    this.keydownHandler = (e) => {
+      if (e.key === "Escape") {
+        this.modal.classList.add("hidden");
+        this.modal.classList.remove("flex");
+        this.modalImage.src = "";
+      }
+    };
+
+    window.addEventListener("keydown", this.keydownHandler);
+  },
+
+  destroyed() {
+    // Clean up image click handlers
+    this.imageClickHandlers.forEach(({ element, handler }) => {
+      element.removeEventListener("click", handler);
     });
 
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-        modalImage.src = "";
-      }
-    });
+    // Clean up backdrop click handler
+    if (this.backdrop && this.backdropClickHandler) {
+      this.backdrop.removeEventListener("click", this.backdropClickHandler);
+    }
+
+    // Clean up keydown handler
+    if (this.keydownHandler) {
+      window.removeEventListener("keydown", this.keydownHandler);
+    }
   },
 };
 
 export const YearTrigger = {
   mounted() {
-    if (window.__yearObserverInitialized) return;
-    window.__yearObserverInitialized = true;
+    // Use instance-level flag instead of global to allow proper cleanup
+    if (this.initialized) return;
+    this.initialized = true;
 
-    const yearEl = document.getElementById("timeline-year");
-    const navLinks = document.querySelectorAll("[data-anchor-year]");
-    const sections = document.querySelectorAll("[data-year]");
-    let currentYear = parseInt(
-      [...yearEl.querySelectorAll(".digit")].map((d) => d.textContent).join(""),
+    this.yearEl = document.getElementById("timeline-year");
+    if (!this.yearEl) return;
+
+    this.navLinks = document.querySelectorAll("[data-anchor-year]");
+    this.sections = document.querySelectorAll("[data-year]");
+    this.currentYear = parseInt(
+      [...this.yearEl.querySelectorAll(".digit")]
+        .map((d) => d.textContent)
+        .join(""),
     );
 
-    function animateNavYearMenu(activeYear) {
-      navLinks.forEach((link) => {
+    // Use arrow functions to preserve 'this' context
+    this.animateNavYearMenu = (activeYear) => {
+      this.navLinks.forEach((link) => {
         const isActive = parseInt(link.dataset.year) === activeYear;
         link.classList.toggle("opacity-100", isActive);
         link.classList.toggle("opacity-60", !isActive);
         link.classList.toggle("font-semibold", isActive);
       });
-    }
+    };
 
-    function animateDigitRoll(digitWrapper, fromDigit, toDigit) {
+    this.animateDigitRoll = (digitWrapper, fromDigit, toDigit) => {
       digitWrapper.innerHTML = ""; // Clear previous
       const sign = fromDigit > toDigit;
       const toElY = sign ? "translateY(100%)" : "translateY(-100%)";
@@ -310,15 +359,10 @@ export const YearTrigger = {
         opacity: [0, 1],
         duration: 500,
         easing: "easeInOutCubic",
-        // complete: () => {
-        //   digitWrapper.innerHTML = `
-        //     <span class="digit inline-block w-full text-center">${toDigit}</span>
-        //   `;
-        // },
       });
-    }
+    };
 
-    const observer = new IntersectionObserver(
+    this.observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
           .filter((e) => e.isIntersecting)
@@ -332,24 +376,24 @@ export const YearTrigger = {
         if (!topEntry) return;
 
         const newYear = parseInt(topEntry.target.dataset.year);
-        if (newYear !== currentYear) {
-          const fromStr = String(currentYear).padStart(4, "0");
+        if (newYear !== this.currentYear) {
+          const fromStr = String(this.currentYear).padStart(4, "0");
           const toStr = String(newYear).padStart(4, "0");
-          const digitWrappers = yearEl.querySelectorAll(".digit-wrapper");
+          const digitWrappers = this.yearEl.querySelectorAll(".digit-wrapper");
 
           for (let i = 0; i < 4; i++) {
             const fromDigit = parseInt(fromStr[i]);
             const toDigit = parseInt(toStr[i]);
 
             if (fromDigit != toDigit) {
-              animateDigitRoll(digitWrappers[i], fromDigit, toDigit);
+              this.animateDigitRoll(digitWrappers[i], fromDigit, toDigit);
             }
           }
 
-          currentYear = newYear;
+          this.currentYear = newYear;
 
           // Update navbar highlight
-          animateNavYearMenu(newYear);
+          this.animateNavYearMenu(newYear);
         }
       },
       {
@@ -357,8 +401,15 @@ export const YearTrigger = {
       },
     );
 
-    animateNavYearMenu(currentYear);
-    sections.forEach((section) => observer.observe(section));
+    this.animateNavYearMenu(this.currentYear);
+    this.sections.forEach((section) => this.observer.observe(section));
+  },
+
+  destroyed() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+    this.initialized = false;
   },
 };
 
@@ -408,7 +459,8 @@ export const HorizontalScrollFadeIn = {
 
 export const AnimatePhotographyGallery = {
   mounted() {
-    [header] = document.getElementsByClassName("project-title");
+    const [header] = document.getElementsByClassName("project-title");
+    if (!header) return;
 
     setTimeout(() => {
       header.classList.replace("opacity-0", "opacity-100");
@@ -424,13 +476,20 @@ export const AnimatePhotographyGallery = {
 export const DarkModeSwitch = {
   mounted() {
     const html = document.documentElement;
-    this.el.addEventListener("click", () => {
+    this.clickHandler = () => {
       const isDark = html.classList.contains("dark");
       const newTheme = isDark ? "light" : "dark";
 
       html.classList.toggle("dark", newTheme === "dark");
       localStorage.setItem("theme", newTheme);
-    });
+    };
+    this.el.addEventListener("click", this.clickHandler);
+  },
+
+  destroyed() {
+    if (this.clickHandler) {
+      this.el.removeEventListener("click", this.clickHandler);
+    }
   },
 };
 

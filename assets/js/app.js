@@ -102,15 +102,28 @@ liveSocket.connect();
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
 
+// Normalize locale value to prevent injection (BCP-47 format)
+const normalizeLocale = (value) =>
+  typeof value === "string"
+    ? value.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 20)
+    : "";
+
 const SetLocale = () => {
-  if (document.cookie.match("locale=") == null) {
-    document.cookie = `locale=${navigator.language};path=/`;
-    location.reload();
+  if (document.cookie.match(/(?:^|;\s*)locale=/) == null) {
+    const locale = normalizeLocale(navigator.language);
+    if (!locale) return;
+    document.cookie = `locale=${locale};path=/`;
+    // Only reload if cookie was successfully set (avoid infinite loop if cookies blocked)
+    if (document.cookie.match(/(?:^|;\s*)locale=/)) {
+      location.reload();
+    }
   }
 };
 SetLocale();
 
 window.addEventListener("phx:change_locale", (e) => {
-  document.cookie = `locale=${e.detail.locale};path=/`;
+  const locale = normalizeLocale(e.detail.locale);
+  if (!locale) return;
+  document.cookie = `locale=${locale};path=/`;
   location.reload();
 });

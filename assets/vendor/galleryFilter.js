@@ -21,21 +21,48 @@ const GalleryFilter = {
    * Set up click and keydown event listeners for filter buttons.
    */
   _setupEventListeners() {
+    this.clickHandlers = new Map();
+    this.keydownHandlers = new Map();
+
     this.filterButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
+      const clickHandler = () => {
         if (btn.disabled) return;
         // Normalize filter value to lowercase for consistent matching.
-        const category = btn.dataset.category.toLowerCase();
+        const category = (btn.dataset.category || "").toLowerCase();
         if (category) this.applyFilter(category, btn);
-      });
+      };
 
-      btn.addEventListener("keydown", (e) => {
+      const keydownHandler = (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           btn.click();
         }
-      });
+      };
+
+      btn.addEventListener("click", clickHandler);
+      btn.addEventListener("keydown", keydownHandler);
+
+      this.clickHandlers.set(btn, clickHandler);
+      this.keydownHandlers.set(btn, keydownHandler);
     });
+  },
+
+  /**
+   * Clean up event listeners when hook is destroyed.
+   */
+  destroyed() {
+    if (this.filterButtons && this.clickHandlers && this.keydownHandlers) {
+      this.filterButtons.forEach((btn) => {
+        const clickHandler = this.clickHandlers.get(btn);
+        const keydownHandler = this.keydownHandlers.get(btn);
+
+        if (clickHandler) btn.removeEventListener("click", clickHandler);
+        if (keydownHandler) btn.removeEventListener("keydown", keydownHandler);
+      });
+
+      this.clickHandlers.clear();
+      this.keydownHandlers.clear();
+    }
   },
 
   /**
@@ -50,7 +77,10 @@ const GalleryFilter = {
     if (category === this.defaultFilter) return true;
     // Here, we expect that the data attribute contains a comma-separated string
     // representing an array of categories (e.g. "sky" or "sky,flowers").
-    const itemCategories = item.dataset.category
+    const rawCategories = item.dataset.category || "";
+    if (!rawCategories) return false;
+
+    const itemCategories = rawCategories
       .split(",")
       .map((c) => c.trim().toLowerCase());
     return itemCategories.includes(category);
@@ -63,6 +93,9 @@ const GalleryFilter = {
   _captureItemPositions() {
     const positions = new Map();
     this.items.forEach((item) => {
+      // Only record positions for currently visible items; hidden ones
+      // will be treated as "new" during the next animation.
+      if (item.style.display === "none") return;
       positions.set(item, item.getBoundingClientRect());
     });
     return positions;
@@ -101,6 +134,17 @@ const GalleryFilter = {
    * @param {function} onComplete - Callback function when all animations are complete.
    */
   _animateItems(beforePositions, onComplete) {
+    // Check for reduced motion preference - skip animation if set
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (prefersReducedMotion) {
+      this._showItemsImmediately();
+      onComplete && onComplete();
+      return;
+    }
+
     // Force browser reflow to ensure new positions are calculated.
     void this.el.offsetWidth;
 
@@ -108,15 +152,60 @@ const GalleryFilter = {
       (item) => item.style.display !== "none",
     );
     let animationsRemaining = visibleItems.length;
+    const TRANSITION_TIMEOUT = 400; // 300ms transition + 100ms margin
 
     if (animationsRemaining === 0) {
       onComplete && onComplete();
       return;
     }
 
+    const decrementAndComplete = () => {
+      animationsRemaining--;
+      if (animationsRemaining === 0) {
+        onComplete && onComplete();
+      }
+    };
+
     visibleItems.forEach((item) => {
       const before = beforePositions.get(item);
       const after = item.getBoundingClientRect();
+
+      // Items that were previously hidden have no `before` position:
+      // just fade/scale them in without a FLIP translation.
+      if (!before) {
+        item.style.opacity = "0";
+        item.style.transform = "scale(0.95)";
+        requestAnimationFrame(() => {
+          item.style.transition = "transform 300ms ease, opacity 300ms ease";
+          item.style.transform = "scale(1)";
+          item.style.opacity = "1";
+
+          // Set timeout fallback in case transitionend doesn't fire
+          let completed = false;
+          const fallbackTimeout = setTimeout(() => {
+            if (!completed) {
+              completed = true;
+              item.style.transition = "";
+              decrementAndComplete();
+            }
+          }, TRANSITION_TIMEOUT);
+
+          item.addEventListener(
+            "transitionend",
+            () => {
+              if (!completed) {
+                completed = true;
+                clearTimeout(fallbackTimeout);
+                item.style.transition = "";
+                decrementAndComplete();
+              }
+            },
+            { once: true },
+          );
+        });
+        return;
+      }
+
       const dx = before.left - after.left;
       const dy = before.top - after.top;
 
@@ -130,13 +219,25 @@ const GalleryFilter = {
         item.style.transition = "transform 300ms ease, opacity 300ms ease";
         item.style.transform = "translate(0, 0) scale(1)";
         item.style.opacity = "1";
+
+        // Set timeout fallback in case transitionend doesn't fire
+        let completed = false;
+        const fallbackTimeout = setTimeout(() => {
+          if (!completed) {
+            completed = true;
+            item.style.transition = "";
+            decrementAndComplete();
+          }
+        }, TRANSITION_TIMEOUT);
+
         item.addEventListener(
           "transitionend",
           () => {
-            item.style.transition = "";
-            animationsRemaining--;
-            if (animationsRemaining === 0) {
-              onComplete && onComplete();
+            if (!completed) {
+              completed = true;
+              clearTimeout(fallbackTimeout);
+              item.style.transition = "";
+              decrementAndComplete();
             }
           },
           { once: true },
@@ -152,7 +253,8 @@ const GalleryFilter = {
    */
   _updateActiveFilterButton(activeCategory) {
     this.filterButtons.forEach((btn) => {
-      const isActive = btn.dataset.category.toLowerCase() === activeCategory;
+      const btnCategory = (btn.dataset.category || "").toLowerCase();
+      const isActive = btnCategory === activeCategory;
       btn.setAttribute("aria-pressed", isActive);
       if (isActive) {
         btn.classList.add("active");
@@ -171,6 +273,10 @@ const GalleryFilter = {
    * @param {boolean} [skipAnimation=false] - Whether to skip the animation.
    */
   applyFilter(category, clickedButton = null, skipAnimation = false) {
+    // Track the latest requested category so animations from older clicks
+    // can't re-activate stale buttons.
+    this._activeFilterCategory = category;
+
     // Disable only the clicked button immediately.
     if (clickedButton) {
       clickedButton.disabled = true;
@@ -180,12 +286,12 @@ const GalleryFilter = {
 
     if (skipAnimation) {
       this._showItemsImmediately();
-      this._updateActiveFilterButton(category);
+      this._updateActiveFilterButton(this._activeFilterCategory);
       return;
     }
 
     this._animateItems(beforePositions, () => {
-      this._updateActiveFilterButton(category);
+      this._updateActiveFilterButton(this._activeFilterCategory);
     });
   },
 };

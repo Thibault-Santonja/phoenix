@@ -1,5 +1,13 @@
 const Carousel = {
   mounted() {
+    // Initialize properties to safe defaults to prevent cleanup errors
+    this.eventHandlers = {};
+    this.prevButtons = [];
+    this.nextButtons = [];
+    this.indicators = [];
+    this.indicatorClickHandlers = [];
+    this._tornDown = false;
+
     try {
       this.initializeElements();
       this.setupState();
@@ -19,10 +27,40 @@ const Carousel = {
   },
 
   disconnected() {
+    this.teardown();
+  },
+
+  destroyed() {
+    this.teardown();
+  },
+
+  teardown() {
+    // Prevent double teardown
+    if (this._tornDown) return;
+    this._tornDown = true;
+
+    // Clean up event listeners
     this.cleanupEventListeners();
+
+    // Stop autoplay and clear timer
     this.stopAutoplay();
+
+    // Clear user interaction timeout
+    if (this.userInteractionTimeout) {
+      clearTimeout(this.userInteractionTimeout);
+      this.userInteractionTimeout = null;
+    }
+
+    // Clear resize timeout
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = null;
+    }
+
+    // Disconnect intersection observer
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
+      this.intersectionObserver = null;
     }
   },
 
@@ -107,8 +145,8 @@ const Carousel = {
     this.userInteractionTimeout = null;
     this.isHovered = false;
     this.isTouching = false;
-    this.touchStartX = 0;
-    this.touchEndX = 0;
+    this.touchStartX = null;
+    this.touchEndX = null;
     this.minSwipeDistance = 50;
   },
 
@@ -156,9 +194,8 @@ const Carousel = {
       touchEnd: () => {
         this.isTouching = false;
         this.handleSwipe();
-        if (this.shouldAutoplay && !this.isHovered) {
-          this.startAutoplay();
-        }
+        // Autoplay resumption is handled by handleUserInteraction() in handleSwipe()
+        // to respect the same userInteractionDelay cooldown as button/keyboard interactions
       },
       keyDown: (e) => this.handleKeyDown(e),
       resize: () => this.handleResize(),
@@ -172,10 +209,11 @@ const Carousel = {
       button?.addEventListener("click", this.eventHandlers.nextClick);
     });
 
+    this.indicatorClickHandlers = [];
     this.indicators?.forEach((indicator, index) => {
-      indicator.addEventListener("click", () =>
-        this.eventHandlers.indicatorClick(index),
-      );
+      const handler = () => this.eventHandlers.indicatorClick(index);
+      this.indicatorClickHandlers.push(handler);
+      indicator.addEventListener("click", handler);
     });
 
     if (this.el.dataset.pauseOnHover !== "false") {
@@ -185,29 +223,67 @@ const Carousel = {
   },
 
   cleanupEventListeners() {
-    this.prevButtons.forEach((button) => {
-      button?.removeEventListener("click", this.eventHandlers.prevClick);
-    });
+    // Guard against missing handlers or button arrays/NodeLists
+    // Use forEach support check to handle both Array and NodeList
+    if (
+      this.prevButtons &&
+      typeof this.prevButtons.forEach === "function" &&
+      this.eventHandlers?.prevClick
+    ) {
+      this.prevButtons.forEach((button) => {
+        button?.removeEventListener("click", this.eventHandlers.prevClick);
+      });
+    }
 
-    this.nextButtons.forEach((button) => {
-      button?.removeEventListener("click", this.eventHandlers.nextClick);
-    });
+    if (
+      this.nextButtons &&
+      typeof this.nextButtons.forEach === "function" &&
+      this.eventHandlers?.nextClick
+    ) {
+      this.nextButtons.forEach((button) => {
+        button?.removeEventListener("click", this.eventHandlers.nextClick);
+      });
+    }
 
-    this.indicators?.forEach((indicator, index) => {
-      indicator.removeEventListener("click", () =>
-        this.eventHandlers.indicatorClick(index),
-      );
-    });
+    // indicators is a NodeList from querySelectorAll, not an Array
+    if (
+      this.indicators &&
+      typeof this.indicators.forEach === "function" &&
+      Array.isArray(this.indicatorClickHandlers)
+    ) {
+      this.indicators.forEach((indicator, index) => {
+        if (this.indicatorClickHandlers[index]) {
+          indicator?.removeEventListener(
+            "click",
+            this.indicatorClickHandlers[index],
+          );
+        }
+      });
+    }
 
-    this.el.removeEventListener("mouseenter", this.eventHandlers.mouseEnter);
-    this.el.removeEventListener("mouseleave", this.eventHandlers.mouseLeave);
+    if (this.eventHandlers?.mouseEnter) {
+      this.el.removeEventListener("mouseenter", this.eventHandlers.mouseEnter);
+    }
+    if (this.eventHandlers?.mouseLeave) {
+      this.el.removeEventListener("mouseleave", this.eventHandlers.mouseLeave);
+    }
 
-    document.removeEventListener("keydown", this.eventHandlers.keyDown);
-    window.removeEventListener("resize", this.eventHandlers.resize);
+    if (this.eventHandlers?.keyDown) {
+      document.removeEventListener("keydown", this.eventHandlers.keyDown);
+    }
+    if (this.eventHandlers?.resize) {
+      window.removeEventListener("resize", this.eventHandlers.resize);
+    }
 
-    this.el.removeEventListener("touchstart", this.eventHandlers.touchStart);
-    this.el.removeEventListener("touchmove", this.eventHandlers.touchMove);
-    this.el.removeEventListener("touchend", this.eventHandlers.touchEnd);
+    if (this.eventHandlers?.touchStart) {
+      this.el.removeEventListener("touchstart", this.eventHandlers.touchStart);
+    }
+    if (this.eventHandlers?.touchMove) {
+      this.el.removeEventListener("touchmove", this.eventHandlers.touchMove);
+    }
+    if (this.eventHandlers?.touchEnd) {
+      this.el.removeEventListener("touchend", this.eventHandlers.touchEnd);
+    }
   },
 
   setupKeyboardNavigation() {
@@ -243,20 +319,23 @@ const Carousel = {
   },
 
   handleSwipe() {
-    if (!this.touchStartX || !this.touchEndX) return;
+    if (this.touchStartX == null || this.touchEndX == null) return;
 
     const swipeDistance = this.touchEndX - this.touchStartX;
 
     if (Math.abs(swipeDistance) > this.minSwipeDistance) {
+      // Apply same userInteractionDelay cooldown as button/keyboard interactions
+      this.handleUserInteraction();
+      const evt = new Event("swipe");
       if (swipeDistance > 0) {
-        this.handlePrevClick(new Event("swipe"));
+        this.handlePrevClick(evt);
       } else {
-        this.handleNextClick(new Event("swipe"));
+        this.handleNextClick(evt);
       }
     }
 
-    this.touchStartX = 0;
-    this.touchEndX = 0;
+    this.touchStartX = null;
+    this.touchEndX = null;
   },
 
   setupResizeHandling() {
@@ -277,7 +356,7 @@ const Carousel = {
     const containerWidth = this.el.clientWidth;
     this.slides.forEach((slide) => {
       const img = slide.querySelector("img");
-      if (img) {
+      if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
         const aspectRatio = img.naturalHeight / img.naturalWidth;
         img.style.maxHeight = `${containerWidth * aspectRatio}px`;
       }
@@ -397,21 +476,18 @@ const Carousel = {
     this.updateIndicators(targetIndex);
 
     this.activeIndex = targetIndex;
-
-    if (this.shouldFocusSlide) {
-      targetSlide.focus({ preventScroll: true });
-    }
   },
 
   updateIndicators(targetIndex) {
+    const indicatorClasses = this.classes.activeIndicator.split(" ");
     this.indicators?.forEach((indicator, index) => {
       const isActive = index + 1 === targetIndex;
 
       if (isActive) {
-        indicator.classList.add(this.classes.activeIndicator);
+        indicator.classList.add(...indicatorClasses);
         indicator.setAttribute("aria-current", "true");
       } else {
-        indicator.classList.remove(this.classes.activeIndicator);
+        indicator.classList.remove(...indicatorClasses);
         indicator.setAttribute("aria-current", "false");
       }
 
@@ -481,11 +557,12 @@ const Carousel = {
   },
 
   toggleIndicatorState(indicator, isActive) {
+    const indicatorClasses = this.classes.activeIndicator.split(" ");
     if (isActive) {
-      indicator.classList.add(this.classes.activeIndicator);
+      indicator.classList.add(...indicatorClasses);
       indicator.setAttribute("aria-current", "true");
     } else {
-      indicator.classList.remove(this.classes.activeIndicator);
+      indicator.classList.remove(...indicatorClasses);
       indicator.setAttribute("aria-current", "false");
     }
   },
@@ -499,6 +576,11 @@ const Carousel = {
       if (slide) {
         slide.style.minHeight = "300px";
         overlay.style.minHeight = "300px";
+      }
+
+      // Guard against missing parentNode if image is detached from DOM
+      if (!img.parentNode) {
+        return;
       }
 
       img.parentNode.insertBefore(overlay, img.nextSibling);
@@ -586,12 +668,15 @@ const Carousel = {
     return !isNaN(num) ? num : 0;
   },
 
-  // Helper method: sanitizes class names by allowing only alphanumeric, dash, underscore, and space
+  // Helper method: sanitizes class names for Tailwind CSS
+  // Allows: alphanumeric, dash, underscore, colon (variants), forward slash (fractions/opacity),
+  // square brackets (arbitrary values), period (decimals), percent, and hash (colors)
+  // Examples: "md:w-1/2", "hover:bg-red-500/80", "w-[200px]", "text-[#ff0000]"
   sanitizeClassName(classString) {
     if (!classString || typeof classString !== "string") return null;
     return classString
       .split(" ")
-      .map((name) => name.replace(/[^a-zA-Z0-9_\-]/g, ""))
+      .map((name) => name.replace(/[^a-zA-Z0-9_\-:\/\[\].%#]/g, ""))
       .filter((name) => name.length > 0)
       .join(" ");
   },

@@ -1,17 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
 
-#amvcc {
-    div {
-        font-family: Lato, system-ui, sans-serif;
-    }
+#amvcc div {
+    font-family: Lato, system-ui, sans-serif;
+}
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: Fraunces, system-ui, sans-serif;
-    }
+#amvcc h1,
+#amvcc h2,
+#amvcc h3,
+#amvcc h4,
+#amvcc h5,
+#amvcc h6 {
+    font-family: Fraunces, system-ui, sans-serif;
 }
