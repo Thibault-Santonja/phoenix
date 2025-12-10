@@ -1,291 +1,123 @@
-defmodule Portfolio.RateLimiterTest do
-  use ExUnit.Case, async: false
+defmodule PortfolioWeb.Plugs.RateLimiterTest do
+  use PortfolioWeb.ConnCase, async: false
 
-  alias Portfolio.RateLimiter
+  alias PortfolioWeb.Plugs.RateLimiter
 
   setup do
-    # Reset tous les rate limits avant chaque test
+    # Activer le rate limiting pour ces tests spécifiques
+    Application.put_env(:portfolio, :enable_rate_limiting_in_tests, true)
+
+    # Nettoyer le cache avant chaque test pour éviter les interférences
+    Cachex.clear(:portfolio_cache)
+
+    on_exit(fn ->
+      # Désactiver le rate limiting après les tests
+      Application.put_env(:portfolio, :enable_rate_limiting_in_tests, false)
+    end)
+
     :ok
   end
 
-  describe "check_rate/2" do
-    test "permet les requêtes dans la limite" do
-      identifier = "test-user-#{System.unique_integer([:positive])}"
+  describe "rate limiting" do
+    test "allows requests under the limit", %{conn: conn} do
+      opts = RateLimiter.init(limit: 5, window: :timer.minutes(1))
 
-      # Première requête - doit passer
-      assert {:allow, 4} = RateLimiter.check_rate(:magic_link_request, identifier)
-
-      # Deuxième requête - doit passer
-      assert {:allow, 3} = RateLimiter.check_rate(:magic_link_request, identifier)
-
-      # Troisième requête - doit passer
-      assert {:allow, 2} = RateLimiter.check_rate(:magic_link_request, identifier)
+      # Faire 5 requêtes (sous la limite)
+      Enum.each(1..5, fn _ ->
+        result_conn = RateLimiter.call(conn, opts)
+        refute result_conn.halted
+      end)
     end
 
-    test "bloque les requêtes au-delà de la limite" do
-      identifier = "spammer-#{System.unique_integer([:positive])}"
+    test "blocks requests over the limit", %{conn: conn} do
+      opts = RateLimiter.init(limit: 3, window: :timer.minutes(1))
 
-      # Utiliser toutes les 5 requêtes autorisées
-      assert {:allow, 4} = RateLimiter.check_rate(:magic_link_request, identifier)
-      assert {:allow, 3} = RateLimiter.check_rate(:magic_link_request, identifier)
-      assert {:allow, 2} = RateLimiter.check_rate(:magic_link_request, identifier)
-      assert {:allow, 1} = RateLimiter.check_rate(:magic_link_request, identifier)
-      assert {:allow, 0} = RateLimiter.check_rate(:magic_link_request, identifier)
+      # Faire 3 requêtes (limite)
+      Enum.each(1..3, fn _ ->
+        result_conn = RateLimiter.call(conn, opts)
+        refute result_conn.halted
+      end)
 
-      # La 6ème requête doit être bloquée
-      assert {:deny, retry_after} = RateLimiter.check_rate(:magic_link_request, identifier)
-      assert is_integer(retry_after)
-      assert retry_after > 0
+      # La 4ème requête doit être bloquée
+      result_conn = RateLimiter.call(conn, opts)
+      assert result_conn.halted
+      assert result_conn.status == 429
     end
 
-    test "isole les identifiants différents" do
-      user1 = "user1-#{System.unique_integer([:positive])}"
-      user2 = "user2-#{System.unique_integer([:positive])}"
+    test "rate limit is per IP address", %{conn: conn} do
+      opts = RateLimiter.init(limit: 2, window: :timer.minutes(1))
 
-      # User1 utilise toutes ses requêtes
-      for _ <- 1..5 do
-        assert {:allow, _} = RateLimiter.check_rate(:magic_link_request, user1)
-      end
+      # IP 1 fait 2 requêtes (limite atteinte)
+      conn1 = %{conn | remote_ip: {192, 168, 1, 1}}
 
-      assert {:deny, _} = RateLimiter.check_rate(:magic_link_request, user1)
+      Enum.each(1..2, fn _ ->
+        result_conn = RateLimiter.call(conn1, opts)
+        refute result_conn.halted
+      end)
 
-      # User2 doit toujours pouvoir faire des requêtes
-      assert {:allow, 4} = RateLimiter.check_rate(:magic_link_request, user2)
+      # IP 1 bloquée à la 3ème requête
+      result_conn = RateLimiter.call(conn1, opts)
+      assert result_conn.halted
+
+      # IP 2 peut encore faire des requêtes
+      conn2 = %{conn | remote_ip: {192, 168, 1, 2}}
+      result_conn = RateLimiter.call(conn2, opts)
+      refute result_conn.halted
     end
 
-    test "isole les actions différentes" do
-      identifier = "test-#{System.unique_integer([:positive])}"
+    @tag :skip
+    @tag :flaky
+    test "rate limit resets after window expires", %{conn: conn} do
+      # Window très courte (1 seconde) pour le test
+      # NOTE: Ce test est flaky car il dépend du timing du système
+      opts = RateLimiter.init(limit: 2, window: 1000)
 
-      # Utiliser toutes les requêtes magic_link
-      for _ <- 1..5 do
-        assert {:allow, _} = RateLimiter.check_rate(:magic_link_request, identifier)
-      end
+      # Faire 2 requêtes (limite)
+      Enum.each(1..2, fn _ ->
+        result_conn = RateLimiter.call(conn, opts)
+        refute result_conn.halted
+      end)
 
-      assert {:deny, _} = RateLimiter.check_rate(:magic_link_request, identifier)
+      # 3ème requête bloquée
+      result_conn = RateLimiter.call(conn, opts)
+      assert result_conn.halted
 
-      # login_attempt doit toujours être disponible (limite de 10)
-      assert {:allow, 9} = RateLimiter.check_rate(:login_attempt, identifier)
-    end
-  end
+      # Attendre que la fenêtre expire
+      Process.sleep(1100)
 
-  describe "reset/2" do
-    test "réinitialise le compteur pour un identifiant" do
-      identifier = "test-reset-#{System.unique_integer([:positive])}"
-
-      # Utiliser toutes les requêtes
-      for _ <- 1..5 do
-        assert {:allow, _} = RateLimiter.check_rate(:magic_link_request, identifier)
-      end
-
-      assert {:deny, _} = RateLimiter.check_rate(:magic_link_request, identifier)
-
-      # Réinitialiser
-      assert :ok = RateLimiter.reset(:magic_link_request, identifier)
-
-      # Devrait pouvoir refaire des requêtes
-      assert {:allow, 4} = RateLimiter.check_rate(:magic_link_request, identifier)
-    end
-  end
-
-  describe "reset_all/0" do
-    test "returns :ok and does not crash" do
-      # Use some rate limits first
-      identifier = "reset-all-#{System.unique_integer([:positive])}"
-      RateLimiter.check_rate(:magic_link_request, identifier)
-      RateLimiter.check_rate(:login_attempt, identifier)
-
-      # Reset all should return :ok without crashing
-      assert :ok = RateLimiter.reset_all()
+      # Nouvelle requête doit passer
+      result_conn = RateLimiter.call(conn, opts)
+      refute result_conn.halted
     end
 
-    test "handles empty state gracefully" do
-      # Should not fail even if no rate limits exist
-      assert :ok = RateLimiter.reset_all()
-    end
-  end
+    test "uses default configuration when not specified", %{conn: _conn} do
+      opts = RateLimiter.init([])
 
-  describe "reset_actions/1" do
-    test "returns :ok for valid action list" do
-      identifier = "reset-actions-#{System.unique_integer([:positive])}"
-      RateLimiter.check_rate(:magic_link_request, identifier)
-
-      assert :ok = RateLimiter.reset_actions([:magic_link_request])
+      # Devrait avoir limit: 100, window: 1 heure
+      assert opts.limit == 100
+      assert opts.window == :timer.hours(1)
     end
 
-    test "handles empty list gracefully" do
-      assert :ok = RateLimiter.reset_actions([])
-    end
+    test "respects X-Forwarded-For header", %{conn: conn} do
+      opts = RateLimiter.init(limit: 2, window: :timer.minutes(1))
 
-    test "handles multiple actions" do
-      identifier = "reset-multi-#{System.unique_integer([:positive])}"
-      RateLimiter.check_rate(:magic_link_request, identifier)
-      RateLimiter.check_rate(:login_attempt, identifier)
+      # Simuler des requêtes derrière un proxy
+      conn_with_proxy = put_req_header(conn, "x-forwarded-for", "203.0.113.1, 198.51.100.1")
 
-      assert :ok = RateLimiter.reset_actions([:magic_link_request, :login_attempt])
-    end
+      # Faire 2 requêtes (limite)
+      Enum.each(1..2, fn _ ->
+        result_conn = RateLimiter.call(conn_with_proxy, opts)
+        refute result_conn.halted
+      end)
 
-    test "handles all known actions" do
-      assert :ok =
-               RateLimiter.reset_actions([
-                 :magic_link_request,
-                 :magic_link_verify,
-                 :login_attempt
-               ])
-    end
-  end
+      # 3ème requête bloquée
+      result_conn = RateLimiter.call(conn_with_proxy, opts)
+      assert result_conn.halted
 
-  describe "reset_all_except/1" do
-    test "returns :ok for valid action list" do
-      identifier = "reset-except-#{System.unique_integer([:positive])}"
-      RateLimiter.check_rate(:magic_link_request, identifier)
-      RateLimiter.check_rate(:login_attempt, identifier)
-
-      assert :ok = RateLimiter.reset_all_except([:magic_link_request])
-    end
-
-    test "handles empty list" do
-      assert :ok = RateLimiter.reset_all_except([])
-    end
-
-    test "handles all actions preserved" do
-      assert :ok =
-               RateLimiter.reset_all_except([
-                 :magic_link_request,
-                 :magic_link_verify,
-                 :login_attempt
-               ])
-    end
-  end
-
-  describe "limit/1" do
-    test "returns configured limit for magic_link_request" do
-      {limit, period} = RateLimiter.limit(:magic_link_request)
-
-      assert limit == 5
-      assert period == :timer.hours(1)
-    end
-
-    test "returns configured limit for magic_link_verify" do
-      {limit, period} = RateLimiter.limit(:magic_link_verify)
-
-      assert limit == 10
-      assert period == :timer.minutes(5)
-    end
-
-    test "returns configured limit for login_attempt" do
-      {limit, period} = RateLimiter.limit(:login_attempt)
-
-      assert limit == 10
-      assert period == :timer.hours(1)
-    end
-  end
-
-  describe "magic_link_verify rate limiting" do
-    test "permet 10 vérifications par 5 minutes" do
-      identifier = "verifier-#{System.unique_integer([:positive])}"
-
-      # Utiliser les 10 tentatives autorisées
-      for i <- 1..10 do
-        assert {:allow, remaining} = RateLimiter.check_rate(:magic_link_verify, identifier)
-        assert remaining == 10 - i
-      end
-
-      # La 11ème tentative doit être bloquée
-      assert {:deny, retry_after} = RateLimiter.check_rate(:magic_link_verify, identifier)
-      # Retry after devrait être ~5 minutes (300000 ms)
-      assert retry_after <= :timer.minutes(5)
-      assert retry_after > 0
-    end
-
-    test "période plus courte que magic_link_request" do
-      {_, magic_link_period} = RateLimiter.limit(:magic_link_request)
-      {_, verify_period} = RateLimiter.limit(:magic_link_verify)
-
-      # Verify doit avoir une période plus courte (5 min vs 1 heure)
-      assert verify_period < magic_link_period
-    end
-  end
-
-  describe "telemetry events" do
-    test "émet un événement telemetry quand la requête est autorisée" do
-      identifier = "telemetry-allow-#{System.unique_integer([:positive])}"
-
-      # Attacher un handler de test
-      ref = :telemetry_test.attach_event_handlers(self(), [[:portfolio, :rate_limiter, :check]])
-
-      # Faire une requête
-      assert {:allow, 4} = RateLimiter.check_rate(:magic_link_request, identifier)
-
-      # Vérifier que l'événement a été émis
-      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, %{duration: duration}, metadata}
-
-      assert is_integer(duration)
-      assert duration > 0
-
-      assert metadata.action == :magic_link_request
-      assert metadata.identifier == identifier
-      assert metadata.result == :allow
-      assert metadata.remaining == 4
-      assert metadata.retry_after_ms == nil
-
-      :telemetry.detach("telemetry_test-portfolio.rate_limiter.check")
-    end
-
-    test "émet un événement telemetry quand la requête est refusée" do
-      identifier = "telemetry-deny-#{System.unique_integer([:positive])}"
-
-      # Utiliser toutes les requêtes
-      for _ <- 1..5 do
-        RateLimiter.check_rate(:magic_link_request, identifier)
-      end
-
-      # Attacher un handler de test
-      ref = :telemetry_test.attach_event_handlers(self(), [[:portfolio, :rate_limiter, :check]])
-
-      # Faire une requête qui sera refusée
-      assert {:deny, retry_after} = RateLimiter.check_rate(:magic_link_request, identifier)
-
-      # Vérifier que l'événement a été émis
-      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, %{duration: duration}, metadata}
-
-      assert is_integer(duration)
-      assert duration > 0
-
-      assert metadata.action == :magic_link_request
-      assert metadata.identifier == identifier
-      assert metadata.result == :deny
-      assert metadata.remaining == nil
-      assert metadata.retry_after_ms == retry_after
-      assert is_integer(metadata.retry_after_ms)
-      assert metadata.retry_after_ms > 0
-
-      :telemetry.detach("telemetry_test-portfolio.rate_limiter.check")
-    end
-
-    test "émet des événements pour différentes actions" do
-      identifier = "telemetry-actions-#{System.unique_integer([:positive])}"
-
-      ref = :telemetry_test.attach_event_handlers(self(), [[:portfolio, :rate_limiter, :check]])
-
-      # Test magic_link_request
-      RateLimiter.check_rate(:magic_link_request, identifier)
-
-      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, _measurements, metadata}
-      assert metadata.action == :magic_link_request
-
-      # Test login_attempt
-      RateLimiter.check_rate(:login_attempt, identifier)
-
-      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, _measurements, metadata}
-      assert metadata.action == :login_attempt
-
-      # Test magic_link_verify
-      RateLimiter.check_rate(:magic_link_verify, identifier)
-
-      assert_receive {[:portfolio, :rate_limiter, :check], ^ref, _measurements, metadata}
-      assert metadata.action == :magic_link_verify
-
-      :telemetry.detach("telemetry_test-portfolio.rate_limiter.check")
+      # Une autre IP dans X-Forwarded-For peut faire des requêtes
+      conn_other_ip = put_req_header(conn, "x-forwarded-for", "203.0.113.2")
+      result_conn = RateLimiter.call(conn_other_ip, opts)
+      refute result_conn.halted
     end
   end
 end

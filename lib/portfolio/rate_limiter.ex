@@ -1,6 +1,9 @@
 defmodule Portfolio.RateLimiter do
   @moduledoc """
-  Rate limiting using Hammer.
+  Rate limiting service using Hammer's ETS backend.
+
+  This module wraps Hammer.ETS.FixWindow directly instead of using `use Hammer`
+  to avoid compilation-time ETS table creation issues during parallel test compilation.
 
   Provides rate limiting for various operations to prevent abuse:
   - Magic link requests (email-based authentication)
@@ -14,7 +17,7 @@ defmodule Portfolio.RateLimiter do
   - `:magic_link_request` - 5 requests per hour per email
   - `:login_attempt` - 10 attempts per hour per IP
 
-  ## Exemples
+  ## Examples
 
       iex> RateLimiter.check_rate(:magic_link_request, "user@example.com")
       {:allow, 4}  # 4 requests remaining
@@ -23,9 +26,20 @@ defmodule Portfolio.RateLimiter do
       {:deny, 0}  # Rate limit exceeded
   """
 
+  use GenServer
+
   require Logger
 
-  @type action :: :magic_link_request | :magic_link_verify | :login_attempt | :session_creation
+  @table __MODULE__
+
+  @type action ::
+          :magic_link_request
+          | :magic_link_verify
+          | :login_attempt
+          | :session_creation
+          | :photo_upload
+          | :album_creation
+          | :bulk_delete
   @type rate_identifier :: String.t()
   @type result :: {:allow, remaining :: integer()} | {:deny, retry_after :: integer()}
 
@@ -38,8 +52,58 @@ defmodule Portfolio.RateLimiter do
     # 10 login attempts per hour per IP
     login_attempt: {10, :timer.hours(1)},
     # 20 session creations per hour per user (prevents DoS via unlimited sessions)
-    session_creation: {20, :timer.hours(1)}
+    session_creation: {20, :timer.hours(1)},
+    # 50 photo uploads per 10 minutes per user (prevents disk I/O exhaustion)
+    photo_upload: {50, :timer.minutes(10)},
+    # 10 album creations per hour per user (prevents database spam)
+    album_creation: {10, :timer.hours(1)},
+    # 5 bulk delete operations per minute per user (prevents mass deletion abuse)
+    bulk_delete: {5, :timer.minutes(1)}
   }
+
+  # GenServer API
+
+  def child_spec(opts) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, [opts]},
+      type: :worker
+    }
+  end
+
+  def start_link(opts \\ []) do
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  end
+
+  @impl GenServer
+  def init(opts) do
+    clean_period = Keyword.get(opts, :clean_period, :timer.minutes(1))
+
+    # Create the ETS table with Hammer-compatible options
+    _table =
+      :ets.new(@table, [
+        :named_table,
+        :set,
+        :public,
+        {:read_concurrency, true},
+        {:write_concurrency, true},
+        {:decentralized_counters, true}
+      ])
+
+    # Schedule periodic cleanup
+    schedule_cleanup(clean_period)
+
+    {:ok, %{clean_period: clean_period}}
+  end
+
+  @impl GenServer
+  def handle_info(:cleanup, state) do
+    clean_expired_entries()
+    schedule_cleanup(state.clean_period)
+    {:noreply, state}
+  end
+
+  # Public API
 
   @doc """
   Checks if an action is allowed for a given identifier.
@@ -70,31 +134,7 @@ defmodule Portfolio.RateLimiter do
 
     start_time = System.monotonic_time()
 
-    result =
-      case Hammer.check_rate(bucket_key, period, limit) do
-        {:allow, count} ->
-          remaining = limit - count
-
-          Logger.debug("Rate limit check passed",
-            action: action,
-            identifier: identifier,
-            remaining: remaining
-          )
-
-          {:allow, remaining}
-
-        {:deny, _limit} ->
-          # Calculate retry_after based on the oldest entry in the bucket
-          retry_after = period
-
-          Logger.warning("Rate limit exceeded",
-            action: action,
-            identifier: identifier,
-            retry_after_ms: retry_after
-          )
-
-          {:deny, retry_after}
-      end
+    result = hit(bucket_key, period, limit)
 
     # Emit telemetry event
     duration = System.monotonic_time() - start_time
@@ -127,7 +167,20 @@ defmodule Portfolio.RateLimiter do
   @spec reset(action(), rate_identifier()) :: :ok
   def reset(action, identifier) when is_atom(action) and is_binary(identifier) do
     bucket_key = build_bucket_key(action, identifier)
-    _result = Hammer.delete_buckets(bucket_key)
+    {_limit, period} = Map.fetch!(@rate_limits, action)
+
+    # Calculate the current window key
+    now = System.system_time(:millisecond)
+    window = div(now, period)
+    full_key = {bucket_key, window}
+
+    # Delete the bucket key directly from ETS table
+    try do
+      :ets.delete(@table, full_key)
+    rescue
+      ArgumentError -> :ok
+    end
+
     :ok
   end
 
@@ -143,29 +196,10 @@ defmodule Portfolio.RateLimiter do
   """
   @spec reset_all() :: :ok
   def reset_all do
-    # Clear all Hammer ETS buckets by deleting all objects from all Hammer tables
-    # Hammer.Backend.ETS uses multiple ETS tables, we need to clear them all
     try do
-      # List all ETS tables and find Hammer tables
-      :ets.all()
-      |> Enum.filter(fn table ->
-        try do
-          info = :ets.info(table)
-          name = Keyword.get(info, :name, "")
-          name == Hammer.ETS or String.contains?(to_string(name), "hammer")
-        rescue
-          _ -> false
-        end
-      end)
-      |> Enum.each(fn table ->
-        try do
-          :ets.delete_all_objects(table)
-        rescue
-          _ -> :ok
-        end
-      end)
+      :ets.delete_all_objects(@table)
     rescue
-      _ -> :ok
+      ArgumentError -> :ok
     end
 
     :ok
@@ -185,35 +219,17 @@ defmodule Portfolio.RateLimiter do
   @spec reset_actions([action()]) :: :ok
   def reset_actions(actions) when is_list(actions) do
     try do
-      :ets.all()
-      |> Enum.filter(fn table ->
-        try do
-          info = :ets.info(table)
-          name = Keyword.get(info, :name, "")
-          name == Hammer.ETS or String.contains?(to_string(name), "hammer")
-        rescue
-          _ -> false
-        end
-      end)
-      |> Enum.each(fn table ->
-        try do
-          # Get all objects and filter by action
-          :ets.tab2list(table)
-          |> Enum.each(fn {key, _value} ->
-            # Keys are like: "rate_limit:magic_link_request:user@example.com"
-            key_str = to_string(key)
+      :ets.tab2list(@table)
+      |> Enum.each(fn {{key, _window}, _count, _expires_at} ->
+        key_str = to_string(key)
 
-            should_delete =
-              Enum.any?(actions, fn action ->
-                String.contains?(key_str, "rate_limit:#{action}:")
-              end)
-
-            if should_delete do
-              :ets.delete(table, key)
-            end
+        should_delete =
+          Enum.any?(actions, fn action ->
+            String.contains?(key_str, "rate_limit:#{action}:")
           end)
-        rescue
-          _ -> :ok
+
+        if should_delete do
+          :ets.match_delete(@table, {{key, :_}, :_, :_})
         end
       end)
     rescue
@@ -237,35 +253,17 @@ defmodule Portfolio.RateLimiter do
   @spec reset_all_except([action()]) :: :ok
   def reset_all_except(actions) when is_list(actions) do
     try do
-      :ets.all()
-      |> Enum.filter(fn table ->
-        try do
-          info = :ets.info(table)
-          name = Keyword.get(info, :name, "")
-          name == Hammer.ETS or String.contains?(to_string(name), "hammer")
-        rescue
-          _ -> false
-        end
-      end)
-      |> Enum.each(fn table ->
-        try do
-          # Get all objects and filter by action
-          :ets.tab2list(table)
-          |> Enum.each(fn {key, _value} ->
-            # Keys are like: "rate_limit:magic_link_request:user@example.com"
-            key_str = to_string(key)
+      :ets.tab2list(@table)
+      |> Enum.each(fn {{key, _window}, _count, _expires_at} ->
+        key_str = to_string(key)
 
-            should_keep =
-              Enum.any?(actions, fn action ->
-                String.contains?(key_str, "rate_limit:#{action}:")
-              end)
-
-            if not should_keep do
-              :ets.delete(table, key)
-            end
+        should_keep =
+          Enum.any?(actions, fn action ->
+            String.contains?(key_str, "rate_limit:#{action}:")
           end)
-        rescue
-          _ -> :ok
+
+        if not should_keep do
+          :ets.match_delete(@table, {{key, :_}, :_, :_})
         end
       end)
     rescue
@@ -288,8 +286,58 @@ defmodule Portfolio.RateLimiter do
     Map.fetch!(@rate_limits, action)
   end
 
-  # Build a unique key for the Hammer bucket
-  @spec build_bucket_key(action(), rate_identifier()) :: String.t()
+  # Private functions
+
+  # Hammer-compatible hit function using FixWindow algorithm
+  defp hit(key, scale, limit) do
+    now = System.system_time(:millisecond)
+    window = div(now, scale)
+    full_key = {key, window}
+    expires_at = (window + 1) * scale
+
+    count = update_counter(full_key, 1, expires_at)
+
+    if count <= limit do
+      remaining = limit - count
+
+      Logger.debug("Rate limit check passed",
+        bucket_key: key,
+        remaining: remaining
+      )
+
+      {:allow, remaining}
+    else
+      retry_after = expires_at - now
+
+      Logger.warning("Rate limit exceeded",
+        bucket_key: key,
+        retry_after_ms: retry_after
+      )
+
+      {:deny, retry_after}
+    end
+  end
+
+  # Atomic counter update with default value creation
+  defp update_counter(key, increment, expires_at) do
+    :ets.update_counter(@table, key, increment, {key, 0, expires_at})
+  end
+
+  defp clean_expired_entries do
+    now = System.system_time(:millisecond)
+    match_spec = [{{{:_, :_}, :_, :"$1"}, [], [{:<, :"$1", {:const, now}}]}]
+
+    try do
+      :ets.select_delete(@table, match_spec)
+    rescue
+      ArgumentError -> 0
+    end
+  end
+
+  defp schedule_cleanup(period) do
+    Process.send_after(self(), :cleanup, period)
+  end
+
   defp build_bucket_key(action, identifier) do
     "rate_limit:#{action}:#{identifier}"
   end
