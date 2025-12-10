@@ -12,8 +12,6 @@
 # - Health checks
 # - Resource limits
 
-version: "3.8"
-
 services:
   # PostgreSQL Database
   postgres:
@@ -29,7 +27,7 @@ services:
     ports:
       - "5433:5432" # Expose on 5433 to avoid conflicts with local PostgreSQL
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U portfolio"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-portfolio}"]
       interval: 10s
       timeout: 5s
       retries: 5

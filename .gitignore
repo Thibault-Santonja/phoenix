@@ -68,3 +68,4 @@ Thumbs.db
 # Dialyzer PLT files (machine-specific, regenerated in CI)
 /priv/plts/*.plt
 /priv/plts/*.plt.hash
+_build_test/test/lib

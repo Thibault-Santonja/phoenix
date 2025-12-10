@@ -29,7 +29,7 @@ A Phoenix LiveView application showcasing photography, medieval reenactment, and
 - **Storage Adapters**: Pluggable storage backends (LocalStorage, future CloudflareStorage)
 - **LiveView Components**: Modern, reactive UI with Phoenix LiveView
 - **Background Processing**: Oban-based async job processing with monitoring
-- **Comprehensive Tests**: 677 tests with excellent coverage
+- **Comprehensive Tests**: 2026 tests (1962 tests + 35 doctests + 29 properties) with excellent coverage
   - Auth Context: 100% coverage
   - Photography Context: 100% coverage
   - Image Processing: 77 comprehensive tests
@@ -111,7 +111,7 @@ mix ecto.reset            # Drop, create, and migrate
 
 ## Project Structure
 
-```
+```text
 lib/portfolio/
 ├── auth/                 # Authentication context
 │   ├── user.ex          # User schema
@@ -160,7 +160,7 @@ See the [Phoenix deployment guide](https://hexdocs.pm/phoenix/deployment.html) f
 - **Authentication**: Custom magic link implementation
 - **UI**: Tailwind CSS 3.x with Heroicons
 - **Email**: Swoosh with configurable adapters
-- **Testing**: ExUnit with 202 test cases
+- **Testing**: ExUnit with 2026 tests
 
 ## Documentation
 
@@ -174,4 +174,4 @@ This is a personal portfolio project. For questions or suggestions, please open 
 
 ## License
 
-Copyright © 2025 Thibault San. All rights reserved.
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
