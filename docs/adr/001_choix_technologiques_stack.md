@@ -39,7 +39,7 @@ Portfolio photographique avec :
 Stack fonctionnelle complète basée sur Elixir/Phoenix avec LiveView pour le frontend et PostgreSQL comme base de données.
 
 **Stack détaillée:**
-- Backend: Elixir 1.18 + Phoenix 1.8
+- Backend: Elixir 1.18 + Phoenix 1.8.0
 - Frontend: Phoenix LiveView + TailwindCSS
 - BDD: PostgreSQL 16
 - Traitement images: Vix (libvips), formats WebP + AVIF
@@ -192,7 +192,7 @@ L'option choisie est: **Option 1 - Elixir + Phoenix + LiveView**
 
 La décision est basée sur les critères suivants, par ordre d'importance :
 
-**1. Coût d'hébergement (Critique)**
+### 1. Coût d'hébergement (Critique)
 
 Le budget étant la contrainte principale, Elixir offre le meilleur ratio performance/coût :
 - Serveur Hetzner CX22 (2 vCPU, 4 GB RAM) : 4.51€/mois
@@ -200,7 +200,7 @@ Le budget étant la contrainte principale, Elixir offre le meilleur ratio perfor
 - Un seul serveur suffit pour trafic < 10k visiteurs/jour
 - Comparable : Python nécessiterait 2-3x plus de ressources (workers Celery, Redis)
 
-**2. Plaisir de développement / Apprentissage (Très important)**
+### 2. Plaisir de développement / Apprentissage (Très important)
 
 Projet personnel sans pression commerciale, le plaisir est essentiel :
 - Expérience Elixir préalable = zone de confort avec possibilité d'approfondissement
@@ -208,7 +208,7 @@ Projet personnel sans pression commerciale, le plaisir est essentiel :
 - Pattern matching, pipe operator, immutabilité = paradigmes appréciés
 - Évite JavaScript/TypeScript (aversion personnelle)
 
-**3. Productivité / Rapidité de développement (Important)**
+### 3. Productivité / Rapidité de développement (Important)
 
 Objectif de livraison en quelques mois :
 - Phoenix générateurs accélèrent développement (`mix phx.gen.live`)
@@ -217,7 +217,7 @@ Objectif de livraison en quelques mois :
 - Ecto migrations et changesets = robustesse avec peu d'effort
 - Hot reloading dev très rapide
 
-**4. Performance / Scalabilité (Souhaitable)**
+### 4. Performance / Scalabilité (Souhaitable)
 
 Bien que trafic faible attendu, la marge de manœuvre est rassurante :
 - Phoenix : 2M+ connexions WebSocket démontrées sur hardware modeste
@@ -307,7 +307,7 @@ Ces librairies sont ajoutées progressivement selon les besoins, pas d'over-engi
 ## Plan d'Action
 
 1. **Phase 1: Setup Initial**
-   - Installation Elixir 1.18, Phoenix 1.8
+   - Installation Elixir 1.18, Phoenix 1.8.0
    - Configuration PostgreSQL 16
    - Setup Hetzner VPS + Kamal
    - Configuration Cloudflare DNS

@@ -362,9 +362,9 @@ Développement local utilise `/etc/hosts` :
 Configuration actuelle (simple et efficace) :
 ```
 Type    Name             Content          Proxy Status
-A       *                157.180.70.8     DNS only
-A       thibaultsan.com  157.180.70.8     DNS only
-CNAME   www              thibaultsan.com  DNS only
+A       *                157.180.70.8     Proxied
+A       thibaultsan.com  157.180.70.8     Proxied
+CNAME   www              thibaultsan.com  Proxied
 ```
 
 Le wildcard `*` capture tous les sous-domaines (photo, tech, amvcc, futurs).
