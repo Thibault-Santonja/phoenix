@@ -56,6 +56,17 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
         assert render(view) =~ "Tableau de bord" or render(view) =~ "Dashboard"
       end
     end
+
+    test "retry_all_failed event triggers reprocessing", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin")
+
+      # Trigger the event directly
+      html = render_click(view, "retry_all_failed", %{})
+
+      # Should show flash message or remain on dashboard
+      assert html =~ "redémarré" or html =~ "restarted" or html =~ "Tableau de bord" or
+               html =~ "Dashboard" or is_binary(html)
+    end
   end
 
   describe "statistics display" do

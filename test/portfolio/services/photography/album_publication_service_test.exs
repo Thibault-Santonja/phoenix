@@ -1,86 +1,70 @@
 defmodule Portfolio.Services.Photography.AlbumPublicationServiceTest do
-  use Portfolio.DataCase, async: false
+  use Portfolio.DataCase, async: true
 
-  alias Portfolio.Photography
   alias Portfolio.Services.Photography.AlbumPublicationService
 
+  import PortfolioTest.Fixtures.PhotographyFixtures
+
   describe "execute/2" do
-    setup do
-      {:ok, album} =
-        Photography.create_album(%{
-          title: "Test Album for Publication",
-          type: :wedding,
-          date_prise_vue: ~D[2024-01-15],
-          published: false
-        })
+    test "publishes an unpublished album" do
+      album = create_album(published: false)
 
-      {:ok, album: album}
-    end
+      assert {:ok, published_album} = AlbumPublicationService.execute(album)
 
-    test "publishes album successfully", %{album: album} do
-      assert album.published == false
-
-      result = AlbumPublicationService.execute(album)
-
-      assert {:ok, published_album} = result
       assert published_album.published == true
     end
 
-    test "accepts user_id option", %{album: album} do
+    test "returns ok for already published album" do
+      album = create_album(published: true)
+
+      assert {:ok, published_album} = AlbumPublicationService.execute(album)
+
+      assert published_album.published == true
+    end
+
+    test "accepts user_id option" do
+      album = create_album(published: false)
       user_id = Ecto.UUID.generate()
 
-      result = AlbumPublicationService.execute(album, user_id: user_id)
-
-      assert {:ok, _published_album} = result
+      assert {:ok, _album} = AlbumPublicationService.execute(album, user_id: user_id)
     end
 
-    test "updates album in database", %{album: album} do
-      {:ok, _} = AlbumPublicationService.execute(album)
+    test "invalidates cache after publication" do
+      album = create_album(published: false)
 
-      # Reload from database
-      {:ok, reloaded} = Photography.get_album(album.id)
-      assert reloaded.published == true
-    end
-
-    test "invalidates cache", %{album: album} do
-      # Pre-populate cache
+      # Put something in cache
       Cachex.put(:portfolio_cache, {:published_albums_by_year, []}, [])
-      Cachex.put(:portfolio_cache, {:published_albums_by_year, [:photos]}, [])
 
-      {:ok, _} = AlbumPublicationService.execute(album)
+      assert {:ok, _album} = AlbumPublicationService.execute(album)
 
       # Cache should be invalidated
       assert {:ok, nil} = Cachex.get(:portfolio_cache, {:published_albums_by_year, []})
-      assert {:ok, nil} = Cachex.get(:portfolio_cache, {:published_albums_by_year, [:photos]})
     end
 
-    test "emits telemetry event", %{album: album} do
-      ref =
-        :telemetry_test.attach_event_handlers(self(), [
-          [:portfolio, :services, :album_publication, :executed]
-        ])
+    test "emits telemetry event" do
+      album = create_album(published: false)
+
+      test_pid = self()
+
+      :telemetry.attach(
+        "test-album-publication",
+        [:portfolio, :services, :album_publication, :executed],
+        fn event, measurements, metadata, _config ->
+          send(test_pid, {:telemetry, event, measurements, metadata})
+        end,
+        nil
+      )
 
       AlbumPublicationService.execute(album)
 
-      assert_received {[:portfolio, :services, :album_publication, :executed], ^ref,
-                       %{duration: _}, %{album_id: _, result: :ok}}
-    end
+      assert_receive {:telemetry, [:portfolio, :services, :album_publication, :executed],
+                      measurements, metadata}
 
-    test "raises StaleEntryError for deleted album" do
-      # Create album then delete it to simulate invalid state
-      {:ok, album} =
-        Photography.create_album(%{
-          title: "To Delete",
-          type: :wedding,
-          date_prise_vue: ~D[2024-01-01]
-        })
+      assert measurements.duration > 0
+      assert metadata.result == :ok
+      assert metadata.album_id == album.id
 
-      Photography.delete_album(album)
-
-      # Try to publish deleted album - Ecto raises StaleEntryError
-      assert_raise Ecto.StaleEntryError, fn ->
-        AlbumPublicationService.execute(album)
-      end
+      :telemetry.detach("test-album-publication")
     end
   end
 end

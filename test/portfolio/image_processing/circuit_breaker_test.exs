@@ -4,9 +4,11 @@ defmodule Portfolio.ImageProcessing.CircuitBreakerTest do
   alias Portfolio.ImageProcessing.CircuitBreaker
 
   @fuse_name :test_circuit_breaker
+  @fuse_options {{:standard, 5, 60_000}, {:reset, 30_000}}
 
   setup do
-    # Reset fuse before each test
+    # Install and reset fuse before each test
+    :fuse.install(@fuse_name, @fuse_options)
     _ = :fuse.reset(@fuse_name)
     :ok
   end

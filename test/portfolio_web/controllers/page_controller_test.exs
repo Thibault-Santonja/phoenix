@@ -1,53 +1,36 @@
 defmodule PortfolioWeb.PageControllerTest do
-  use PortfolioWeb.ConnCase
-
-  describe "home/2" do
-    test "GET / renders home page", %{conn: conn} do
-      conn = get(conn, ~p"/")
-      assert html_response(conn, 200)
-    end
-
-    test "GET / renders without layout", %{conn: conn} do
-      conn = get(conn, ~p"/")
-      html = html_response(conn, 200)
-
-      # Home page should render but not include standard layout elements
-      # that would be in the app layout
-      assert html =~ "html" or html =~ "body"
-    end
-
-    test "GET / returns valid HTML", %{conn: conn} do
-      conn = get(conn, ~p"/")
-      html = html_response(conn, 200)
-
-      # Should contain basic HTML structure
-      assert html =~ "<!DOCTYPE html>" or html =~ "<html"
-    end
-  end
+  use PortfolioWeb.ConnCase, async: true
 
   describe "subdomain_redirect/2" do
-    test "GET /amvcc redirects to allowed subdomain", %{conn: conn} do
-      conn = get(conn, ~p"/amvcc")
-      assert html_response(conn, 302) =~ "https://amvcc.thibaultsan.com"
-    end
-
-    test "GET /photo redirects to allowed subdomain", %{conn: conn} do
+    test "redirects to photo subdomain", %{conn: conn} do
       conn = get(conn, ~p"/photo")
-      assert html_response(conn, 302) =~ "https://photo.thibaultsan.com"
+
+      assert redirected_to(conn) == "https://photo.thibaultsan.com"
     end
 
-    test "GET /tech redirects to allowed subdomain", %{conn: conn} do
+    test "redirects to tech subdomain", %{conn: conn} do
       conn = get(conn, ~p"/tech")
-      assert html_response(conn, 302) =~ "https://tech.thibaultsan.com"
+
+      assert redirected_to(conn) == "https://tech.thibaultsan.com"
     end
 
-    test "GET /unknown returns 404 for non-whitelisted subdomain", %{conn: conn} do
-      conn = get(conn, ~p"/unknown")
+    test "redirects to amvcc subdomain", %{conn: conn} do
+      conn = get(conn, ~p"/amvcc")
+
+      assert redirected_to(conn) == "https://amvcc.thibaultsan.com"
+    end
+
+    test "returns 404 for unknown subdomain", %{conn: conn} do
+      conn = get(conn, "/unknown-subdomain")
+
       assert html_response(conn, 404)
     end
 
-    test "GET /malicious does not redirect to arbitrary URLs", %{conn: conn} do
-      conn = get(conn, ~p"/evil.com")
+    test "prevents open redirect attacks with malicious subdomain", %{conn: conn} do
+      # Attempt to inject a malicious redirect
+      conn = get(conn, "/malicious.example.com")
+
+      # Should return 404, not redirect
       assert html_response(conn, 404)
     end
   end

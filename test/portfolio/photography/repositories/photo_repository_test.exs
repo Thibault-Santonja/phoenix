@@ -87,7 +87,13 @@ defmodule Portfolio.Photography.Repositories.PhotoRepositoryTest do
       _photo2 = insert_photo(album1, %{title: "Photo 2", display_order: 1})
       _photo3 = insert_photo(album2, %{title: "Photo 3", display_order: 0})
 
-      photos = PhotoRepository.list(album_id: album1.id, limit: 1, preload: [:album])
+      photos =
+        PhotoRepository.list(
+          album_id: album1.id,
+          limit: 1,
+          order_by: [asc: :display_order],
+          preload: [:album]
+        )
 
       assert length(photos) == 1
       assert hd(photos).id == photo1.id

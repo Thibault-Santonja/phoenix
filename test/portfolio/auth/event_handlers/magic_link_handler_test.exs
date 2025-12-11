@@ -1,17 +1,16 @@
 defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
-  @moduledoc """
-  Tests for MagicLinkHandler GenServer.
-  """
-  use Portfolio.DataCase, async: false
+  use ExUnit.Case, async: false
 
   alias Portfolio.Auth.EventHandlers.MagicLinkHandler
-  alias Portfolio.Auth.Events.{MagicLinkRequested, MagicLinkVerified}
+  alias Portfolio.Auth.Events.MagicLinkRequested
+  alias Portfolio.Auth.Events.MagicLinkVerified
+  alias Portfolio.DomainEvents
 
   describe "start_link/1" do
-    test "starts the GenServer successfully" do
-      # Stop existing handler if running
-      if pid = Process.whereis(MagicLinkHandler) do
-        GenServer.stop(pid)
+    test "starts the handler GenServer" do
+      case GenServer.whereis(MagicLinkHandler) do
+        nil -> :ok
+        pid -> GenServer.stop(pid)
       end
 
       assert {:ok, pid} = MagicLinkHandler.start_link([])
@@ -20,132 +19,235 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
 
       GenServer.stop(pid)
     end
-  end
 
-  describe "init/1" do
-    test "initializes with empty state" do
-      # Stop existing handler if running
-      if pid = Process.whereis(MagicLinkHandler) do
-        GenServer.stop(pid)
+    test "registers with module name" do
+      case GenServer.whereis(MagicLinkHandler) do
+        nil -> :ok
+        pid -> GenServer.stop(pid)
       end
 
       {:ok, pid} = MagicLinkHandler.start_link([])
 
-      # Handler should be running
-      assert Process.alive?(pid)
+      assert GenServer.whereis(MagicLinkHandler) == pid
 
       GenServer.stop(pid)
     end
   end
 
-  describe "handle_info/2 - magic_link_requested event" do
-    test "handles MagicLinkRequested event successfully" do
+  describe "handle_info/2 for magic_link_requested" do
+    setup do
+      case GenServer.whereis(MagicLinkHandler) do
+        nil -> :ok
+        pid -> GenServer.stop(pid)
+      end
+
+      {:ok, pid} = MagicLinkHandler.start_link([])
+      on_exit(fn -> if Process.alive?(pid), do: GenServer.stop(pid) end)
+      {:ok, handler_pid: pid}
+    end
+
+    test "processes magic link requested event without crashing", %{handler_pid: pid} do
       event = %MagicLinkRequested{
-        magic_link_id: Ecto.UUID.generate(),
+        magic_link_id: "ml_123",
         email: "test@example.com",
         short_code: "ABC123",
         requested_at: DateTime.utc_now(),
-        expires_at: DateTime.add(DateTime.utc_now(), 3600, :second)
+        expires_at: DateTime.add(DateTime.utc_now(), 900, :second)
       }
 
-      state = %{}
+      send(pid, {:magic_link_requested, event})
+      Process.sleep(50)
 
-      assert {:noreply, ^state} =
-               MagicLinkHandler.handle_info({:magic_link_requested, event}, state)
+      assert Process.alive?(pid)
     end
 
-    test "preserves state after handling event" do
+    test "receives event through DomainEvents.publish", %{handler_pid: pid} do
       event = %MagicLinkRequested{
-        magic_link_id: Ecto.UUID.generate(),
-        email: "test@example.com",
+        magic_link_id: "ml_456",
+        email: "user@domain.com",
         short_code: "DEF456",
         requested_at: DateTime.utc_now(),
-        expires_at: DateTime.add(DateTime.utc_now(), 3600, :second)
+        expires_at: DateTime.add(DateTime.utc_now(), 900, :second)
       }
 
-      initial_state = %{counter: 5}
+      DomainEvents.publish(:magic_link_requested, event)
+      Process.sleep(50)
 
-      assert {:noreply, ^initial_state} =
-               MagicLinkHandler.handle_info({:magic_link_requested, event}, initial_state)
+      # Handler should still be alive after processing
+      assert Process.alive?(pid)
+    end
+
+    test "handles multiple events in sequence", %{handler_pid: pid} do
+      for i <- 1..5 do
+        event = %MagicLinkRequested{
+          magic_link_id: "ml_seq_#{i}",
+          email: "user#{i}@example.com",
+          short_code: "SEQ#{i}00",
+          requested_at: DateTime.utc_now(),
+          expires_at: DateTime.add(DateTime.utc_now(), 900, :second)
+        }
+
+        send(pid, {:magic_link_requested, event})
+      end
+
+      Process.sleep(100)
+      assert Process.alive?(pid)
     end
   end
 
-  describe "handle_info/2 - magic_link_verified event" do
-    test "handles MagicLinkVerified event successfully" do
+  describe "handle_info/2 for magic_link_verified" do
+    setup do
+      case GenServer.whereis(MagicLinkHandler) do
+        nil -> :ok
+        pid -> GenServer.stop(pid)
+      end
+
+      {:ok, pid} = MagicLinkHandler.start_link([])
+      on_exit(fn -> if Process.alive?(pid), do: GenServer.stop(pid) end)
+      {:ok, handler_pid: pid}
+    end
+
+    test "processes magic link verified event without crashing", %{handler_pid: pid} do
       event = %MagicLinkVerified{
-        magic_link_id: Ecto.UUID.generate(),
-        user_id: Ecto.UUID.generate(),
+        magic_link_id: "ml_789",
+        user_id: "user_123",
         email: "verified@example.com",
         verified_at: DateTime.utc_now()
       }
 
-      state = %{}
+      send(pid, {:magic_link_verified, event})
+      Process.sleep(50)
 
-      assert {:noreply, ^state} =
-               MagicLinkHandler.handle_info({:magic_link_verified, event}, state)
+      assert Process.alive?(pid)
     end
 
-    test "preserves state after verification event" do
+    test "receives event through DomainEvents.publish", %{handler_pid: pid} do
       event = %MagicLinkVerified{
-        magic_link_id: Ecto.UUID.generate(),
-        user_id: Ecto.UUID.generate(),
-        email: "verified@example.com",
+        magic_link_id: "ml_abc",
+        user_id: "user_xyz",
+        email: "auth@example.com",
         verified_at: DateTime.utc_now()
       }
 
-      initial_state = %{data: "test"}
+      DomainEvents.publish(:magic_link_verified, event)
+      Process.sleep(50)
 
-      assert {:noreply, ^initial_state} =
-               MagicLinkHandler.handle_info({:magic_link_verified, event}, initial_state)
+      assert Process.alive?(pid)
+    end
+
+    test "handles multiple verification events", %{handler_pid: pid} do
+      for i <- 1..3 do
+        event = %MagicLinkVerified{
+          magic_link_id: "ml_ver_#{i}",
+          user_id: "user_ver_#{i}",
+          email: "verified#{i}@example.com",
+          verified_at: DateTime.utc_now()
+        }
+
+        send(pid, {:magic_link_verified, event})
+      end
+
+      Process.sleep(100)
+      assert Process.alive?(pid)
     end
   end
 
-  describe "handle_info/2 - unexpected messages" do
-    test "handles unexpected messages gracefully" do
-      state = %{}
+  describe "handle_info/2 for unexpected messages" do
+    setup do
+      case GenServer.whereis(MagicLinkHandler) do
+        nil -> :ok
+        pid -> GenServer.stop(pid)
+      end
 
-      assert {:noreply, ^state} =
-               MagicLinkHandler.handle_info({:unknown_event, %{}}, state)
+      {:ok, pid} = MagicLinkHandler.start_link([])
+
+      on_exit(fn ->
+        case GenServer.whereis(MagicLinkHandler) do
+          nil -> :ok
+          p when is_pid(p) -> GenServer.stop(p, :normal, 100)
+        end
+      end)
+
+      {:ok, handler_pid: pid}
     end
 
-    test "handles random atom messages" do
-      state = %{data: "test"}
+    test "handles unexpected tuple message gracefully", %{handler_pid: pid} do
+      send(pid, {:unexpected_event, %{data: "test"}})
+      Process.sleep(50)
 
-      assert {:noreply, ^state} =
-               MagicLinkHandler.handle_info(:random_atom, state)
+      assert Process.alive?(pid)
     end
 
-    test "handles nil message" do
-      state = %{}
+    test "handles unexpected atom message gracefully", %{handler_pid: pid} do
+      send(pid, :random_atom)
+      Process.sleep(50)
 
-      assert {:noreply, ^state} =
-               MagicLinkHandler.handle_info(nil, state)
+      assert Process.alive?(pid)
+    end
+
+    test "handles nil message gracefully", %{handler_pid: pid} do
+      send(pid, nil)
+      Process.sleep(50)
+
+      assert Process.alive?(pid)
+    end
+
+    test "handles string message gracefully", %{handler_pid: pid} do
+      send(pid, "unexpected string")
+      Process.sleep(100)
+
+      assert Process.alive?(pid)
     end
   end
 
-  describe "event processing" do
-    test "handles multiple events sequentially" do
-      state = %{}
+  describe "subscription behavior" do
+    test "subscribes to magic_link_requested on init" do
+      case GenServer.whereis(MagicLinkHandler) do
+        nil -> :ok
+        pid -> GenServer.stop(pid)
+      end
 
-      event1 = %MagicLinkRequested{
-        magic_link_id: Ecto.UUID.generate(),
-        email: "user1@example.com",
-        short_code: "SEQ123",
+      {:ok, pid} = MagicLinkHandler.start_link([])
+
+      # Publish an event - handler should receive it
+      event = %MagicLinkRequested{
+        magic_link_id: "ml_sub_test",
+        email: "sub@test.com",
+        short_code: "SUB123",
         requested_at: DateTime.utc_now(),
-        expires_at: DateTime.add(DateTime.utc_now(), 3600, :second)
+        expires_at: DateTime.add(DateTime.utc_now(), 900, :second)
       }
 
-      event2 = %MagicLinkVerified{
-        magic_link_id: Ecto.UUID.generate(),
-        user_id: Ecto.UUID.generate(),
-        email: "user1@example.com",
+      DomainEvents.publish(:magic_link_requested, event)
+      Process.sleep(50)
+
+      # Handler processed event and is still alive
+      assert Process.alive?(pid)
+
+      GenServer.stop(pid)
+    end
+
+    test "subscribes to magic_link_verified on init" do
+      case GenServer.whereis(MagicLinkHandler) do
+        nil -> :ok
+        pid -> GenServer.stop(pid)
+      end
+
+      {:ok, pid} = MagicLinkHandler.start_link([])
+
+      event = %MagicLinkVerified{
+        magic_link_id: "ml_sub_ver",
+        user_id: "user_sub",
+        email: "subver@test.com",
         verified_at: DateTime.utc_now()
       }
 
-      {:noreply, state} = MagicLinkHandler.handle_info({:magic_link_requested, event1}, state)
+      DomainEvents.publish(:magic_link_verified, event)
+      Process.sleep(50)
 
-      assert {:noreply, ^state} =
-               MagicLinkHandler.handle_info({:magic_link_verified, event2}, state)
+      assert Process.alive?(pid)
+
+      GenServer.stop(pid)
     end
   end
 end

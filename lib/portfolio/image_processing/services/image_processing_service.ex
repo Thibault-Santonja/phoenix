@@ -98,12 +98,9 @@ defmodule Portfolio.ImageProcessing.Services.ImageProcessingService do
           | {:error, term()}
   defp load_image_with_circuit_breaker(source_path) do
     case CircuitBreaker.call(fn -> VipsAdapter.load_image(source_path) end) do
-      {:ok, {vix_image, dimensions}} ->
+      # CircuitBreaker wraps {:ok, image, dims} as {:ok, {:ok, image, dims}}
+      {:ok, {:ok, vix_image, dimensions}} ->
         {:ok, vix_image, dimensions}
-
-      {:ok, result} ->
-        # Handle the case where load_image returns {:ok, image, dims} directly
-        result
 
       {:error, :circuit_blown} ->
         Logger.error("Image processing circuit breaker open - service unavailable",

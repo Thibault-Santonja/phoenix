@@ -49,6 +49,7 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
 
   require Logger
 
+  alias Portfolio.Exif.Parser
   alias Portfolio.Photography
 
   @impl Oban.Worker
@@ -119,7 +120,7 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
     # Use Exiftool.execute to get structured EXIF data
     case Exiftool.execute([file_path]) do
       {:ok, exif_map} when is_map(exif_map) ->
-        parsed = parse_relevant_exif(exif_map)
+        parsed = Parser.parse_relevant_exif(exif_map)
         {:ok, parsed}
 
       {:error, reason} ->
@@ -135,172 +136,6 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
       {:error, :exiftool_exception}
   end
 
-  defp parse_relevant_exif(raw_exif) do
-    # Extract only relevant EXIF fields for photography
-    %{}
-    |> maybe_add(:camera_make, raw_exif["Make"])
-    |> maybe_add(:camera_model, raw_exif["Model"])
-    |> maybe_add(:camera, build_camera_name(raw_exif["Make"], raw_exif["Model"]))
-    |> maybe_add(:lens, raw_exif["LensModel"] || raw_exif["Lens"])
-    |> maybe_add(:focal_length, raw_exif["FocalLength"])
-    |> maybe_add(:aperture, format_aperture(raw_exif["FNumber"] || raw_exif["ApertureValue"]))
-    |> maybe_add(
-      :shutter_speed,
-      format_shutter_speed(raw_exif["ExposureTime"] || raw_exif["ShutterSpeedValue"])
-    )
-    |> maybe_add(:iso, parse_iso(raw_exif["ISO"]))
-    |> maybe_add(
-      :captured_at,
-      parse_datetime(raw_exif["DateTimeOriginal"] || raw_exif["CreateDate"])
-    )
-    |> maybe_add(:width, raw_exif["ImageWidth"])
-    |> maybe_add(:height, raw_exif["ImageHeight"])
-    |> maybe_add(:orientation, raw_exif["Orientation"])
-    |> maybe_add(:flash, raw_exif["Flash"])
-    |> maybe_add(:white_balance, raw_exif["WhiteBalance"])
-    |> maybe_add(:gps_latitude, parse_gps_coordinate(raw_exif["GPSLatitude"]))
-    |> maybe_add(:gps_longitude, parse_gps_coordinate(raw_exif["GPSLongitude"]))
-  end
-
-  defp maybe_add(map, _key, nil), do: map
-  defp maybe_add(map, _key, ""), do: map
-  defp maybe_add(map, key, value), do: Map.put(map, key, value)
-
-  @spec build_camera_name(String.t() | nil, String.t() | nil) :: String.t() | nil
-  defp build_camera_name(nil, nil), do: nil
-  defp build_camera_name(make, nil), do: make
-  defp build_camera_name(nil, model), do: model
-
-  defp build_camera_name(make, model) do
-    # Avoid duplication if model already contains make
-    if String.contains?(model, make) do
-      model
-    else
-      "#{make} #{model}"
-    end
-  end
-
-  @spec format_aperture(any()) :: String.t() | nil
-  defp format_aperture(nil), do: nil
-  defp format_aperture(value) when is_number(value), do: "f/#{value}"
-  defp format_aperture(value) when is_binary(value), do: value
-  defp format_aperture(_), do: nil
-
-  @spec format_shutter_speed(any()) :: String.t() | nil
-  defp format_shutter_speed(nil), do: nil
-  defp format_shutter_speed(value) when is_binary(value), do: value
-
-  defp format_shutter_speed(value) when is_number(value) and value < 1,
-    do: "1/#{trunc(1 / value)}"
-
-  defp format_shutter_speed(value) when is_number(value), do: "#{value}s"
-  defp format_shutter_speed(_), do: nil
-
-  @spec parse_iso(any()) :: integer() | nil
-  defp parse_iso(nil), do: nil
-  defp parse_iso(value) when is_integer(value), do: value
-
-  defp parse_iso(value) when is_binary(value) do
-    case Integer.parse(value) do
-      {iso, _} -> iso
-      :error -> nil
-    end
-  end
-
-  defp parse_iso(_), do: nil
-
-  @spec parse_datetime(String.t() | nil) :: DateTime.t() | nil
-  defp parse_datetime(nil), do: nil
-
-  defp parse_datetime(datetime_string) when is_binary(datetime_string) do
-    # EXIF datetime format: "YYYY:MM:DD HH:MM:SS"
-    case String.split(datetime_string, " ") do
-      [date_part, time_part] ->
-        date = String.replace(date_part, ":", "-")
-        datetime_str = "#{date} #{time_part}"
-
-        case NaiveDateTime.from_iso8601(datetime_str) do
-          {:ok, naive_dt} -> DateTime.from_naive!(naive_dt, "Etc/UTC")
-          _ -> nil
-        end
-
-      _ ->
-        nil
-    end
-  end
-
-  @spec parse_gps_coordinate(String.t() | nil) :: float() | nil
-  defp parse_gps_coordinate(nil), do: nil
-
-  defp parse_gps_coordinate(coord_string) when is_binary(coord_string) do
-    # GPS format examples:
-    # "48 deg 51' 29.52\" N" or "48.858200" (decimal degrees)
-    case Float.parse(coord_string) do
-      {float_val, _} ->
-        float_val
-
-      :error ->
-        # Try parsing DMS format (degrees, minutes, seconds)
-        parse_dms_coordinate(coord_string)
-    end
-  end
-
-  defp parse_gps_coordinate(coord) when is_float(coord), do: coord
-  defp parse_gps_coordinate(_), do: nil
-
-  @spec parse_dms_coordinate(String.t()) :: float() | nil
-  defp parse_dms_coordinate(dms_string) do
-    # Parse "48 deg 51' 29.52\" N" format
-    # Simple regex to extract degrees, minutes, seconds
-    case Regex.run(~r/(\d+)\s*deg\s*(\d+)'\s*([\d.]+)"?\s*([NSEW])?/, dms_string) do
-      [_, degrees, minutes, seconds | direction] ->
-        convert_dms_to_decimal(degrees, minutes, seconds, direction)
-
-      _ ->
-        nil
-    end
-  rescue
-    _ -> nil
-  end
-
-  @spec convert_dms_to_decimal(String.t(), String.t(), String.t(), [String.t()]) ::
-          float() | nil
-  defp convert_dms_to_decimal(degrees, minutes, seconds, direction) do
-    deg = parse_number(degrees)
-    min = parse_number(minutes)
-    sec = parse_number(seconds)
-
-    if valid_dms_bounds?(deg, min, sec) do
-      decimal = deg + min / 60.0 + sec / 3600.0
-      apply_direction_sign(decimal, direction)
-    else
-      nil
-    end
-  end
-
-  @spec apply_direction_sign(float(), [String.t()]) :: float()
-  defp apply_direction_sign(decimal, ["S"]), do: -decimal
-  defp apply_direction_sign(decimal, ["W"]), do: -decimal
-  defp apply_direction_sign(decimal, _), do: decimal
-
-  @spec parse_number(String.t()) :: float() | nil
-  defp parse_number(str) do
-    case Float.parse(str) do
-      {num, _} -> num
-      :error -> String.to_integer(str) * 1.0
-    end
-  rescue
-    _ -> nil
-  end
-
-  @spec valid_dms_bounds?(float() | nil, float() | nil, float() | nil) :: boolean()
-  defp valid_dms_bounds?(deg, min, sec) do
-    is_number(deg) and is_number(min) and is_number(sec) and
-      deg >= 0 and deg <= 180 and
-      min >= 0 and min < 60 and
-      sec >= 0 and sec < 60
-  end
-
   @spec update_photo_with_exif(Portfolio.Photography.Photo.t(), map()) :: :ok | {:error, term()}
   defp update_photo_with_exif(photo, exif_data) do
     # Merge new EXIF data with existing exif_data JSON field
@@ -309,15 +144,15 @@ defmodule Portfolio.Workers.ExifExtractionWorker do
     # Build update attributes for dedicated columns
     attrs =
       %{exif_data: merged_exif}
-      |> maybe_add(:captured_at, exif_data[:captured_at])
-      |> maybe_add(:camera, exif_data[:camera])
-      |> maybe_add(:lens, exif_data[:lens])
-      |> maybe_add(:iso, exif_data[:iso])
-      |> maybe_add(:aperture, exif_data[:aperture])
-      |> maybe_add(:focal_length, exif_data[:focal_length])
-      |> maybe_add(:shutter_speed, exif_data[:shutter_speed])
-      |> maybe_add(:gps_latitude, exif_data[:gps_latitude])
-      |> maybe_add(:gps_longitude, exif_data[:gps_longitude])
+      |> Parser.maybe_add(:captured_at, exif_data[:captured_at])
+      |> Parser.maybe_add(:camera, exif_data[:camera])
+      |> Parser.maybe_add(:lens, exif_data[:lens])
+      |> Parser.maybe_add(:iso, exif_data[:iso])
+      |> Parser.maybe_add(:aperture, exif_data[:aperture])
+      |> Parser.maybe_add(:focal_length, exif_data[:focal_length])
+      |> Parser.maybe_add(:shutter_speed, exif_data[:shutter_speed])
+      |> Parser.maybe_add(:gps_latitude, exif_data[:gps_latitude])
+      |> Parser.maybe_add(:gps_longitude, exif_data[:gps_longitude])
 
     case Photography.update_photo(photo, attrs) do
       {:ok, _updated_photo} ->

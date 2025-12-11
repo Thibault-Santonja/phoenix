@@ -84,6 +84,10 @@ defmodule Portfolio.ImageProcessing.CircuitBreaker do
             {:ok, result} ->
               {:ok, result}
 
+            # Handle 3-element tuple from VipsAdapter.load_image
+            {:ok, _image, _dimensions} = result ->
+              {:ok, result}
+
             {:error, reason} = error ->
               # Record failure for circuit breaker
               :fuse.melt(fuse_name)

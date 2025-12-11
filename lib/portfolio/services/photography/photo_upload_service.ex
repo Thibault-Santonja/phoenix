@@ -82,8 +82,14 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
       :ok ->
         do_upload_files_parallel(uploads, opts)
 
-      {:error, {filename, size}} ->
+      {:error, {filename, size}} when is_binary(filename) and is_integer(size) ->
         {:error, {:file_too_large, filename, size, max_size}}
+
+      {:error, {filename, reason}} when is_binary(filename) and is_atom(reason) ->
+        {:error, {:file_error, filename, reason}}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
@@ -213,7 +219,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
           {:cont, :ok}
 
         {:error, reason} ->
-          {:halt, {:error, reason}}
+          {:halt, {:error, {upload.client_name, reason}}}
       end
     end)
   end

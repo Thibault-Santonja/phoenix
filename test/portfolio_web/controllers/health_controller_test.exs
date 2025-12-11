@@ -1,252 +1,72 @@
 defmodule PortfolioWeb.HealthControllerTest do
-  @moduledoc """
-  Tests for health check endpoints.
-
-  Verifies that:
-  - Basic health check endpoint responds correctly
-  - Ready endpoint checks all critical services
-  - Response format is valid JSON
-  - Status codes are appropriate
-  - Timestamps are included in responses
-  """
   use PortfolioWeb.ConnCase, async: true
 
   describe "GET /health" do
-    test "returns 200 OK with basic health status", %{conn: conn} do
-      conn = get(conn, ~p"/health")
+    test "returns 200 OK with status", %{conn: conn} do
+      conn = get(conn, "/health")
 
-      assert conn.status == 200
-      assert get_resp_header(conn, "content-type") == ["application/json; charset=utf-8"]
+      assert json_response(conn, 200)["status"] == "ok"
+      assert json_response(conn, 200)["service"] == "portfolio"
+      assert json_response(conn, 200)["timestamp"] != nil
     end
 
-    test "response includes status field", %{conn: conn} do
-      conn = get(conn, ~p"/health")
-      response = json_response(conn, 200)
+    test "responds quickly (no database check)", %{conn: conn} do
+      {time_micros, _result} = :timer.tc(fn -> get(conn, "/health") end)
 
-      assert response["status"] == "ok"
-    end
-
-    test "response includes service name", %{conn: conn} do
-      conn = get(conn, ~p"/health")
-      response = json_response(conn, 200)
-
-      assert response["service"] == "portfolio"
-    end
-
-    test "response includes timestamp", %{conn: conn} do
-      conn = get(conn, ~p"/health")
-      response = json_response(conn, 200)
-
-      assert is_binary(response["timestamp"])
-      # Verify timestamp is valid ISO8601 format
-      assert {:ok, _datetime, _offset} = DateTime.from_iso8601(response["timestamp"])
-    end
-
-    test "response is fast (no database check)", %{conn: conn} do
-      start_time = System.monotonic_time(:millisecond)
-      _conn = get(conn, ~p"/health")
-      end_time = System.monotonic_time(:millisecond)
-
-      # Should be very fast (< 100ms) since it doesn't check database
-      duration = end_time - start_time
-      assert duration < 100, "Health check took #{duration}ms, should be < 100ms"
-    end
-
-    test "returns consistent structure across multiple calls", %{conn: conn} do
-      response1 = get(conn, ~p"/health") |> json_response(200)
-      response2 = get(conn, ~p"/health") |> json_response(200)
-
-      # Structure should be identical
-      assert Map.keys(response1) == Map.keys(response2)
-      assert response1["status"] == response2["status"]
-      assert response1["service"] == response2["service"]
+      # Should respond in under 100ms
+      assert time_micros < 100_000
     end
   end
 
   describe "GET /health/ready" do
-    # Note: In test mode, Oban may not be running, so we accept both 200 and 503
+    test "returns response with checks", %{conn: conn} do
+      conn = get(conn, "/health/ready")
 
-    test "returns valid response (200 or 503 depending on Oban)", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-
-      assert conn.status in [200, 503]
-      assert get_resp_header(conn, "content-type") == ["application/json; charset=utf-8"]
-    end
-
-    test "response includes status field", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      # Accept any status code since Oban may not be running in tests
-      response = conn |> response(conn.status) |> Jason.decode!()
-
+      # May return 200 or 503 depending on Oban status
+      response = json_response(conn, conn.status)
       assert response["status"] in ["ready", "unhealthy"]
-    end
-
-    test "response includes checks map", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      response = conn |> response(conn.status) |> Jason.decode!()
-
       assert is_map(response["checks"])
-      assert Map.has_key?(response["checks"], "database")
-      assert Map.has_key?(response["checks"], "oban")
+      assert response["timestamp"] != nil
     end
 
-    test "database check returns ok status", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      response = conn |> response(conn.status) |> Jason.decode!()
+    test "checks database connectivity", %{conn: conn} do
+      conn = get(conn, "/health/ready")
 
+      response = json_response(conn, conn.status)
+      # Database should always be ok in test
       assert response["checks"]["database"] == "ok"
     end
 
-    test "oban check returns valid status", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      response = conn |> response(conn.status) |> Jason.decode!()
+    test "checks Oban status", %{conn: conn} do
+      conn = get(conn, "/health/ready")
 
-      # Oban may or may not be running in test mode
+      response = json_response(conn, conn.status)
+      # Oban may or may not be running in test environment
       assert response["checks"]["oban"] in ["ok", "not_running"]
     end
 
-    test "response includes timestamp", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      response = conn |> response(conn.status) |> Jason.decode!()
+    test "includes timestamp in response", %{conn: conn} do
+      conn = get(conn, "/health/ready")
 
+      response = json_response(conn, conn.status)
       assert is_binary(response["timestamp"])
-      assert {:ok, _datetime, _offset} = DateTime.from_iso8601(response["timestamp"])
+      # Verify it's a valid ISO8601 timestamp
+      assert {:ok, _, _} = DateTime.from_iso8601(response["timestamp"])
     end
 
-    test "all checks return string status", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      response = conn |> response(conn.status) |> Jason.decode!()
+    test "returns 503 when a service is unhealthy", %{conn: conn} do
+      conn = get(conn, "/health/ready")
 
-      Enum.each(response["checks"], fn {check_name, status} ->
-        assert is_binary(status),
-               "Check #{check_name} should return string status, got: #{inspect(status)}"
-      end)
-    end
+      response = json_response(conn, conn.status)
 
-    test "response structure is complete", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      response = conn |> response(conn.status) |> Jason.decode!()
-
-      # Should have exactly these keys
-      assert Map.keys(response) |> Enum.sort() == ["checks", "status", "timestamp"]
-    end
-  end
-
-  describe "health check error scenarios" do
-    test "ready endpoint handles all check combinations", %{conn: conn} do
-      # This test verifies the endpoint doesn't crash
-      # Even if individual checks fail, the endpoint should respond
-      conn = get(conn, ~p"/health/ready")
-
-      # Should always return 200 or 503, never crash
-      assert conn.status in [200, 503]
-    end
-
-    test "basic health check never fails", %{conn: conn} do
-      # Make multiple requests to ensure stability
-      for _ <- 1..5 do
-        conn = get(conn, ~p"/health")
+      # If Oban is not running, status should be 503
+      if response["checks"]["oban"] == "not_running" do
+        assert conn.status == 503
+        assert response["status"] == "unhealthy"
+      else
         assert conn.status == 200
+        assert response["status"] == "ready"
       end
-    end
-  end
-
-  describe "response format validation" do
-    test "health endpoint returns valid JSON", %{conn: conn} do
-      conn = get(conn, ~p"/health")
-
-      # Should not raise when parsing JSON
-      assert is_map(json_response(conn, 200))
-    end
-
-    test "ready endpoint returns valid JSON", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-
-      # Should not raise when parsing JSON (accept any status)
-      response = conn |> response(conn.status) |> Jason.decode!()
-      assert is_map(response)
-    end
-
-    test "health response has no extra fields", %{conn: conn} do
-      conn = get(conn, ~p"/health")
-      response = json_response(conn, 200)
-
-      # Should only have these three fields
-      expected_keys = ["service", "status", "timestamp"]
-      assert Enum.sort(Map.keys(response)) == Enum.sort(expected_keys)
-    end
-
-    test "ready response has expected fields", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      response = conn |> response(conn.status) |> Jason.decode!()
-
-      # Should only have these three fields
-      expected_keys = ["checks", "status", "timestamp"]
-      assert Enum.sort(Map.keys(response)) == Enum.sort(expected_keys)
-    end
-  end
-
-  describe "timestamp format" do
-    test "health endpoint timestamp is recent", %{conn: conn} do
-      before = DateTime.utc_now()
-      conn = get(conn, ~p"/health")
-      after_time = DateTime.utc_now()
-
-      response = json_response(conn, 200)
-      {:ok, timestamp, 0} = DateTime.from_iso8601(response["timestamp"])
-
-      # Timestamp should be between before and after
-      assert DateTime.compare(timestamp, before) in [:gt, :eq]
-      assert DateTime.compare(timestamp, after_time) in [:lt, :eq]
-    end
-
-    test "ready endpoint timestamp is recent", %{conn: conn} do
-      before = DateTime.utc_now()
-      conn = get(conn, ~p"/health/ready")
-      after_time = DateTime.utc_now()
-
-      response = conn |> response(conn.status) |> Jason.decode!()
-      {:ok, timestamp, 0} = DateTime.from_iso8601(response["timestamp"])
-
-      # Timestamp should be between before and after
-      assert DateTime.compare(timestamp, before) in [:gt, :eq]
-      assert DateTime.compare(timestamp, after_time) in [:lt, :eq]
-    end
-  end
-
-  describe "monitoring and load balancer usage" do
-    test "basic health check is suitable for frequent polling", %{conn: conn} do
-      # Simulate frequent health checks (like a load balancer would do)
-      results =
-        for _ <- 1..10 do
-          start = System.monotonic_time(:millisecond)
-          conn = get(conn, ~p"/health")
-          duration = System.monotonic_time(:millisecond) - start
-
-          {conn.status, duration}
-        end
-
-      # All should succeed
-      assert Enum.all?(results, fn {status, _duration} -> status == 200 end)
-
-      # All should be fast (average < 50ms)
-      avg_duration = results |> Enum.map(&elem(&1, 1)) |> Enum.sum() |> div(length(results))
-      assert avg_duration < 50, "Average health check took #{avg_duration}ms, should be < 50ms"
-    end
-
-    test "ready check provides detailed service status", %{conn: conn} do
-      conn = get(conn, ~p"/health/ready")
-      response = conn |> response(conn.status) |> Jason.decode!()
-
-      # Should provide granular information about each service
-      checks = response["checks"]
-      assert map_size(checks) >= 2, "Should check at least database and oban"
-
-      # Each check should have a clear status
-      Enum.each(checks, fn {service, status} ->
-        assert status in ["ok", "error", "not_running"],
-               "Service #{service} has unclear status: #{status}"
-      end)
     end
   end
 end

@@ -64,6 +64,34 @@ defmodule Portfolio.Auth.AuditLoggerTest do
         AuditLogger.log(resource_type: "Test")
       end
     end
+
+    test "handles non-User struct in performed_by" do
+      assert {:ok, log} =
+               AuditLogger.log(
+                 action: :test_action,
+                 resource_type: "Test",
+                 performed_by: %{id: "not-a-user-struct"}
+               )
+
+      # Should be nil because it's not a User struct
+      assert log.performed_by_id == nil
+    end
+
+    test "prefers performed_by_id over performed_by" do
+      admin = create_user(email: "admin@example.com", role: :admin)
+      other = create_user(email: "other@example.com")
+
+      assert {:ok, log} =
+               AuditLogger.log(
+                 action: :test_action,
+                 resource_type: "Test",
+                 performed_by_id: admin.id,
+                 performed_by: other
+               )
+
+      # Should use performed_by_id when both are provided
+      assert log.performed_by_id == admin.id
+    end
   end
 
   describe "log_user_role_changed/2" do

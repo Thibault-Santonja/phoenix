@@ -1,6 +1,8 @@
 defmodule PortfolioWeb.ImageHelpersTest do
   use ExUnit.Case, async: true
 
+  import Phoenix.LiveViewTest
+
   alias Portfolio.Photography.Photo
   alias PortfolioWeb.ImageHelpers
 
@@ -244,6 +246,187 @@ defmodule PortfolioWeb.ImageHelpersTest do
       }
 
       assert ImageHelpers.extract_dimensions(photo) == %{width: 1920, height: 1080}
+    end
+  end
+
+  describe "responsive_image/1 component" do
+    test "renders image with srcset when variants available" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: "Test Photo",
+        original_filename: "photo.jpg",
+        exif_data: %{"ImageWidth" => 1920, "ImageHeight" => 1080},
+        variants: %{
+          "thumbnail" => "/photos/abc/thumbnail.webp",
+          "small" => "/photos/abc/small.webp",
+          "medium" => "/photos/abc/medium.webp",
+          "large" => "/photos/abc/large.webp"
+        }
+      }
+
+      html = render_component(&ImageHelpers.responsive_image/1, photo: photo)
+
+      assert html =~ "srcset="
+      assert html =~ "/photos/abc/medium.webp"
+      assert html =~ "loading=\"lazy\""
+      assert html =~ "decoding=\"async\""
+    end
+
+    test "renders fallback image when processing not completed" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "pending",
+        title: "Test Photo",
+        original_filename: "photo.jpg",
+        exif_data: %{},
+        variants: %{}
+      }
+
+      html = render_component(&ImageHelpers.responsive_image/1, photo: photo)
+
+      assert html =~ "/uploads/original.jpg"
+      refute html =~ "srcset="
+    end
+
+    test "renders fallback image when no variants" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: "Test Photo",
+        original_filename: "photo.jpg",
+        exif_data: %{},
+        variants: %{}
+      }
+
+      html = render_component(&ImageHelpers.responsive_image/1, photo: photo)
+
+      assert html =~ "/uploads/original.jpg"
+      refute html =~ "srcset="
+    end
+
+    test "uses custom alt text when provided" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: "Default Title",
+        original_filename: "photo.jpg",
+        exif_data: %{},
+        variants: %{"medium" => "/photos/abc/medium.webp"}
+      }
+
+      html = render_component(&ImageHelpers.responsive_image/1, photo: photo, alt: "Custom Alt")
+
+      assert html =~ "alt=\"Custom Alt\""
+    end
+
+    test "falls back to title for alt text" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: "Photo Title",
+        original_filename: "photo.jpg",
+        exif_data: %{},
+        variants: %{"medium" => "/photos/abc/medium.webp"}
+      }
+
+      html = render_component(&ImageHelpers.responsive_image/1, photo: photo)
+
+      assert html =~ "alt=\"Photo Title\""
+    end
+
+    test "falls back to filename for alt text when no title" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: nil,
+        original_filename: "sunset_beach.jpg",
+        exif_data: %{},
+        variants: %{"medium" => "/photos/abc/medium.webp"}
+      }
+
+      html = render_component(&ImageHelpers.responsive_image/1, photo: photo)
+
+      assert html =~ "alt=\"sunset_beach.jpg\""
+    end
+
+    test "applies custom CSS class" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: "Test",
+        original_filename: "photo.jpg",
+        exif_data: %{},
+        variants: %{"medium" => "/photos/abc/medium.webp"}
+      }
+
+      html =
+        render_component(&ImageHelpers.responsive_image/1,
+          photo: photo,
+          class: "rounded-lg shadow"
+        )
+
+      assert html =~ "class=\"rounded-lg shadow\""
+    end
+
+    test "uses custom sizes attribute" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: "Test",
+        original_filename: "photo.jpg",
+        exif_data: %{},
+        variants: %{"medium" => "/photos/abc/medium.webp"}
+      }
+
+      html =
+        render_component(&ImageHelpers.responsive_image/1,
+          photo: photo,
+          sizes: "(max-width: 400px) 100vw, 50vw"
+        )
+
+      assert html =~ "sizes=\"(max-width: 400px) 100vw, 50vw\""
+    end
+
+    test "uses eager loading when specified" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: "Test",
+        original_filename: "photo.jpg",
+        exif_data: %{},
+        variants: %{"medium" => "/photos/abc/medium.webp"}
+      }
+
+      html = render_component(&ImageHelpers.responsive_image/1, photo: photo, loading: "eager")
+
+      assert html =~ "loading=\"eager\""
+    end
+
+    test "includes width and height from EXIF data" do
+      photo = %Photo{
+        id: "test-id",
+        file_path: "/uploads/original.jpg",
+        processing_status: "completed",
+        title: "Test",
+        original_filename: "photo.jpg",
+        exif_data: %{"ImageWidth" => 1920, "ImageHeight" => 1080},
+        variants: %{"medium" => "/photos/abc/medium.webp"}
+      }
+
+      html = render_component(&ImageHelpers.responsive_image/1, photo: photo)
+
+      assert html =~ "width=\"1920\""
+      assert html =~ "height=\"1080\""
     end
   end
 end
