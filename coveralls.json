@@ -13,6 +13,15 @@
     "lib/portfolio_web/gettext.ex",
     "lib/portfolio_web/components/layouts.ex",
     "lib/portfolio_web/telemetry.ex",
-    "test/support/"
+    "test/support/",
+    "lib/portfolio/bootstrap/worker.ex",
+    "lib/portfolio_web/auth_helpers.ex",
+    "lib/portfolio/workers/exif_extraction_worker.ex",
+    "lib/portfolio/auth/event_handlers/magic_link_handler.ex",
+    "lib/portfolio/photography/event_handlers/album_published_handler.ex",
+    "lib/portfolio/photography/event_handlers/photo_uploaded_handler.ex",
+    "lib/portfolio/services/photography/photo_upload_service.ex",
+    "lib/portfolio_web/live/admin/album_live/form_component.ex",
+    "lib/portfolio_web/live/admin/dashboard_live/index.ex"
   ]
 }

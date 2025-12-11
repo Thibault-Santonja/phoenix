@@ -34,9 +34,8 @@ defmodule Portfolio.Application do
          )
        ]},
       # Bootstrap admin user automatically (skipped in :test env)
-      Portfolio.Bootstrap.Worker,
-      # Start the session cleaner worker for periodic cleanup
-      Portfolio.Auth.SessionCleaner
+      Portfolio.Bootstrap.Worker
+      # Note: Session cleanup is handled by Oban cron job (SessionCleanerWorker)
     ]
 
     # Event handlers - disabled in test environment to avoid DB ownership issues

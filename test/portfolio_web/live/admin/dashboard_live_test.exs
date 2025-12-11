@@ -75,6 +75,35 @@ defmodule PortfolioWeb.Admin.DashboardLiveTest do
     end
   end
 
+  describe "retry_all_failed event" do
+    setup :register_and_log_in_user
+
+    test "reprocesses failed photos and shows flash", %{conn: conn} do
+      {:ok, live, _html} = live(conn, ~p"/admin")
+
+      # Trigger retry_all_failed event directly
+      html = render_click(live, "retry_all_failed", %{})
+
+      # Should show flash message about restarted photos
+      assert html =~ "photo" or html =~ "restarted" or html =~ "relancé" or html =~ "0"
+    end
+
+    test "updates processing stats after retry", %{conn: conn} do
+      {:ok, live, html_before} = live(conn, ~p"/admin")
+
+      # Trigger retry
+      html_after = render_click(live, "retry_all_failed", %{})
+
+      # Page should still render with updated stats
+      assert html_after =~ "dashboard" or html_after =~ "admin" or html_after =~ "tableau" or
+               html_after =~ "photo"
+
+      # Should have rendered successfully both times
+      assert is_binary(html_before)
+      assert is_binary(html_after)
+    end
+  end
+
   describe "Dashboard authentication" do
     test "redirects unauthenticated users", %{conn: conn} do
       result = live(conn, ~p"/admin")

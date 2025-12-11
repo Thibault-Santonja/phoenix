@@ -2,93 +2,72 @@ defmodule Portfolio.Workers.ExifExtractionWorkerTest do
   use Portfolio.DataCase, async: true
   use Oban.Testing, repo: Portfolio.Repo
 
-  alias Portfolio.Workers.ExifExtractionWorker
-
   import PortfolioTest.Fixtures.PhotographyFixtures
 
-  describe "new/1" do
-    test "creates a valid changeset with photo_id" do
-      changeset = ExifExtractionWorker.new(%{photo_id: 123})
-      assert %Ecto.Changeset{valid?: true} = changeset
+  alias Portfolio.Workers.ExifExtractionWorker
+
+  describe "perform/1" do
+    test "returns cancel when photo not found" do
+      assert {:cancel, "Photo not found"} =
+               perform_job(ExifExtractionWorker, %{"photo_id" => Ecto.UUID.generate()})
     end
 
-    test "job uses exif_extraction queue" do
-      changeset = ExifExtractionWorker.new(%{photo_id: 123})
-      assert changeset.changes[:queue] == "exif_extraction"
-    end
-
-    test "job has correct priority" do
-      changeset = ExifExtractionWorker.new(%{photo_id: 123})
-      assert changeset.changes[:priority] == 2
-    end
-
-    test "job has max_attempts of 3" do
-      changeset = ExifExtractionWorker.new(%{photo_id: 123})
-      assert changeset.changes[:max_attempts] == 3
-    end
-  end
-
-  describe "perform/1 with missing photo" do
-    test "cancels job when photo not found" do
-      # Use a valid UUID format that doesn't exist in DB
-      non_existent_id = Ecto.UUID.generate()
-      job = %Oban.Job{args: %{"photo_id" => non_existent_id}, attempt: 1}
-
-      assert {:cancel, "Photo not found"} = ExifExtractionWorker.perform(job)
-    end
-  end
-
-  describe "perform/1 with existing photo" do
-    setup do
+    test "returns cancel when file not found" do
       album = create_album()
-      photo = create_photo(album: album)
-      {:ok, photo: photo, album: album}
+      photo = create_photo(album: album, file_path: "/nonexistent/path.jpg")
+
+      assert {:cancel, "File not found"} =
+               perform_job(ExifExtractionWorker, %{"photo_id" => photo.id})
     end
 
-    test "cancels job when file does not exist", %{photo: photo} do
-      job = %Oban.Job{args: %{"photo_id" => photo.id}, attempt: 1}
+    test "handles photo with existing exif_data" do
+      album = create_album()
+      photo = create_photo(album: album, exif_data: %{"existing" => "data"})
 
-      # The photo fixture creates a photo with a non-existent file path
-      result = ExifExtractionWorker.perform(job)
-
-      # Should cancel because file doesn't exist
+      # File doesn't exist, so will return cancel
+      result = perform_job(ExifExtractionWorker, %{"photo_id" => photo.id})
       assert {:cancel, "File not found"} = result
     end
   end
 
-  describe "job enqueueing" do
-    test "can enqueue job successfully" do
-      assert {:ok, %Oban.Job{}} =
-               %{photo_id: 123}
-               |> ExifExtractionWorker.new()
-               |> Oban.insert()
+  describe "job creation" do
+    test "can create a new job" do
+      job_changeset = ExifExtractionWorker.new(%{photo_id: Ecto.UUID.generate()})
+      assert %Ecto.Changeset{} = job_changeset
     end
 
-    test "job is inserted with correct args" do
-      {:ok, job} =
-        %{photo_id: 456}
-        |> ExifExtractionWorker.new()
-        |> Oban.insert()
+    test "creates job with correct args" do
+      photo_id = Ecto.UUID.generate()
+      job_changeset = ExifExtractionWorker.new(%{photo_id: photo_id})
 
-      # Args are stored with atom keys
-      assert job.args == %{photo_id: 456}
-    end
-  end
-
-  describe "worker configuration" do
-    test "max_attempts is 3" do
-      config = ExifExtractionWorker.__opts__()
-      assert config[:max_attempts] == 3
+      # Apply the changeset to get the job struct
+      job = Ecto.Changeset.apply_changes(job_changeset)
+      # Args are stored with atom keys before DB insertion
+      assert job.args[:photo_id] == photo_id or job.args["photo_id"] == photo_id
     end
 
-    test "queue is exif_extraction" do
-      config = ExifExtractionWorker.__opts__()
-      assert config[:queue] == :exif_extraction
+    test "job is configured for exif_extraction queue" do
+      photo_id = Ecto.UUID.generate()
+      job_changeset = ExifExtractionWorker.new(%{photo_id: photo_id})
+      job = Ecto.Changeset.apply_changes(job_changeset)
+
+      assert job.queue == "exif_extraction"
     end
 
-    test "priority is 2" do
-      config = ExifExtractionWorker.__opts__()
-      assert config[:priority] == 2
+    test "job has priority 2" do
+      photo_id = Ecto.UUID.generate()
+      job_changeset = ExifExtractionWorker.new(%{photo_id: photo_id})
+      job = Ecto.Changeset.apply_changes(job_changeset)
+
+      assert job.priority == 2
+    end
+
+    test "job has max_attempts of 3" do
+      photo_id = Ecto.UUID.generate()
+      job_changeset = ExifExtractionWorker.new(%{photo_id: photo_id})
+      job = Ecto.Changeset.apply_changes(job_changeset)
+
+      assert job.max_attempts == 3
     end
   end
 end

@@ -30,6 +30,16 @@ defmodule Portfolio.ImageProcessing.CircuitBreakerTest do
       assert result == {:ok, :success}
     end
 
+    test "handles 3-element ok tuple from image operations" do
+      # VipsAdapter.load_image returns {:ok, image, dimensions}
+      result =
+        CircuitBreaker.call(@fuse_name, fn ->
+          {:ok, :mock_image, %{width: 1920, height: 1080}}
+        end)
+
+      assert result == {:ok, {:ok, :mock_image, %{width: 1920, height: 1080}}}
+    end
+
     test "returns error tuple when function fails" do
       result = CircuitBreaker.call(@fuse_name, fn -> {:error, :some_error} end)
       assert result == {:error, :some_error}

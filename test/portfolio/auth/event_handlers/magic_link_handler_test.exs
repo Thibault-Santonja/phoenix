@@ -163,8 +163,14 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
 
       on_exit(fn ->
         case GenServer.whereis(MagicLinkHandler) do
-          nil -> :ok
-          p when is_pid(p) -> GenServer.stop(p, :normal, 100)
+          nil ->
+            :ok
+
+          p when is_pid(p) ->
+            if Process.alive?(p), do: GenServer.stop(p, :normal, 100), else: :ok
+
+          _ ->
+            :ok
         end
       end)
 

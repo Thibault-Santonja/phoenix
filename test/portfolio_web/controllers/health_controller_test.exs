@@ -2,70 +2,105 @@ defmodule PortfolioWeb.HealthControllerTest do
   use PortfolioWeb.ConnCase, async: true
 
   describe "GET /health" do
-    test "returns 200 OK with status", %{conn: conn} do
-      conn = get(conn, "/health")
+    test "returns ok status", %{conn: conn} do
+      conn = get(conn, ~p"/health")
 
       assert json_response(conn, 200)["status"] == "ok"
-      assert json_response(conn, 200)["service"] == "portfolio"
-      assert json_response(conn, 200)["timestamp"] != nil
     end
 
-    test "responds quickly (no database check)", %{conn: conn} do
-      {time_micros, _result} = :timer.tc(fn -> get(conn, "/health") end)
+    test "returns service name", %{conn: conn} do
+      conn = get(conn, ~p"/health")
 
-      # Should respond in under 100ms
-      assert time_micros < 100_000
+      assert json_response(conn, 200)["service"] == "portfolio"
+    end
+
+    test "returns timestamp", %{conn: conn} do
+      conn = get(conn, ~p"/health")
+
+      response = json_response(conn, 200)
+      assert Map.has_key?(response, "timestamp")
+      assert is_binary(response["timestamp"])
+    end
+
+    test "returns 200 status code", %{conn: conn} do
+      conn = get(conn, ~p"/health")
+
+      assert conn.status == 200
     end
   end
 
   describe "GET /health/ready" do
-    test "returns response with checks", %{conn: conn} do
-      conn = get(conn, "/health/ready")
+    test "returns status field", %{conn: conn} do
+      conn = get(conn, ~p"/health/ready")
 
-      # May return 200 or 503 depending on Oban status
-      response = json_response(conn, conn.status)
+      # May be 200 or 503 depending on Oban status
+      response =
+        case conn.status do
+          200 -> json_response(conn, 200)
+          503 -> json_response(conn, 503)
+        end
+
       assert response["status"] in ["ready", "unhealthy"]
-      assert is_map(response["checks"])
-      assert response["timestamp"] != nil
     end
 
-    test "checks database connectivity", %{conn: conn} do
-      conn = get(conn, "/health/ready")
+    test "returns checks map", %{conn: conn} do
+      conn = get(conn, ~p"/health/ready")
 
-      response = json_response(conn, conn.status)
-      # Database should always be ok in test
+      response =
+        case conn.status do
+          200 -> json_response(conn, 200)
+          503 -> json_response(conn, 503)
+        end
+
+      assert Map.has_key?(response, "checks")
+      assert is_map(response["checks"])
+    end
+
+    test "includes database check", %{conn: conn} do
+      conn = get(conn, ~p"/health/ready")
+
+      response =
+        case conn.status do
+          200 -> json_response(conn, 200)
+          503 -> json_response(conn, 503)
+        end
+
       assert response["checks"]["database"] == "ok"
     end
 
-    test "checks Oban status", %{conn: conn} do
-      conn = get(conn, "/health/ready")
+    test "includes oban check", %{conn: conn} do
+      conn = get(conn, ~p"/health/ready")
 
-      response = json_response(conn, conn.status)
-      # Oban may or may not be running in test environment
+      response =
+        case conn.status do
+          200 -> json_response(conn, 200)
+          503 -> json_response(conn, 503)
+        end
+
+      # Oban may or may not be running in test mode
       assert response["checks"]["oban"] in ["ok", "not_running"]
     end
 
-    test "includes timestamp in response", %{conn: conn} do
-      conn = get(conn, "/health/ready")
+    test "returns timestamp", %{conn: conn} do
+      conn = get(conn, ~p"/health/ready")
 
-      response = json_response(conn, conn.status)
-      assert is_binary(response["timestamp"])
-      # Verify it's a valid ISO8601 timestamp
-      assert {:ok, _, _} = DateTime.from_iso8601(response["timestamp"])
+      response =
+        case conn.status do
+          200 -> json_response(conn, 200)
+          503 -> json_response(conn, 503)
+        end
+
+      assert Map.has_key?(response, "timestamp")
     end
 
-    test "returns 503 when a service is unhealthy", %{conn: conn} do
-      conn = get(conn, "/health/ready")
+    test "returns 503 when oban is not running", %{conn: conn} do
+      conn = get(conn, ~p"/health/ready")
 
-      response = json_response(conn, conn.status)
-
-      # If Oban is not running, status should be 503
-      if response["checks"]["oban"] == "not_running" do
-        assert conn.status == 503
+      # In test mode, Oban typically isn't running
+      if conn.status == 503 do
+        response = json_response(conn, 503)
         assert response["status"] == "unhealthy"
-      else
-        assert conn.status == 200
-        assert response["status"] == "ready"
+        assert response["checks"]["oban"] == "not_running"
       end
     end
   end

@@ -1,123 +1,191 @@
 defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
   use Portfolio.DataCase, async: true
 
-  alias Portfolio.Services.Photography.PhotoUploadService
-
   import PortfolioTest.Fixtures.PhotographyFixtures
 
+  alias Portfolio.Services.Photography.PhotoUploadService
+
   describe "execute/3" do
-    test "returns error when album not found" do
-      result = PhotoUploadService.execute("non-existent-album", [])
+    test "returns error for non-existent album" do
+      upload = create_test_upload()
+
+      result = PhotoUploadService.execute("nonexistent-album", [upload])
+
       assert {:error, :not_found} = result
+
+      cleanup_upload(upload)
     end
 
-    test "returns ok with empty uploads list" do
+    test "returns error for file too large" do
+      album = create_album()
+      upload = create_large_upload()
+
+      result = PhotoUploadService.execute(album.slug, [upload])
+
+      assert {:error, {:file_too_large, _, _, _}} = result
+
+      cleanup_upload(upload)
+    end
+
+    test "returns error when file doesn't exist" do
       album = create_album()
 
-      result = PhotoUploadService.execute(album.slug, [])
-      assert {:ok, []} = result
-    end
-
-    test "accepts max_concurrency option" do
-      album = create_album()
-
-      # Should not raise with valid options
-      result = PhotoUploadService.execute(album.slug, [], max_concurrency: 8)
-      assert {:ok, []} = result
-    end
-
-    test "accepts timeout option" do
-      album = create_album()
-
-      result = PhotoUploadService.execute(album.slug, [], timeout: 60_000)
-      assert {:ok, []} = result
-    end
-
-    test "accepts ordered option" do
-      album = create_album()
-
-      result = PhotoUploadService.execute(album.slug, [], ordered: true)
-      assert {:ok, []} = result
-    end
-
-    test "accepts combined options" do
-      album = create_album()
-
-      result =
-        PhotoUploadService.execute(album.slug, [],
-          max_concurrency: 2,
-          timeout: 5000,
-          ordered: true
-        )
-
-      assert {:ok, []} = result
-    end
-
-    test "emits telemetry event" do
-      album = create_album()
-
-      test_pid = self()
-
-      :telemetry.attach(
-        "test-photo-upload-telemetry",
-        [:portfolio, :photography, :photos, :uploaded],
-        fn event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry, event, measurements, metadata})
-        end,
-        nil
-      )
-
-      PhotoUploadService.execute(album.slug, [])
-
-      assert_receive {:telemetry, [:portfolio, :photography, :photos, :uploaded], _, metadata}
-
-      assert metadata.album_slug == album.slug
-      assert metadata.count == 0
-
-      :telemetry.detach("test-photo-upload-telemetry")
-    end
-  end
-
-  describe "execute/3 with upload validation" do
-    setup do
-      album = create_album()
-
-      # Create a temporary test file
-      tmp_dir = System.tmp_dir!()
-      test_file_path = Path.join(tmp_dir, "test_upload_#{System.unique_integer([:positive])}.jpg")
-      File.write!(test_file_path, String.duplicate("x", 100))
-
-      on_exit(fn ->
-        File.rm(test_file_path)
-      end)
-
-      {:ok, album: album, test_file_path: test_file_path}
-    end
-
-    test "validates file size before upload", %{album: album, test_file_path: test_file_path} do
-      # Create a fake upload struct with all required fields
       upload = %{
-        path: test_file_path,
+        path: "/nonexistent/file.jpg",
         client_name: "test.jpg",
         content_type: "image/jpeg"
       }
 
-      # This will proceed past size validation but may fail at storage level
       result = PhotoUploadService.execute(album.slug, [upload])
 
-      # Size validation passed - may fail at storage level but that's expected
-      assert match?({:ok, _}, result) or match?({:error, _}, result)
+      assert {:error, {:file_error, "test.jpg", :enoent}} = result
     end
 
-    test "rejects files that don't exist", %{album: album} do
-      upload = %{
-        path: "/non/existent/path/file.jpg",
-        client_name: "missing.jpg"
-      }
+    test "uploads single file successfully" do
+      album = create_album()
+      upload = create_test_upload()
 
       result = PhotoUploadService.execute(album.slug, [upload])
 
-      assert {:error, {:file_error, "missing.jpg", :enoent}} = result
+      assert {:ok, [metadata]} = result
+      assert metadata.original_filename == "test_photo.jpg"
+      assert metadata.hash != nil
+
+      cleanup_upload(upload)
     end
+
+    test "uploads multiple files with different content successfully" do
+      album = create_album()
+      # Create uploads with different content to get different hashes
+      upload1 = create_test_upload_with_content("photo1.jpg", "content1")
+      upload2 = create_test_upload_with_content("photo2.jpg", "content2")
+
+      result = PhotoUploadService.execute(album.slug, [upload1, upload2])
+
+      assert {:ok, metadata_list} = result
+      assert length(metadata_list) == 2
+
+      cleanup_upload(upload1)
+      cleanup_upload(upload2)
+    end
+
+    test "accepts max_concurrency option" do
+      album = create_album()
+      upload = create_test_upload()
+
+      result = PhotoUploadService.execute(album.slug, [upload], max_concurrency: 2)
+
+      assert {:ok, _} = result
+
+      cleanup_upload(upload)
+    end
+
+    test "accepts timeout option" do
+      album = create_album()
+      upload = create_test_upload()
+
+      result = PhotoUploadService.execute(album.slug, [upload], timeout: 60_000)
+
+      assert {:ok, _} = result
+
+      cleanup_upload(upload)
+    end
+
+    test "accepts ordered option" do
+      album = create_album()
+      upload = create_test_upload()
+
+      result = PhotoUploadService.execute(album.slug, [upload], ordered: true)
+
+      assert {:ok, _} = result
+
+      cleanup_upload(upload)
+    end
+
+    test "creates photos in database" do
+      album = create_album()
+      upload = create_test_upload()
+
+      assert {:ok, _metadata} = PhotoUploadService.execute(album.slug, [upload])
+
+      # Reload album with photos
+      updated_album = Portfolio.Photography.get_album!(album.id, preload: [:photos])
+      assert length(updated_album.photos) >= 1
+
+      cleanup_upload(upload)
+    end
+  end
+
+  # Helper to create a test upload file
+  defp create_test_upload(filename \\ "test_photo.jpg") do
+    tmp_dir = System.tmp_dir!()
+    path = Path.join(tmp_dir, "upload_#{System.unique_integer([:positive])}_#{filename}")
+
+    # Create a minimal valid JPEG file (smallest possible)
+    jpeg_data =
+      <<0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00,
+        0x01, 0x00, 0x01, 0x00, 0x00, 0xFF, 0xDB, 0x00, 0x43, 0x00, 0x08, 0x06, 0x06, 0x07, 0x06,
+        0x05, 0x08, 0x07, 0x07, 0x07, 0x09, 0x09, 0x08, 0x0A, 0x0C, 0x14, 0x0D, 0x0C, 0x0B, 0x0B,
+        0x0C, 0x19, 0x12, 0x13, 0x0F, 0x14, 0x1D, 0x1A, 0x1F, 0x1E, 0x1D, 0x1A, 0x1C, 0x1C, 0x20,
+        0x24, 0x2E, 0x27, 0x20, 0x22, 0x2C, 0x23, 0x1C, 0x1C, 0x28, 0x37, 0x29, 0x2C, 0x30, 0x31,
+        0x34, 0x34, 0x34, 0x1F, 0x27, 0x39, 0x3D, 0x38, 0x32, 0x3C, 0x2E, 0x33, 0x34, 0x32, 0xFF,
+        0xC0, 0x00, 0x0B, 0x08, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x11, 0x00, 0xFF, 0xC4, 0x00,
+        0x1F, 0x00, 0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
+        0xFF, 0xC4, 0x00, 0xB5, 0x10, 0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03, 0x05, 0x05,
+        0x04, 0x04, 0x00, 0x00, 0x01, 0x7D, 0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12, 0x21,
+        0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07, 0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xA1, 0x08,
+        0x23, 0x42, 0xB1, 0xC1, 0x15, 0x52, 0xD1, 0xF0, 0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0A,
+        0x16, 0x17, 0x18, 0x19, 0x1A, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x34, 0x35, 0x36, 0x37,
+        0x38, 0x39, 0x3A, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x53, 0x54, 0x55, 0x56,
+        0x57, 0x58, 0x59, 0x5A, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x73, 0x74, 0x75,
+        0x76, 0x77, 0x78, 0x79, 0x7A, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x92, 0x93,
+        0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9A, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9,
+        0xAA, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6,
+        0xC7, 0xC8, 0xC9, 0xCA, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xE1, 0xE2,
+        0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7,
+        0xF8, 0xF9, 0xFA, 0xFF, 0xDA, 0x00, 0x08, 0x01, 0x01, 0x00, 0x00, 0x3F, 0x00, 0xFB, 0xD5,
+        0xDB, 0x20, 0xA8, 0xF3, 0xFF, 0xD9>>
+
+    File.write!(path, jpeg_data)
+
+    %{path: path, client_name: filename, content_type: "image/jpeg"}
+  end
+
+  # Create a file larger than max size
+  defp create_large_upload do
+    tmp_dir = System.tmp_dir!()
+    path = Path.join(tmp_dir, "large_#{System.unique_integer([:positive])}.jpg")
+
+    max_size = Application.get_env(:portfolio, :uploads)[:max_file_size] || 10_485_760
+    # Create file slightly larger than max
+    File.write!(path, String.duplicate("x", max_size + 1000))
+
+    %{path: path, client_name: "large_file.jpg", content_type: "image/jpeg"}
+  end
+
+  defp cleanup_upload(%{path: path}) do
+    File.rm(path)
+  end
+
+  # Create a test upload with unique content to ensure different hash
+  defp create_test_upload_with_content(filename, unique_content) do
+    tmp_dir = System.tmp_dir!()
+    path = Path.join(tmp_dir, "upload_#{System.unique_integer([:positive])}_#{filename}")
+
+    # Create a minimal JPEG with unique content embedded
+    # The unique content changes the hash
+    jpeg_header =
+      <<0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00,
+        0x01, 0x00, 0x01, 0x00, 0x00>>
+
+    jpeg_footer = <<0xFF, 0xD9>>
+
+    # Add unique content in the middle to change hash
+    unique_bytes = :crypto.hash(:sha256, unique_content)
+
+    File.write!(path, jpeg_header <> unique_bytes <> jpeg_footer)
+
+    %{path: path, client_name: filename, content_type: "image/jpeg"}
   end
 end

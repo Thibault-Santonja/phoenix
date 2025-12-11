@@ -66,5 +66,35 @@ defmodule Portfolio.Services.Photography.AlbumPublicationServiceTest do
 
       :telemetry.detach("test-album-publication")
     end
+
+    test "emits domain event on publication" do
+      album = create_album(published: false)
+
+      # Subscribe to domain events
+      Portfolio.DomainEvents.subscribe(:album_published)
+
+      assert {:ok, _album} = AlbumPublicationService.execute(album, user_id: "test-user")
+
+      # Should receive domain event
+      assert_receive {:album_published, event}
+      assert event.album_id == album.id
+      assert event.title == album.title
+      assert event.slug == album.slug
+      assert event.user_id == "test-user"
+    end
+
+    test "invalidates both cache keys" do
+      album = create_album(published: false)
+
+      # Put something in both cache keys
+      Cachex.put(:portfolio_cache, {:published_albums_by_year, []}, ["cached"])
+      Cachex.put(:portfolio_cache, {:published_albums_by_year, [:photos]}, ["cached_with_photos"])
+
+      assert {:ok, _album} = AlbumPublicationService.execute(album)
+
+      # Both cache keys should be invalidated
+      assert {:ok, nil} = Cachex.get(:portfolio_cache, {:published_albums_by_year, []})
+      assert {:ok, nil} = Cachex.get(:portfolio_cache, {:published_albums_by_year, [:photos]})
+    end
   end
 end

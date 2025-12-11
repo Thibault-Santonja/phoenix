@@ -1,81 +1,70 @@
 defmodule Portfolio.Services.Photography.PhotoDeletionServiceTest do
   use Portfolio.DataCase, async: true
 
-  alias Portfolio.Photography
-  alias Portfolio.Services.Photography.PhotoDeletionService
-
   import PortfolioTest.Fixtures.PhotographyFixtures
 
+  alias Portfolio.DomainEvents
+  alias Portfolio.Photography.Photo
+  alias Portfolio.Repo
+  alias Portfolio.Services.Photography.PhotoDeletionService
+
   describe "execute/2" do
-    test "deletes a photo successfully" do
+    test "deletes photo from database" do
       album = create_album()
-      photo = create_photo(album: album)
+      # Create photo with a file_path that doesn't exist - storage will return :ok anyway
+      photo = create_photo(album: album, file_path: "/uploads/photos/nonexistent/original.jpg")
 
-      assert {:ok, result} = PhotoDeletionService.execute(photo)
+      assert {:ok, %{photo: deleted_photo}} = PhotoDeletionService.execute(photo)
+      assert deleted_photo.id == photo.id
 
-      assert result.photo.id == photo.id
-      assert result.file == :ok
-
-      # Photo should be deleted from database
-      assert {:error, :not_found} = Photography.get_photo(photo.id)
+      # Photo should no longer exist in DB
+      assert Repo.get(Photo, photo.id) == nil
     end
 
-    test "emits telemetry event for deletion" do
+    test "emits photo_deleted domain event on success" do
       album = create_album()
-      photo = create_photo(album: album)
+      photo = create_photo(album: album, file_path: "/uploads/photos/nonexistent/original.jpg")
 
-      test_pid = self()
+      DomainEvents.subscribe(:photo_deleted)
 
-      :telemetry.attach(
-        "test-photo-deletion",
-        [:portfolio, :services, :photo_deletion, :executed],
-        fn event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry, event, measurements, metadata})
-        end,
-        nil
-      )
+      assert {:ok, _} = PhotoDeletionService.execute(photo)
 
-      PhotoDeletionService.execute(photo)
-
-      assert_receive {:telemetry, [:portfolio, :services, :photo_deletion, :executed],
-                      measurements, metadata}
-
-      assert measurements.duration > 0
-      assert metadata.photo_id == photo.id
-      assert metadata.album_id == album.id
-
-      :telemetry.detach("test-photo-deletion")
+      assert_receive {:photo_deleted, event}
+      assert event.photo_id == photo.id
+      assert event.album_id == photo.album_id
     end
 
-    test "publishes domain event on success" do
+    test "returns file ok when storage file does not exist" do
       album = create_album()
-      photo = create_photo(album: album)
+      # File doesn't exist, but LocalStorage returns :ok for non-existent files
+      photo = create_photo(album: album, file_path: "/uploads/photos/nonexistent/original.jpg")
 
-      # The service publishes a :photo_deleted event
-      # We verify execution completes successfully
-      assert {:ok, result} = PhotoDeletionService.execute(photo)
-
-      assert result.photo.id == photo.id
+      assert {:ok, %{photo: _deleted, file: :ok}} = PhotoDeletionService.execute(photo)
     end
 
-    test "accepts options parameter" do
+    test "event contains correct metadata" do
       album = create_album()
-      photo = create_photo(album: album)
 
-      # Should work with empty options
-      assert {:ok, _result} = PhotoDeletionService.execute(photo, [])
+      photo =
+        create_photo(
+          album: album,
+          file_path: "/uploads/photos/testphoto/original.jpg"
+        )
+
+      DomainEvents.subscribe(:photo_deleted)
+
+      assert {:ok, _} = PhotoDeletionService.execute(photo)
+
+      assert_receive {:photo_deleted, event}
+      assert event.file_path == "/uploads/photos/testphoto/original.jpg"
+      assert %DateTime{} = event.deleted_at
     end
 
-    test "handles photo with file_path that doesn't exist on disk" do
+    test "accepts empty options" do
       album = create_album()
-      # Photo with non-existent file path - should still delete record
-      photo = create_photo(album: album, file_path: "/nonexistent/path/photo.jpg")
+      photo = create_photo(album: album, file_path: "/uploads/photos/nonexistent/original.jpg")
 
-      assert {:ok, result} = PhotoDeletionService.execute(photo)
-
-      assert result.photo.id == photo.id
-      # File deletion returns :ok for non-existent files (acceptable orphan cleanup)
-      assert result.file == :ok
+      assert {:ok, _} = PhotoDeletionService.execute(photo, [])
     end
   end
 end
