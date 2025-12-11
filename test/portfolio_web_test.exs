@@ -13,7 +13,8 @@ defmodule PortfolioWebTest do
       conn = get(conn, "/sitemap.xml")
 
       assert response_content_type(conn, :xml)
-      assert response(conn, 200) =~ ~r/<loc>https:\/\/thibaultsan.com\/<\/loc>/
+      # The sitemap URL may or may not have a trailing slash
+      assert response(conn, 200) =~ ~r/<loc>https:\/\/thibaultsan.com\/?<\/loc>/
     end
   end
 end

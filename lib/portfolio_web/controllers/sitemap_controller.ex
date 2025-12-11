@@ -32,10 +32,10 @@ defmodule PortfolioWeb.SitemapController do
   # Private functions
 
   defp get_or_generate_sitemap do
-    case Cachex.get(:app_cache, :sitemap) do
+    case Cachex.get(:portfolio_cache, :sitemap) do
       {:ok, nil} ->
         sitemap = generate_sitemap()
-        _ = Cachex.put(:app_cache, :sitemap, sitemap, ttl: :timer.seconds(@cache_ttl))
+        _ = Cachex.put(:portfolio_cache, :sitemap, sitemap, ttl: :timer.seconds(@cache_ttl))
         sitemap
 
       {:ok, cached_sitemap} ->

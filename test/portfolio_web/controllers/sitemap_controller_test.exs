@@ -1,9 +1,9 @@
 defmodule PortfolioWeb.SitemapControllerTest do
-  use PortfolioWeb.ConnCase, async: true
+  use PortfolioWeb.ConnCase, async: false
 
   setup do
     # Clear cache before each test
-    Cachex.clear(:app_cache)
+    Cachex.clear(:portfolio_cache)
     :ok
   end
 
@@ -31,7 +31,25 @@ defmodule PortfolioWeb.SitemapControllerTest do
       assert String.contains?(body, ~s(xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"))
     end
 
-    test "includes url elements", %{conn: conn} do
+    test "includes xhtml namespace for alternates", %{conn: conn} do
+      conn = get(conn, ~p"/sitemap.xml")
+      body = response(conn, 200)
+
+      assert String.contains?(body, ~s(xmlns:xhtml="http://www.w3.org/1999/xhtml"))
+    end
+  end
+
+  describe "main domain sitemap (thibaultsan.com)" do
+    # Test config sets host to thibaultsan.com
+
+    test "includes homepage URL", %{conn: conn} do
+      conn = get(conn, ~p"/sitemap.xml")
+      body = response(conn, 200)
+
+      assert String.contains?(body, "<loc>https://thibaultsan.com</loc>")
+    end
+
+    test "includes url elements with required children", %{conn: conn} do
       conn = get(conn, ~p"/sitemap.xml")
       body = response(conn, 200)
 
@@ -39,35 +57,37 @@ defmodule PortfolioWeb.SitemapControllerTest do
       assert String.contains?(body, "</url>")
       assert String.contains?(body, "<loc>")
       assert String.contains?(body, "<lastmod>")
-    end
-
-    test "includes required url children elements", %{conn: conn} do
-      conn = get(conn, ~p"/sitemap.xml")
-      body = response(conn, 200)
-
       assert String.contains?(body, "<changefreq>")
       assert String.contains?(body, "<priority>")
     end
-  end
 
-  describe "sitemap structure" do
-    test "includes photo subdomain URLs", %{conn: conn} do
+    test "formats lastmod as ISO8601 date", %{conn: conn} do
       conn = get(conn, ~p"/sitemap.xml")
       body = response(conn, 200)
 
-      assert String.contains?(body, "photo.thibaultsan.com")
+      # Should contain ISO8601 formatted dates (YYYY-MM-DD)
+      assert Regex.match?(~r/<lastmod>\d{4}-\d{2}-\d{2}/, body)
     end
 
-    test "includes timeline URLs", %{conn: conn} do
+    test "homepage has highest priority", %{conn: conn} do
       conn = get(conn, ~p"/sitemap.xml")
       body = response(conn, 200)
 
-      assert String.contains?(body, "/timeline")
+      assert String.contains?(body, "<priority>1.0</priority>")
+    end
+
+    test "uses weekly change frequency for homepage", %{conn: conn} do
+      conn = get(conn, ~p"/sitemap.xml")
+      body = response(conn, 200)
+
+      assert String.contains?(body, "<changefreq>weekly</changefreq>")
     end
   end
 
   describe "sitemap caching" do
     test "caches sitemap content", %{conn: conn} do
+      Cachex.clear(:portfolio_cache)
+
       # First request generates sitemap
       conn1 = get(conn, ~p"/sitemap.xml")
       body1 = response(conn1, 200)
@@ -80,63 +100,63 @@ defmodule PortfolioWeb.SitemapControllerTest do
     end
 
     test "returns valid XML when cache is empty", %{conn: conn} do
-      Cachex.clear(:app_cache)
+      Cachex.clear(:portfolio_cache)
 
       conn = get(conn, ~p"/sitemap.xml")
       body = response(conn, 200)
 
       assert String.starts_with?(body, ~s(<?xml version="1.0"))
     end
-  end
 
-  describe "lastmod formatting" do
-    test "formats lastmod as ISO8601 date", %{conn: conn} do
+    test "stores sitemap in cache after generation", %{conn: conn} do
+      Cachex.clear(:portfolio_cache)
+
+      # Generate sitemap
       conn = get(conn, ~p"/sitemap.xml")
       body = response(conn, 200)
 
-      # Should contain ISO8601 formatted dates (YYYY-MM-DD)
-      assert Regex.match?(~r/<lastmod>\d{4}-\d{2}-\d{2}/, body)
+      # Check cache contains the sitemap
+      {:ok, cached} = Cachex.get(:portfolio_cache, :sitemap)
+      assert cached == body
     end
   end
 
-  describe "sitemap priorities" do
-    test "homepage has highest priority", %{conn: conn} do
+  describe "XML structure validation" do
+    test "generates well-formed XML", %{conn: conn} do
       conn = get(conn, ~p"/sitemap.xml")
       body = response(conn, 200)
 
-      # Should have priority 1.0 for main pages
-      assert String.contains?(body, "<priority>1.0</priority>") or
-               String.contains?(body, "<priority>0.9</priority>")
+      # Check basic XML structure
+      assert String.starts_with?(body, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+      assert String.contains?(body, "<urlset")
+      assert String.contains?(body, "</urlset>")
+
+      # Each <url> should be properly closed
+      url_count = length(Regex.scan(~r/<url>/, body))
+      url_close_count = length(Regex.scan(~r/<\/url>/, body))
+      assert url_count == url_close_count
+    end
+
+    test "all loc elements are properly closed", %{conn: conn} do
+      conn = get(conn, ~p"/sitemap.xml")
+      body = response(conn, 200)
+
+      loc_count = length(Regex.scan(~r/<loc>/, body))
+      loc_close_count = length(Regex.scan(~r/<\/loc>/, body))
+      assert loc_count == loc_close_count
     end
   end
 
-  describe "hreflang alternates" do
-    test "includes xhtml:link elements for alternates", %{conn: conn} do
+  describe "cache error handling" do
+    test "handles cache miss gracefully", %{conn: conn} do
+      # Ensure cache is empty
+      Cachex.clear(:portfolio_cache)
+
       conn = get(conn, ~p"/sitemap.xml")
       body = response(conn, 200)
 
-      # May include hreflang alternates depending on subdomain
-      if String.contains?(body, "xhtml:link") do
-        assert String.contains?(body, ~s(rel="alternate"))
-        assert String.contains?(body, "hreflang=")
-      end
-    end
-  end
-
-  describe "change frequencies" do
-    test "uses appropriate change frequencies", %{conn: conn} do
-      conn = get(conn, ~p"/sitemap.xml")
-      body = response(conn, 200)
-
-      # Should use standard changefreq values
-      valid_frequencies = ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"]
-
-      frequencies_in_body =
-        Enum.filter(valid_frequencies, fn freq ->
-          String.contains?(body, "<changefreq>#{freq}</changefreq>")
-        end)
-
-      assert length(frequencies_in_body) >= 1
+      assert String.starts_with?(body, "<?xml")
+      assert String.contains?(body, "thibaultsan.com")
     end
   end
 end

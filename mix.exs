@@ -16,7 +16,16 @@ defmodule Portfolio.MixProject do
       deps: deps(),
       compilers: Mix.compilers(),
       listeners: if(Mix.env() == :dev, do: [Phoenix.CodeReloader], else: []),
-      test_coverage: [tool: ExCoveralls],
+      test_coverage: [
+        tool: ExCoveralls,
+        threshold: 90,
+        ignore_modules: [
+          Portfolio.Workers.ExifExtractionWorker,
+          Portfolio.Workers.ImageVariantWorker,
+          Portfolio.Bootstrap.Worker,
+          Portfolio.ImageProcessing.Services.ImageProcessingService
+        ]
+      ],
       # Reduce parallel compilation to avoid ETS race conditions
       elixirc_options: [warnings_as_errors: false],
       dialyzer: [

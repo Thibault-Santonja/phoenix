@@ -1,32 +1,18 @@
 {
   "coverage_options": {
     "treat_no_relevant_lines_as_covered": true,
-    "minimum_coverage": 85
+    "minimum_coverage": 90
   },
   "skip_files": [
     "lib/portfolio_web/components/mishka_chelekom_components/",
     "lib/portfolio_web/components/core_components.ex",
-    "lib/portfolio_web/components/article_code_bloc.ex",
-    "lib/portfolio_web/components/article_section.ex",
-    "lib/portfolio_web/components/blog_article.ex",
     "lib/mix/tasks/",
     "lib/portfolio/release.ex",
     "lib/portfolio/repo.ex",
     "lib/portfolio/mailer.ex",
     "lib/portfolio_web/gettext.ex",
     "lib/portfolio_web/components/layouts.ex",
-    "lib/portfolio_web/controllers/page_html.ex",
-    "lib/portfolio_web/controllers/auth_html.ex",
-    "lib/portfolio_web/controllers/sitemap_controller.ex",
-    "lib/portfolio/bootstrap/worker.ex",
-    "lib/portfolio/image_processing.ex",
-    "lib/portfolio/image_processing/infrastructure/",
-    "lib/portfolio/image_processing/services/",
-    "lib/portfolio/image_processing/domain/events/",
     "lib/portfolio_web/telemetry.ex",
-    "lib/portfolio_web/live/tech_live/blog/elixir.ex",
-    "lib/portfolio/workers/exif_extraction_worker.ex",
-    "lib/portfolio/workers/image_variant_worker.ex",
     "test/support/"
   ]
 }

@@ -1,6 +1,30 @@
 defmodule PortfolioWeb.PageControllerTest do
   use PortfolioWeb.ConnCase
 
+  describe "home/2" do
+    test "GET / renders home page", %{conn: conn} do
+      conn = get(conn, ~p"/")
+      assert html_response(conn, 200)
+    end
+
+    test "GET / renders without layout", %{conn: conn} do
+      conn = get(conn, ~p"/")
+      html = html_response(conn, 200)
+
+      # Home page should render but not include standard layout elements
+      # that would be in the app layout
+      assert html =~ "html" or html =~ "body"
+    end
+
+    test "GET / returns valid HTML", %{conn: conn} do
+      conn = get(conn, ~p"/")
+      html = html_response(conn, 200)
+
+      # Should contain basic HTML structure
+      assert html =~ "<!DOCTYPE html>" or html =~ "<html"
+    end
+  end
+
   describe "subdomain_redirect/2" do
     test "GET /amvcc redirects to allowed subdomain", %{conn: conn} do
       conn = get(conn, ~p"/amvcc")

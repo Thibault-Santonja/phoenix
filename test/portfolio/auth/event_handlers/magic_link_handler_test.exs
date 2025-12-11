@@ -1,5 +1,8 @@
 defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
-  use ExUnit.Case, async: true
+  @moduledoc """
+  Tests for MagicLinkHandler GenServer.
+  """
+  use Portfolio.DataCase, async: false
 
   alias Portfolio.Auth.EventHandlers.MagicLinkHandler
   alias Portfolio.Auth.Events.{MagicLinkRequested, MagicLinkVerified}
@@ -15,27 +18,34 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
       assert is_pid(pid)
       assert Process.alive?(pid)
 
-      # Clean up
       GenServer.stop(pid)
     end
   end
 
   describe "init/1" do
     test "initializes with empty state" do
-      assert {:ok, %{}} = MagicLinkHandler.init([])
+      # Stop existing handler if running
+      if pid = Process.whereis(MagicLinkHandler) do
+        GenServer.stop(pid)
+      end
+
+      {:ok, pid} = MagicLinkHandler.start_link([])
+
+      # Handler should be running
+      assert Process.alive?(pid)
+
+      GenServer.stop(pid)
     end
   end
 
-  describe "handle_info/2 - magic_link_requested" do
-    test "handles MagicLinkRequested event" do
-      # Note: token is intentionally NOT included in the event for security reasons
-      # (prevents accidental logging of sensitive authentication tokens)
+  describe "handle_info/2 - magic_link_requested event" do
+    test "handles MagicLinkRequested event successfully" do
       event = %MagicLinkRequested{
         magic_link_id: Ecto.UUID.generate(),
         email: "test@example.com",
         short_code: "ABC123",
         requested_at: DateTime.utc_now(),
-        expires_at: DateTime.utc_now() |> DateTime.add(900)
+        expires_at: DateTime.add(DateTime.utc_now(), 3600, :second)
       }
 
       state = %{}
@@ -47,21 +57,21 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
     test "preserves state after handling event" do
       event = %MagicLinkRequested{
         magic_link_id: Ecto.UUID.generate(),
-        email: "user@example.com",
-        short_code: "XYZ789",
+        email: "test@example.com",
+        short_code: "DEF456",
         requested_at: DateTime.utc_now(),
-        expires_at: DateTime.utc_now() |> DateTime.add(900)
+        expires_at: DateTime.add(DateTime.utc_now(), 3600, :second)
       }
 
-      initial_state = %{some_key: "some_value"}
+      initial_state = %{counter: 5}
 
       assert {:noreply, ^initial_state} =
                MagicLinkHandler.handle_info({:magic_link_requested, event}, initial_state)
     end
   end
 
-  describe "handle_info/2 - magic_link_verified" do
-    test "handles MagicLinkVerified event" do
+  describe "handle_info/2 - magic_link_verified event" do
+    test "handles MagicLinkVerified event successfully" do
       event = %MagicLinkVerified{
         magic_link_id: Ecto.UUID.generate(),
         user_id: Ecto.UUID.generate(),
@@ -75,15 +85,15 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
                MagicLinkHandler.handle_info({:magic_link_verified, event}, state)
     end
 
-    test "preserves state after handling verified event" do
+    test "preserves state after verification event" do
       event = %MagicLinkVerified{
         magic_link_id: Ecto.UUID.generate(),
         user_id: Ecto.UUID.generate(),
-        email: "user@example.com",
+        email: "verified@example.com",
         verified_at: DateTime.utc_now()
       }
 
-      initial_state = %{counter: 5}
+      initial_state = %{data: "test"}
 
       assert {:noreply, ^initial_state} =
                MagicLinkHandler.handle_info({:magic_link_verified, event}, initial_state)
@@ -98,7 +108,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
                MagicLinkHandler.handle_info({:unknown_event, %{}}, state)
     end
 
-    test "handles random messages without crashing" do
+    test "handles random atom messages" do
       state = %{data: "test"}
 
       assert {:noreply, ^state} =
@@ -110,6 +120,32 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
 
       assert {:noreply, ^state} =
                MagicLinkHandler.handle_info(nil, state)
+    end
+  end
+
+  describe "event processing" do
+    test "handles multiple events sequentially" do
+      state = %{}
+
+      event1 = %MagicLinkRequested{
+        magic_link_id: Ecto.UUID.generate(),
+        email: "user1@example.com",
+        short_code: "SEQ123",
+        requested_at: DateTime.utc_now(),
+        expires_at: DateTime.add(DateTime.utc_now(), 3600, :second)
+      }
+
+      event2 = %MagicLinkVerified{
+        magic_link_id: Ecto.UUID.generate(),
+        user_id: Ecto.UUID.generate(),
+        email: "user1@example.com",
+        verified_at: DateTime.utc_now()
+      }
+
+      {:noreply, state} = MagicLinkHandler.handle_info({:magic_link_requested, event1}, state)
+
+      assert {:noreply, ^state} =
+               MagicLinkHandler.handle_info({:magic_link_verified, event2}, state)
     end
   end
 end

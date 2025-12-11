@@ -17,6 +17,7 @@ config :portfolio, Portfolio.Repo,
 # you can enable the server option below.
 config :portfolio, PortfolioWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
+  url: [host: "thibaultsan.com", scheme: "https", port: 443],
   secret_key_base: "sxlebCP09EzixtLZ5ZkeBMZqNNHcJQOHdlcMtP1wk5puEUZnnLyRkt3xHqXa/69X",
   server: false
 

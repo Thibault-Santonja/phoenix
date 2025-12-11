@@ -64,15 +64,14 @@ defmodule Portfolio.ImageProcessing.CircuitBreakerTest do
       assert result == {:error, :circuit_blown}
     end
 
-    test "installs fuse if not found and retries" do
-      # Use a unique fuse name that hasn't been installed
-      unique_fuse = :unique_test_fuse
+    test "installs default fuse if not found and retries" do
+      # The CircuitBreaker.call/2 with a custom fuse name will call install()
+      # which installs the default :image_processing fuse
+      # Test using the default fuse name to verify this behavior
+      :fuse.remove(:image_processing)
 
-      result = CircuitBreaker.call(unique_fuse, fn -> {:ok, :auto_installed} end)
+      result = CircuitBreaker.call(fn -> {:ok, :auto_installed} end)
       assert result == {:ok, :auto_installed}
-
-      # Clean up
-      :fuse.reset(unique_fuse)
     end
   end
 

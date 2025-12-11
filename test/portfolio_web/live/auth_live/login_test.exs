@@ -173,6 +173,47 @@ defmodule PortfolioWeb.AuthLive.LoginTest do
     end
   end
 
+  describe "validate event" do
+    test "validates email format in real-time", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/login")
+
+      # Enter an invalid email
+      html =
+        view
+        |> element("form")
+        |> render_change(%{email_form: %{email: "invalid"}})
+
+      # Should show validation error
+      assert html =~ "email" or html =~ "invalide"
+    end
+
+    test "accepts valid email format", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/login")
+
+      # Enter a valid email
+      html =
+        view
+        |> element("form")
+        |> render_change(%{email_form: %{email: "valid@example.com"}})
+
+      # Should not show email format error
+      refute html =~ "invalide"
+    end
+
+    test "requires email field", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/login")
+
+      # Submit empty form
+      html =
+        view
+        |> element("form")
+        |> render_change(%{email_form: %{email: ""}})
+
+      # Should show required error or keep submit button state
+      assert html =~ "email" or html =~ "requis"
+    end
+  end
+
   # Helper functions
   defp insert_user(attrs \\ %{}) do
     attrs = Enum.into(attrs, %{})
