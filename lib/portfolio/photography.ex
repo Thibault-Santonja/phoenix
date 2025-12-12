@@ -77,6 +77,7 @@ defmodule Portfolio.Photography do
   alias Portfolio.Photography.{Album, Photo}
   alias Portfolio.Photography.Events.PhotoUploaded
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
+  alias Portfolio.Workers.ImageVariantWorker
 
   # Service Layer
   alias Portfolio.Services.Photography.{
@@ -536,8 +537,6 @@ defmodule Portfolio.Photography do
   """
   @spec reprocess_photo(Photo.t()) :: {:ok, Photo.t()} | {:error, term()}
   def reprocess_photo(%Photo{id: photo_id} = photo) do
-    alias Portfolio.Workers.ImageVariantWorker
-
     with {:ok, updated_photo} <- update_photo(photo, %{processing_status: "pending"}),
          {:ok, _job} <- ImageVariantWorker.enqueue(photo_id) do
       {:ok, updated_photo}
@@ -563,12 +562,7 @@ defmodule Portfolio.Photography do
       [%Photo{}, ...]
   """
   @spec list_pending_photos(keyword()) :: [Photo.t()]
-  def list_pending_photos(opts \\ []) do
-    limit = Keyword.get(opts, :limit, 100)
-    preload = Keyword.get(opts, :preload, [])
-
-    PhotoRepository.list_by_processing_status("pending", limit: limit, preload: preload)
-  end
+  def list_pending_photos(opts \\ []), do: list_photos_by_status("pending", opts)
 
   @doc """
   Liste les photos dont le traitement a échoué.
@@ -590,11 +584,14 @@ defmodule Portfolio.Photography do
       [%Photo{album: %Album{}}, ...]
   """
   @spec list_failed_photos(keyword()) :: [Photo.t()]
-  def list_failed_photos(opts \\ []) do
+  def list_failed_photos(opts \\ []), do: list_photos_by_status("failed", opts)
+
+  # Helper privé pour lister les photos par statut de traitement
+  defp list_photos_by_status(status, opts) do
     limit = Keyword.get(opts, :limit, 100)
     preload = Keyword.get(opts, :preload, [])
 
-    PhotoRepository.list_by_processing_status("failed", limit: limit, preload: preload)
+    PhotoRepository.list_by_processing_status(status, limit: limit, preload: preload)
   end
 
   @doc """

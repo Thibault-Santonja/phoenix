@@ -268,16 +268,11 @@ defmodule Portfolio.Auth.SessionService do
   """
   @spec delete_all_user_sessions(User.t()) :: {integer(), nil}
   def delete_all_user_sessions(%User{id: user_id}) do
-    # Retrieve all tokens before deletion to invalidate cache
-    sessions = SessionRepository.list_by_user(user_id)
-    tokens = Enum.map(sessions, & &1.token)
-
-    result = SessionRepository.delete_all_for_user(user_id)
-
-    # Invalidate cache for all sessions
-    Enum.each(tokens, &invalidate_session_cache/1)
-
-    result
+    delete_user_sessions_with_cache_invalidation(
+      user_id,
+      fn sessions -> Enum.map(sessions, & &1.token) end,
+      fn -> SessionRepository.delete_all_for_user(user_id) end
+    )
   end
 
   @doc """
@@ -295,13 +290,28 @@ defmodule Portfolio.Auth.SessionService do
   """
   @spec delete_all_user_sessions_except(User.t(), Ecto.UUID.t()) :: {integer(), nil}
   def delete_all_user_sessions_except(%User{id: user_id}, current_session_id) do
-    # Retrieve all tokens before deletion to invalidate cache
+    delete_user_sessions_with_cache_invalidation(
+      user_id,
+      fn sessions ->
+        sessions |> Enum.reject(&(&1.id == current_session_id)) |> Enum.map(& &1.token)
+      end,
+      fn -> SessionRepository.delete_all_for_user_except(user_id, current_session_id) end
+    )
+  end
+
+  # Helper to delete sessions with cache invalidation
+  # Extracts common logic between delete_all_user_sessions and delete_all_user_sessions_except
+  @spec delete_user_sessions_with_cache_invalidation(
+          Ecto.UUID.t(),
+          (list() -> [String.t()]),
+          (-> {integer(), nil})
+        ) :: {integer(), nil}
+  defp delete_user_sessions_with_cache_invalidation(user_id, token_extractor, delete_fn) do
     sessions = SessionRepository.list_by_user(user_id)
-    tokens = sessions |> Enum.reject(&(&1.id == current_session_id)) |> Enum.map(& &1.token)
+    tokens = token_extractor.(sessions)
 
-    result = SessionRepository.delete_all_for_user_except(user_id, current_session_id)
+    result = delete_fn.()
 
-    # Invalidate cache for all sessions
     Enum.each(tokens, &invalidate_session_cache/1)
 
     result

@@ -218,25 +218,7 @@ defmodule Portfolio.RateLimiter do
   """
   @spec reset_actions([action()]) :: :ok
   def reset_actions(actions) when is_list(actions) do
-    try do
-      :ets.tab2list(@table)
-      |> Enum.each(fn {{key, _window}, _count, _expires_at} ->
-        key_str = to_string(key)
-
-        should_delete =
-          Enum.any?(actions, fn action ->
-            String.contains?(key_str, "rate_limit:#{action}:")
-          end)
-
-        if should_delete do
-          :ets.match_delete(@table, {{key, :_}, :_, :_})
-        end
-      end)
-    rescue
-      _ -> :ok
-    end
-
-    :ok
+    reset_filtered(actions, :delete_matching)
   end
 
   @doc """
@@ -252,17 +234,27 @@ defmodule Portfolio.RateLimiter do
   """
   @spec reset_all_except([action()]) :: :ok
   def reset_all_except(actions) when is_list(actions) do
+    reset_filtered(actions, :keep_matching)
+  end
+
+  # Helper to reset rate limit entries based on action filter
+  # mode: :delete_matching - delete entries matching the actions
+  # mode: :keep_matching - delete entries NOT matching the actions
+  @spec reset_filtered([action()], :delete_matching | :keep_matching) :: :ok
+  defp reset_filtered(actions, mode) do
     try do
       :ets.tab2list(@table)
       |> Enum.each(fn {{key, _window}, _count, _expires_at} ->
         key_str = to_string(key)
+        matches_action = action_in_list?(key_str, actions)
 
-        should_keep =
-          Enum.any?(actions, fn action ->
-            String.contains?(key_str, "rate_limit:#{action}:")
-          end)
+        should_delete =
+          case mode do
+            :delete_matching -> matches_action
+            :keep_matching -> not matches_action
+          end
 
-        if not should_keep do
+        if should_delete do
           :ets.match_delete(@table, {{key, :_}, :_, :_})
         end
       end)
@@ -271,6 +263,14 @@ defmodule Portfolio.RateLimiter do
     end
 
     :ok
+  end
+
+  # Checks if a bucket key matches any of the given actions
+  @spec action_in_list?(String.t(), [action()]) :: boolean()
+  defp action_in_list?(key_str, actions) do
+    Enum.any?(actions, fn action ->
+      String.contains?(key_str, "rate_limit:#{action}:")
+    end)
   end
 
   @doc """
