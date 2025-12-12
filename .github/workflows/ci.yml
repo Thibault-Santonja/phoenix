@@ -59,7 +59,7 @@ jobs:
             plt-
 
       - run: mix deps.get
-      - run: mix compile --warnings-as-errors
+      - run: mix compile --warnings-as-errors --all-warnings
 
       # Code formatting
       - name: Check formatting
@@ -75,13 +75,13 @@ jobs:
       - name: Deps audit
         run: mix deps.audit
 
-      # Static analysis
-      - name: Credo (strict)
-        run: mix credo --strict
+      # Static analysis - strict mode with all priority levels
+      - name: Credo (strict + all)
+        run: mix credo --strict --all
 
-      # Security scanner
-      - name: Sobelow
-        run: mix sobelow --config
+      # Security scanner - exit on any issue
+      - name: Sobelow (strict)
+        run: mix sobelow --config --exit low
 
       # Translations up to date
       - name: Gettext (check translations)

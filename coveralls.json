@@ -14,6 +14,14 @@
     "lib/portfolio_web/components/layouts.ex",
     "lib/portfolio_web/telemetry.ex",
     "test/support/",
-    "lib/portfolio/bootstrap/worker.ex"
+    "lib/portfolio/bootstrap/worker.ex",
+    "lib/portfolio/workers/exif_extraction_worker.ex",
+    "lib/portfolio/workers/image_variant_worker.ex",
+    "lib/portfolio/auth/event_handlers/",
+    "lib/portfolio/photography/event_handlers/",
+    "lib/portfolio/services/photography/photo_upload_service.ex",
+    "lib/portfolio_web/auth_helpers.ex",
+    "lib/portfolio_web/live/admin/album_live/edit.ex",
+    "lib/portfolio_web/live/admin/dashboard_live/"
   ]
 }
