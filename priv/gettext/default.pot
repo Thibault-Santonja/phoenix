@@ -21,17 +21,12 @@ msgstr ""
 msgid "A `GenServer` is a generic server process — a behavior module provided by Elixir that helps you encapsulate state, handle messages, and manage synchronous or asynchronous operations."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:289
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:141
 #, elixir-autogen, elixir-format
 msgid "A recurring theme in my work is solitude — not as loneliness, but as presence. I often photograph solitary figures integrated into wide scenes, at the border between street and landscape photography. It might be a person quietly immersed in their thoughts, a couple lost in the calm of nature, or someone standing still amid the blurry noise of a bustling city. These moments of solitude carry a certain poetry. Sometimes they evoke serenity, sometimes melancholy — but always a kind of truth."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:409
-#, elixir-autogen, elixir-format
-msgid "A wedding is a whirlwind of faces, gestures, and shifting light. It’s a day that passes too quickly, where every moment deserves to be lived — and sometimes preserved. My approach is documentary, sensitive, and attentive: I don’t direct, I observe. I follow the natural rhythm of the day, the glances that connect, the laughter that bursts out, the hands that tighten when emotions overflow."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:164
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:16
 #, elixir-autogen, elixir-format
 msgid "AMVCC (Association pour la Mise en Valeur du Château de Coucy) brings together passionate volunteers who work year-round to preserve, animate, and share the cultural heritage of Coucy castle. As a photographer, secretary, and active member, I contribute both behind the scenes and on the ground — where commitment meets creativity."
 msgstr ""
@@ -41,19 +36,9 @@ msgstr ""
 msgid "An OTP Application typically defines a supervision tree and is started by the BEAM runtime when your project boots. This pattern enables you to structure your code as modular and resilient components, ideal for long-running services like web servers, messaging queues, or background job processors."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:224
-#, elixir-autogen, elixir-format
-msgid "As a concert photographer, I seek to convey the energy, emotion, and atmosphere of live music. From international acts like Hans Zimmer’s band, to national stars like Zaho de Sagazan, Eddy de Pretto, and L’Impératrice, or more eclectic and vibrant acts like Charlotte Adigéry & Boris Pupul or A2H, each performance is a living story that I try to preserve through images."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:239
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:91
 #, elixir-autogen, elixir-format
 msgid "As a music photographer, I still have dreams to fulfill. I hope one day to photograph Joe Hisaishi, whose compositions have deeply moved me, and Metallica, a band I have followed with passion since my youth. These are more than musical icons to me — they represent moments of life, inspiration, and enduring emotion."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:274
-#, elixir-autogen, elixir-format
-msgid "As a street photographer, I’m drawn to the evolving life of cities — the interplay between architecture, infrastructure, and the quiet rhythm of human presence. My camera becomes a way to observe, feel, and preserve these fragile moments of everyday life."
 msgstr ""
 
 #: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:71
@@ -82,11 +67,6 @@ msgstr ""
 msgid "At the heart of every Elixir project lies an OTP Application — a standardized way to package, configure, and run an Elixir system. An OTP Application is more than a module or a set of functions: it's a self-contained unit of behavior that defines how your app starts, supervises its processes, and integrates with other applications."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:204
-#, elixir-autogen, elixir-format
-msgid "At the same time, I’m drawn to the strength and majesty of the earth itself — mountains that command silence, forests that pulse with life, skies that stretch far beyond us. These landscapes are not just scenery; they are alive, ancient, and essential. They remind us of scale, of time, of fragility and force."
-msgstr ""
-
 #: lib/portfolio_web/live/tech_live/blog/ci.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "At the time of writing, the app doesn’t rely on a database like Postgres, but we’ve left support commented out for future expansion."
@@ -102,7 +82,7 @@ msgstr ""
 msgid "Below, I’ll walk you through the CI setup we use for this site, which is built with Phoenix (Elixir), and deployed using Kamal (another article will be write on it !) and Docker."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:174
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:26
 #, elixir-autogen, elixir-format
 msgid "Beyond the events, my lens seeks the gestures of dedication — the early morning preparations, the camaraderie around a fire, the quiet pride in historical transmission. These fleeting moments, often invisible to the public, are the beating heart of the association. They embody a spirit of generosity, intergenerational exchange, and resilience."
 msgstr ""
@@ -110,11 +90,6 @@ msgstr ""
 #: lib/portfolio_web/live/tech_live/blog/ci.html.heex:223
 #, elixir-autogen, elixir-format
 msgid "By caching mix and build artifacts per tool version and environment, we also save time on repeat CI runs:"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:304
-#, elixir-autogen, elixir-format
-msgid "China holds a deeply personal place in my life. I’ve lived there, studied there, loved there. Part of my family still resides in China, and every return is filled with emotion — echoes both old and new. This vast, multifaceted country continues to amaze me with the richness of its traditions, the strength of its contrasts, and the quiet beauty found in the gestures of daily life."
 msgstr ""
 
 #: lib/portfolio_web/live/amvcc_live/index.html.heex:371
@@ -132,7 +107,7 @@ msgstr ""
 msgid "Compared to solutions like Fly.io, which abstract away the infrastructure, Kamal gives you full control while keeping the workflow efficient and reproducible."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:379
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:231
 #, elixir-autogen, elixir-format
 msgid "Couple photography, as I practice it, is rooted in real life — a walk through the woods, a shared coffee, a quiet moment in a familiar place. My approach is discreet, respectful, and deeply human. I try to capture tenderness, connection, the gestures of daily life — everything that makes a relationship unique. These are not frozen memories, but living fragments, sincere and shared."
 msgstr ""
@@ -217,16 +192,6 @@ msgstr ""
 msgid "Environment variables that are safe to commit (e.g. hostname, database URL)."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:389
-#, elixir-autogen, elixir-format
-msgid "Even before the first cries, there is already a story — that of a young couple, caught between wonder, joy, and quiet suspense. It unfolds in glances, in waiting, in the hands that care. Photographing this moment means capturing the ‘before’ — that blend of tenderness, momentum, and gentle intimacy."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:419
-#, elixir-autogen, elixir-format
-msgid "Every wedding is a unique story, and I slip into it as a quiet witness. I’m here to capture the truth of a moment, not to stage it. What moves me are the genuine sparks: a held-back tear, a child running under the tables, a grandfather smiling softly. All these living fragments weave together the memory of your day."
-msgstr ""
-
 #: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:390
 #, elixir-autogen, elixir-format
 msgid "For example, a cluster of OTP applications can coordinate work across nodes, balance load, or recover from partial failures — making Elixir a powerful choice for building distributed systems, microservices, and globally available APIs."
@@ -247,7 +212,7 @@ msgstr ""
 msgid "Fourteenth century clothing in northern France reflects a society structured by status, gender and the seasons. By observing the cuts, materials and colours, we discover a fashion in full transformation, between medieval heritage and the beginnings of Gothic refinement."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:329
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:181
 #, elixir-autogen, elixir-format
 msgid "From isolated natural spots, unknown even to many locals, to the towering buildings of Tokyo and Osaka, Japan slowly reveals itself: in the light slipping between two doors, in the silence of a shrine at dusk, in the murmur of a street at night. Its culture holds a mystical gentleness, an elegance in everyday life, a grace that lingers long within you."
 msgstr ""
@@ -262,57 +227,37 @@ msgstr ""
 msgid "Here's how I configured Kamal for my own Phoenix project deployed to a Hetzner VPS using Docker and PostgreSQL."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:249
-#, elixir-autogen, elixir-format
-msgid "Historical reenactment is the art of bringing the past to life — through costume, gesture, objects, and immersive scenes, grounded in careful historical research. It’s a vivid and engaging way to explore medieval life."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:369
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:221
 #, elixir-autogen, elixir-format
 msgid "I aim to create images that truly resemble the people in them. Each session is unique: a meaningful place, an improvised walk, natural light. The setting becomes a quiet accomplice — present, yet never taking center stage. My approach is documentary and sensitive, with a refined aesthetic but no artifice."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:334
-#, elixir-autogen, elixir-format
-msgid "I deeply love this country—its people, their hospitality, its complex history, and its serene resilience. I’m also profoundly inspired by its photographers, who capture fragility with overwhelming intensity. Photographing in Japan, for me, is about listening more than looking. It’s about letting the place speak and patiently tracing the silent beauty of presence."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:254
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:106
 #, elixir-autogen, elixir-format
 msgid "I document this world through photography. I focus on reenactment and medieval-inspired imagery, capturing authentic scenes with an artistic eye — bringing them to life through vivid images that evoke the fabric of a 14th-century garment, the tension of a militia drill, or the stillness of a camp at dawn."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:394
-#, elixir-autogen, elixir-format
-msgid "I don’t try to freeze time — I try to let it breathe. A soft light on a round belly, a tiny hand resting on a father’s beard, arms opening to hold. These raw and tender gestures are what move me — and what I strive to carry forward through my images."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:194
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:46
 #, elixir-autogen, elixir-format
 msgid "I feel a strong, personal bond with the natural world — a place of both wonder and worry. As I witness climate change, biodiversity loss, and the growing scars of human activity, my photography becomes a form of quiet testimony. A way to say: this existed, this was beautiful, this matters."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:399
-#, elixir-autogen, elixir-format
-msgid "I go where life is — at home, in a garden, in the stillness of a slow morning or the whirlwind of a lively afternoon. There may be laughter, tears, surprises — that’s the beauty of these moments. My gaze is discreet, respectful, always seeking the simple truth of a world as it is — a beautiful mess, full of warmth and energy."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:229
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:81
 #, elixir-autogen, elixir-format
 msgid "I have a particular love for small outdoor festivals — places where music meets nature, where the atmosphere is laid-back and genuine, and where human connection takes centre stage. These moments, charged with light, dust, sound and laughter, offer an ideal canvas for documentary and my artistic work."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:374
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:226
 #, elixir-autogen, elixir-format
 msgid "I love capturing the silence between two laughs, the brush of a hand, the glance that says everything. These suspended moments speak far beyond a single photo: they tell of memory, of love, of presence. A couple is a story in motion — and my role is to preserve a faithful, simple, and precious trace of it."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:279
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:131
 #, elixir-autogen, elixir-format
 msgid "I often find beauty in the layered textures of urban history — an old house patched and repurposed over time, tangled cables tracing decades of adaptation, or a passerby moving through it all, unaware of the silent stories in the walls around them."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:414
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:266
 #, elixir-autogen, elixir-format
 msgid "I photograph the behind-the-scenes, the quiet before the big moments, the details that are often forgotten. A wrinkled dress, shoes kicked off, sunlight on a bare neck. I love that gentle tension between the intimate and the shared, between fragility and joy. My aim is not to create perfect images, but honest ones — true to you, your energy, and the bond that unites you."
 msgstr ""
@@ -407,7 +352,7 @@ msgstr ""
 msgid "Libraries like Oban use GenServer and supervision trees to manage job queues, retries, and scheduling reliably."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:324
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:176
 #, elixir-autogen, elixir-format
 msgid "Like many in France, I grew up dreaming of Japan—immersed in manga, films, and the music of Joe Hisaishi, whom I hope to photograph one day. That fascination has never left me. As an adult, I wanted to go beyond the dream, to live there for several months and feel the soul and culture of the country from within."
 msgstr ""
@@ -427,34 +372,24 @@ msgstr ""
 msgid "Mise is a modern version manager that supports multiple languages and tools — similar to asdf, but faster and easier to configure."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:219
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:71
 #, elixir-autogen, elixir-format
 msgid "Music has always been at the heart of my life. I began playing guitar as a child, and this early connection to sound and rhythm continues to shape how I perceive the world — and how I capture it through photography."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:189
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:41
 #, elixir-autogen, elixir-format
 msgid "My landscape photography is deeply connected to my approach to street photography — both seek to capture the relationship between people and their environments. But in nature, the dialogue shifts. It becomes quieter, older, and more elemental."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:259
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:111
 #, elixir-autogen, elixir-format
 msgid "My main collaboration is with La Seigneurie de Coucy (my reenactment company), but I have also work with other inspiring reenactment groups such as Pont-Croix 1358, Gentes Comitis, Aeterna and more. These encounters enrich my photographic work, offering a tapestry of unique faces, gestures, and moments. Each project becomes a shared journey — where historical rigour meets artistic vision, and where the past finds new light through the lens."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:169
-#, elixir-autogen, elixir-format
-msgid "My photographic journey with AMVCC is deeply human : from capturing the energy of public events like the Seigneuriales with the joy of a family discovering medieval crafts, to documenting large-scale initiatives such as castle restoration workshops in collaboration with REMPART, or the silent focus before the major show : Coucy à la Merveille — a grand outdoor spectacle that combines medieval drama, music, and scenography on a fantastic and epic scale. Each image becomes a fragment of shared memory and lived heritage and reflects a unique facet of the association’s efforts to bring medieval history to life and promote Coucy's heritage."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:234
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:86
 #, elixir-autogen, elixir-format
 msgid "My photography is more than event coverage — it's a personal way to explore and share the emotional power of music. I aim to capture the invisible thread between artist and audience, the tension before the drop, the intimacy of a verse whispered under the stars."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:179
-#, elixir-autogen, elixir-format
-msgid "My visual work aims to support AMVCC’s mission by creating a lasting record of its cultural initiatives. These images are not just archives — they are storytelling tools that celebrate the dedication of volunteers, artisans, and performers, and help share the living heritage of Coucy with a wider audience."
 msgstr ""
 
 #: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:384
@@ -485,21 +420,6 @@ msgstr ""
 #: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:400
 #, elixir-autogen, elixir-format
 msgid "Phoenix web servers, job processing platforms like Oban, and chat systems all leverage OTP applications behind the scenes. Each application encapsulates its logic, dependencies, and supervision trees, making them easy to compose and maintain."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:354
-#, elixir-autogen, elixir-format
-msgid "Photographing Taiwan feels like entering a parallel time. It’s a gentle, attentive observation of life unfolding — unpretentious, yet full of humanity. I find here all that I love in street photography: quiet presences, textured details, and a discreet poetry that lives between walls, faces, and landscapes. It’s a country I never finish discovering."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:364
-#, elixir-autogen, elixir-format
-msgid "Photographing a couple means entering an intimate space — a space of connection, shared glances, and spontaneous gestures. It’s a work of trust and attentiveness, where the image becomes the extension of a lived moment. No stiff poses, no masks — only the authenticity of a relationship captured in its own light."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:309
-#, elixir-autogen, elixir-format
-msgid "Photographing in China, for me, is not about capturing exoticism or postcard scenes, but about entering—humbly—a world that feels both close and distant. I look for silences, laughter, habits, the invisible threads that weave everyday life. Morning markets, shared meals, slow walks through old neighborhoods. In alleyways and on sidewalks, I’m drawn to the quiet poetry I love in street photography — a fleeting solitude, an unexpected light, a passing glance. Each image is an attempt to preserve something honest, without noise or artifice."
 msgstr ""
 
 #: lib/portfolio_web/live/tech_live/blog/kamal.html.heex:248
@@ -552,7 +472,7 @@ msgstr ""
 msgid "Remote builder support: useful when your local architecture differs from the server (e.g., M1 Mac to amd64 VPS)."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:294
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:146
 #, elixir-autogen, elixir-format
 msgid "Street photography, for me, is a way to witness time, humanity, and space converging. Each image is a silent dialogue — between place and person, solitude and movement, memory and moment."
 msgstr ""
@@ -560,11 +480,6 @@ msgstr ""
 #: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:324
 #, elixir-autogen, elixir-format
 msgid "Supervision trees are hierarchical structures of supervisors and workers, forming a resilient system where localized errors don’t bring down the entire application."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:344
-#, elixir-autogen, elixir-format
-msgid "Taiwan is a country I hold close to my heart. There’s a singular gentleness to life here — a subtle blend of Chinese heritage and Japanese influence, especially felt in Taipei, in the architecture, the habits, the quiet rhythm of the days. The country has preserved its traditions, its temples, and a kind of everyday spirituality. It is both ancient and modern, vibrant and serene."
 msgstr ""
 
 #: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:248
@@ -602,7 +517,7 @@ msgstr ""
 msgid "The name of your app/service, consistent with your Docker image and Elixir project."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:284
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:136
 #, elixir-autogen, elixir-format
 msgid "There is a deep humanity in the way people inhabit cities. I aim to capture this — not just the dramatic or spectacular, but the subtle poetry of a glance, a posture, a window left open. These details reveal the soul of a place and the quiet resilience of life."
 msgstr ""
@@ -654,7 +569,7 @@ msgstr ""
 msgid "This file should be kept out of version control. Kamal will read it and inject the variables into the container."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:314
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:166
 #, elixir-autogen, elixir-format
 msgid "This is a deeply human form of photography — where you can feel the breath of a place, the presence of its people, the memory of a history. My gaze is that of someone who knows, and who is still learning — with respect, patience, and tenderness."
 msgstr ""
@@ -674,7 +589,7 @@ msgstr ""
 msgid "This speeds up builds, avoids mismatched versions, and keeps CI mirrors of local dev environments."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:209
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:61
 #, elixir-autogen, elixir-format
 msgid "Through composition and light, I try to reveal the quiet power of nature — and our place within it. Not as rulers, not as outsiders, but as part of a larger story. My landscape work is about presence, memory, and respect. A way to reconnect with the world we too often overlook."
 msgstr ""
@@ -684,7 +599,7 @@ msgstr ""
 msgid "Through our events, we bring to life the everyday gestures, trades, skills and traditions of the period, offering visitors a living immersion in medieval life."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:264
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:116
 #, elixir-autogen, elixir-format
 msgid "Through this lens, I seek to create more than documentation — I strive to craft visual narratives with real artistic value. My photography brings history to life in ways that resonate emotionally and aesthetically. These images can support reenactment groups, medieval festivals, or even cosplay communities looking for a cinematic, historically grounded aesthetic."
 msgstr ""
@@ -729,14 +644,9 @@ msgstr ""
 msgid "We offer different animation formats to adapt to all contexts. In each configuration, we reveal the richness of daily life in the XIVᵉ century."
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:199
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:51
 #, elixir-autogen, elixir-format
 msgid "We often think of humanity as separate from nature, but we are part of it. I try to explore this tension — how we inhabit the land, how we shape it, and how, in return, it shapes us. Even in the most remote places, there are traces of our passage — paths, fences, forgotten ruins. My photography seeks to make these echoes visible."
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/index.ex:349
-#, elixir-autogen, elixir-format
-msgid "What I love in Taiwan are the streets — their calm energy. Beneath the arcades, people cook, knit, read, work. There’s steam, slow gestures, quiet conversations, laughter. The warm, humid climate wraps everything in a soft, diffuse light. Nature is spectacular: mountains, hot springs, rice fields, dense forests. And of course, the Oolong — this rich, fragrant tea, sipped under a tree or at a modest table, in a silence that soothes the soul."
 msgstr ""
 
 #: lib/portfolio_web/live/tech_live/blog/elixir.html.heex:261
@@ -807,32 +717,32 @@ msgstr ""
 msgid "link"
 msgstr ""
 
-#: lib/portfolio_web/controllers/auth_controller.ex:77
+#: lib/portfolio_web/controllers/auth_controller.ex:78
 #, elixir-autogen, elixir-format
 msgid "auth.login.session_error"
 msgstr ""
 
-#: lib/portfolio_web/controllers/auth_controller.ex:72
+#: lib/portfolio_web/controllers/auth_controller.ex:73
 #, elixir-autogen, elixir-format
 msgid "auth.login.success"
 msgstr ""
 
-#: lib/portfolio_web/controllers/auth_controller.ex:120
+#: lib/portfolio_web/controllers/auth_controller.ex:122
 #, elixir-autogen, elixir-format
 msgid "auth.logout.success"
 msgstr ""
 
-#: lib/portfolio_web/controllers/auth_controller.ex:93
+#: lib/portfolio_web/controllers/auth_controller.ex:94
 #, elixir-autogen, elixir-format
 msgid "auth.magic_link.already_used"
 msgstr ""
 
-#: lib/portfolio_web/controllers/auth_controller.ex:88
+#: lib/portfolio_web/controllers/auth_controller.ex:89
 #, elixir-autogen, elixir-format
 msgid "auth.magic_link.expired"
 msgstr ""
 
-#: lib/portfolio_web/controllers/auth_controller.ex:83
+#: lib/portfolio_web/controllers/auth_controller.ex:84
 #, elixir-autogen, elixir-format
 msgid "auth.magic_link.invalid"
 msgstr ""
@@ -883,7 +793,7 @@ msgid_plural "time.seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.ex:23
+#: lib/portfolio_web/live/admin/photo_live/index.ex:25
 #: lib/portfolio_web/live/admin/photo_live/index.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "admin.photos.title"
@@ -951,7 +861,7 @@ msgstr ""
 msgid "admin.albums.delete_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:123
+#: lib/portfolio_web/live/admin/album_live/edit.ex:104
 #, elixir-autogen, elixir-format
 msgid "admin.albums.delete_photo_error"
 msgstr ""
@@ -972,27 +882,27 @@ msgstr ""
 msgid "admin.albums.not_found"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:234
+#: lib/portfolio_web/live/admin/album_live/edit.ex:215
 #, elixir-autogen, elixir-format
 msgid "admin.albums.order_saved"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:118
+#: lib/portfolio_web/live/admin/album_live/edit.ex:99
 #, elixir-autogen, elixir-format
 msgid "admin.albums.photo_deleted"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:138
+#: lib/portfolio_web/live/admin/album_live/edit.ex:119
 #, elixir-autogen, elixir-format
 msgid "admin.albums.photo_reprocessing"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:187
+#: lib/portfolio_web/live/admin/album_live/edit.ex:168
 #, elixir-autogen, elixir-format
 msgid "admin.albums.photo_updated"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:95
+#: lib/portfolio_web/live/admin/album_live/edit.ex:247
 #, elixir-autogen, elixir-format
 msgid "admin.albums.photos_added"
 msgstr ""
@@ -1007,12 +917,12 @@ msgstr ""
 msgid "admin.albums.publish_updated"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:239
+#: lib/portfolio_web/live/admin/album_live/edit.ex:220
 #, elixir-autogen, elixir-format
 msgid "admin.albums.reorder_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:143
+#: lib/portfolio_web/live/admin/album_live/edit.ex:124
 #, elixir-autogen, elixir-format
 msgid "admin.albums.reprocess_error"
 msgstr ""
@@ -1023,42 +933,47 @@ msgstr ""
 msgid "admin.albums.title"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/edit.ex:103
+#: lib/portfolio_web/live/admin/album_live/edit.ex:84
 #, elixir-autogen, elixir-format
 msgid "admin.albums.upload_error"
 msgstr ""
 
 #: lib/portfolio_web/live/admin/album_live/form_component.ex:173
 #: lib/portfolio_web/live/admin/album_live/index.ex:215
-#: lib/portfolio_web/live/photography_live/index.ex:61
+#: lib/portfolio_web/live/photography_live/index.ex:70
+#: lib/portfolio_web/live/photography_live/modal_content.ex:15
 #, elixir-autogen, elixir-format
 msgid "album.type.china"
 msgstr ""
 
 #: lib/portfolio_web/live/admin/album_live/form_component.ex:164
 #: lib/portfolio_web/live/admin/album_live/index.ex:206
-#: lib/portfolio_web/live/photography_live/index.ex:62
+#: lib/portfolio_web/live/photography_live/index.ex:71
+#: lib/portfolio_web/live/photography_live/modal_content.ex:16
 #, elixir-autogen, elixir-format
 msgid "album.type.couples"
 msgstr ""
 
 #: lib/portfolio_web/live/admin/album_live/form_component.ex:167
 #: lib/portfolio_web/live/admin/album_live/index.ex:209
-#: lib/portfolio_web/live/photography_live/index.ex:63
+#: lib/portfolio_web/live/photography_live/index.ex:72
+#: lib/portfolio_web/live/photography_live/modal_content.ex:17
 #, elixir-autogen, elixir-format
 msgid "album.type.events"
 msgstr ""
 
 #: lib/portfolio_web/live/admin/album_live/form_component.ex:174
 #: lib/portfolio_web/live/admin/album_live/index.ex:216
-#: lib/portfolio_web/live/photography_live/index.ex:64
+#: lib/portfolio_web/live/photography_live/index.ex:73
+#: lib/portfolio_web/live/photography_live/modal_content.ex:18
 #, elixir-autogen, elixir-format
 msgid "album.type.japan"
 msgstr ""
 
 #: lib/portfolio_web/live/admin/album_live/form_component.ex:168
 #: lib/portfolio_web/live/admin/album_live/index.ex:210
-#: lib/portfolio_web/live/photography_live/index.ex:65
+#: lib/portfolio_web/live/photography_live/index.ex:74
+#: lib/portfolio_web/live/photography_live/modal_content.ex:19
 #, elixir-autogen, elixir-format
 msgid "album.type.landscape"
 msgstr ""
@@ -1077,7 +992,8 @@ msgstr ""
 
 #: lib/portfolio_web/live/admin/album_live/form_component.ex:171
 #: lib/portfolio_web/live/admin/album_live/index.ex:213
-#: lib/portfolio_web/live/photography_live/index.ex:68
+#: lib/portfolio_web/live/photography_live/index.ex:77
+#: lib/portfolio_web/live/photography_live/modal_content.ex:22
 #, elixir-autogen, elixir-format
 msgid "album.type.reenactment"
 msgstr ""
@@ -1090,14 +1006,16 @@ msgstr ""
 
 #: lib/portfolio_web/live/admin/album_live/form_component.ex:175
 #: lib/portfolio_web/live/admin/album_live/index.ex:217
-#: lib/portfolio_web/live/photography_live/index.ex:70
+#: lib/portfolio_web/live/photography_live/index.ex:79
+#: lib/portfolio_web/live/photography_live/modal_content.ex:24
 #, elixir-autogen, elixir-format
 msgid "album.type.taiwan"
 msgstr ""
 
 #: lib/portfolio_web/live/admin/album_live/form_component.ex:165
 #: lib/portfolio_web/live/admin/album_live/index.ex:207
-#: lib/portfolio_web/live/photography_live/index.ex:71
+#: lib/portfolio_web/live/photography_live/index.ex:80
+#: lib/portfolio_web/live/photography_live/modal_content.ex:25
 #, elixir-autogen, elixir-format
 msgid "album.type.wedding"
 msgstr ""
@@ -1187,56 +1105,59 @@ msgstr ""
 msgid "admin.albums.form.update_success"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:105
+#: lib/portfolio_web/live/photography_live/modal_content.ex:62
 #, elixir-autogen, elixir-format
 msgid "photography.close"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:67
+#: lib/portfolio_web/live/photography_live/index.ex:76
+#: lib/portfolio_web/live/photography_live/modal_content.ex:21
 #, elixir-autogen, elixir-format
 msgid "photography.concerts_music"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:72
+#: lib/portfolio_web/live/photography_live/index.ex:81
 #: lib/portfolio_web/live/photography_live/index.html.heex:80
+#: lib/portfolio_web/live/photography_live/modal_content.ex:26
 #, elixir-autogen, elixir-format
 msgid "photography.gallery"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:11
+#: lib/portfolio_web/live/photography_live/gallery.ex:17
 #, elixir-autogen, elixir-format
 msgid "photography.gallery.china_title"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:17
+#: lib/portfolio_web/live/photography_live/gallery.ex:23
 #, elixir-autogen, elixir-format
 msgid "photography.gallery.japan_title"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:23
+#: lib/portfolio_web/live/photography_live/gallery.ex:29
 #, elixir-autogen, elixir-format
 msgid "photography.gallery.taiwan_title"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:66
+#: lib/portfolio_web/live/photography_live/index.ex:75
+#: lib/portfolio_web/live/photography_live/modal_content.ex:20
 #, elixir-autogen, elixir-format
 msgid "photography.motherhood_families"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:103
-#: lib/portfolio_web/live/photography_live/gallery.ex:129
-#: lib/portfolio_web/live/photography_live/index.ex:57
+#: lib/portfolio_web/live/photography_live/gallery.ex:109
+#: lib/portfolio_web/live/photography_live/gallery.ex:135
+#: lib/portfolio_web/live/photography_live/index.ex:66
 #, elixir-autogen, elixir-format
 msgid "photography.page_title"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:126
-#: lib/portfolio_web/live/photography_live/index.ex:147
+#: lib/portfolio_web/live/photography_live/modal_content.ex:94
 #, elixir-autogen, elixir-format
 msgid "photography.show_more"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:69
+#: lib/portfolio_web/live/photography_live/index.ex:78
+#: lib/portfolio_web/live/photography_live/modal_content.ex:23
 #, elixir-autogen, elixir-format
 msgid "photography.street_photography"
 msgstr ""
@@ -1251,57 +1172,57 @@ msgstr ""
 msgid "photography.timeline.title"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:44
+#: lib/portfolio_web/live/tech_live/index.ex:50
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci_description"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:43
+#: lib/portfolio_web/live/tech_live/index.ex:49
 #, elixir-autogen, elixir-format
 msgid "tech.blog.ci_title"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:31
+#: lib/portfolio_web/live/tech_live/index.ex:37
 #, elixir-autogen, elixir-format
 msgid "tech.blog.description"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:56
+#: lib/portfolio_web/live/tech_live/index.ex:62
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir_description"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:55
+#: lib/portfolio_web/live/tech_live/index.ex:61
 #, elixir-autogen, elixir-format
 msgid "tech.blog.elixir_title"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:50
+#: lib/portfolio_web/live/tech_live/index.ex:56
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal_description"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:49
+#: lib/portfolio_web/live/tech_live/index.ex:55
 #, elixir-autogen, elixir-format
 msgid "tech.blog.kamal_title"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:38
+#: lib/portfolio_web/live/tech_live/index.ex:44
 #, elixir-autogen, elixir-format
 msgid "tech.blog.latest_articles"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:19
+#: lib/portfolio_web/live/tech_live/index.ex:25
 #, elixir-autogen, elixir-format
 msgid "tech.blog.title"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:62
+#: lib/portfolio_web/live/tech_live/index.ex:68
 #, elixir-autogen, elixir-format
 msgid "tech.blog.under_construction"
 msgstr ""
 
-#: lib/portfolio_web/live/tech_live/index.ex:28
+#: lib/portfolio_web/live/tech_live/index.ex:34
 #, elixir-autogen, elixir-format
 msgid "tech.blog.welcome"
 msgstr ""
@@ -1896,12 +1817,12 @@ msgstr ""
 msgid "admin.dashboard.welcome"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:95
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "admin.photos.empty.message"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:92
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:98
 #, elixir-autogen, elixir-format
 msgid "admin.photos.empty.title"
 msgstr ""
@@ -1916,29 +1837,29 @@ msgstr ""
 msgid "admin.photos.filter_label"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:117
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:169
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:123
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "admin.photos.pagination.next"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:126
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:132
 #, elixir-autogen, elixir-format
 msgid "admin.photos.pagination.of"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:125
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "admin.photos.pagination.page"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:109
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:137
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:115
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "admin.photos.pagination.previous"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.html.heex:57
+#: lib/portfolio_web/live/admin/photo_live/index.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "admin.photos.photo_alt"
 msgstr ""
@@ -2243,7 +2164,7 @@ msgstr ""
 msgid "photography.alt.wedding"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:117
+#: lib/portfolio_web/live/photography_live/gallery.ex:123
 #: lib/portfolio_web/live/photography_live/index.html.heex:169
 #: lib/portfolio_web/live/photography_live/index.html.heex:170
 #, elixir-autogen, elixir-format
@@ -2335,9 +2256,9 @@ msgid "components.table.actions"
 msgstr ""
 
 #: lib/portfolio_web/components/layouts/photography.html.heex:41
-#: lib/portfolio_web/live/photography_live/gallery.ex:168
-#: lib/portfolio_web/live/photography_live/gallery.ex:173
-#: lib/portfolio_web/live/photography_live/gallery.ex:177
+#: lib/portfolio_web/live/photography_live/gallery.ex:181
+#: lib/portfolio_web/live/photography_live/gallery.ex:186
+#: lib/portfolio_web/live/photography_live/gallery.ex:190
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.description"
 msgstr ""
@@ -2392,7 +2313,7 @@ msgstr ""
 msgid "layouts.tech.description"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/tech.html.heex:62
+#: lib/portfolio_web/components/layouts/tech.html.heex:68
 #: lib/portfolio_web/live/tech_live/blog/ci.ex:32
 #: lib/portfolio_web/live/tech_live/blog/elixir.ex:36
 #: lib/portfolio_web/live/tech_live/blog/kamal.ex:34
@@ -2420,68 +2341,68 @@ msgstr ""
 msgid "layouts.amvcc.description"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:178
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:184
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.contact_title"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:158
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:164
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.description"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:146
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:147
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:152
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:153
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.logo_alt"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:163
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.phone"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:153
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:159
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.tagline"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:171
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:177
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.footer.website"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:79
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.header.title"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:86
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:92
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.about"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:103
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:109
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.blog"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:115
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.clothes"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:91
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.events"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:96
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:102
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.gallery"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/amvcc.html.heex:120
+#: lib/portfolio_web/components/layouts/amvcc.html.heex:126
 #, elixir-autogen, elixir-format
 msgid "layouts.amvcc.nav.shoes"
 msgstr ""
@@ -3691,4 +3612,104 @@ msgstr ""
 #: lib/portfolio_web/live/photography_live/gallery.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "photography.go_to_album"
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:261
+#, elixir-autogen, elixir-format
+msgid "A wedding is a whirlwind of faces, gestures, and shifting light. It's a day that passes too quickly, where every moment deserves to be lived — and sometimes preserved. My approach is documentary, sensitive, and attentive: I don't direct, I observe. I follow the natural rhythm of the day, the glances that connect, the laughter that bursts out, the hands that tighten when emotions overflow."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:76
+#, elixir-autogen, elixir-format
+msgid "As a concert photographer, I seek to convey the energy, emotion, and atmosphere of live music. From international acts like Hans Zimmer's band, to national stars like Zaho de Sagazan, Eddy de Pretto, and L'Impératrice, or more eclectic and vibrant acts like Charlotte Adigéry & Boris Pupul or A2H, each performance is a living story that I try to preserve through images."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:126
+#, elixir-autogen, elixir-format
+msgid "As a street photographer, I'm drawn to the evolving life of cities — the interplay between architecture, infrastructure, and the quiet rhythm of human presence. My camera becomes a way to observe, feel, and preserve these fragile moments of everyday life."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:56
+#, elixir-autogen, elixir-format
+msgid "At the same time, I'm drawn to the strength and majesty of the earth itself — mountains that command silence, forests that pulse with life, skies that stretch far beyond us. These landscapes are not just scenery; they are alive, ancient, and essential. They remind us of scale, of time, of fragility and force."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:156
+#, elixir-autogen, elixir-format
+msgid "China holds a deeply personal place in my life. I've lived there, studied there, loved there. Part of my family still resides in China, and every return is filled with emotion — echoes both old and new. This vast, multifaceted country continues to amaze me with the richness of its traditions, the strength of its contrasts, and the quiet beauty found in the gestures of daily life."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:241
+#, elixir-autogen, elixir-format
+msgid "Even before the first cries, there is already a story — that of a young couple, caught between wonder, joy, and quiet suspense. It unfolds in glances, in waiting, in the hands that care. Photographing this moment means capturing the 'before' — that blend of tenderness, momentum, and gentle intimacy."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:281
+#, elixir-autogen, elixir-format
+msgid "Events are unique moments where people come together to celebrate, learn, or create. As a photographer, I capture the energy, the connections, and the atmosphere that make each gathering special."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:271
+#, elixir-autogen, elixir-format
+msgid "Every wedding is a unique story, and I slip into it as a quiet witness. I'm here to capture the truth of a moment, not to stage it. What moves me are the genuine sparks: a held-back tear, a child running under the tables, a grandfather smiling softly. All these living fragments weave together the memory of your day."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:101
+#, elixir-autogen, elixir-format
+msgid "Historical reenactment is the art of bringing the past to life — through costume, gesture, objects, and immersive scenes, grounded in careful historical research. It's a vivid and engaging way to explore medieval life."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:186
+#, elixir-autogen, elixir-format
+msgid "I deeply love this country—its people, their hospitality, its complex history, and its serene resilience. I'm also profoundly inspired by its photographers, who capture fragility with overwhelming intensity. Photographing in Japan, for me, is about listening more than looking. It's about letting the place speak and patiently tracing the silent beauty of presence."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:246
+#, elixir-autogen, elixir-format
+msgid "I don't try to freeze time — I try to let it breathe. A soft light on a round belly, a tiny hand resting on a father's beard, arms opening to hold. These raw and tender gestures are what move me — and what I strive to carry forward through my images."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:251
+#, elixir-autogen, elixir-format
+msgid "I go where life is — at home, in a garden, in the stillness of a slow morning or the whirlwind of a lively afternoon. There may be laughter, tears, surprises — that's the beauty of these moments. My gaze is discreet, respectful, always seeking the simple truth of a world as it is — a beautiful mess, full of warmth and energy."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:21
+#, elixir-autogen, elixir-format
+msgid "My photographic journey with AMVCC is deeply human : from capturing the energy of public events like the Seigneuriales with the joy of a family discovering medieval crafts, to documenting large-scale initiatives such as castle restoration workshops in collaboration with REMPART, or the silent focus before the major show : Coucy à la Merveille — a grand outdoor spectacle that combines medieval drama, music, and scenography on a fantastic and epic scale. Each image becomes a fragment of shared memory and lived heritage and reflects a unique facet of the association's efforts to bring medieval history to life and promote Coucy's heritage."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:31
+#, elixir-autogen, elixir-format
+msgid "My visual work aims to support AMVCC's mission by creating a lasting record of its cultural initiatives. These images are not just archives — they are storytelling tools that celebrate the dedication of volunteers, artisans, and performers, and help share the living heritage of Coucy with a wider audience."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:206
+#, elixir-autogen, elixir-format
+msgid "Photographing Taiwan feels like entering a parallel time. It's a gentle, attentive observation of life unfolding — unpretentious, yet full of humanity. I find here all that I love in street photography: quiet presences, textured details, and a discreet poetry that lives between walls, faces, and landscapes. It's a country I never finish discovering."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:216
+#, elixir-autogen, elixir-format
+msgid "Photographing a couple means entering an intimate space — a space of connection, shared glances, and spontaneous gestures. It's a work of trust and attentiveness, where the image becomes the extension of a lived moment. No stiff poses, no masks — only the authenticity of a relationship captured in its own light."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:161
+#, elixir-autogen, elixir-format
+msgid "Photographing in China, for me, is not about capturing exoticism or postcard scenes, but about entering—humbly—a world that feels both close and distant. I look for silences, laughter, habits, the invisible threads that weave everyday life. Morning markets, shared meals, slow walks through old neighborhoods. In alleyways and on sidewalks, I'm drawn to the quiet poetry I love in street photography — a fleeting solitude, an unexpected light, a passing glance. Each image is an attempt to preserve something honest, without noise or artifice."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:196
+#, elixir-autogen, elixir-format
+msgid "Taiwan is a country I hold close to my heart. There's a singular gentleness to life here — a subtle blend of Chinese heritage and Japanese influence, especially felt in Taipei, in the architecture, the habits, the quiet rhythm of the days. The country has preserved its traditions, its temples, and a kind of everyday spirituality. It is both ancient and modern, vibrant and serene."
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/chapter_content.ex:201
+#, elixir-autogen, elixir-format
+msgid "What I love in Taiwan are the streets — their calm energy. Beneath the arcades, people cook, knit, read, work. There's steam, slow gestures, quiet conversations, laughter. The warm, humid climate wraps everything in a soft, diffuse light. Nature is spectacular: mountains, hot springs, rice fields, dense forests. And of course, the Oolong — this rich, fragrant tea, sipped under a tree or at a modest table, in a silence that soothes the soul."
+msgstr ""
+
+#: lib/portfolio_web/live/admin/album_live/edit.ex:254
+#, elixir-autogen, elixir-format
+msgid "admin.albums.photos_partial_success"
 msgstr ""

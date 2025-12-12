@@ -80,14 +80,16 @@ defmodule PortfolioWeb.Integration.EdgeCasesTest do
 
   describe "session edge cases" do
     test "handles session with deleted user gracefully", %{conn: conn} do
-      user = create_user(email: "deleted@example.com")
+      # Create a second admin first to avoid "Cannot delete the last admin user" trigger
+      _other_admin = create_user(email: "other_admin@example.com", role: :admin)
+      user = create_user(email: "deleted@example.com", role: :admin)
       magic_link = create_magic_link(user: user)
 
       # Log in the user
       conn = post(conn, ~p"/auth/verify", %{"token" => magic_link.token})
       assert redirected_to(conn) == ~p"/admin"
 
-      # Delete the user from database
+      # Delete the user from database (now allowed since there's another admin)
       Portfolio.Repo.delete!(user)
 
       # Try to access protected route - should handle gracefully
