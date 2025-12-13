@@ -525,7 +525,9 @@ defmodule Portfolio.Photography do
       iex> upload_photos("mariage-2024", uploads, max_concurrency: 8)
       {:ok, [%{file_path: "...", hash: "..."}, ...]}
   """
-  @spec upload_photos(String.t(), [map()], keyword()) :: {:ok, [map()]} | {:error, term()}
+  @spec upload_photos(String.t(), [PhotoUploadService.upload()], keyword()) ::
+          {:ok, [PhotoUploadService.photo_metadata()]}
+          | {:error, PhotoUploadService.error_reason()}
   def upload_photos(album_slug, uploads, opts \\ []) when is_list(uploads) do
     PhotoUploadService.execute(album_slug, uploads, opts)
   end

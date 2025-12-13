@@ -29,6 +29,7 @@ defmodule Portfolio.Auth.Repositories.MagicLinkRepository do
 
   # warn: false suppresses unused import warnings - query macros are used dynamically
   import Ecto.Query, warn: false
+  import Portfolio.Repo.QueryHelpers
 
   alias Portfolio.Auth.MagicLink
   alias Portfolio.Repo
@@ -57,18 +58,10 @@ defmodule Portfolio.Auth.Repositories.MagicLinkRepository do
   """
   @spec get_by_token(String.t(), keyword()) :: {:ok, MagicLink.t()} | {:error, :not_found}
   def get_by_token(token, opts \\ []) when is_binary(token) do
-    preload = Keyword.get(opts, :preload, [])
-
-    query =
-      from ml in MagicLink,
-        where: ml.token == ^token
-
-    query = if preload != [], do: preload(query, ^preload), else: query
-
-    case Repo.one(query) do
-      nil -> {:error, :not_found}
-      magic_link -> {:ok, magic_link}
-    end
+    from(ml in MagicLink, where: ml.token == ^token)
+    |> maybe_preload(opts[:preload])
+    |> Repo.one()
+    |> wrap_result()
   end
 
   @doc """
@@ -91,18 +84,10 @@ defmodule Portfolio.Auth.Repositories.MagicLinkRepository do
   """
   @spec get_by_short_code(String.t(), keyword()) :: {:ok, MagicLink.t()} | {:error, :not_found}
   def get_by_short_code(short_code, opts \\ []) when is_binary(short_code) do
-    preload = Keyword.get(opts, :preload, [])
-
-    query =
-      from ml in MagicLink,
-        where: ml.short_code == ^short_code
-
-    query = if preload != [], do: preload(query, ^preload), else: query
-
-    case Repo.one(query) do
-      nil -> {:error, :not_found}
-      magic_link -> {:ok, magic_link}
-    end
+    from(ml in MagicLink, where: ml.short_code == ^short_code)
+    |> maybe_preload(opts[:preload])
+    |> Repo.one()
+    |> wrap_result()
   end
 
   @doc """

@@ -109,7 +109,8 @@ config :portfolio, Oban,
   queues: [
     default: 10,
     image_processing: 2,
-    exif_extraction: 5
+    exif_extraction: 5,
+    cdn: 3
   ],
   plugins: [
     # Pruner: Supprime les jobs completes/annules de plus de 7 jours

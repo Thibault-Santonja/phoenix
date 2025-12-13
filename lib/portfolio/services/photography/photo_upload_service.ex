@@ -10,6 +10,32 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
 
   This service encapsulates the complex workflow of uploading multiple photos
   in parallel, handling errors, timeouts, and tracking performance metrics.
+
+  ## Error Types
+
+  The service can return the following error types:
+
+  | Error | Description |
+  |-------|-------------|
+  | `:album_not_found` | The target album does not exist |
+  | `:partial_upload_failure` | Some files uploaded, but at least one failed. All uploaded files are rolled back. |
+  | `{:file_too_large, filename, size, max_size}` | A file exceeds the maximum allowed size |
+  | `{:file_error, filename, reason}` | File system error (e.g., file not found, permission denied) |
+  | `%Ecto.Changeset{}` | Database validation error when creating photo records |
+
+  ## Upload Workflow
+
+  1. Validate album exists
+  2. Pre-validate all file sizes (fail fast before any I/O)
+  3. Upload files in parallel to storage
+  4. Create photo records atomically in database
+  5. On any failure: rollback uploaded files (best-effort)
+
+  ## Telemetry Events
+
+  Emits `[:portfolio, :photography, :photos, :uploaded]` with:
+  - `album_slug` - Target album slug
+  - `count` - Number of photos uploaded
   """
 
   use Portfolio.Services.Service
@@ -19,6 +45,33 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   alias Portfolio.Repo
 
   require Logger
+
+  # Type definitions for better documentation and dialyzer support
+
+  @typedoc "Photo metadata returned after successful upload"
+  @type photo_metadata :: %{
+          file_path: String.t(),
+          storage_path: String.t(),
+          hash: String.t(),
+          original_filename: String.t(),
+          photo_id: String.t()
+        }
+
+  @typedoc "Error reasons that can be returned by execute/3"
+  @type error_reason ::
+          :album_not_found
+          | :partial_upload_failure
+          | {:file_too_large, filename :: String.t(), size :: pos_integer(),
+             max_size :: pos_integer()}
+          | {:file_error, filename :: String.t(), reason :: atom()}
+          | Ecto.Changeset.t()
+
+  @typedoc "Upload entry from Phoenix.LiveView.Upload or similar"
+  @type upload :: %{
+          required(:path) => String.t(),
+          required(:client_name) => String.t(),
+          optional(atom()) => term()
+        }
 
   @impl true
   @doc """
@@ -36,7 +89,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   ## Returns
 
   - `{:ok, metadata_list}` - List of uploaded photo metadata
-  - `{:error, reason}` - Upload failed
+  - `{:error, reason}` - Upload failed (see module doc for error types)
 
   ## Examples
 
@@ -45,7 +98,12 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
 
       iex> execute("invalid-album", [upload])
       {:error, :album_not_found}
+
+      iex> execute("album", [large_file])
+      {:error, {:file_too_large, "photo.jpg", 52_428_800, 10_485_760}}
   """
+  @spec execute(String.t(), [upload()], keyword()) ::
+          {:ok, [photo_metadata()]} | {:error, error_reason()}
   def execute(album_slug, uploads, opts \\ []) when is_list(uploads) do
     count = length(uploads)
 

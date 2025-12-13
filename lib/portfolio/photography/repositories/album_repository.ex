@@ -30,6 +30,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
 
   # warn: false suppresses unused import warnings - query macros are used dynamically
   import Ecto.Query, warn: false
+  import Portfolio.Repo.QueryHelpers
 
   alias Portfolio.Photography.Album
   alias Portfolio.Photography.Queries.AlbumQuery
@@ -85,10 +86,8 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   """
   @spec get(Ecto.UUID.t(), keyword()) :: {:ok, Album.t()} | {:error, :not_found}
   def get(id, opts \\ []) do
-    case fetch_one(:id, id, opts) do
-      nil -> {:error, :not_found}
-      album -> {:ok, album}
-    end
+    fetch_one(:id, id, opts)
+    |> wrap_result()
   end
 
   @doc """
@@ -105,10 +104,8 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   """
   @spec get_by_slug(String.t(), keyword()) :: {:ok, Album.t()} | {:error, :not_found}
   def get_by_slug(slug, opts \\ []) do
-    case fetch_one(:slug, slug, opts) do
-      nil -> {:error, :not_found}
-      album -> {:ok, album}
-    end
+    fetch_one(:slug, slug, opts)
+    |> wrap_result()
   end
 
   @doc """

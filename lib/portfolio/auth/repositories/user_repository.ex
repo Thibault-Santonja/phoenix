@@ -28,6 +28,7 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
 
   # warn: false suppresses unused import warnings - query macros are used dynamically
   import Ecto.Query, warn: false
+  import Portfolio.Repo.QueryHelpers
 
   alias Portfolio.Auth.User
   alias Portfolio.Repo
@@ -49,10 +50,9 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
   """
   @spec get_by_email(String.t()) :: {:ok, User.t()} | {:error, :not_found}
   def get_by_email(email) when is_binary(email) do
-    case Repo.get_by(User, email: email) do
-      nil -> {:error, :not_found}
-      user -> {:ok, user}
-    end
+    User
+    |> Repo.get_by(email: email)
+    |> wrap_result()
   end
 
   @doc """
@@ -68,10 +68,9 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
   """
   @spec get(Ecto.UUID.t()) :: {:ok, User.t()} | {:error, :not_found}
   def get(id) do
-    case Repo.get(User, id) do
-      nil -> {:error, :not_found}
-      user -> {:ok, user}
-    end
+    User
+    |> Repo.get(id)
+    |> wrap_result()
   end
 
   @doc """

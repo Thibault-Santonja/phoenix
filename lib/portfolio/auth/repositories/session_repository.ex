@@ -29,6 +29,7 @@ defmodule Portfolio.Auth.Repositories.SessionRepository do
 
   # warn: false suppresses unused import warnings - query macros are used dynamically
   import Ecto.Query, warn: false
+  import Portfolio.Repo.QueryHelpers
 
   alias Portfolio.Auth.UserSession
   alias Portfolio.Repo
@@ -60,18 +61,10 @@ defmodule Portfolio.Auth.Repositories.SessionRepository do
   """
   @spec get_by_token(String.t(), keyword()) :: {:ok, UserSession.t()} | {:error, :not_found}
   def get_by_token(hashed_token, opts \\ []) when is_binary(hashed_token) do
-    preload = Keyword.get(opts, :preload, [])
-
-    query =
-      from s in UserSession,
-        where: s.token == ^hashed_token
-
-    query = if preload != [], do: preload(query, ^preload), else: query
-
-    case Repo.one(query) do
-      nil -> {:error, :not_found}
-      session -> {:ok, session}
-    end
+    from(s in UserSession, where: s.token == ^hashed_token)
+    |> maybe_preload(opts[:preload])
+    |> Repo.one()
+    |> wrap_result()
   end
 
   @doc """
@@ -87,10 +80,9 @@ defmodule Portfolio.Auth.Repositories.SessionRepository do
   """
   @spec get(Ecto.UUID.t()) :: {:ok, UserSession.t()} | {:error, :not_found}
   def get(id) do
-    case Repo.get(UserSession, id) do
-      nil -> {:error, :not_found}
-      session -> {:ok, session}
-    end
+    UserSession
+    |> Repo.get(id)
+    |> wrap_result()
   end
 
   @doc """

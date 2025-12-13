@@ -31,6 +31,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   # warn: false suppresses unused import warnings - query macros are used dynamically
   import Ecto.Query, warn: false
+  import Portfolio.Repo.QueryHelpers
 
   alias Ecto.Multi
   alias Portfolio.Photography.Photo
@@ -102,10 +103,8 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   """
   @spec get(Ecto.UUID.t(), keyword()) :: {:ok, Photo.t()} | {:error, :not_found}
   def get(id, opts \\ []) do
-    case fetch_one(id, opts) do
-      nil -> {:error, :not_found}
-      photo -> {:ok, photo}
-    end
+    fetch_one(id, opts)
+    |> wrap_result()
   end
 
   @doc """
@@ -351,16 +350,13 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   """
   @spec get_oldest_by_processing_status(String.t()) :: {:ok, Photo.t()} | {:error, :not_found}
   def get_oldest_by_processing_status(status) do
-    query =
-      from p in Photo,
-        where: p.processing_status == ^status,
-        order_by: [asc: p.inserted_at],
-        limit: 1
-
-    case Repo.one(query) do
-      nil -> {:error, :not_found}
-      photo -> {:ok, photo}
-    end
+    from(p in Photo,
+      where: p.processing_status == ^status,
+      order_by: [asc: p.inserted_at],
+      limit: 1
+    )
+    |> Repo.one()
+    |> wrap_result()
   end
 
   # Valide que toutes les photos de la liste appartiennent à l'album spécifié
