@@ -30,6 +30,7 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
 
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.Events.AlbumPublished
+  alias Portfolio.Workers.CdnInvalidationWorker
 
   # =============================================================================
   # Public API
@@ -67,8 +68,8 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
       user_id: event.user_id
     )
 
-    # Invalidate CDN cache asynchronously
-    _ = Task.start(fn -> invalidate_cdn_cache(event) end)
+    # Invalidate CDN cache via Oban worker (resilient with retries)
+    enqueue_cdn_invalidation(event)
 
     # Clear application cache
     clear_albums_cache()
@@ -87,10 +88,8 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
   # Private Functions
   # =============================================================================
 
-  @spec invalidate_cdn_cache(AlbumPublished.t()) :: :ok | {:error, term()}
-  defp invalidate_cdn_cache(event) do
-    cdn_module = Application.get_env(:portfolio, :cdn_module, Portfolio.CDN.NoOp)
-
+  @spec enqueue_cdn_invalidation(AlbumPublished.t()) :: :ok
+  defp enqueue_cdn_invalidation(event) do
     paths_to_invalidate = [
       "/",
       "/albums",
@@ -99,22 +98,19 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
       "/api/albums/#{event.slug}"
     ]
 
-    case cdn_module.invalidate(paths_to_invalidate) do
-      :ok ->
-        Logger.info("CDN cache invalidated",
-          album_slug: event.slug,
-          paths: paths_to_invalidate
-        )
-
+    case CdnInvalidationWorker.enqueue(event.slug, paths_to_invalidate) do
+      {:ok, _job} ->
+        Logger.debug("CDN invalidation job enqueued", album_slug: event.slug)
         :ok
 
       {:error, reason} ->
-        Logger.error("Failed to invalidate CDN cache",
+        # Log but don't crash - CDN invalidation is best-effort
+        Logger.warning("Failed to enqueue CDN invalidation",
           album_slug: event.slug,
           reason: inspect(reason)
         )
 
-        {:error, reason}
+        :ok
     end
   end
 

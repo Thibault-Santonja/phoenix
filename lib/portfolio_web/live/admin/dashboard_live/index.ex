@@ -46,11 +46,13 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
   end
 
   defp load_statistics do
-    # Optimization: Use COUNT queries instead of loading all albums into memory
+    # Optimization: Single SQL query for all album stats (avoids N+1)
+    album_stats = Photography.get_album_stats()
+
     %{
-      total_albums: Photography.count_all_albums(),
-      published_albums: Photography.count_published_albums(),
-      draft_albums: Photography.count_draft_albums(),
+      total_albums: album_stats.total,
+      published_albums: album_stats.published,
+      draft_albums: album_stats.draft,
       total_photos: Photography.count_all_photos(),
       total_users: Auth.count_users()
     }

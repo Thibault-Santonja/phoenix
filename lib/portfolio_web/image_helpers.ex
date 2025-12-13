@@ -194,8 +194,34 @@ defmodule PortfolioWeb.ImageHelpers do
 
   def extract_dimensions(_photo), do: %{width: nil, height: nil}
 
+  # Maximum reasonable dimension (100 megapixels = ~10000x10000)
+  @max_dimension 100_000
+  # Minimum valid dimension
+  @min_dimension 1
+
   # Parse dimension value to integer, handling various formats
-  defp parse_dimension(value) when is_integer(value), do: value
-  defp parse_dimension(value) when is_binary(value), do: String.to_integer(value)
+  # Validates that dimensions are within reasonable bounds to prevent
+  # corrupted EXIF data from causing issues
+  defp parse_dimension(value) when is_integer(value) do
+    validate_dimension(value)
+  end
+
+  defp parse_dimension(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {int, _} -> validate_dimension(int)
+      :error -> nil
+    end
+  end
+
   defp parse_dimension(_), do: nil
+
+  # Validates dimension is within reasonable bounds
+  # Returns nil for invalid/corrupted values to let browser determine size
+  defp validate_dimension(value) when is_integer(value) do
+    if value >= @min_dimension and value <= @max_dimension do
+      value
+    else
+      nil
+    end
+  end
 end

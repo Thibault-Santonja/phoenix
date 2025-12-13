@@ -320,9 +320,16 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
     counts =
       Enum.reduce(results, counts, fn {status, count}, acc ->
-        # Safe: status comes from Ecto enum, not user input
-        status_atom = status |> to_string() |> String.to_existing_atom()
-        Map.put(acc, status_atom, count)
+        # Safe mapping with explicit fallback for unknown statuses
+        # This prevents crashes if a new status is added to DB before code update
+        status_atom = safe_status_to_atom(status)
+
+        if Map.has_key?(acc, status_atom) do
+          Map.put(acc, status_atom, count)
+        else
+          # Unknown status - log and skip (don't crash)
+          acc
+        end
       end)
 
     total = Enum.reduce(Map.values(counts), 0, &(&1 + &2))
@@ -484,4 +491,22 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   defp apply_filters(query, [_other | rest]) do
     apply_filters(query, rest)
   end
+
+  # Safely converts processing status string to atom
+  # Uses explicit mapping to prevent crashes from unknown statuses
+  # (e.g., if a new status is added to DB before code update)
+  @valid_statuses %{
+    "pending" => :pending,
+    "processing" => :processing,
+    "completed" => :completed,
+    "failed" => :failed
+  }
+
+  defp safe_status_to_atom(status) when is_atom(status), do: status
+
+  defp safe_status_to_atom(status) when is_binary(status) do
+    Map.get(@valid_statuses, status, :unknown)
+  end
+
+  defp safe_status_to_atom(_), do: :unknown
 end

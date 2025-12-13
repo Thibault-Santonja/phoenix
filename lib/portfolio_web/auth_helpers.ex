@@ -11,6 +11,7 @@ defmodule PortfolioWeb.AuthHelpers do
 
   alias Portfolio.Auth
   alias Portfolio.Auth.UserSession
+  alias Portfolio.Config.CacheConfig
 
   @doc """
   Récupère l'utilisateur et la session depuis un token de session.
@@ -55,7 +56,7 @@ defmodule PortfolioWeb.AuthHelpers do
   # Récupère une session avec le cache Cachex
   defp fetch_session_with_cache(session_token) do
     hashed_token = UserSession.hash_token_value(session_token)
-    cache_key = {:session, hashed_token}
+    cache_key = CacheConfig.session_key(hashed_token)
 
     case Cachex.fetch(:portfolio_cache, cache_key, fn ->
            get_session_for_cache(session_token)
@@ -74,16 +75,21 @@ defmodule PortfolioWeb.AuthHelpers do
         {:ignore, nil}
 
       session ->
-        {:commit, session, ttl: :timer.hours(1)}
+        {:commit, session, ttl: CacheConfig.session_ttl()}
     end
   end
 
   # Met à jour l'activité de la session de manière asynchrone en production
+  # Utilise Task.Supervisor pour une meilleure supervision et logging des erreurs
   defp update_session_activity_async(session) do
     if Mix.env() == :test do
       _ = Auth.update_session_activity(session)
     else
-      _ = Task.start(fn -> Auth.update_session_activity(session) end)
+      _ =
+        Task.Supervisor.start_child(
+          Portfolio.TaskSupervisor,
+          fn -> Auth.update_session_activity(session) end
+        )
     end
   end
 end

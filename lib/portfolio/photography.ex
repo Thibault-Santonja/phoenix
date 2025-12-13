@@ -73,6 +73,7 @@ defmodule Portfolio.Photography do
       {:ok, published_album} = Photography.publish_album(album)
   """
 
+  alias Portfolio.Config.CacheConfig
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.{Album, Photo}
   alias Portfolio.Photography.Events.PhotoUploaded
@@ -132,6 +133,24 @@ defmodule Portfolio.Photography do
   """
   @spec count_published_albums() :: non_neg_integer()
   def count_published_albums, do: AlbumRepository.count_published()
+
+  @doc """
+  Retourne toutes les statistiques des albums en une seule requête SQL.
+
+  Optimisé pour le dashboard admin - évite les requêtes multiples en consolidant
+  tous les counts dans une seule requête avec des agrégations conditionnelles.
+
+  ## Exemples
+
+      iex> get_album_stats()
+      %{total: 42, published: 25, draft: 17}
+  """
+  @spec get_album_stats() :: %{
+          total: non_neg_integer(),
+          published: non_neg_integer(),
+          draft: non_neg_integer()
+        }
+  def get_album_stats, do: AlbumRepository.get_all_stats()
 
   @doc """
   Compte le nombre d'albums non publiés (brouillons).
@@ -736,28 +755,17 @@ defmodule Portfolio.Photography do
 
   # Récupère depuis le cache ou la DB avec fallback
   defp fetch_from_cache_or_db(opts) do
-    cache_key = build_cache_key(opts)
+    cache_key = CacheConfig.published_albums_key(preloads: opts[:preload] || [])
 
     case Cachex.fetch(:portfolio_cache, cache_key, fn ->
            result = fetch_published_albums_by_year(opts)
-           # Cache pendant 1 heure
-           {:commit, result, ttl: :timer.hours(1)}
+           {:commit, result, ttl: CacheConfig.albums_ttl()}
          end) do
       {:ok, albums} -> albums
       {:commit, albums} -> albums
       {:ignore, albums} -> albums
       {:error, _reason} -> fetch_published_albums_by_year(opts)
     end
-  end
-
-  # Construit la clé de cache basée sur les options
-  defp build_cache_key(opts) do
-    cache_key(:published_albums_by_year, opts[:preload] || [])
-  end
-
-  # Génère une clé de cache pour les albums publiés par année
-  defp cache_key(:published_albums_by_year, preloads) do
-    {:published_albums_by_year, preloads}
   end
 
   # Exécute une fonction avec instrumentation telemetry
@@ -802,8 +810,8 @@ defmodule Portfolio.Photography do
   #
   # Note: La suppression d'album (delete_album/1) est gérée par AlbumDeletionService
   defp invalidate_albums_cache do
-    _ = Cachex.del(:portfolio_cache, cache_key(:published_albums_by_year, []))
-    _ = Cachex.del(:portfolio_cache, cache_key(:published_albums_by_year, [:photos]))
+    _ = Cachex.del(:portfolio_cache, CacheConfig.published_albums_key())
+    _ = Cachex.del(:portfolio_cache, CacheConfig.published_albums_key(preloads: [:photos]))
     :ok
   end
 

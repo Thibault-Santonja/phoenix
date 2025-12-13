@@ -441,6 +441,41 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
     |> Repo.aggregate(:count)
   end
 
+  @doc """
+  Retourne toutes les statistiques des albums en une seule requête SQL.
+
+  Optimisé pour le dashboard admin - évite les N+1 queries en consolidant
+  tous les counts dans une seule requête avec des agrégations conditionnelles.
+
+  ## Exemples
+
+      iex> get_all_stats()
+      %{total: 42, published: 25, draft: 17}
+  """
+  @spec get_all_stats() :: %{
+          total: non_neg_integer(),
+          published: non_neg_integer(),
+          draft: non_neg_integer()
+        }
+  def get_all_stats do
+    result =
+      from(a in Album,
+        select: %{
+          total: count(a.id),
+          published: sum(fragment("CASE WHEN ? THEN 1 ELSE 0 END", a.published)),
+          draft: sum(fragment("CASE WHEN NOT ? THEN 1 ELSE 0 END", a.published))
+        }
+      )
+      |> Repo.one()
+
+    # Ensure we return integers (not nil) even if table is empty
+    %{
+      total: result.total || 0,
+      published: result.published || 0,
+      draft: result.draft || 0
+    }
+  end
+
   # Applique les preloads à la query en utilisant AlbumQuery
   @spec apply_preload(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
   defp apply_preload(query, nil), do: query
