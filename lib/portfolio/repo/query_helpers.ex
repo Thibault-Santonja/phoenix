@@ -69,4 +69,58 @@ defmodule Portfolio.Repo.QueryHelpers do
   @spec wrap_result(term() | nil) :: {:ok, term()} | {:error, :not_found}
   def wrap_result(nil), do: {:error, :not_found}
   def wrap_result(result), do: {:ok, result}
+
+  @doc """
+  Conditionally applies a limit to a query.
+
+  Returns the query unchanged if limit is nil.
+
+  ## Examples
+
+      iex> query |> maybe_limit(nil)
+      # Returns query unchanged
+
+      iex> query |> maybe_limit(10)
+      # Returns query with LIMIT 10
+  """
+  @spec maybe_limit(Ecto.Query.t(), nil | pos_integer()) :: Ecto.Query.t()
+  def maybe_limit(query, nil), do: query
+  def maybe_limit(query, limit) when is_integer(limit) and limit > 0, do: limit(query, ^limit)
+
+  @doc """
+  Conditionally applies an offset to a query.
+
+  Returns the query unchanged if offset is nil.
+
+  ## Examples
+
+      iex> query |> maybe_offset(nil)
+      # Returns query unchanged
+
+      iex> query |> maybe_offset(20)
+      # Returns query with OFFSET 20
+  """
+  @spec maybe_offset(Ecto.Query.t(), nil | non_neg_integer()) :: Ecto.Query.t()
+  def maybe_offset(query, nil), do: query
+
+  def maybe_offset(query, offset) when is_integer(offset) and offset >= 0,
+    do: offset(query, ^offset)
+
+  @doc """
+  Conditionally applies ordering to a query.
+
+  Returns the query unchanged if order_by is nil or empty.
+
+  ## Examples
+
+      iex> query |> maybe_order_by(nil)
+      # Returns query unchanged
+
+      iex> query |> maybe_order_by([desc: :inserted_at])
+      # Returns query ordered by inserted_at DESC
+  """
+  @spec maybe_order_by(Ecto.Query.t(), nil | keyword()) :: Ecto.Query.t()
+  def maybe_order_by(query, nil), do: query
+  def maybe_order_by(query, []), do: query
+  def maybe_order_by(query, order_spec) when is_list(order_spec), do: order_by(query, ^order_spec)
 end

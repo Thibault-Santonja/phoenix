@@ -88,6 +88,15 @@ defmodule Mix.Tasks.MigrateLegacyAlbums do
     end
   end
 
+  # Valid album types - explicit whitelist to avoid String.to_atom on untrusted input
+  @valid_album_types %{
+    "couples" => :couples,
+    "amvcc" => :amvcc,
+    "wedding" => :wedding,
+    "music" => :music,
+    "reenactment" => :reenactment
+  }
+
   defp migrate_gallery_albums do
     Logger.info("Migrating gallery albums...")
 
@@ -116,28 +125,44 @@ defmodule Mix.Tasks.MigrateLegacyAlbums do
     }
 
     Enum.each(gallery_mapping, fn {filename, {title, category, date}} ->
-      slug = filename |> Path.rootname() |> String.downcase() |> String.replace("_", "-")
-
-      album_attrs = %{
-        title: title,
-        slug: slug,
-        type: String.to_atom(category),
-        description: "Photo unique du portfolio",
-        date_prise_vue: date,
-        published: true
-      }
-
-      case Photography.create_album(album_attrs) do
-        {:ok, album} ->
-          Logger.info("Created gallery album: #{album.title}")
-
-          source_file = Path.join([gallery_dir, filename])
-          migrate_single_photo(album, source_file, filename)
-
-        {:error, changeset} ->
-          Logger.error("Failed to create gallery album #{title}: #{inspect(changeset.errors)}")
-      end
+      migrate_gallery_album(gallery_dir, filename, title, category, date)
     end)
+  end
+
+  defp migrate_gallery_album(gallery_dir, filename, title, category, date) do
+    slug = filename |> Path.rootname() |> String.downcase() |> String.replace("_", "-")
+
+    case Map.fetch(@valid_album_types, category) do
+      {:ok, album_type} ->
+        create_gallery_album(gallery_dir, filename, title, slug, album_type, date)
+
+      :error ->
+        Logger.error(
+          "Invalid album category '#{category}' for #{filename}. " <>
+            "Valid categories: #{Map.keys(@valid_album_types) |> Enum.join(", ")}"
+        )
+    end
+  end
+
+  defp create_gallery_album(gallery_dir, filename, title, slug, album_type, date) do
+    album_attrs = %{
+      title: title,
+      slug: slug,
+      type: album_type,
+      description: "Photo unique du portfolio",
+      date_prise_vue: date,
+      published: true
+    }
+
+    case Photography.create_album(album_attrs) do
+      {:ok, album} ->
+        Logger.info("Created gallery album: #{album.title}")
+        source_file = Path.join([gallery_dir, filename])
+        migrate_single_photo(album, source_file, filename)
+
+      {:error, changeset} ->
+        Logger.error("Failed to create gallery album #{title}: #{inspect(changeset.errors)}")
+    end
   end
 
   defp migrate_photos_from_directory(album, source_dir) do
