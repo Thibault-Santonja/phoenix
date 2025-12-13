@@ -2146,11 +2146,11 @@ defmodule PortfolioWeb.Components.Accordion do
   defp chevron_position(%{chevron: true}), do: "right"
   defp chevron_position(_), do: "right"
 
-  defp drop_rest(rest) do
-    all_rest =
-      ~w(left_chevron right_chevron chevron hide_chevron)
-      |> Enum.map(&if(is_binary(&1), do: String.to_atom(&1), else: &1))
+  # Defined as atoms to avoid String.to_atom at runtime (security: atom table exhaustion)
+  @drop_rest_atoms [:left_chevron, :right_chevron, :chevron, :hide_chevron]
 
-    Map.drop(rest, all_rest)
+  defp drop_rest(rest) do
+    # Use pre-defined atoms to avoid String.to_atom at runtime
+    Map.drop(rest, @drop_rest_atoms)
   end
 end
