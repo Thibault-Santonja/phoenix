@@ -80,10 +80,10 @@ defmodule Portfolio.Auth.CompleteAuthFlowTest do
       # Act: Request magic link (should create user)
       assert {:ok, magic_link} = Auth.request_magic_link(email)
 
-      # Assert: User created
+      # Assert: User created with default :user role (security: no privilege escalation)
       assert {:ok, user} = Auth.get_user_by_email(email)
       assert user.email == email
-      assert user.role == :admin
+      assert user.role == :user
 
       # Act: Verify and authenticate
       assert {:ok, verified_user} = Auth.verify_magic_link(magic_link.token)

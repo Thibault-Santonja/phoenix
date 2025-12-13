@@ -57,8 +57,17 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
 
   @impl true
   def handle_event("open_edit_modal", %{"user-id" => user_id}, socket) do
-    user = Enum.find(socket.assigns.users, &(&1.id == user_id))
-    {:noreply, assign(socket, edit_user: user)}
+    # Fetch fresh data from DB to avoid stale data issues
+    case Auth.get_user(user_id) do
+      {:ok, user} ->
+        {:noreply, assign(socket, edit_user: user)}
+
+      {:error, :not_found} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("admin.users.user_not_found"))
+         |> assign(:users, load_users(socket.assigns.filter))}
+    end
   end
 
   @impl true
@@ -123,34 +132,41 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
 
   @impl true
   def handle_event("delete_user", %{"user-id" => user_id}, socket) do
-    user = Enum.find(socket.assigns.users, &(&1.id == user_id))
     current_user_id = socket.assigns.current_user.id
 
-    case Auth.delete_user(user) do
-      {:ok, deleted_user} ->
-        # Log audit de la suppression
-        _audit_result =
-          AuditLogger.log_user_deleted(
-            deleted_user,
-            performed_by_id: current_user_id,
-            ip_address: socket.assigns.ip_address,
-            metadata: %{"via" => "admin_interface"}
-          )
+    # Fetch fresh data from DB to avoid stale data issues
+    with {:ok, user} <- Auth.get_user(user_id),
+         {:ok, deleted_user} <- Auth.delete_user(user) do
+      # Log audit de la suppression
+      _audit_result =
+        AuditLogger.log_user_deleted(
+          deleted_user,
+          performed_by_id: current_user_id,
+          ip_address: socket.assigns.ip_address,
+          metadata: %{"via" => "admin_interface"}
+        )
 
-        users = load_users(socket.assigns.filter)
+      users = load_users(socket.assigns.filter)
 
-        user_stats = %{
-          total: Auth.count_users(),
-          admins: Auth.count_admin_users(),
-          regular_users: Auth.count_regular_users()
-        }
+      user_stats = %{
+        total: Auth.count_users(),
+        admins: Auth.count_admin_users(),
+        regular_users: Auth.count_regular_users()
+      }
 
+      {:noreply,
+       socket
+       |> put_flash(:info, gettext("admin.users.delete_success"))
+       |> assign(:delete_user_id, nil)
+       |> assign(:users, users)
+       |> assign(:user_stats, user_stats)}
+    else
+      {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("admin.users.delete_success"))
+         |> put_flash(:error, gettext("admin.users.user_not_found"))
          |> assign(:delete_user_id, nil)
-         |> assign(:users, users)
-         |> assign(:user_stats, user_stats)}
+         |> assign(:users, load_users(socket.assigns.filter))}
 
       {:error, _changeset} ->
         {:noreply,
@@ -162,55 +178,74 @@ defmodule PortfolioWeb.Admin.UserLive.Index do
 
   @impl true
   def handle_event("revoke_sessions", %{"user-id" => user_id}, socket) do
-    user = Enum.find(socket.assigns.users, &(&1.id == user_id))
-    current_user_id = socket.assigns.current_user.id
-    {count, _} = Auth.delete_all_user_sessions(user)
-
-    # Log audit de la révocation
-    _audit_result =
-      AuditLogger.log_sessions_revoked(
-        user,
-        session_count: count,
-        performed_by_id: current_user_id,
-        ip_address: socket.assigns.ip_address,
-        metadata: %{"via" => "admin_interface"}
-      )
-
-    {:noreply,
-     socket
-     |> put_flash(:info, gettext("admin.users.sessions_revoked", count: count))}
-  end
-
-  @impl true
-  def handle_event("send_magic_link", %{"user-id" => user_id}, socket) do
-    user = Enum.find(socket.assigns.users, &(&1.id == user_id))
     current_user_id = socket.assigns.current_user.id
 
-    # Utiliser la fonction admin qui bypass le rate limiting
-    case Auth.request_magic_link_as_admin(user.email) do
-      {:ok, _magic_link} ->
-        # Log audit de l'envoi
+    # Fetch fresh data from DB to avoid stale data issues
+    case Auth.get_user(user_id) do
+      {:ok, user} ->
+        {count, _} = Auth.delete_all_user_sessions(user)
+
+        # Log audit de la révocation
         _audit_result =
-          AuditLogger.log_magic_link_sent(
+          AuditLogger.log_sessions_revoked(
             user,
+            session_count: count,
             performed_by_id: current_user_id,
             ip_address: socket.assigns.ip_address,
-            metadata: %{"via" => "admin_interface", "bypass_rate_limit" => true}
+            metadata: %{"via" => "admin_interface"}
           )
 
         {:noreply,
          socket
-         |> put_flash(:info, gettext("admin.users.magic_link_sent", email: user.email))}
+         |> put_flash(:info, gettext("admin.users.sessions_revoked", count: count))}
 
-      {:error, :user_not_found} ->
+      {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("admin.users.user_not_found"))}
+         |> put_flash(:error, gettext("admin.users.user_not_found"))
+         |> assign(:users, load_users(socket.assigns.filter))}
+    end
+  end
 
-      {:error, _} ->
+  @impl true
+  def handle_event("send_magic_link", %{"user-id" => user_id}, socket) do
+    current_user_id = socket.assigns.current_user.id
+
+    # Fetch fresh data from DB to avoid stale data issues
+    case Auth.get_user(user_id) do
+      {:ok, user} ->
+        # Utiliser la fonction admin qui bypass le rate limiting
+        case Auth.request_magic_link_as_admin(user.email) do
+          {:ok, _magic_link} ->
+            # Log audit de l'envoi
+            _audit_result =
+              AuditLogger.log_magic_link_sent(
+                user,
+                performed_by_id: current_user_id,
+                ip_address: socket.assigns.ip_address,
+                metadata: %{"via" => "admin_interface", "bypass_rate_limit" => true}
+              )
+
+            {:noreply,
+             socket
+             |> put_flash(:info, gettext("admin.users.magic_link_sent", email: user.email))}
+
+          {:error, :user_not_found} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, gettext("admin.users.user_not_found"))}
+
+          {:error, _} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, gettext("admin.users.magic_link_error"))}
+        end
+
+      {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("admin.users.magic_link_error"))}
+         |> put_flash(:error, gettext("admin.users.user_not_found"))
+         |> assign(:users, load_users(socket.assigns.filter))}
     end
   end
 

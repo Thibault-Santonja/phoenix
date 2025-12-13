@@ -219,6 +219,7 @@ defmodule Portfolio.Photography do
   Supprime un album et toutes ses photos (CASCADE) de manière atomique.
 
   Délègue au AlbumDeletionService pour orchestrer l'opération complète.
+  Invalide le cache des albums publiés si l'album était publié.
 
   ## Exemples
 
@@ -227,7 +228,18 @@ defmodule Portfolio.Photography do
   """
   @spec delete_album(Album.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_album(%Album{} = album) do
-    AlbumDeletionService.execute(album)
+    case AlbumDeletionService.execute(album) do
+      {:ok, _result} = success ->
+        # Invalider le cache si l'album était publié
+        if album.published do
+          invalidate_albums_cache()
+        end
+
+        success
+
+      error ->
+        error
+    end
   end
 
   @doc """

@@ -17,53 +17,80 @@ defmodule PortfolioWeb.Integration.AuthFlowTest do
   alias Portfolio.Auth
 
   describe "complete authentication flow" do
-    test "user can register and authenticate via magic link", %{conn: conn} do
-      email = "newuser#{System.unique_integer([:positive])}@example.com"
+    test "existing admin user can authenticate via magic link", %{conn: conn} do
+      # Arrange: Create an admin user (realistic production scenario)
+      admin = create_user(email: "admin@example.com", role: :admin)
 
       # Step 1: Request magic link via LiveView (simulates form submission)
       {:ok, view, _html} = live(conn, ~p"/login")
 
-      # Use phx-submit attribute since form has no id
       html =
         view
         |> element("form[phx-submit='request_link']")
-        |> render_submit(%{email_form: %{email: email}})
+        |> render_submit(%{email_form: %{email: admin.email}})
 
       # Verify confirmation message appears
       assert html =~ "lien" or has_element?(view, "button", "Renvoyer le lien")
 
-      # Step 2: Verify magic link was created
-      {:ok, user} = Auth.get_user_by_email(email)
-      assert user.email == email
-      assert user.role == :admin
-
-      # Step 3: Get the magic link token
-      magic_link = Portfolio.Repo.get_by!(Portfolio.Auth.MagicLink, user_id: user.id)
+      # Step 2: Get the magic link token
+      magic_link = Portfolio.Repo.get_by!(Portfolio.Auth.MagicLink, user_id: admin.id)
       assert magic_link.used_at == nil
 
-      # Step 4: Click magic link (simulates email link click)
-      # Using legacy GET verification route for testing
+      # Step 3: Click magic link (simulates email link click)
       conn = build_conn()
       conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
       assert redirected_to(conn) == ~p"/admin"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Connexion réussie"
 
-      # Step 5: Verify session was created
+      # Step 4: Verify session was created
       session_token = get_session(conn, :session_token)
       assert session_token != nil
 
       session = Auth.get_session_by_token(session_token)
       assert session != nil
-      assert session.user_id == user.id
+      assert session.user_id == admin.id
 
-      # Step 6: Verify magic link was marked as used
+      # Step 5: Verify magic link was marked as used
       used_magic_link = Portfolio.Repo.get!(Portfolio.Auth.MagicLink, magic_link.id)
       assert used_magic_link.used_at != nil
 
-      # Step 7: Verify user can access protected pages
+      # Step 6: Verify admin can access admin pages
       conn = build_conn() |> init_test_session(%{session_token: session_token})
       conn = get(conn, ~p"/admin/albums")
       assert html_response(conn, 200) =~ "Albums"
+    end
+
+    test "new user auto-created in dev/test gets :user role", %{conn: conn} do
+      # This test verifies the security fix: auto-created users get :user role, not :admin
+      email = "newuser#{System.unique_integer([:positive])}@example.com"
+
+      # Request magic link for a new email (will auto-create in dev/test)
+      {:ok, view, _html} = live(conn, ~p"/login")
+
+      view
+      |> element("form[phx-submit='request_link']")
+      |> render_submit(%{email_form: %{email: email}})
+
+      # Verify user was created with :user role (not :admin)
+      {:ok, user} = Auth.get_user_by_email(email)
+      assert user.email == email
+      assert user.role == :user
+
+      # Get magic link and authenticate
+      magic_link = Portfolio.Repo.get_by!(Portfolio.Auth.MagicLink, user_id: user.id)
+      conn = build_conn()
+      conn = get(conn, ~p"/auth/verify/#{magic_link.token}")
+
+      # User is authenticated but redirected to home (not admin, since they're not admin)
+      assert redirected_to(conn) == ~p"/admin"
+
+      # Verify regular user cannot access admin pages
+      session_token = get_session(conn, :session_token)
+      conn = build_conn() |> init_test_session(%{session_token: session_token})
+      conn = get(conn, ~p"/admin/albums")
+
+      # Should be redirected (no admin access for :user role)
+      assert redirected_to(conn) == ~p"/"
     end
 
     test "user cannot reuse magic link", %{conn: conn} do

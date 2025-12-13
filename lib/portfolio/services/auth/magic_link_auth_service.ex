@@ -181,10 +181,12 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   end
 
   # Creates a new user and emits the event
+  # Note: In dev/test only, users are auto-created with default role (:user)
+  # Production blocks auto-creation entirely (anti-enumeration security)
   defp create_new_user(email) do
     result =
       %User{}
-      |> User.changeset(%{email: email, role: "admin"})
+      |> User.registration_changeset(%{email: email})
       |> Repo.insert()
 
     case result do
