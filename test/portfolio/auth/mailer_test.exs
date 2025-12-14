@@ -3,8 +3,7 @@ defmodule Portfolio.Auth.MailerTest do
 
   import Swoosh.TestAssertions
 
-  alias Portfolio.Auth.Mailer
-  alias Portfolio.Auth.{MagicLink, User}
+  alias Portfolio.Auth.{MagicLink, Mailer, User}
 
   describe "send_magic_link_email/2" do
     setup do

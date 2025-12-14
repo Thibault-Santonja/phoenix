@@ -2,8 +2,8 @@ defmodule Portfolio.Auth.DomainEventsTest do
   use Portfolio.DataCase, async: false
 
   alias Portfolio.Auth
-  alias Portfolio.DomainEvents
   alias Portfolio.Auth.Events.{MagicLinkRequested, MagicLinkVerified}
+  alias Portfolio.DomainEvents
 
   setup do
     # Subscribe to events before each test

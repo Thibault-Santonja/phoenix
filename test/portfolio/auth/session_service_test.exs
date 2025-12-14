@@ -171,7 +171,7 @@ defmodule Portfolio.Auth.SessionServiceTest do
       session_ids = Enum.map(user1_sessions, & &1.id)
 
       assert session1.id in session_ids
-      assert length(user1_sessions) >= 1
+      assert user1_sessions != []
     end
 
     test "orders sessions by most recent activity first" do

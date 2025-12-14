@@ -263,7 +263,7 @@ defmodule Portfolio.PhotographyTest do
 
       photos = Photography.list_failed_photos(preload: [:album])
 
-      assert length(photos) >= 1
+      assert photos != []
       first_photo = List.first(photos)
 
       if first_photo.album_id == album.id do

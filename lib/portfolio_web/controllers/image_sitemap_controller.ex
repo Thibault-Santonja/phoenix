@@ -65,7 +65,7 @@ defmodule PortfolioWeb.ImageSitemapController do
       |> Enum.map(fn album ->
         build_album_url(album, photo_base)
       end)
-      |> Enum.filter(fn url -> length(url.images) > 0 end)
+      |> Enum.filter(fn url -> url.images != [] end)
 
     build_xml(urls)
   end

@@ -315,7 +315,7 @@ defmodule PortfolioWeb.Plugs.Fail2BanIntegrationTest do
         |> Enum.filter(&String.contains?(&1, "Rate limit exceeded for login_attempt"))
 
       # Should have multiple log entries (one per violation after limit exceeded)
-      assert length(log_lines) > 0
+      assert log_lines != []
 
       # All log lines should follow same format
       for line <- log_lines do

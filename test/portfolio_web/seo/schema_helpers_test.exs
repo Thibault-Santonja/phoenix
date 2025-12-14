@@ -16,7 +16,7 @@ defmodule PortfolioWeb.SEO.SchemaHelpersTest do
       schema = SchemaHelpers.photographer_schema()
 
       assert is_list(schema["sameAs"])
-      assert length(schema["sameAs"]) >= 1
+      assert schema["sameAs"] != []
     end
 
     test "includes job title" do

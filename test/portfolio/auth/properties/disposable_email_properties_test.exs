@@ -151,7 +151,7 @@ defmodule Portfolio.Auth.Properties.DisposableEmailPropertiesTest do
 
     property "list is not empty" do
       domains = DisposableEmailChecker.disposable_domains()
-      assert length(domains) > 0
+      assert is_list(domains) and domains != []
     end
 
     property "common disposable domains are included" do

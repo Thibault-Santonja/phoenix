@@ -29,8 +29,8 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandler do
   use GenServer
   require Logger
 
-  alias Portfolio.DomainEvents
   alias Portfolio.Auth.Events.{MagicLinkRequested, MagicLinkVerified}
+  alias Portfolio.DomainEvents
 
   # =============================================================================
   # Public API

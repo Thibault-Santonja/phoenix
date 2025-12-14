@@ -110,7 +110,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
 
       # Reload album with photos
       updated_album = Portfolio.Photography.get_album!(album.id, preload: [:photos])
-      assert length(updated_album.photos) >= 1
+      assert updated_album.photos != []
 
       cleanup_upload(upload)
     end

@@ -18,8 +18,7 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   use Portfolio.Services.Service
 
   alias Portfolio.Auth.Events.MagicLinkRequested
-  alias Portfolio.Auth.Mailer
-  alias Portfolio.Auth.{MagicLink, User}
+  alias Portfolio.Auth.{MagicLink, Mailer, User}
   alias Portfolio.DomainEvents
   alias Portfolio.Repo
 

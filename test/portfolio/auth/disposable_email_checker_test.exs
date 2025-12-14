@@ -72,7 +72,7 @@ defmodule Portfolio.Auth.DisposableEmailCheckerTest do
     test "returns a list of disposable domains" do
       domains = DisposableEmailChecker.disposable_domains()
       assert is_list(domains)
-      assert length(domains) > 0
+      assert domains != []
       assert "mailinator.com" in domains
       assert "guerrillamail.com" in domains
     end

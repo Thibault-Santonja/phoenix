@@ -7,8 +7,8 @@ defmodule Portfolio.ImageProcessing.Infrastructure.VipsAdapterTest do
   """
   use ExUnit.Case, async: true
 
-  alias Portfolio.ImageProcessing.Infrastructure.VipsAdapter
   alias Portfolio.ImageProcessing.Domain.ValueObjects.{ImageDimensions, VariantSpecification}
+  alias Portfolio.ImageProcessing.Infrastructure.VipsAdapter
   alias Vix.Vips.Image
 
   # Test fixtures directory (use project root fixtures)
@@ -239,7 +239,7 @@ defmodule Portfolio.ImageProcessing.Infrastructure.VipsAdapterTest do
         low_files = File.ls!(output_dir) |> Enum.filter(&String.contains?(&1, "low"))
         high_files = File.ls!(output_dir) |> Enum.filter(&String.contains?(&1, "high"))
 
-        if length(low_files) > 0 and length(high_files) > 0 do
+        if low_files != [] and high_files != [] do
           low_size = File.stat!(Path.join(output_dir, hd(low_files))).size
           high_size = File.stat!(Path.join(output_dir, hd(high_files))).size
 

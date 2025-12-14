@@ -117,7 +117,7 @@ defmodule Portfolio.Auth.MXValidatorTest do
       case MXValidator.check_mx_records("gmail.com") do
         {:ok, records} ->
           assert is_list(records)
-          assert length(records) > 0
+          assert records != []
 
         {:error, reason} ->
           # Problème réseau acceptable

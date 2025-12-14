@@ -196,7 +196,7 @@ defmodule Portfolio.ImageConfigTest do
       srcset_variants = ImageConfig.srcset_variants()
 
       assert is_list(srcset_variants)
-      assert length(srcset_variants) > 0
+      assert srcset_variants != []
     end
 
     test "all srcset variants exist in main variants" do
