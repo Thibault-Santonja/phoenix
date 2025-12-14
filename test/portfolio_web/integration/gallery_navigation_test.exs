@@ -11,8 +11,6 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
 
   use PortfolioWeb.ConnCase, async: true
 
-  @moduletag :skip
-
   import Phoenix.LiveViewTest
   import PortfolioTest.Fixtures.PhotographyFixtures
 
@@ -54,7 +52,7 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
   describe "filter by chapter/type" do
     test "filters albums by type (wedding)" do
       wedding = create_album(title: "Wedding Album", type: :wedding, published: true)
-      _portrait = create_album(title: "Portrait Album", type: :portrait, published: true)
+      _portrait = create_album(title: "Portrait Album", type: :couples, published: true)
 
       create_photo(album: wedding)
 
@@ -69,7 +67,7 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
 
     test "filters albums by type (portrait)" do
       _wedding = create_album(title: "Wedding Album", type: :wedding, published: true)
-      portrait = create_album(title: "Portrait Album", type: :portrait, published: true)
+      portrait = create_album(title: "Portrait Album", type: :couples, published: true)
 
       create_photo(album: portrait)
 
@@ -82,7 +80,7 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
 
     test "shows all albums when no filter applied" do
       create_album(title: "Wedding 1", type: :wedding, published: true)
-      create_album(title: "Portrait 1", type: :portrait, published: true)
+      create_album(title: "Portrait 1", type: :couples, published: true)
 
       conn = %{build_conn() | host: "photo.example.com"}
       {:ok, _view, html} = live(conn, "/gallery")

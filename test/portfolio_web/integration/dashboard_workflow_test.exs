@@ -11,8 +11,6 @@ defmodule PortfolioWeb.Integration.DashboardWorkflowTest do
 
   use PortfolioWeb.ConnCase, async: true
 
-  @moduletag :skip
-
   import Phoenix.LiveViewTest
   import PortfolioTest.Fixtures.{AuthFixtures, PhotographyFixtures}
 
