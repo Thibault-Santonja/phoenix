@@ -15,7 +15,13 @@ defmodule Portfolio.Release do
   Or combine both:
 
       /app/bin/portfolio eval "Portfolio.Release.migrate_and_bootstrap"
+
+  ## Environment Variables
+
+  - `ADMIN_EMAIL` - Email address for the initial admin user (default: "thibault.santonja@pm.me")
   """
+
+  require Logger
 
   alias Portfolio.Auth.User
   alias Portfolio.Repo
@@ -25,13 +31,13 @@ defmodule Portfolio.Release do
   @doc """
   Run pending database migrations.
   """
+  @spec migrate() :: :ok
   def migrate do
     load_app()
 
-    _results =
-      for repo <- repos() do
-        {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
-      end
+    for repo <- repos() do
+      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+    end
 
     :ok
   end
@@ -44,12 +50,10 @@ defmodule Portfolio.Release do
 
   Safe to run multiple times - will not create duplicates.
   """
+  @spec bootstrap() :: :ok
   def bootstrap do
     load_app()
     start_repo()
-
-    alias Portfolio.Auth.User
-    alias Portfolio.Repo
 
     admin_email = System.get_env("ADMIN_EMAIL") || "thibault.santonja@pm.me"
 
@@ -63,12 +67,14 @@ defmodule Portfolio.Release do
         })
         |> Repo.insert!()
         |> then(fn user ->
-          IO.puts("✓ Admin user created: #{user.email}")
+          Logger.info("Admin user created: #{user.email}")
         end)
 
       user ->
         ensure_user_is_admin(user)
     end
+
+    :ok
   end
 
   @doc """
@@ -76,6 +82,7 @@ defmodule Portfolio.Release do
 
   This is the recommended way to initialize the application in production.
   """
+  @spec migrate_and_bootstrap() :: :ok
   def migrate_and_bootstrap do
     migrate()
     bootstrap()
@@ -88,12 +95,23 @@ defmodule Portfolio.Release do
     :ok
   end
 
+  defp start_repo do
+    Logger.info("Starting Repo...")
+    _ = Application.ensure_all_started(:ssl)
+
+    for repo <- repos() do
+      {:ok, _} = repo.start_link(pool_size: 2)
+    end
+
+    :ok
+  end
+
   # Assure que l'utilisateur a le rôle admin
   defp ensure_user_is_admin(user) do
     if user.role != :admin do
       promote_user_to_admin(user)
     else
-      IO.puts("✓ Admin user already exists: #{user.email}")
+      Logger.info("Admin user already exists: #{user.email}")
     end
   end
 
@@ -103,20 +121,8 @@ defmodule Portfolio.Release do
     |> User.admin_changeset(%{role: :admin})
     |> Repo.update!()
     |> then(fn updated_user ->
-      IO.puts("✓ User #{updated_user.email} promoted to admin")
+      Logger.info("User #{updated_user.email} promoted to admin")
     end)
-  end
-
-  defp start_repo do
-    IO.puts("Starting Repo...")
-    _ = Application.ensure_all_started(:ssl)
-
-    _results =
-      for repo <- repos() do
-        {:ok, _} = repo.start_link(pool_size: 2)
-      end
-
-    :ok
   end
 
   defp repos do

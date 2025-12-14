@@ -33,6 +33,8 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   import Ecto.Query, warn: false
   import Portfolio.Repo.QueryHelpers
 
+  require Logger
+
   alias Ecto.Multi
   alias Portfolio.Photography.Photo
   alias Portfolio.Photography.Queries.PhotoQuery
@@ -501,8 +503,18 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   defp safe_status_to_atom(status) when is_atom(status), do: status
 
   defp safe_status_to_atom(status) when is_binary(status) do
-    Map.get(@valid_statuses, status, :unknown)
+    case Map.get(@valid_statuses, status) do
+      nil ->
+        Logger.warning("Unknown photo processing status: #{status}")
+        :unknown
+
+      atom ->
+        atom
+    end
   end
 
-  defp safe_status_to_atom(_), do: :unknown
+  defp safe_status_to_atom(other) do
+    Logger.warning("Invalid photo processing status type: #{inspect(other)}")
+    :unknown
+  end
 end
