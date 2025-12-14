@@ -11,8 +11,6 @@ defmodule Portfolio.RateLimiterBoundariesTest do
   """
   use PortfolioWeb.ConnCase, async: false
 
-  @moduletag :skip
-
   alias Portfolio.RateLimiter
 
   setup do

@@ -7,7 +7,6 @@ defmodule Portfolio.Photography.ValueObjects.SlugPropertiesExtendedTest do
   """
   use ExUnit.Case, async: true
 
-  @moduletag :skip
   use ExUnitProperties
 
   alias Portfolio.Photography.ValueObjects.Slug

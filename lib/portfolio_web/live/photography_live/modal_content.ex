@@ -8,22 +8,8 @@ defmodule PortfolioWeb.PhotographyLive.ModalContent do
 
   use PortfolioWeb, :html
 
+  alias PortfolioWeb.Helpers.AlbumTypeFormatter
   alias PortfolioWeb.PhotographyLive.ChapterContent
-
-  # Chapter title formatting - duplicated to avoid circular dependency with Index
-  defp format_chapter_title("amvcc"), do: "AMVCC"
-  defp format_chapter_title("china"), do: gettext("album.type.china")
-  defp format_chapter_title("couples"), do: gettext("album.type.couples")
-  defp format_chapter_title("events"), do: gettext("album.type.events")
-  defp format_chapter_title("japan"), do: gettext("album.type.japan")
-  defp format_chapter_title("landscape"), do: gettext("album.type.landscape")
-  defp format_chapter_title("motherhood"), do: gettext("photography.motherhood_families")
-  defp format_chapter_title("music"), do: gettext("photography.concerts_music")
-  defp format_chapter_title("reenactment"), do: gettext("album.type.reenactment")
-  defp format_chapter_title("street"), do: gettext("photography.street_photography")
-  defp format_chapter_title("taiwan"), do: gettext("album.type.taiwan")
-  defp format_chapter_title("wedding"), do: gettext("album.type.wedding")
-  defp format_chapter_title(_), do: gettext("photography.gallery")
 
   attr :modal_chapter, :string, required: true
   attr :language, :string, required: true
@@ -37,7 +23,9 @@ defmodule PortfolioWeb.PhotographyLive.ModalContent do
       "flex flex-col"
     ]}>
       <header class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold uppercase">{format_chapter_title(@modal_chapter)}</h2>
+        <h2 class="text-2xl font-bold uppercase">
+          {AlbumTypeFormatter.format_chapter_title(@modal_chapter)}
+        </h2>
         <button class={["text-white text-2xl font-bold", "close-modal"]} phx-click="close_modal">
           &times;
         </button>

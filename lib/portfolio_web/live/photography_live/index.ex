@@ -11,6 +11,10 @@ defmodule PortfolioWeb.PhotographyLive.Index do
   import PortfolioWeb.PhotographyLive.ModalContent
   use PortfolioWeb, :live_view
 
+  alias PortfolioWeb.Helpers.AlbumTypeFormatter
+
+  defdelegate format_chapter_title(chapter), to: AlbumTypeFormatter
+
   @impl true
   def mount(params, session, socket) do
     chapter = Map.get(params, "chapter", nil)
@@ -65,18 +69,4 @@ defmodule PortfolioWeb.PhotographyLive.Index do
     socket
     |> assign(:page_title, gettext("photography.page_title"))
   end
-
-  def format_chapter_title("amvcc"), do: "AMVCC"
-  def format_chapter_title("china"), do: gettext("album.type.china")
-  def format_chapter_title("couples"), do: gettext("album.type.couples")
-  def format_chapter_title("events"), do: gettext("album.type.events")
-  def format_chapter_title("japan"), do: gettext("album.type.japan")
-  def format_chapter_title("landscape"), do: gettext("album.type.landscape")
-  def format_chapter_title("motherhood"), do: gettext("photography.motherhood_families")
-  def format_chapter_title("music"), do: gettext("photography.concerts_music")
-  def format_chapter_title("reenactment"), do: gettext("album.type.reenactment")
-  def format_chapter_title("street"), do: gettext("photography.street_photography")
-  def format_chapter_title("taiwan"), do: gettext("album.type.taiwan")
-  def format_chapter_title("wedding"), do: gettext("album.type.wedding")
-  def format_chapter_title(_), do: gettext("photography.gallery")
 end

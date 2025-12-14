@@ -6,8 +6,6 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
   """
   use Portfolio.DataCase
 
-  @moduletag :skip
-
   alias Portfolio.Auth.{MagicLink, MagicLinkService, User}
 
   describe "verify_magic_link/1 error handling" do

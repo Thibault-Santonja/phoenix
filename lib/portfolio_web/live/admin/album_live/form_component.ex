@@ -10,6 +10,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.FormComponent do
 
   alias Portfolio.Photography
   alias Portfolio.Photography.Album
+  alias PortfolioWeb.Helpers.AlbumTypeFormatter
 
   @impl true
   def render(assigns) do
@@ -157,21 +158,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.FormComponent do
   defp album_type_options do
     Photography.list_album_types()
     |> Enum.map(fn type ->
-      {format_type(type), type}
+      {AlbumTypeFormatter.format_type(type), type}
     end)
   end
-
-  defp format_type(:couples), do: gettext("album.type.couples")
-  defp format_type(:wedding), do: gettext("album.type.wedding")
-  defp format_type(:motherhood), do: gettext("album.type.motherhood")
-  defp format_type(:events), do: gettext("album.type.events")
-  defp format_type(:landscape), do: gettext("album.type.landscape")
-  defp format_type(:street), do: gettext("album.type.street")
-  defp format_type(:music), do: gettext("album.type.music")
-  defp format_type(:reenactment), do: gettext("album.type.reenactment")
-  defp format_type(:amvcc), do: "AMVCC"
-  defp format_type(:china), do: gettext("album.type.china")
-  defp format_type(:japan), do: gettext("album.type.japan")
-  defp format_type(:taiwan), do: gettext("album.type.taiwan")
-  defp format_type(type), do: to_string(type)
 end

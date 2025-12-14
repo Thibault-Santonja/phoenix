@@ -10,8 +10,6 @@ defmodule Portfolio.Photography.PhotoReorderingTest do
 
   use Portfolio.DataCase, async: true
 
-  @moduletag :skip
-
   alias Portfolio.Photography
 
   import PortfolioTest.Fixtures.PhotographyFixtures

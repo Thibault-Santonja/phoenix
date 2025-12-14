@@ -7,7 +7,6 @@ defmodule Portfolio.RateLimiterPropertiesTest do
   """
   use ExUnit.Case, async: false
 
-  @moduletag :skip
   use ExUnitProperties
 
   alias Portfolio.RateLimiter

@@ -5,8 +5,6 @@ defmodule Portfolio.Auth.MagicLinkPropertiesTest do
   Tests token uniqueness, URL safety, and format consistency.
   """
   use ExUnit.Case, async: true
-
-  @moduletag :skip
   use ExUnitProperties
 
   describe "token generation properties" do
