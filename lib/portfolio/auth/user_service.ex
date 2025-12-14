@@ -278,12 +278,14 @@ defmodule Portfolio.Auth.UserService do
   # Creates a user only if the environment allows it
   @spec create_user_if_allowed(String.t()) ::
           {:ok, User.t()} | {:error, Ecto.Changeset.t() | :user_not_found}
-  defp create_user_if_allowed(email) do
-    # In development and test, automatically create the user
-    # In production, refuse the connection
-    if Mix.env() in [:dev, :test] do
+  if Mix.env() in [:dev, :test] do
+    defp create_user_if_allowed(email) do
+      # In development and test, automatically create the user
       UserRepository.insert(%{email: email})
-    else
+    end
+  else
+    defp create_user_if_allowed(_email) do
+      # In production, refuse the connection
       {:error, :user_not_found}
     end
   end

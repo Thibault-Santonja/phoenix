@@ -89,7 +89,7 @@ defmodule Portfolio.Auth.EmailNormalizer do
   @spec normalize_by_domain(String.t()) :: String.t()
   defp normalize_by_domain(email) do
     case String.split(email, "@") do
-      [local, domain] when length([local, domain]) == 2 ->
+      [local, domain] ->
         if gmail_domain?(domain) do
           normalize_gmail_local(local, domain)
         else

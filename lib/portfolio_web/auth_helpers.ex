@@ -13,6 +13,9 @@ defmodule PortfolioWeb.AuthHelpers do
   alias Portfolio.Auth.UserSession
   alias Portfolio.Config.CacheConfig
 
+  # Cache environment at compile time to avoid runtime lookups
+  @env Mix.env()
+
   @doc """
   Récupère l'utilisateur et la session depuis un token de session.
 
@@ -46,7 +49,7 @@ defmodule PortfolioWeb.AuthHelpers do
   # Récupère une session depuis le cache ou la base de données
   defp fetch_session_from_cache(session_token) do
     # En test, skip le cache pour éviter la pollution entre tests
-    if Mix.env() == :test do
+    if @env == :test do
       Auth.get_session_by_token(session_token)
     else
       fetch_session_with_cache(session_token)
@@ -82,7 +85,7 @@ defmodule PortfolioWeb.AuthHelpers do
   # Met à jour l'activité de la session de manière asynchrone en production
   # Utilise Task.Supervisor pour une meilleure supervision et logging des erreurs
   defp update_session_activity_async(session) do
-    if Mix.env() == :test do
+    if @env == :test do
       _ = Auth.update_session_activity(session)
     else
       _ =

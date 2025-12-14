@@ -80,6 +80,9 @@ defmodule Portfolio.Photography do
   alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
   alias Portfolio.Workers.ImageVariantWorker
 
+  # Cache environment at compile time to avoid runtime lookups
+  @env Mix.env()
+
   # Service Layer
   alias Portfolio.Services.Photography.{
     AlbumDeletionService,
@@ -747,7 +750,7 @@ defmodule Portfolio.Photography do
   defp should_skip_cache?(opts) do
     skip_cache = Keyword.get(opts, :skip_cache, false)
     # En test, toujours skip le cache pour éviter la pollution entre tests
-    skip_cache or Mix.env() == :test
+    skip_cache or @env == :test
   end
 
   # Récupère les albums publiés par année depuis la DB
