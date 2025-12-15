@@ -42,11 +42,9 @@ defmodule Portfolio.Auth.AuditLogger do
 
   require Logger
 
-  import Ecto.Query
-
   alias Portfolio.Auth.AuditLog
+  alias Portfolio.Auth.Repositories.AuditLogRepository
   alias Portfolio.Auth.User
-  alias Portfolio.Repo
 
   @type audit_opts :: [
           performed_by_id: Ecto.UUID.t() | nil,
@@ -97,10 +95,7 @@ defmodule Portfolio.Auth.AuditLogger do
       user_agent: Keyword.get(opts, :user_agent)
     }
 
-    result =
-      %AuditLog{}
-      |> AuditLog.changeset(attrs)
-      |> Repo.insert()
+    result = AuditLogRepository.insert(attrs)
 
     log_result(result)
     result
@@ -246,15 +241,7 @@ defmodule Portfolio.Auth.AuditLogger do
   """
   @spec get_logs_for_resource(String.t(), Ecto.UUID.t(), Keyword.t()) :: [AuditLog.t()]
   def get_logs_for_resource(resource_type, resource_id, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 50)
-
-    from(log in AuditLog,
-      where: log.resource_type == ^resource_type and log.resource_id == ^resource_id,
-      order_by: [desc: log.inserted_at],
-      limit: ^limit,
-      preload: [:performed_by]
-    )
-    |> Repo.all()
+    AuditLogRepository.get_by_resource(resource_type, resource_id, opts)
   end
 
   @doc """
@@ -267,15 +254,7 @@ defmodule Portfolio.Auth.AuditLogger do
   """
   @spec get_logs_by_user(Ecto.UUID.t(), Keyword.t()) :: [AuditLog.t()]
   def get_logs_by_user(user_id, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 50)
-
-    from(log in AuditLog,
-      where: log.performed_by_id == ^user_id,
-      order_by: [desc: log.inserted_at],
-      limit: ^limit,
-      preload: [:performed_by]
-    )
-    |> Repo.all()
+    AuditLogRepository.get_by_performer(user_id, opts)
   end
 
   # Extracts the user ID from options

@@ -18,7 +18,9 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   use Portfolio.Services.Service
 
   alias Portfolio.Auth.Events.MagicLinkRequested
-  alias Portfolio.Auth.{MagicLink, Mailer, User}
+  alias Portfolio.Auth.MagicLink
+  alias Portfolio.Auth.Mailer
+  alias Portfolio.Auth.Repositories.{MagicLinkRepository, UserRepository}
   alias Portfolio.DomainEvents
   alias Portfolio.Repo
 
@@ -156,8 +158,11 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   # Production: don't auto-create users to prevent email enumeration (security)
   # Dev/Test: auto-create users for convenience
   defp fetch_or_create_user(email) do
-    case Repo.get_by(User, email: email) do
-      nil ->
+    case UserRepository.get_by_email(email) do
+      {:ok, user} ->
+        {:ok, user}
+
+      {:error, :not_found} ->
         # Production: block auto-creation (anti-enumeration)
         if production_env?() do
           # Return special marker instead of error to prevent enumeration
@@ -166,9 +171,6 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
           # Dev/Test: auto-create the user
           create_new_user(email)
         end
-
-      user ->
-        {:ok, user}
     end
   end
 
@@ -183,12 +185,7 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   # Note: In dev/test only, users are auto-created with default role (:user)
   # Production blocks auto-creation entirely (anti-enumeration security)
   defp create_new_user(email) do
-    result =
-      %User{}
-      |> User.registration_changeset(%{email: email})
-      |> Repo.insert()
-
-    case result do
+    case UserRepository.insert(%{email: email}) do
       {:ok, user} ->
         # Emit UserCreated event for new users
         DomainEvents.publish(:user_created, %Portfolio.Auth.Events.UserCreated{
@@ -217,14 +214,12 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
       |> DateTime.add(ttl_minutes, :minute)
       |> DateTime.truncate(:second)
 
-    %MagicLink{}
-    |> MagicLink.changeset(%{
+    MagicLinkRepository.insert(%{
       user_id: user.id,
       token: token,
       short_code: short_code,
       expires_at: expires_at
     })
-    |> Repo.insert()
   end
 
   # Get magic link TTL from configuration

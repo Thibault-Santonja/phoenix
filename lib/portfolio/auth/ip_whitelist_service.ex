@@ -28,10 +28,8 @@ defmodule Portfolio.Auth.IPWhitelistService do
 
   require Logger
 
-  import Ecto.Query
-
   alias Portfolio.Auth.IPWhitelist
-  alias Portfolio.Repo
+  alias Portfolio.Auth.Repositories.IPWhitelistRepository
 
   @cache_table :ip_whitelist_cache
   @cache_ttl :timer.minutes(5)
@@ -73,10 +71,7 @@ defmodule Portfolio.Auth.IPWhitelistService do
   """
   @spec list_whitelist() :: [IPWhitelist.t()]
   def list_whitelist do
-    IPWhitelist
-    |> order_by([w], desc: w.inserted_at)
-    |> preload(:created_by)
-    |> Repo.all()
+    IPWhitelistRepository.list_all()
   end
 
   @doc """
@@ -105,10 +100,7 @@ defmodule Portfolio.Auth.IPWhitelistService do
       |> Map.new()
       |> Map.put("created_by_id", created_by_id)
 
-    %IPWhitelist{}
-    |> IPWhitelist.changeset(attrs)
-    |> Repo.insert()
-    |> case do
+    case IPWhitelistRepository.insert(attrs) do
       {:ok, entry} ->
         Logger.info("IP added to whitelist",
           ip: entry.ip_address,
@@ -137,12 +129,12 @@ defmodule Portfolio.Auth.IPWhitelistService do
   @spec remove_from_whitelist(Ecto.UUID.t()) ::
           {:ok, IPWhitelist.t()} | {:error, :not_found}
   def remove_from_whitelist(id) do
-    case Repo.get(IPWhitelist, id) do
-      nil ->
+    case IPWhitelistRepository.get(id) do
+      {:error, :not_found} ->
         {:error, :not_found}
 
-      entry ->
-        {:ok, deleted} = Repo.delete(entry)
+      {:ok, entry} ->
+        {:ok, deleted} = IPWhitelistRepository.delete(entry)
 
         Logger.info("IP removed from whitelist",
           ip: deleted.ip_address
@@ -166,9 +158,10 @@ defmodule Portfolio.Auth.IPWhitelistService do
   """
   @spec get_whitelist_entry(Ecto.UUID.t()) :: IPWhitelist.t() | nil
   def get_whitelist_entry(id) do
-    IPWhitelist
-    |> preload(:created_by)
-    |> Repo.get(id)
+    case IPWhitelistRepository.get(id) do
+      {:ok, entry} -> entry
+      {:error, :not_found} -> nil
+    end
   end
 
   @doc """
@@ -182,9 +175,7 @@ defmodule Portfolio.Auth.IPWhitelistService do
   @spec update_whitelist_entry(IPWhitelist.t(), map()) ::
           {:ok, IPWhitelist.t()} | {:error, Ecto.Changeset.t()}
   def update_whitelist_entry(entry, attrs) do
-    entry
-    |> IPWhitelist.update_changeset(attrs)
-    |> Repo.update()
+    IPWhitelistRepository.update(entry, attrs)
   end
 
   @doc """
@@ -248,9 +239,7 @@ defmodule Portfolio.Auth.IPWhitelistService do
   @spec refresh_cache() :: :ok
   defp refresh_cache do
     ips =
-      IPWhitelist
-      |> select([w], w.ip_address)
-      |> Repo.all()
+      IPWhitelistRepository.list_ip_addresses()
       |> MapSet.new()
 
     expires_at = System.system_time(:millisecond) + @cache_ttl
