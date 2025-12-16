@@ -29,16 +29,18 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   """
 
-  # warn: false suppresses unused import warnings - query macros are used dynamically
-  import Ecto.Query, warn: false
-  import Portfolio.Repo.QueryHelpers
+  use Portfolio.Repo.RepositoryBase
 
   require Logger
 
   alias Ecto.Multi
   alias Portfolio.Photography.Photo
   alias Portfolio.Photography.Queries.PhotoQuery
-  alias Portfolio.Repo
+
+  # Custom filter handlers for photo-specific filters
+  @filter_handlers %{
+    album_id: &__MODULE__.filter_by_album/2
+  }
 
   @doc """
   Liste toutes les photos avec options de filtrage.
@@ -62,7 +64,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   @spec list(keyword()) :: [Photo.t()]
   def list(opts \\ []) do
     PhotoQuery.base()
-    |> apply_filters(opts)
+    |> apply_filters(opts, @filter_handlers)
     |> Repo.all()
   end
 
@@ -85,7 +87,7 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
     PhotoQuery.base()
     |> PhotoQuery.order_by_display_order()
-    |> apply_filters(opts_with_album)
+    |> apply_filters(opts_with_album, @filter_handlers)
     |> Repo.all()
   end
 
@@ -444,6 +446,16 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
     |> Repo.one()
   end
 
+  # =============================================================================
+  # Filter Handlers
+  # =============================================================================
+
+  @doc false
+  @spec filter_by_album(Ecto.Query.t(), Ecto.UUID.t()) :: Ecto.Query.t()
+  def filter_by_album(query, album_id) do
+    PhotoQuery.by_album(query, album_id)
+  end
+
   # Applique les preloads à la query en utilisant PhotoQuery
   @spec apply_preload_if_present(Ecto.Query.t(), nil | atom() | [atom()]) :: Ecto.Query.t()
   defp apply_preload_if_present(query, nil), do: query
@@ -451,43 +463,6 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   defp apply_preload_if_present(query, preloads) do
     PhotoQuery.with_preload(query, preloads)
-  end
-
-  # Applique les filtres à la query
-  defp apply_filters(query, []), do: query
-
-  defp apply_filters(query, [{:album_id, album_id} | rest]) do
-    query
-    |> PhotoQuery.by_album(album_id)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [{:preload, preloads} | rest]) do
-    query
-    |> apply_preload_if_present(preloads)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [{:limit, limit} | rest]) when is_integer(limit) do
-    query
-    |> limit(^limit)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [{:offset, offset} | rest]) when is_integer(offset) do
-    query
-    |> offset(^offset)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [{:order_by, order_spec} | rest]) when is_list(order_spec) do
-    query
-    |> order_by(^order_spec)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [_other | rest]) do
-    apply_filters(query, rest)
   end
 
   # Safely converts processing status string to atom

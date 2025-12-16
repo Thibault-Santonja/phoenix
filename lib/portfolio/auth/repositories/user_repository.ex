@@ -26,12 +26,14 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
       2
   """
 
-  # warn: false suppresses unused import warnings - query macros are used dynamically
-  import Ecto.Query, warn: false
-  import Portfolio.Repo.QueryHelpers
+  use Portfolio.Repo.RepositoryBase
 
   alias Portfolio.Auth.User
-  alias Portfolio.Repo
+
+  # Custom filter handlers for user-specific filters
+  @filter_handlers %{
+    role: &__MODULE__.filter_by_role/2
+  }
 
   # =============================================================================
   # Query Functions
@@ -106,7 +108,7 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
   @spec list(keyword()) :: [User.t()]
   def list(opts \\ []) do
     from(u in User)
-    |> apply_filters(opts)
+    |> apply_filters(opts, @filter_handlers)
     |> Repo.all()
   end
 
@@ -239,26 +241,12 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
   end
 
   # =============================================================================
-  # Private Functions
+  # Filter Handlers
   # =============================================================================
 
-  # Applique les filtres à la query
-  @spec apply_filters(Ecto.Query.t(), keyword()) :: Ecto.Query.t()
-  defp apply_filters(query, []), do: query
-
-  defp apply_filters(query, [{:role, role} | rest]) when is_atom(role) do
-    query
-    |> where([u], u.role == ^role)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [{:preload, preloads} | rest]) do
-    query
-    |> preload(^preloads)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [_other | rest]) do
-    apply_filters(query, rest)
+  @doc false
+  @spec filter_by_role(Ecto.Query.t(), atom()) :: Ecto.Query.t()
+  def filter_by_role(query, role) when is_atom(role) do
+    where(query, [u], u.role == ^role)
   end
 end

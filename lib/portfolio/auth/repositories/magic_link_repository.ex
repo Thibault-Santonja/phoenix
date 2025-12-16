@@ -27,12 +27,9 @@ defmodule Portfolio.Auth.Repositories.MagicLinkRepository do
       {5, nil}
   """
 
-  # warn: false suppresses unused import warnings - query macros are used dynamically
-  import Ecto.Query, warn: false
-  import Portfolio.Repo.QueryHelpers
+  use Portfolio.Repo.RepositoryBase
 
   alias Portfolio.Auth.MagicLink
-  alias Portfolio.Repo
 
   # =============================================================================
   # Query Functions

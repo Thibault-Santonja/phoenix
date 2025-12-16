@@ -28,13 +28,17 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
 
   """
 
-  # warn: false suppresses unused import warnings - query macros are used dynamically
-  import Ecto.Query, warn: false
-  import Portfolio.Repo.QueryHelpers
+  use Portfolio.Repo.RepositoryBase
 
   alias Portfolio.Photography.Album
   alias Portfolio.Photography.Queries.AlbumQuery
-  alias Portfolio.Repo
+
+  # Custom filter handlers for album-specific filters
+  @filter_handlers %{
+    type: &__MODULE__.filter_by_type/2,
+    published: &__MODULE__.filter_by_published/2,
+    with_photo_count: &__MODULE__.filter_with_photo_count/2
+  }
 
   @doc """
   Liste tous les albums avec filtres optionnels.
@@ -66,7 +70,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   @spec list(keyword()) :: [Album.t()]
   def list(filters \\ []) do
     AlbumQuery.base()
-    |> apply_filters(filters)
+    |> apply_filters(filters, @filter_handlers)
     |> Repo.all()
   end
 
@@ -308,62 +312,35 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
     |> Repo.one()
   end
 
-  # Applique les filtres à la query en utilisant AlbumQuery
-  @spec apply_filters(Ecto.Query.t(), keyword()) :: Ecto.Query.t()
-  defp apply_filters(query, []), do: query
+  # =============================================================================
+  # Filter Handlers
+  # =============================================================================
 
-  defp apply_filters(query, [{:type, type} | rest]) do
-    query
-    |> AlbumQuery.by_type(type)
-    |> apply_filters(rest)
+  @doc false
+  @spec filter_by_type(Ecto.Query.t(), atom()) :: Ecto.Query.t()
+  def filter_by_type(query, type) do
+    AlbumQuery.by_type(query, type)
   end
 
-  defp apply_filters(query, [{:published, true} | rest]) do
+  @doc false
+  @spec filter_by_published(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
+  def filter_by_published(query, true) do
     query
     |> AlbumQuery.published()
     |> AlbumQuery.order_by_date_desc()
-    |> apply_filters(rest)
   end
 
-  defp apply_filters(query, [{:published, false} | rest]) do
-    query
-    |> AlbumQuery.unpublished()
-    |> apply_filters(rest)
+  def filter_by_published(query, false) do
+    AlbumQuery.unpublished(query)
   end
 
-  defp apply_filters(query, [{:preload, preloads} | rest]) do
-    query
-    |> apply_preload(preloads)
-    |> apply_filters(rest)
+  @doc false
+  @spec filter_with_photo_count(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
+  def filter_with_photo_count(query, true) do
+    AlbumQuery.with_photo_count(query)
   end
 
-  defp apply_filters(query, [{:with_photo_count, true} | rest]) do
-    query
-    |> AlbumQuery.with_photo_count()
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [{:limit, limit} | rest]) when is_integer(limit) do
-    query
-    |> limit(^limit)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [{:offset, offset} | rest]) when is_integer(offset) do
-    query
-    |> offset(^offset)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [{:order_by, order_spec} | rest]) when is_list(order_spec) do
-    query
-    |> order_by(^order_spec)
-    |> apply_filters(rest)
-  end
-
-  defp apply_filters(query, [_other | rest]) do
-    apply_filters(query, rest)
-  end
+  def filter_with_photo_count(query, _), do: query
 
   @doc """
   Counts albums with optional filters.
