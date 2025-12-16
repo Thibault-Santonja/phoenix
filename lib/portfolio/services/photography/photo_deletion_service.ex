@@ -17,8 +17,8 @@ defmodule Portfolio.Services.Photography.PhotoDeletionService do
 
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.Events.PhotoDeleted
+  alias Portfolio.Photography.FileStorageHelper
   alias Portfolio.Photography.Photo
-  alias Portfolio.Photography.Storage
   alias Portfolio.Repo
 
   @impl true
@@ -60,7 +60,7 @@ defmodule Portfolio.Services.Photography.PhotoDeletionService do
           Ecto.Multi.new()
           |> Ecto.Multi.delete(:photo, photo)
           |> Ecto.Multi.run(:file, fn _repo, %{photo: deleted_photo} ->
-            delete_photo_file(deleted_photo.file_path)
+            FileStorageHelper.delete_file(deleted_photo.file_path)
           end)
           |> Repo.transaction()
 
@@ -81,21 +81,5 @@ defmodule Portfolio.Services.Photography.PhotoDeletionService do
         result
       end
     )
-  end
-
-  # Delete photo file, accepting :not_found as success (orphan data is acceptable)
-  defp delete_photo_file(file_path) do
-    case Storage.backend().delete_photo(file_path) do
-      :ok ->
-        {:ok, :ok}
-
-      {:error, :not_found} ->
-        # If the file doesn't exist, it's acceptable (orphaned data)
-        {:ok, :ok}
-
-      {:error, reason} ->
-        # Other error - rollback the transaction
-        {:error, reason}
-    end
   end
 end
