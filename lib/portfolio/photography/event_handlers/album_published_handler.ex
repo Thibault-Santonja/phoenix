@@ -28,6 +28,7 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
   use GenServer
   require Logger
 
+  alias Portfolio.CacheManager
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.Events.AlbumPublished
   alias Portfolio.Workers.CdnInvalidationWorker
@@ -116,29 +117,6 @@ defmodule Portfolio.Photography.EventHandlers.AlbumPublishedHandler do
 
   @spec clear_albums_cache() :: :ok
   defp clear_albums_cache do
-    # Clear specific Cachex keys for albums
-    # Use targeted deletion instead of clear to preserve other cache entries
-    cache_keys = [
-      {:published_albums_by_year, []},
-      {:published_albums_by_year, [:photos]}
-    ]
-
-    results =
-      Enum.map(cache_keys, fn key ->
-        case Cachex.del(:portfolio_cache, key) do
-          {:ok, _} -> :ok
-          {:error, reason} -> {:error, key, reason}
-        end
-      end)
-
-    errors = Enum.filter(results, &match?({:error, _, _}, &1))
-
-    if errors == [] do
-      Logger.debug("Albums cache invalidated (targeted keys)")
-    else
-      Logger.warning("Partial cache invalidation failure", errors: inspect(errors))
-    end
-
-    :ok
+    CacheManager.invalidate_albums()
   end
 end

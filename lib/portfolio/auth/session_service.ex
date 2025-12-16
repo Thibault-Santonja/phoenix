@@ -26,6 +26,7 @@ defmodule Portfolio.Auth.SessionService do
   alias Portfolio.Auth.Events.SessionCreated
   alias Portfolio.Auth.Repositories.SessionRepository
   alias Portfolio.Auth.{User, UserSession}
+  alias Portfolio.CacheManager
   alias Portfolio.DomainEvents
   alias Portfolio.RateLimiter
 
@@ -349,20 +350,9 @@ defmodule Portfolio.Auth.SessionService do
   # =============================================================================
 
   # Invalidates session cache by token (raw or hashed)
-  # The cache key always uses the hashed token
-  # We hash the token to ensure consistency regardless of input format
   @spec invalidate_session_cache(String.t()) :: :ok
   defp invalidate_session_cache(token) when is_binary(token) do
-    # Hash the token - if it's already hashed, we get a different hash
-    # but that's OK because we also try the original as a hash
-    hashed_token = UserSession.hash_token_value(token)
-    cache_key = {:session, hashed_token}
-    _ = Cachex.del(:portfolio_cache, cache_key)
-
-    # Also try with the token directly as hash (for sessions from DB)
-    cache_key_direct = {:session, token}
-    _ = Cachex.del(:portfolio_cache, cache_key_direct)
-    :ok
+    CacheManager.invalidate_session(token)
   end
 
   # =============================================================================
