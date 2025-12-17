@@ -1,5 +1,5 @@
 defmodule PortfolioWeb.Admin.ProfileLive.EditTest do
-  use PortfolioWeb.ConnCase
+  use PortfolioWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import PortfolioTest.Fixtures.AuthFixtures

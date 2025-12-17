@@ -1,5 +1,5 @@
 defmodule PortfolioWeb.Photography.IndexLiveTest do
-  use PortfolioWeb.ConnCase
+  use PortfolioWeb.ConnCase, async: true
   import Phoenix.LiveViewTest
 
   alias PortfolioWeb.PhotographyLive.Index

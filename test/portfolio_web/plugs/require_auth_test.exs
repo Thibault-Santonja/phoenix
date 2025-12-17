@@ -1,5 +1,5 @@
 defmodule PortfolioWeb.Plugs.RequireAuthTest do
-  use PortfolioWeb.ConnCase
+  use PortfolioWeb.ConnCase, async: true
 
   import Plug.Conn
 

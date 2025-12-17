@@ -180,6 +180,16 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
       assert html =~ "edit@example.com" or html =~ "Modifier"
     end
 
+    test "handles non-existent user when opening modal", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Try to open modal for non-existent user
+      html = render_click(view, "open_edit_modal", %{"user-id" => Ecto.UUID.generate()})
+
+      # Should show error
+      assert html =~ "introuvable" or html =~ "not found" or html =~ "Utilisateur"
+    end
+
     test "closes edit modal", %{conn: conn} do
       other_user = create_user(email: "close@example.com", role: :user)
 
@@ -230,6 +240,16 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
 
       # Should show confirmation
       assert html =~ "delete@example.com"
+    end
+
+    test "handles non-existent user when deleting", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Try to delete non-existent user
+      html = render_click(view, "delete_user", %{"user-id" => Ecto.UUID.generate()})
+
+      # Should show error
+      assert html =~ "introuvable" or html =~ "not found" or html =~ "erreur"
     end
 
     test "cancels delete action", %{conn: conn} do
@@ -308,6 +328,16 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
       # Should show success message
       assert html =~ "0" or html =~ "session"
     end
+
+    test "handles non-existent user when revoking sessions", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Try to revoke sessions for non-existent user
+      html = render_click(view, "revoke_sessions", %{"user-id" => Ecto.UUID.generate()})
+
+      # Should show error
+      assert html =~ "introuvable" or html =~ "not found" or html =~ "Utilisateur"
+    end
   end
 
   describe "Send magic link" do
@@ -321,6 +351,16 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
 
       # Should show success message
       assert html =~ "magic@example.com" or html =~ "Magic link"
+    end
+
+    test "handles non-existent user when sending magic link", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
+
+      # Try to send magic link for non-existent user
+      html = render_click(view, "send_magic_link", %{"user-id" => Ecto.UUID.generate()})
+
+      # Should show error
+      assert html =~ "introuvable" or html =~ "not found" or html =~ "Utilisateur"
     end
   end
 

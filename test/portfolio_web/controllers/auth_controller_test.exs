@@ -1,5 +1,6 @@
 defmodule PortfolioWeb.AuthControllerTest do
-  use PortfolioWeb.ConnCase
+  # async: false required for rate limiting tests which use global state
+  use PortfolioWeb.ConnCase, async: false
 
   alias Portfolio.Auth
   alias Portfolio.Auth.MagicLink

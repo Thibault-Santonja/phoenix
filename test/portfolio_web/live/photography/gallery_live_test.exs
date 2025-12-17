@@ -1,5 +1,5 @@
 defmodule PortfolioWeb.Photography.GalleryLiveTest do
-  use PortfolioWeb.ConnCase
+  use PortfolioWeb.ConnCase, async: true
   import Phoenix.LiveViewTest
   import PortfolioTest.Fixtures.PhotographyFixtures
 

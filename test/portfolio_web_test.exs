@@ -1,5 +1,5 @@
 defmodule PortfolioWebTest do
-  use PortfolioWeb.ConnCase
+  use PortfolioWeb.ConnCase, async: true
 
   describe "SEO files" do
     test "GET /robots.txt", %{conn: conn} do

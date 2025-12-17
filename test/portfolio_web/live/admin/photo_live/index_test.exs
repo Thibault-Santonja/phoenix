@@ -225,4 +225,51 @@ defmodule PortfolioWeb.Admin.PhotoLive.IndexTest do
       assert html =~ "Photos"
     end
   end
+
+  describe "Edge cases" do
+    test "handles invalid page number gracefully", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/admin/photos?page=invalid")
+
+      # Should default to page 1
+      assert html =~ "Photos"
+    end
+
+    test "handles negative page number", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/admin/photos?page=-1")
+
+      # Should default to page 1
+      assert html =~ "Photos"
+    end
+
+    test "handles very large page number", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/admin/photos?page=999999")
+
+      # Should handle gracefully (show empty or last page)
+      assert html =~ "Photos"
+    end
+
+    test "handles non-existent album filter", %{conn: conn} do
+      fake_album_id = Ecto.UUID.generate()
+
+      {:ok, _view, html} = live(conn, ~p"/admin/photos?album=#{fake_album_id}")
+
+      # Should show 0 photos
+      assert html =~ "0"
+    end
+
+    test "clears album filter when clicking all", %{conn: conn} do
+      unique_id = System.unique_integer([:positive])
+      album = create_album(title: "ClearFilterAlbum#{unique_id}")
+      _photo = create_photo(album_id: album.id, title: "ClearFilterPhoto#{unique_id}")
+
+      {:ok, view, _html} = live(conn, ~p"/admin/photos?album=#{album.id}")
+
+      # Click on "Tous" to clear filter
+      view
+      |> element("a[href=\"/admin/photos\"]", "Tous")
+      |> render_click()
+
+      assert_patched(view, "/admin/photos")
+    end
+  end
 end

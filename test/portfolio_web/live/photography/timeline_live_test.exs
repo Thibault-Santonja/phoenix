@@ -1,5 +1,5 @@
 defmodule PortfolioWeb.Photography.TimelineLiveTest do
-  use PortfolioWeb.ConnCase
+  use PortfolioWeb.ConnCase, async: true
   import Phoenix.LiveViewTest
 
   defp open_subdomain(%{conn: conn}) do

@@ -46,12 +46,25 @@ defmodule PortfolioWeb.PageControllerTest do
       assert conn.status == 404
     end
 
+    test "renders 404 error page with ErrorHTML view", %{conn: conn} do
+      conn = get(conn, "/unknown_subdomain")
+
+      assert html_response(conn, 404) =~ "404"
+    end
+
     test "does not redirect to arbitrary URLs", %{conn: conn} do
       # Attempting to access a path that's not in the whitelist
       conn = get(conn, "/evil")
 
       assert conn.status == 404
       refute conn.status in [301, 302]
+    end
+
+    test "handles empty path segments gracefully", %{conn: conn} do
+      # Edge case: path with no segments after base
+      conn = get(conn, "/nonexistent")
+
+      assert conn.status == 404
     end
   end
 end

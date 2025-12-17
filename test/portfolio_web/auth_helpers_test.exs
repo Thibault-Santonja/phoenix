@@ -41,9 +41,6 @@ defmodule PortfolioWeb.AuthHelpersTest do
       session = create_session(user: user)
       original_last_active = session.last_activity_at
 
-      # Give a small delay so timestamp can change
-      Process.sleep(10)
-
       {_user, returned_session} = AuthHelpers.fetch_user_from_session_token(session.token)
 
       # Session should have been updated
