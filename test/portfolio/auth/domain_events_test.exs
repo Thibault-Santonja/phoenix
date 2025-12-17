@@ -5,6 +5,9 @@ defmodule Portfolio.Auth.DomainEventsTest do
   alias Portfolio.Auth.Events.{MagicLinkRequested, MagicLinkVerified}
   alias Portfolio.DomainEvents
 
+  # Short timeout for synchronous event delivery
+  @receive_timeout 50
+
   setup do
     # Subscribe to events before each test
     DomainEvents.subscribe(:magic_link_requested)
@@ -19,7 +22,7 @@ defmodule Portfolio.Auth.DomainEventsTest do
       {:ok, magic_link} = Auth.request_magic_link(email)
 
       # Assert event was published
-      assert_receive {:magic_link_requested, %MagicLinkRequested{} = event}, 100
+      assert_receive {:magic_link_requested, %MagicLinkRequested{} = event}, @receive_timeout
 
       # Verify event data
       # Note: token is intentionally NOT included in the event for security reasons
@@ -36,7 +39,7 @@ defmodule Portfolio.Auth.DomainEventsTest do
 
       {:ok, _magic_link} = Auth.request_magic_link(email)
 
-      assert_receive {:magic_link_requested, %MagicLinkRequested{} = event}, 100
+      assert_receive {:magic_link_requested, %MagicLinkRequested{} = event}, @receive_timeout
 
       # Magic link should expire in ~15 minutes
       diff = DateTime.diff(event.expires_at, event.requested_at, :minute)
@@ -50,13 +53,13 @@ defmodule Portfolio.Auth.DomainEventsTest do
       {:ok, magic_link} = Auth.request_magic_link(email)
 
       # Clear the requested event from mailbox
-      assert_receive {:magic_link_requested, _}, 100
+      assert_receive {:magic_link_requested, _}, @receive_timeout
 
       # Verify the magic link
       {:ok, user} = Auth.verify_magic_link(magic_link.token)
 
       # Assert verified event was published
-      assert_receive {:magic_link_verified, %MagicLinkVerified{} = event}, 100
+      assert_receive {:magic_link_verified, %MagicLinkVerified{} = event}, @receive_timeout
 
       # Verify event data
       assert event.magic_link_id == magic_link.id
@@ -68,8 +71,8 @@ defmodule Portfolio.Auth.DomainEventsTest do
     test "does not publish event if magic link is invalid" do
       {:error, :invalid_token} = Auth.verify_magic_link("invalid_token")
 
-      # Should not receive verified event
-      refute_receive {:magic_link_verified, _}, 100
+      # Should not receive verified event (use 0 timeout - mailbox check only)
+      refute_receive {:magic_link_verified, _}, 0
     end
 
     test "does not publish event if magic link is expired" do
@@ -77,7 +80,7 @@ defmodule Portfolio.Auth.DomainEventsTest do
       {:ok, magic_link} = Auth.request_magic_link(email)
 
       # Clear requested event
-      assert_receive {:magic_link_requested, _}, 100
+      assert_receive {:magic_link_requested, _}, @receive_timeout
 
       # Manually expire the magic link
       expired_time =
@@ -92,8 +95,8 @@ defmodule Portfolio.Auth.DomainEventsTest do
       # Try to verify expired link
       {:error, :expired} = Auth.verify_magic_link(magic_link.token)
 
-      # Should not receive verified event
-      refute_receive {:magic_link_verified, _}, 100
+      # Should not receive verified event (use 0 timeout)
+      refute_receive {:magic_link_verified, _}, 0
     end
 
     test "does not publish event if magic link is already used" do
@@ -101,17 +104,17 @@ defmodule Portfolio.Auth.DomainEventsTest do
       {:ok, magic_link} = Auth.request_magic_link(email)
 
       # Clear requested event
-      assert_receive {:magic_link_requested, _}, 100
+      assert_receive {:magic_link_requested, _}, @receive_timeout
 
       # Verify once
       {:ok, _user} = Auth.verify_magic_link(magic_link.token)
-      assert_receive {:magic_link_verified, _}, 100
+      assert_receive {:magic_link_verified, _}, @receive_timeout
 
       # Try to verify again
       {:error, :already_used} = Auth.verify_magic_link(magic_link.token)
 
-      # Should not receive second verified event
-      refute_receive {:magic_link_verified, _}, 100
+      # Should not receive second verified event (use 0 timeout)
+      refute_receive {:magic_link_verified, _}, 0
     end
   end
 end

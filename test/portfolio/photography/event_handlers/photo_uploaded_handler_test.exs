@@ -9,6 +9,12 @@ defmodule Portfolio.Photography.EventHandlers.PhotoUploadedHandlerTest do
   alias Portfolio.Photography.Events.PhotoUploaded
   alias Portfolio.Workers.ExifExtractionWorker
 
+  # Helper to ensure GenServer has processed all pending messages
+  defp flush_handler(pid) do
+    :sys.get_state(pid)
+    :ok
+  end
+
   setup do
     # Start the handler for tests
     case PhotoUploadedHandler.start_link([]) do
@@ -45,9 +51,7 @@ defmodule Portfolio.Photography.EventHandlers.PhotoUploadedHandlerTest do
 
       # Send event directly to the handler
       send(handler, {:photo_uploaded, event})
-
-      # Give it time to process
-      Process.sleep(50)
+      flush_handler(handler)
 
       # Handler should not crash
       assert Process.alive?(handler)
@@ -66,9 +70,7 @@ defmodule Portfolio.Photography.EventHandlers.PhotoUploadedHandlerTest do
       }
 
       send(handler, {:photo_uploaded, event})
-
-      # Give it time to process
-      Process.sleep(50)
+      flush_handler(handler)
 
       # Verify EXIF extraction job was enqueued
       assert_enqueued(worker: ExifExtractionWorker, args: %{photo_id: photo.id})
@@ -77,9 +79,7 @@ defmodule Portfolio.Photography.EventHandlers.PhotoUploadedHandlerTest do
     test "handles unexpected messages gracefully", %{handler: handler} do
       # Send unexpected message
       send(handler, :unexpected_message)
-
-      # Give it time to process
-      Process.sleep(20)
+      flush_handler(handler)
 
       # Handler should not crash
       assert Process.alive?(handler)
@@ -100,8 +100,7 @@ defmodule Portfolio.Photography.EventHandlers.PhotoUploadedHandlerTest do
         uploaded_at: DateTime.utc_now()
       })
 
-      # Give it time to process
-      Process.sleep(50)
+      flush_handler(handler)
 
       # Handler should still be alive
       assert Process.alive?(handler)

@@ -187,7 +187,6 @@ defmodule PortfolioWeb.Integration.RoleChangeTest do
         for role <- [:admin, :user, :admin, :user, :admin] do
           Task.async(fn ->
             update_user_role(user, role)
-            Process.sleep(10)
           end)
         end
 

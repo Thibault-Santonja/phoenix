@@ -6,6 +6,13 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
   alias Portfolio.Auth.Events.MagicLinkVerified
   alias Portfolio.DomainEvents
 
+  # Helper to ensure GenServer has processed all pending messages
+  # Uses :sys.get_state which blocks until the GenServer processes all messages in queue
+  defp flush_handler(pid) do
+    :sys.get_state(pid)
+    :ok
+  end
+
   describe "start_link/1" do
     test "starts the handler GenServer" do
       case GenServer.whereis(MagicLinkHandler) do
@@ -56,7 +63,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
       }
 
       send(pid, {:magic_link_requested, event})
-      Process.sleep(50)
+      flush_handler(pid)
 
       assert Process.alive?(pid)
     end
@@ -71,7 +78,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
       }
 
       DomainEvents.publish(:magic_link_requested, event)
-      Process.sleep(50)
+      flush_handler(pid)
 
       # Handler should still be alive after processing
       assert Process.alive?(pid)
@@ -90,7 +97,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
         send(pid, {:magic_link_requested, event})
       end
 
-      Process.sleep(100)
+      flush_handler(pid)
       assert Process.alive?(pid)
     end
   end
@@ -116,7 +123,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
       }
 
       send(pid, {:magic_link_verified, event})
-      Process.sleep(50)
+      flush_handler(pid)
 
       assert Process.alive?(pid)
     end
@@ -130,7 +137,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
       }
 
       DomainEvents.publish(:magic_link_verified, event)
-      Process.sleep(50)
+      flush_handler(pid)
 
       assert Process.alive?(pid)
     end
@@ -147,7 +154,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
         send(pid, {:magic_link_verified, event})
       end
 
-      Process.sleep(100)
+      flush_handler(pid)
       assert Process.alive?(pid)
     end
   end
@@ -179,28 +186,28 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
 
     test "handles unexpected tuple message gracefully", %{handler_pid: pid} do
       send(pid, {:unexpected_event, %{data: "test"}})
-      Process.sleep(50)
+      flush_handler(pid)
 
       assert Process.alive?(pid)
     end
 
     test "handles unexpected atom message gracefully", %{handler_pid: pid} do
       send(pid, :random_atom)
-      Process.sleep(50)
+      flush_handler(pid)
 
       assert Process.alive?(pid)
     end
 
     test "handles nil message gracefully", %{handler_pid: pid} do
       send(pid, nil)
-      Process.sleep(50)
+      flush_handler(pid)
 
       assert Process.alive?(pid)
     end
 
     test "handles string message gracefully", %{handler_pid: pid} do
       send(pid, "unexpected string")
-      Process.sleep(100)
+      flush_handler(pid)
 
       assert Process.alive?(pid)
     end
@@ -225,7 +232,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
       }
 
       DomainEvents.publish(:magic_link_requested, event)
-      Process.sleep(50)
+      flush_handler(pid)
 
       # Handler processed event and is still alive
       assert Process.alive?(pid)
@@ -249,7 +256,7 @@ defmodule Portfolio.Auth.EventHandlers.MagicLinkHandlerTest do
       }
 
       DomainEvents.publish(:magic_link_verified, event)
-      Process.sleep(50)
+      flush_handler(pid)
 
       assert Process.alive?(pid)
 

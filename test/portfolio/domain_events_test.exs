@@ -3,6 +3,9 @@ defmodule Portfolio.DomainEventsTest do
 
   alias Portfolio.DomainEvents
 
+  # Short timeout for synchronous pub/sub (events are delivered immediately)
+  @receive_timeout 50
+
   describe "publish/2 and subscribe/1" do
     test "publishes events to subscribed processes" do
       # Subscribe to a test event
@@ -13,7 +16,7 @@ defmodule Portfolio.DomainEventsTest do
       :ok = DomainEvents.publish(:test_event, payload)
 
       # Assert the process receives the event
-      assert_receive {:test_event, ^payload}, 100
+      assert_receive {:test_event, ^payload}, @receive_timeout
     end
 
     test "does not receive events without subscription" do
@@ -21,17 +24,20 @@ defmodule Portfolio.DomainEventsTest do
       payload = %{id: "456", message: "test2"}
       :ok = DomainEvents.publish(:unsubscribed_event, payload)
 
-      # Should not receive any message
-      refute_receive {:unsubscribed_event, _}, 100
+      # Should not receive any message (use 0 timeout - mailbox check only)
+      refute_receive {:unsubscribed_event, _}, 0
     end
 
     test "multiple subscribers receive the same event" do
       # Create a test process that subscribes
       parent = self()
+      ref1 = make_ref()
+      ref2 = make_ref()
 
       subscriber1 =
         spawn_link(fn ->
           DomainEvents.subscribe(:multi_event)
+          send(parent, {:ready, ref1})
 
           receive do
             {:multi_event, payload} ->
@@ -42,6 +48,7 @@ defmodule Portfolio.DomainEventsTest do
       subscriber2 =
         spawn_link(fn ->
           DomainEvents.subscribe(:multi_event)
+          send(parent, {:ready, ref2})
 
           receive do
             {:multi_event, payload} ->
@@ -49,16 +56,17 @@ defmodule Portfolio.DomainEventsTest do
           end
         end)
 
-      # Give subscribers time to subscribe
-      Process.sleep(10)
+      # Wait for subscribers to be ready (deterministic)
+      assert_receive {:ready, ^ref1}, @receive_timeout
+      assert_receive {:ready, ^ref2}, @receive_timeout
 
       # Publish event
       payload = %{test: "data"}
       DomainEvents.publish(:multi_event, payload)
 
       # Both subscribers should receive
-      assert_receive {:subscriber1, ^payload}, 100
-      assert_receive {:subscriber2, ^payload}, 100
+      assert_receive {:subscriber1, ^payload}, @receive_timeout
+      assert_receive {:subscriber2, ^payload}, @receive_timeout
 
       # Cleanup
       Process.exit(subscriber1, :kill)
@@ -75,8 +83,8 @@ defmodule Portfolio.DomainEventsTest do
       DomainEvents.publish(:event_a, payload_a)
       DomainEvents.publish(:event_b, payload_b)
 
-      assert_receive {:event_a, ^payload_a}, 100
-      assert_receive {:event_b, ^payload_b}, 100
+      assert_receive {:event_a, ^payload_a}, @receive_timeout
+      assert_receive {:event_b, ^payload_b}, @receive_timeout
     end
   end
 
@@ -87,15 +95,15 @@ defmodule Portfolio.DomainEventsTest do
       # Receive first event
       payload1 = %{count: 1}
       DomainEvents.publish(:unsub_test, payload1)
-      assert_receive {:unsub_test, ^payload1}, 100
+      assert_receive {:unsub_test, ^payload1}, @receive_timeout
 
       # Unsubscribe
       :ok = DomainEvents.unsubscribe(:unsub_test)
 
-      # Publish second event - should not receive
+      # Publish second event - should not receive (use 0 timeout)
       payload2 = %{count: 2}
       DomainEvents.publish(:unsub_test, payload2)
-      refute_receive {:unsub_test, ^payload2}, 100
+      refute_receive {:unsub_test, ^payload2}, 0
     end
   end
 end

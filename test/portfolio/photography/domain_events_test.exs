@@ -7,6 +7,9 @@ defmodule Portfolio.Photography.DomainEventsTest do
   alias Portfolio.Photography
   alias Portfolio.Photography.Events.{AlbumPublished, PhotoUploaded}
 
+  # Short timeout for synchronous event delivery
+  @receive_timeout 50
+
   setup do
     # Subscribe to events before each test
     DomainEvents.subscribe(:album_published)
@@ -21,7 +24,7 @@ defmodule Portfolio.Photography.DomainEventsTest do
       {:ok, published_album} = Photography.publish_album(album)
 
       # Assert event was published
-      assert_receive {:album_published, %AlbumPublished{} = event}, 100
+      assert_receive {:album_published, %AlbumPublished{} = event}, @receive_timeout
 
       # Verify event data
       assert event.album_id == published_album.id
@@ -37,7 +40,7 @@ defmodule Portfolio.Photography.DomainEventsTest do
 
       {:ok, published_album} = Photography.publish_album(album, user_id)
 
-      assert_receive {:album_published, %AlbumPublished{} = event}, 100
+      assert_receive {:album_published, %AlbumPublished{} = event}, @receive_timeout
       assert event.user_id == user_id
       assert event.album_id == published_album.id
     end
@@ -66,7 +69,7 @@ defmodule Portfolio.Photography.DomainEventsTest do
       {:ok, photo} = Photography.create_photo(photo_attrs)
 
       # Assert event was published
-      assert_receive {:photo_uploaded, %PhotoUploaded{} = event}, 100
+      assert_receive {:photo_uploaded, %PhotoUploaded{} = event}, @receive_timeout
 
       # Verify event data
       assert event.photo_id == photo.id
@@ -94,8 +97,8 @@ defmodule Portfolio.Photography.DomainEventsTest do
         0 -> :ok
       end
 
-      # Should not receive photo uploaded event
-      refute_receive {:photo_uploaded, _}, 100
+      # Should not receive photo uploaded event (use 0 timeout)
+      refute_receive {:photo_uploaded, _}, 0
     end
   end
 end
