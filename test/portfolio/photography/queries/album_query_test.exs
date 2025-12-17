@@ -1,5 +1,5 @@
 defmodule Portfolio.Photography.Queries.AlbumQueryTest do
-  use Portfolio.DataCase
+  use Portfolio.DataCase, async: true
 
   import Ecto.Query, only: [where: 3]
 

@@ -1,5 +1,5 @@
 defmodule Portfolio.Workers.MagicLinkCleanerWorkerTest do
-  use Portfolio.DataCase
+  use Portfolio.DataCase, async: true
   use Oban.Testing, repo: Portfolio.Repo
 
   alias Portfolio.Auth.{MagicLink, User}

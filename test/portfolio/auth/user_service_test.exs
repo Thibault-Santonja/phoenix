@@ -1,5 +1,5 @@
 defmodule Portfolio.Auth.UserServiceTest do
-  use Portfolio.DataCase
+  use Portfolio.DataCase, async: true
 
   alias Portfolio.Auth.{MagicLink, User, UserService, UserSession}
 

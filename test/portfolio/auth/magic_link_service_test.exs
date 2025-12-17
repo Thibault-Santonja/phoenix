@@ -1,5 +1,6 @@
 defmodule Portfolio.Auth.MagicLinkServiceTest do
-  use Portfolio.DataCase
+  # async: false required for rate limiting tests which use global state
+  use Portfolio.DataCase, async: false
 
   alias Portfolio.Auth.{MagicLink, MagicLinkService, User}
 

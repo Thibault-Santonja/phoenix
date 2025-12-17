@@ -4,7 +4,7 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
 
   Covers edge cases and error conditions during magic link verification.
   """
-  use Portfolio.DataCase
+  use Portfolio.DataCase, async: true
 
   alias Portfolio.Auth.{MagicLink, MagicLinkService, User}
 

@@ -1,6 +1,8 @@
 defmodule Portfolio.PhotographyTest do
   use Portfolio.DataCase, async: false
 
+  import Ecto.Query
+
   alias Portfolio.Photography
   alias Portfolio.Photography.Photo
 
@@ -326,16 +328,23 @@ defmodule Portfolio.PhotographyTest do
     end
 
     test "returns oldest pending photo", %{album: album} do
-      # Create photos with slight delay to ensure ordering
+      # Create photos with explicit timestamps to ensure ordering
       photo1 = create_photo(album: album, processing_status: "pending")
-      Process.sleep(10)
       _photo2 = create_photo(album: album, processing_status: "pending")
+
+      # Set photo1 to be older using direct DB update
+      older_time = DateTime.add(DateTime.utc_now(), -60, :second)
+
+      Portfolio.Repo.update_all(
+        from(p in Portfolio.Photography.Photo, where: p.id == ^photo1.id),
+        set: [inserted_at: older_time]
+      )
 
       {:ok, oldest} = Photography.get_oldest_pending_photo()
 
-      # The oldest should be photo1 (or an even older one from other tests)
+      # The oldest should be photo1 (we explicitly made it older)
       assert oldest.processing_status == "pending"
-      assert oldest.inserted_at <= photo1.inserted_at
+      assert oldest.id == photo1.id or oldest.inserted_at <= older_time
     end
 
     test "returns error when no pending photos exist", %{album: album} do

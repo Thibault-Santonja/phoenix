@@ -2,6 +2,7 @@ defmodule Portfolio.Auth.AuditLoggerTest do
   # async: false to avoid deadlocks with concurrent user creation in other tests
   use Portfolio.DataCase, async: false
 
+  import Ecto.Query
   import PortfolioTest.Fixtures.AuthFixtures
 
   alias Portfolio.Auth.AuditLog
@@ -239,11 +240,16 @@ defmodule Portfolio.Auth.AuditLoggerTest do
       {:ok, log1} =
         AuditLogger.log_sessions_revoked(user, session_count: 1, performed_by: admin)
 
-      # Attendre un peu pour avoir des timestamps différents
-      Process.sleep(10)
-
       {:ok, log2} =
         AuditLogger.log_sessions_revoked(user, session_count: 2, performed_by: admin)
+
+      # Set log1 to be older using direct DB update for deterministic ordering
+      older_time = DateTime.add(DateTime.utc_now(), -60, :second)
+
+      Repo.update_all(
+        from(l in AuditLog, where: l.id == ^log1.id),
+        set: [inserted_at: older_time]
+      )
 
       logs = AuditLogger.get_logs_for_resource("User", user.id)
 

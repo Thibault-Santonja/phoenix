@@ -1,5 +1,5 @@
 defmodule Portfolio.Auth.SessionServiceTest do
-  use Portfolio.DataCase
+  use Portfolio.DataCase, async: true
 
   alias Portfolio.Auth
   alias Portfolio.Auth.SessionService

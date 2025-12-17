@@ -1,5 +1,5 @@
 defmodule Portfolio.Auth.UserTest do
-  use Portfolio.DataCase
+  use Portfolio.DataCase, async: true
 
   alias Portfolio.Auth.User
 
