@@ -40,9 +40,7 @@ import {
 } from "./hooks";
 
 function getSystemTheme() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 function setTheme() {
@@ -74,11 +72,9 @@ Hooks.SmoothScroll = SmoothScroll;
 Hooks.RateLimitCountdown = RateLimitCountdown;
 Hooks.MagicLinkExpiration = MagicLinkExpiration;
 
-let csrfToken = document
-  .querySelector("meta[name='csrf-token']")
-  .getAttribute("content");
+const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 
-let liveSocket = new LiveSocket("/live", Socket, {
+const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {
     _csrf_token: csrfToken,
@@ -104,14 +100,14 @@ window.liveSocket = liveSocket;
 
 // Normalize locale value to prevent injection (BCP-47 format)
 const normalizeLocale = (value) =>
-  typeof value === "string"
-    ? value.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 20)
-    : "";
+  typeof value === "string" ? value.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 20) : "";
 
 const SetLocale = () => {
-  if (document.cookie.match(/(?:^|;\s*)locale=/) == null) {
+  if (document.cookie.match(/(?:^|;\s*)locale=/) === null) {
     const locale = normalizeLocale(navigator.language);
-    if (!locale) return;
+    if (!locale) {
+      return;
+    }
     document.cookie = `locale=${locale};path=/`;
     // Only reload if cookie was successfully set (avoid infinite loop if cookies blocked)
     if (document.cookie.match(/(?:^|;\s*)locale=/)) {
@@ -123,7 +119,9 @@ SetLocale();
 
 window.addEventListener("phx:change_locale", (e) => {
   const locale = normalizeLocale(e.detail.locale);
-  if (!locale) return;
+  if (!locale) {
+    return;
+  }
   document.cookie = `locale=${locale};path=/`;
   location.reload();
 });

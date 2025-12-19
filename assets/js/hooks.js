@@ -1,17 +1,8 @@
-import {
-  animate,
-  utils,
-  createDraggable,
-  createSpring,
-  onScroll,
-  stagger,
-} from "animejs";
+import { animate, utils, createDraggable, createSpring, onScroll } from "animejs";
 import Sortable from "sortablejs";
 
 // Conditional logging: only log in development mode
-const isDev =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1";
+const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 const log = isDev ? console.log.bind(console) : () => {};
 
 export const AnimateThis = {
@@ -170,7 +161,7 @@ export const AnimateTimelineScroll = {
         root: null,
         // threshold: 0.2, // 20% visible
         rootMargin: "-20% 0px -50% 0px", // zone d’activation centrée verticalement
-      },
+      }
     );
 
     observer.observe(timeline);
@@ -186,8 +177,7 @@ export const AnimateTimelineScroll = {
   enableScrollSync(timeline, container) {
     this.scrollHandler = (e) => {
       const atStart = timeline.scrollLeft === 0;
-      const atEnd =
-        timeline.scrollLeft + timeline.clientWidth >= timeline.scrollWidth - 1;
+      const atEnd = timeline.scrollLeft + timeline.clientWidth >= timeline.scrollWidth - 1;
 
       const goingUp = e.deltaY < 0;
       const goingDown = e.deltaY > 0;
@@ -288,18 +278,20 @@ export const GalleryModal = {
 export const YearTrigger = {
   mounted() {
     // Use instance-level flag instead of global to allow proper cleanup
-    if (this.initialized) return;
+    if (this.initialized) {
+      return;
+    }
     this.initialized = true;
 
     this.yearEl = document.getElementById("timeline-year");
-    if (!this.yearEl) return;
+    if (!this.yearEl) {
+      return;
+    }
 
     this.navLinks = document.querySelectorAll("[data-anchor-year]");
     this.sections = document.querySelectorAll("[data-year]");
     this.currentYear = parseInt(
-      [...this.yearEl.querySelectorAll(".digit")]
-        .map((d) => d.textContent)
-        .join(""),
+      [...this.yearEl.querySelectorAll(".digit")].map((d) => d.textContent).join("")
     );
 
     // Use arrow functions to preserve 'this' context
@@ -366,14 +358,12 @@ export const YearTrigger = {
       (entries) => {
         const visible = entries
           .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) =>
-              Math.abs(a.boundingClientRect.top) -
-              Math.abs(b.boundingClientRect.top),
-          );
+          .sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top));
 
         const topEntry = visible[0];
-        if (!topEntry) return;
+        if (!topEntry) {
+          return;
+        }
 
         const newYear = parseInt(topEntry.target.dataset.year);
         if (newYear !== this.currentYear) {
@@ -385,7 +375,7 @@ export const YearTrigger = {
             const fromDigit = parseInt(fromStr[i]);
             const toDigit = parseInt(toStr[i]);
 
-            if (fromDigit != toDigit) {
+            if (fromDigit !== toDigit) {
               this.animateDigitRoll(digitWrappers[i], fromDigit, toDigit);
             }
           }
@@ -398,7 +388,7 @@ export const YearTrigger = {
       },
       {
         rootMargin: "-20% 0px -80% 0px",
-      },
+      }
     );
 
     this.animateNavYearMenu(this.currentYear);
@@ -430,7 +420,9 @@ export const HorizontalScrollFadeIn = {
 
   mounted() {
     this.handleWheel = (e) => {
-      if (e.deltaY === 0) return;
+      if (e.deltaY === 0) {
+        return;
+      }
 
       // prevent the page from scrolling vertically
       e.preventDefault();
@@ -460,7 +452,9 @@ export const HorizontalScrollFadeIn = {
 export const AnimatePhotographyGallery = {
   mounted() {
     const [header] = document.getElementsByClassName("project-title");
-    if (!header) return;
+    if (!header) {
+      return;
+    }
 
     setTimeout(() => {
       header.classList.replace("opacity-0", "opacity-100");
@@ -527,9 +521,7 @@ export const SmoothScroll = {
       // If not found and it's a year anchor (#year-XXXX), find first album with that year
       if (!target && href.startsWith("#year-")) {
         const yearAnchor = href.substring(1); // Remove the #
-        target = document.querySelector(
-          `[data-album-year-anchor="${yearAnchor}"]`,
-        );
+        target = document.querySelector(`[data-album-year-anchor="${yearAnchor}"]`);
       }
 
       if (target) {
@@ -617,9 +609,9 @@ export const PhotoSortable = {
           log("Drag ended", evt.oldIndex, "->", evt.newIndex);
 
           // Get all photo IDs in the new order
-          const photoIds = Array.from(
-            this.el.querySelectorAll("[data-photo-id]"),
-          ).map((el) => el.dataset.photoId);
+          const photoIds = Array.from(this.el.querySelectorAll("[data-photo-id]")).map(
+            (el) => el.dataset.photoId
+          );
 
           log("New order:", photoIds);
 
@@ -638,7 +630,9 @@ export const RateLimitCountdown = {
     const retryAfter = parseInt(this.el.dataset.retryAfter, 10);
     const display = document.getElementById("countdown-display");
 
-    if (!display || !retryAfter) return;
+    if (!display || !retryAfter) {
+      return;
+    }
 
     let remaining = retryAfter;
 
@@ -679,7 +673,9 @@ export const MagicLinkExpiration = {
     const expiresIn = parseInt(this.el.dataset.expiresIn, 10);
     const display = document.getElementById("magic-link-countdown");
 
-    if (!display || !expiresIn) return;
+    if (!display || !expiresIn) {
+      return;
+    }
 
     let remaining = expiresIn;
 
@@ -693,12 +689,8 @@ export const MagicLinkExpiration = {
         display.textContent = `${seconds}s`;
       } else {
         display.textContent = "expiré";
-        display.parentElement.parentElement.parentElement.classList.remove(
-          "bg-green-50",
-        );
-        display.parentElement.parentElement.parentElement.classList.add(
-          "bg-red-50",
-        );
+        display.parentElement.parentElement.parentElement.classList.remove("bg-green-50");
+        display.parentElement.parentElement.parentElement.classList.add("bg-red-50");
         display.parentElement.querySelector("p").innerHTML =
           "Le lien de connexion a expiré. Veuillez demander un nouveau lien.";
       }
@@ -744,7 +736,7 @@ export const InfiniteScroll = {
         // Similar to Instagram/Twitter strategy for smooth infinite scroll
         rootMargin: "1200px",
         threshold: 0,
-      },
+      }
     );
 
     this.observer.observe(this.el);
