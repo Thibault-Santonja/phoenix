@@ -219,6 +219,11 @@ config :logger, :console,
     :errors,
     :fields,
     :paths,
+    # Security/PathValidator metadata
+    :allowed_base,
+    :caller,
+    :filename,
+    :length,
     # Rate limiting metadata
     :action,
     :identifier,

@@ -45,6 +45,9 @@ defmodule Mix.Tasks.Precommit do
     {:deps_unlock, "deps.unlock --check-unused", :required},
     # Translations must be up to date
     {:gettext, "gettext.extract --check-up-to-date", :required},
+    # JavaScript linting and formatting
+    {:js_lint, "cmd npm --prefix assets run lint", :js},
+    {:js_format, "cmd npm --prefix assets run format:check", :js},
     # Type checking (required but can be skipped if PLT not built yet)
     {:dialyzer, "dialyzer", :dialyzer},
     # Tests with coverage (threshold enforced in coveralls.json)
@@ -98,6 +101,8 @@ defmodule Mix.Tasks.Precommit do
 
   defp execute_check(:dialyzer, _cmd), do: run_dialyzer()
   defp execute_check(:hex_audit, _cmd), do: run_hex_audit()
+  defp execute_check(:js_lint, _cmd), do: run_js_check("lint")
+  defp execute_check(:js_format, _cmd), do: run_js_check("format:check")
   defp execute_check(_name, command), do: run_mix_task(command)
 
   defp run_dialyzer do
@@ -114,6 +119,19 @@ defmodule Mix.Tasks.Precommit do
     case System.cmd("mix", ["hex.audit"], stderr_to_stdout: true) do
       {_output, 0} -> :ok
       {_output, _} -> :error
+    end
+  end
+
+  defp run_js_check(script) do
+    # Check if node_modules exists in assets directory
+    if File.exists?("assets/node_modules") do
+      case System.cmd("npm", ["--prefix", "assets", "run", script], stderr_to_stdout: true) do
+        {_output, 0} -> :ok
+        {_output, _} -> :error
+      end
+    else
+      IO.puts(yellow("  node_modules not found - run 'npm install --prefix assets' first"))
+      :skipped
     end
   end
 
@@ -184,10 +202,10 @@ defmodule Mix.Tasks.Precommit do
     end
   end
 
-  # All checks must pass (required) or be skipped (dialyzer without PLT)
+  # All checks must pass (required) or be skipped (dialyzer without PLT, JS without node_modules)
   defp all_passed?(results) do
     Enum.all?(results, fn {_, status, _, importance} ->
-      status == :ok or (status == :skipped and importance in [:optional, :dialyzer])
+      status == :ok or (status == :skipped and importance in [:optional, :dialyzer, :js])
     end)
   end
 

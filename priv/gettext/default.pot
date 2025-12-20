@@ -689,7 +689,7 @@ msgstr ""
 msgid "branch"
 msgstr ""
 
-#: lib/portfolio_web/components/mishka_chelekom_components/badge.ex:181
+#: lib/portfolio_web/components/mishka_chelekom_components/badge.ex:203
 #: lib/portfolio_web/components/mishka_chelekom_components/banner.ex:197
 #: lib/portfolio_web/components/mishka_chelekom_components/modal.ex:152
 #: lib/portfolio_web/components/mishka_chelekom_components/toast.ex:293
@@ -758,42 +758,42 @@ msgstr ""
 msgid "admin.dashboard.title"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:99
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:101
 #, elixir-autogen, elixir-format
 msgid "time.day"
 msgid_plural "time.days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:95
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:97
 #, elixir-autogen, elixir-format
 msgid "time.hour"
 msgid_plural "time.hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:91
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:93
 #, elixir-autogen, elixir-format
 msgid "time.minute"
 msgid_plural "time.minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:103
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:105
 #, elixir-autogen, elixir-format
 msgid "time.month"
 msgid_plural "time.months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:87
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:89
 #, elixir-autogen, elixir-format
 msgid "time.second"
 msgid_plural "time.seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/portfolio_web/live/admin/photo_live/index.ex:25
+#: lib/portfolio_web/live/admin/photo_live/index.ex:26
 #: lib/portfolio_web/live/admin/photo_live/index.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "admin.photos.title"
@@ -825,17 +825,17 @@ msgstr ""
 msgid "admin.profile.update_success"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:158
+#: lib/portfolio_web/live/admin/user_live/index.ex:174
 #, elixir-autogen, elixir-format
 msgid "admin.users.delete_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:150
+#: lib/portfolio_web/live/admin/user_live/index.ex:159
 #, elixir-autogen, elixir-format
 msgid "admin.users.delete_success"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:181
+#: lib/portfolio_web/live/admin/user_live/index.ex:200
 #, elixir-autogen, elixir-format
 msgid "admin.users.sessions_revoked"
 msgstr ""
@@ -846,17 +846,17 @@ msgstr ""
 msgid "admin.users.title"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:105
+#: lib/portfolio_web/live/admin/user_live/index.ex:114
 #, elixir-autogen, elixir-format
 msgid "admin.users.update_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:95
+#: lib/portfolio_web/live/admin/user_live/index.ex:104
 #, elixir-autogen, elixir-format
 msgid "admin.users.update_success"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/index.ex:169
+#: lib/portfolio_web/live/admin/album_live/index.ex:178
 #, elixir-autogen, elixir-format
 msgid "admin.albums.delete_error"
 msgstr ""
@@ -866,7 +866,7 @@ msgstr ""
 msgid "admin.albums.delete_photo_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/index.ex:163
+#: lib/portfolio_web/live/admin/album_live/index.ex:172
 #, elixir-autogen, elixir-format
 msgid "admin.albums.delete_success"
 msgstr ""
@@ -876,8 +876,8 @@ msgstr ""
 msgid "admin.albums.edit_title"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/index.ex:175
-#: lib/portfolio_web/live/admin/album_live/index.ex:200
+#: lib/portfolio_web/live/admin/album_live/index.ex:184
+#: lib/portfolio_web/live/admin/album_live/index.ex:209
 #, elixir-autogen, elixir-format
 msgid "admin.albums.not_found"
 msgstr ""
@@ -907,12 +907,12 @@ msgstr ""
 msgid "admin.albums.photos_added"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/index.ex:194
+#: lib/portfolio_web/live/admin/album_live/index.ex:203
 #, elixir-autogen, elixir-format
 msgid "admin.albums.publish_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/index.ex:188
+#: lib/portfolio_web/live/admin/album_live/index.ex:197
 #, elixir-autogen, elixir-format
 msgid "admin.albums.publish_updated"
 msgstr ""
@@ -927,8 +927,8 @@ msgstr ""
 msgid "admin.albums.reprocess_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/index.ex:26
-#: lib/portfolio_web/live/admin/album_live/index.ex:74
+#: lib/portfolio_web/live/admin/album_live/index.ex:27
+#: lib/portfolio_web/live/admin/album_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "admin.albums.title"
 msgstr ""
@@ -938,187 +938,177 @@ msgstr ""
 msgid "admin.albums.upload_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:173
-#: lib/portfolio_web/live/admin/album_live/index.ex:215
-#: lib/portfolio_web/live/photography_live/index.ex:70
-#: lib/portfolio_web/live/photography_live/modal_content.ex:15
+#: lib/portfolio_web/helpers/album_type_formatter.ex:32
+#: lib/portfolio_web/helpers/album_type_formatter.ex:54
+#: lib/portfolio_web/live/admin/album_live/index.ex:224
 #, elixir-autogen, elixir-format
 msgid "album.type.china"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:164
-#: lib/portfolio_web/live/admin/album_live/index.ex:206
-#: lib/portfolio_web/live/photography_live/index.ex:71
-#: lib/portfolio_web/live/photography_live/modal_content.ex:16
+#: lib/portfolio_web/helpers/album_type_formatter.ex:23
+#: lib/portfolio_web/helpers/album_type_formatter.ex:55
+#: lib/portfolio_web/live/admin/album_live/index.ex:215
 #, elixir-autogen, elixir-format
 msgid "album.type.couples"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:167
-#: lib/portfolio_web/live/admin/album_live/index.ex:209
-#: lib/portfolio_web/live/photography_live/index.ex:72
-#: lib/portfolio_web/live/photography_live/modal_content.ex:17
+#: lib/portfolio_web/helpers/album_type_formatter.ex:26
+#: lib/portfolio_web/helpers/album_type_formatter.ex:56
+#: lib/portfolio_web/live/admin/album_live/index.ex:218
 #, elixir-autogen, elixir-format
 msgid "album.type.events"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:174
-#: lib/portfolio_web/live/admin/album_live/index.ex:216
-#: lib/portfolio_web/live/photography_live/index.ex:73
-#: lib/portfolio_web/live/photography_live/modal_content.ex:18
+#: lib/portfolio_web/helpers/album_type_formatter.ex:33
+#: lib/portfolio_web/helpers/album_type_formatter.ex:57
+#: lib/portfolio_web/live/admin/album_live/index.ex:225
 #, elixir-autogen, elixir-format
 msgid "album.type.japan"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:168
-#: lib/portfolio_web/live/admin/album_live/index.ex:210
-#: lib/portfolio_web/live/photography_live/index.ex:74
-#: lib/portfolio_web/live/photography_live/modal_content.ex:19
+#: lib/portfolio_web/helpers/album_type_formatter.ex:27
+#: lib/portfolio_web/helpers/album_type_formatter.ex:58
+#: lib/portfolio_web/live/admin/album_live/index.ex:219
 #, elixir-autogen, elixir-format
 msgid "album.type.landscape"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:166
-#: lib/portfolio_web/live/admin/album_live/index.ex:208
+#: lib/portfolio_web/helpers/album_type_formatter.ex:25
+#: lib/portfolio_web/live/admin/album_live/index.ex:217
 #, elixir-autogen, elixir-format
 msgid "album.type.motherhood"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:170
-#: lib/portfolio_web/live/admin/album_live/index.ex:212
+#: lib/portfolio_web/helpers/album_type_formatter.ex:29
+#: lib/portfolio_web/live/admin/album_live/index.ex:221
 #, elixir-autogen, elixir-format
 msgid "album.type.music"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:171
-#: lib/portfolio_web/live/admin/album_live/index.ex:213
-#: lib/portfolio_web/live/photography_live/index.ex:77
-#: lib/portfolio_web/live/photography_live/modal_content.ex:22
+#: lib/portfolio_web/helpers/album_type_formatter.ex:30
+#: lib/portfolio_web/helpers/album_type_formatter.ex:61
+#: lib/portfolio_web/live/admin/album_live/index.ex:222
 #, elixir-autogen, elixir-format
 msgid "album.type.reenactment"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:169
-#: lib/portfolio_web/live/admin/album_live/index.ex:211
+#: lib/portfolio_web/helpers/album_type_formatter.ex:28
+#: lib/portfolio_web/live/admin/album_live/index.ex:220
 #, elixir-autogen, elixir-format
 msgid "album.type.street"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:175
-#: lib/portfolio_web/live/admin/album_live/index.ex:217
-#: lib/portfolio_web/live/photography_live/index.ex:79
-#: lib/portfolio_web/live/photography_live/modal_content.ex:24
+#: lib/portfolio_web/helpers/album_type_formatter.ex:34
+#: lib/portfolio_web/helpers/album_type_formatter.ex:63
+#: lib/portfolio_web/live/admin/album_live/index.ex:226
 #, elixir-autogen, elixir-format
 msgid "album.type.taiwan"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:165
-#: lib/portfolio_web/live/admin/album_live/index.ex:207
-#: lib/portfolio_web/live/photography_live/index.ex:80
-#: lib/portfolio_web/live/photography_live/modal_content.ex:25
+#: lib/portfolio_web/helpers/album_type_formatter.ex:24
+#: lib/portfolio_web/helpers/album_type_formatter.ex:64
+#: lib/portfolio_web/live/admin/album_live/index.ex:216
 #, elixir-autogen, elixir-format
 msgid "album.type.wedding"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:91
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:92
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.cancel"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:87
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:88
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.create"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:132
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:133
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.create_success"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:50
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:51
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.description"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:67
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:68
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.end_date"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:54
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:55
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.location"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:81
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:82
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.published"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:74
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:75
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.reference_link"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:88
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:89
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.save"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:85
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:86
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.saving"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:43
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:44
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.select_type"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:60
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:61
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.start_date"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:24
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:25
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.subtitle_edit"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:22
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:23
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.subtitle_new"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:36
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:37
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.title"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:41
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:42
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.type"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/album_live/form_component.ex:147
+#: lib/portfolio_web/live/admin/album_live/form_component.ex:148
 #, elixir-autogen, elixir-format
 msgid "admin.albums.form.update_success"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/modal_content.ex:62
+#: lib/portfolio_web/live/photography_live/modal_content.ex:50
 #, elixir-autogen, elixir-format
 msgid "photography.close"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:76
-#: lib/portfolio_web/live/photography_live/modal_content.ex:21
+#: lib/portfolio_web/helpers/album_type_formatter.ex:60
 #, elixir-autogen, elixir-format
 msgid "photography.concerts_music"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:81
+#: lib/portfolio_web/helpers/album_type_formatter.ex:65
 #: lib/portfolio_web/live/photography_live/index.html.heex:80
-#: lib/portfolio_web/live/photography_live/modal_content.ex:26
 #, elixir-autogen, elixir-format
 msgid "photography.gallery"
 msgstr ""
@@ -1138,26 +1128,24 @@ msgstr ""
 msgid "photography.gallery.taiwan_title"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:75
-#: lib/portfolio_web/live/photography_live/modal_content.ex:20
+#: lib/portfolio_web/helpers/album_type_formatter.ex:59
 #, elixir-autogen, elixir-format
 msgid "photography.motherhood_families"
 msgstr ""
 
 #: lib/portfolio_web/live/photography_live/gallery.ex:109
 #: lib/portfolio_web/live/photography_live/gallery.ex:135
-#: lib/portfolio_web/live/photography_live/index.ex:66
+#: lib/portfolio_web/live/photography_live/index.ex:70
 #, elixir-autogen, elixir-format
 msgid "photography.page_title"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/modal_content.ex:94
+#: lib/portfolio_web/live/photography_live/modal_content.ex:82
 #, elixir-autogen, elixir-format
 msgid "photography.show_more"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/index.ex:78
-#: lib/portfolio_web/live/photography_live/modal_content.ex:23
+#: lib/portfolio_web/helpers/album_type_formatter.ex:62
 #, elixir-autogen, elixir-format
 msgid "photography.street_photography"
 msgstr ""
@@ -2203,54 +2191,54 @@ msgstr ""
 msgid "photography.timeline.website"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:140
+#: lib/portfolio_web/components/feedback_components.ex:134
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:138
 #, elixir-autogen, elixir-format
 msgid "components.flash.close"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:162
+#: lib/portfolio_web/components/feedback_components.ex:159
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:186
 #, elixir-autogen, elixir-format
 msgid "components.flash.error"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:166
+#: lib/portfolio_web/components/feedback_components.ex:163
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:195
 #, elixir-autogen, elixir-format
 msgid "components.flash.no_internet"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:171
+#: lib/portfolio_web/components/feedback_components.ex:168
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:201
 #, elixir-autogen, elixir-format
 msgid "components.flash.reconnecting"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:178
+#: lib/portfolio_web/components/feedback_components.ex:175
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:209
 #, elixir-autogen, elixir-format
 msgid "components.flash.server_error"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:183
+#: lib/portfolio_web/components/feedback_components.ex:180
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:215
 #, elixir-autogen, elixir-format
 msgid "components.flash.server_error_message"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:161
+#: lib/portfolio_web/components/feedback_components.ex:158
 #: lib/portfolio_web/components/mishka_chelekom_components/alert.ex:179
 #, elixir-autogen, elixir-format
 msgid "components.flash.success"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:83
+#: lib/portfolio_web/components/feedback_components.ex:69
 #, elixir-autogen, elixir-format
 msgid "components.modal.close"
 msgstr ""
 
-#: lib/portfolio_web/components/core_components.ex:493
+#: lib/portfolio_web/components/layout_components.ex:77
 #, elixir-autogen, elixir-format
 msgid "components.table.actions"
 msgstr ""
@@ -3445,17 +3433,21 @@ msgstr ""
 msgid "admin.ip_whitelist.update_success"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:213
+#: lib/portfolio_web/live/admin/user_live/index.ex:241
 #, elixir-autogen, elixir-format
 msgid "admin.users.magic_link_error"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:203
+#: lib/portfolio_web/live/admin/user_live/index.ex:231
 #, elixir-autogen, elixir-format
 msgid "admin.users.magic_link_sent"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/user_live/index.ex:208
+#: lib/portfolio_web/live/admin/user_live/index.ex:68
+#: lib/portfolio_web/live/admin/user_live/index.ex:167
+#: lib/portfolio_web/live/admin/user_live/index.ex:205
+#: lib/portfolio_web/live/admin/user_live/index.ex:236
+#: lib/portfolio_web/live/admin/user_live/index.ex:247
 #, elixir-autogen, elixir-format
 msgid "admin.users.user_not_found"
 msgstr ""
