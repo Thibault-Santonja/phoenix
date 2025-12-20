@@ -13,6 +13,7 @@ defmodule PortfolioWeb.Admin.PhotoLive.Index do
   use PortfolioWeb, :live_view
 
   alias Portfolio.Photography
+  alias PortfolioWeb.Helpers.PaginationHelper
 
   on_mount PortfolioWeb.LiveAuth
 
@@ -32,12 +33,12 @@ defmodule PortfolioWeb.Admin.PhotoLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    page = String.to_integer(params["page"] || "1")
+    page = PaginationHelper.parse_page(params["page"])
     album_filter = params["album"]
 
     photos = load_photos(page, socket.assigns.per_page, album_filter)
     total_photos = count_photos(album_filter)
-    total_pages = max(1, ceil(total_photos / socket.assigns.per_page))
+    total_pages = PaginationHelper.total_pages(total_photos, socket.assigns.per_page)
     albums = Photography.list_albums()
 
     {:noreply,
@@ -52,8 +53,10 @@ defmodule PortfolioWeb.Admin.PhotoLive.Index do
   end
 
   defp load_photos(page, per_page, album_filter) do
-    offset = (page - 1) * per_page
-    opts = [limit: per_page, offset: offset, preload: [:album], order_by: [desc: :inserted_at]]
+    opts =
+      PaginationHelper.build_opts(page, per_page,
+        extra: [preload: [:album], order_by: [desc: :inserted_at]]
+      )
 
     opts =
       if album_filter do

@@ -13,6 +13,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   use PortfolioWeb, :live_view
 
   alias Portfolio.Photography
+  alias PortfolioWeb.Helpers.{PaginationHelper, SortHelper}
 
   on_mount PortfolioWeb.LiveAuth
 
@@ -34,7 +35,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   @impl true
   def handle_params(params, _url, socket) do
     filter = params["filter"]
-    page = String.to_integer(params["page"] || "1")
+    page = PaginationHelper.parse_page(params["page"])
     sort_by = params["sort_by"]
     sort_order = params["sort_order"]
 
@@ -53,7 +54,7 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
         _ -> count_stats.all
       end
 
-    total_pages = ceil(total_albums / socket.assigns.per_page)
+    total_pages = PaginationHelper.total_pages(total_albums, socket.assigns.per_page)
     albums = load_albums(filter, page, socket.assigns.per_page, sort_by, sort_order)
 
     {:noreply,
@@ -83,7 +84,11 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   defp sortable_header(assigns) do
     {next_sort_by, next_sort_order} =
-      next_sort_state(assigns.column, assigns.current_sort_by, assigns.current_sort_order)
+      SortHelper.next_sort_state(
+        assigns.column,
+        assigns.current_sort_by,
+        assigns.current_sort_order
+      )
 
     assigns =
       assigns
@@ -96,7 +101,9 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
       class="group inline-flex items-center gap-1 hover:text-indigo-600"
     >
       {@label}
-      <span class="text-gray-400">{sort_icon(@column, @current_sort_by, @current_sort_order)}</span>
+      <span class="text-gray-400">
+        {SortHelper.sort_icon(@column, @current_sort_by, @current_sort_order)}
+      </span>
     </.link>
     """
   end
@@ -123,8 +130,8 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
 
   # Construit les options de base pour la requête (pagination et compteur de photos)
   defp build_base_opts(opts, per_page, page) do
-    offset = (page - 1) * per_page
-    Keyword.merge(opts, with_photo_count: true, limit: per_page, offset: offset)
+    pagination_opts = PaginationHelper.build_opts(page, per_page, extra: [with_photo_count: true])
+    Keyword.merge(opts, pagination_opts)
   end
 
   # Applique les filtres de publication
@@ -138,19 +145,21 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     Keyword.put(opts, :order_by, order_by)
   end
 
+  # Mapping des colonnes UI vers les champs Ecto
+  @column_mapping %{
+    "title" => :title,
+    "type" => :type,
+    "date" => :date_prise_vue,
+    "photos" => :photo_count,
+    "published" => :published
+  }
+
+  @default_order [desc: :date_prise_vue]
+
   # Construit la clause ORDER BY en fonction des paramètres de tri
-  defp build_order_by("title", "asc"), do: [asc: :title]
-  defp build_order_by("title", "desc"), do: [desc: :title]
-  defp build_order_by("type", "asc"), do: [asc: :type]
-  defp build_order_by("type", "desc"), do: [desc: :type]
-  defp build_order_by("date", "asc"), do: [asc: :date_prise_vue]
-  defp build_order_by("date", "desc"), do: [desc: :date_prise_vue]
-  defp build_order_by("photos", "asc"), do: [asc: :photo_count]
-  defp build_order_by("photos", "desc"), do: [desc: :photo_count]
-  defp build_order_by("published", "asc"), do: [asc: :published]
-  defp build_order_by("published", "desc"), do: [desc: :published]
-  # Ordre par défaut : date décroissante
-  defp build_order_by(_, _), do: [desc: :date_prise_vue]
+  defp build_order_by(sort_by, sort_order) do
+    SortHelper.build_order_by(sort_by, sort_order, @column_mapping, @default_order)
+  end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
@@ -265,43 +274,5 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
     params = if sort_by, do: [{:sort_by, sort_by} | params], else: params
     params = if sort_order, do: [{:sort_order, sort_order} | params], else: params
     params
-  end
-
-  # Cycle de tri à 3 états pour une colonne
-  # Dates: desc → asc → none
-  # Autres: asc → desc → none
-  defp next_sort_state(column, current_sort_by, current_sort_order) do
-    cond do
-      # Pas de tri actif OU tri sur une autre colonne
-      current_sort_by != column or current_sort_by == nil ->
-        initial_sort_order(column)
-
-      # Tri actif sur cette colonne
-      current_sort_by == column ->
-        cycle_sort_order(column, current_sort_order)
-    end
-  end
-
-  defp initial_sort_order("date"), do: {"date", "desc"}
-  defp initial_sort_order(column), do: {column, "asc"}
-
-  defp cycle_sort_order("date", "desc"), do: {"date", "asc"}
-  defp cycle_sort_order("date", "asc"), do: {nil, nil}
-  defp cycle_sort_order(column, "asc"), do: {column, "desc"}
-  defp cycle_sort_order(_column, "desc"), do: {nil, nil}
-  defp cycle_sort_order(_column, _), do: {nil, nil}
-
-  # Helper pour obtenir l'icône de tri à afficher
-  defp sort_icon(column, current_sort_by, current_sort_order) do
-    cond do
-      current_sort_by == column and current_sort_order == "asc" ->
-        "↑"
-
-      current_sort_by == column and current_sort_order == "desc" ->
-        "↓"
-
-      true ->
-        ""
-    end
   end
 end
