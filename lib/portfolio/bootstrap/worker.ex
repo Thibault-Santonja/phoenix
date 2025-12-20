@@ -44,9 +44,6 @@ defmodule Portfolio.Bootstrap.Worker do
 
   alias Portfolio.Bootstrap
 
-  # Cache environment at compile time to avoid runtime lookups
-  @env Mix.env()
-
   @doc """
   Démarre le processus de bootstrap.
 
@@ -58,13 +55,13 @@ defmodule Portfolio.Bootstrap.Worker do
   end
 
   # Server Callbacks
-
-  @impl true
-  def init(_opts) do
-    # En test, on skip le bootstrap
-    if @env == :test do
-      :ignore
-    else
+  # En test, on skip le bootstrap
+  if Mix.env() == :test do
+    @impl true
+    def init(_opts), do: :ignore
+  else
+    @impl true
+    def init(_opts) do
       # En production/dev, on lance le bootstrap de manière asynchrone
       send(self(), :bootstrap)
       {:ok, %{retry_count: 0}}

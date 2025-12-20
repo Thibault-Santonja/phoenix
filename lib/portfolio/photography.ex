@@ -25,38 +25,22 @@ defmodule Portfolio.Photography do
   - **Application Layer** : Ce module (API publique, orchestration)
   - **Infrastructure Layer** : Repositories, Storage (LocalStorage)
 
-  ## Stratégie de Cache
+  ## Services
 
-  Le contexte utilise Cachex pour optimiser les requêtes fréquentes :
+  Ce module délègue aux services spécialisés :
 
-  ### Albums Publiés par Année
-
-  - **Clé de cache** : `{:published_albums_by_year, preloads}`
-  - **TTL** : 1 heure
-  - **Invalidation** : Lors de la publication/dépublication d'un album
-  - **Fonction** : `list_published_albums_by_year/1`
-
-  ### Invalidation du Cache
-
-  Le cache est automatiquement invalidé dans les cas suivants :
-
-  1. **Mise à jour d'un album** (`update_album/2`) :
-     - Invalide si l'album est/était publié
-     - Gère à la fois publish et unpublish
-
-  2. **Publication d'un album** (`publish_album/2`) :
-     - Délégué au `AlbumPublicationService`
-     - Invalide le cache après publication réussie
-
-  ### Mode Test
-
-  En environnement test, le cache est automatiquement désactivé via
-  l'option `:skip_cache` pour éviter la pollution entre tests.
+  - **AlbumService** : Opérations CRUD sur les albums, statistiques, requêtes
+  - **PhotoService** : Opérations CRUD sur les photos, processing, stockage
+  - **AlbumCacheService** : Gestion du cache des albums publiés
+  - **AlbumPublicationService** : Publication d'albums avec orchestration
+  - **AlbumDeletionService** : Suppression atomique d'albums
+  - **PhotoDeletionService** : Suppression atomique de photos
+  - **PhotoUploadService** : Upload parallèle de photos
 
   ## Exemples
 
       # Lister tous les albums publiés groupés par année
-      {:ok, albums_by_year} = Photography.list_published_albums_by_year()
+      albums_by_year = Photography.list_published_albums_by_year()
 
       # Créer un nouvel album
       {:ok, album} = Photography.create_album(%{
@@ -73,188 +57,131 @@ defmodule Portfolio.Photography do
       {:ok, published_album} = Photography.publish_album(album)
   """
 
-  alias Portfolio.Config.CacheConfig
-  alias Portfolio.DomainEvents
   alias Portfolio.Photography.{Album, Photo}
-  alias Portfolio.Photography.Events.PhotoUploaded
-  alias Portfolio.Photography.Repositories.{AlbumRepository, PhotoRepository}
-  alias Portfolio.Workers.ImageVariantWorker
-
-  # Cache environment at compile time to avoid runtime lookups
-  @env Mix.env()
 
   # Service Layer
   alias Portfolio.Services.Photography.{
+    AlbumCacheService,
     AlbumDeletionService,
     AlbumPublicationService,
+    AlbumService,
     PhotoDeletionService,
+    PhotoService,
     PhotoUploadService
   }
 
   # =============================================================================
-  # Album API
+  # Album API - Delegates to AlbumService
   # =============================================================================
 
   @doc """
   Liste tous les albums avec filtres optionnels.
 
-  ## Options
-
-  - `:type` - Filtre par type d'album
-  - `:published` - Filtre par statut de publication
-  - `:preload` - Associations à précharger
-
-  ## Exemples
-
-      iex> list_albums()
-      [%Album{}, %Album{}]
-
-      iex> list_albums(published: true)
-      [%Album{published: true}]
+  Délègue à `AlbumService.list_albums/1`.
   """
   @spec list_albums(keyword()) :: [Album.t()]
-  def list_albums(opts \\ []), do: AlbumRepository.list(opts)
+  defdelegate list_albums(opts \\ []), to: AlbumService
 
   @doc """
   Compte le nombre total d'albums.
 
-  ## Exemples
-
-      iex> count_all_albums()
-      42
+  Délègue à `AlbumService.count_all_albums/0`.
   """
   @spec count_all_albums() :: non_neg_integer()
-  def count_all_albums, do: AlbumRepository.count_all()
+  defdelegate count_all_albums(), to: AlbumService
 
   @doc """
   Compte le nombre d'albums publiés.
 
-  ## Exemples
-
-      iex> count_published_albums()
-      25
+  Délègue à `AlbumService.count_published_albums/0`.
   """
   @spec count_published_albums() :: non_neg_integer()
-  def count_published_albums, do: AlbumRepository.count_published()
+  defdelegate count_published_albums(), to: AlbumService
+
+  @doc """
+  Compte le nombre d'albums non publiés (brouillons).
+
+  Délègue à `AlbumService.count_draft_albums/0`.
+  """
+  @spec count_draft_albums() :: non_neg_integer()
+  defdelegate count_draft_albums(), to: AlbumService
 
   @doc """
   Retourne toutes les statistiques des albums en une seule requête SQL.
 
-  Optimisé pour le dashboard admin - évite les requêtes multiples en consolidant
-  tous les counts dans une seule requête avec des agrégations conditionnelles.
-
-  ## Exemples
-
-      iex> get_album_stats()
-      %{total: 42, published: 25, draft: 17}
+  Délègue à `AlbumService.get_album_stats/0`.
   """
   @spec get_album_stats() :: %{
           total: non_neg_integer(),
           published: non_neg_integer(),
           draft: non_neg_integer()
         }
-  def get_album_stats, do: AlbumRepository.get_all_stats()
-
-  @doc """
-  Compte le nombre d'albums non publiés (brouillons).
-
-  ## Exemples
-
-      iex> count_draft_albums()
-      17
-  """
-  @spec count_draft_albums() :: non_neg_integer()
-  def count_draft_albums, do: AlbumRepository.count_draft()
+  defdelegate get_album_stats(), to: AlbumService
 
   @doc """
   Récupère un album par son ID.
 
-  ## Exemples
-
-      iex> get_album(id)
-      {:ok, %Album{}}
-
-      iex> get_album("invalid")
-      {:error, :not_found}
+  Délègue à `AlbumService.get_album/2`.
   """
   @spec get_album(Ecto.UUID.t(), keyword()) :: {:ok, Album.t()} | {:error, :not_found}
-  def get_album(id, opts \\ []), do: AlbumRepository.get(id, opts)
+  defdelegate get_album(id, opts \\ []), to: AlbumService
 
   @doc """
   Récupère un album par son slug.
+
+  Délègue à `AlbumService.get_album_by_slug/2`.
   """
   @spec get_album_by_slug(String.t(), keyword()) :: {:ok, Album.t()} | {:error, :not_found}
-  def get_album_by_slug(slug, opts \\ []), do: AlbumRepository.get_by_slug(slug, opts)
+  defdelegate get_album_by_slug(slug, opts \\ []), to: AlbumService
 
   @doc """
   Récupère un album par son ID, lève une exception si non trouvé.
+
+  Délègue à `AlbumService.get_album!/2`.
   """
   @spec get_album!(Ecto.UUID.t(), keyword()) :: Album.t()
-  def get_album!(id, opts \\ []), do: AlbumRepository.get!(id, opts)
+  defdelegate get_album!(id, opts \\ []), to: AlbumService
 
   @doc """
   Crée un nouvel album.
 
-  Émet un événement telemetry `[:portfolio, :photography, :album, :created]` avec
-  la durée et le résultat de l'opération.
-
-  ## Exemples
-
-      iex> create_album(%{title: "Mon Album", type: :wedding, date_prise_vue: ~D[2024-01-01]})
-      {:ok, %Album{}}
+  Délègue à `AlbumService.create_album/1`.
   """
   @spec create_album(map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
-  def create_album(attrs) do
-    with_telemetry([:album, :created], %{}, fn ->
-      AlbumRepository.insert(attrs)
-    end)
-  end
+  defdelegate create_album(attrs), to: AlbumService
 
   @doc """
-  Met à jour un album existant et invalide le cache.
+  Met à jour un album existant et invalide le cache si nécessaire.
 
-  ## Exemples
-
-      iex> update_album(album, %{title: "Nouveau titre"})
-      {:ok, %Album{}}
+  Orchestre la mise à jour via AlbumService et l'invalidation du cache
+  via AlbumCacheService.
   """
   @spec update_album(Album.t(), map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def update_album(album, attrs) do
-    with_telemetry([:album, :updated], %{album_id: album.id}, fn ->
-      case AlbumRepository.update(album, attrs) do
-        {:ok, updated_album} = result ->
-          # Invalider le cache si l'album est/était publié
-          # (pour gérer à la fois publish et unpublish)
-          if updated_album.published or album.published do
-            invalidate_albums_cache()
-          end
+    case AlbumService.update_album(album, attrs) do
+      {:ok, updated_album} = result ->
+        if updated_album.published or album.published do
+          AlbumCacheService.invalidate_cache()
+        end
 
-          result
+        result
 
-        error ->
-          error
-      end
-    end)
+      error ->
+        error
+    end
   end
 
   @doc """
   Supprime un album et toutes ses photos (CASCADE) de manière atomique.
 
-  Délègue au AlbumDeletionService pour orchestrer l'opération complète.
-  Invalide le cache des albums publiés si l'album était publié.
-
-  ## Exemples
-
-      iex> delete_album(album)
-      {:ok, %{album: %Album{}, photos: [%Photo{}], files: :ok}}
+  Délègue à `AlbumDeletionService.execute/1` et invalide le cache si nécessaire.
   """
   @spec delete_album(Album.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_album(%Album{} = album) do
     case AlbumDeletionService.execute(album) do
       {:ok, _result} = success ->
-        # Invalider le cache si l'album était publié
         if album.published do
-          invalidate_albums_cache()
+          AlbumCacheService.invalidate_cache()
         end
 
         success
@@ -267,124 +194,39 @@ defmodule Portfolio.Photography do
   @doc """
   Liste les années ayant des albums publiés, triées par ordre décroissant.
 
-  Utilise une requête SQL optimisée pour récupérer uniquement les années distinctes
-  sans charger les albums complets. Idéal pour le lazy loading.
-
-  ## Exemples
-
-      iex> list_published_years()
-      [2024, 2023, 2022, 2021]
-
+  Délègue à `AlbumService.list_published_years/0`.
   """
   @spec list_published_years() :: [integer()]
-  def list_published_years do
-    AlbumRepository.list_published_years()
-  end
+  defdelegate list_published_years(), to: AlbumService
 
   @doc """
   Liste les albums publiés pour une année spécifique.
 
-  Optimisé pour le lazy loading : charge uniquement les albums d'une année donnée.
-  Utilisez `list_published_years/0` en combinaison avec cette fonction pour un
-  chargement progressif par année.
-
-  ## Paramètres
-
-  - `year` - L'année pour laquelle récupérer les albums (integer)
-  - `opts` - Options
-    - `:preload` - Associations à précharger (ex: [:photos])
-
-  ## Exemples
-
-      iex> list_published_for_year(2024)
-      [%Album{}, %Album{}]
-
-      iex> list_published_for_year(2024, preload: [:photos])
-      [%Album{photos: [...]}, ...]
-
+  Délègue à `AlbumService.list_published_for_year/2`.
   """
   @spec list_published_for_year(integer(), keyword()) :: [Album.t()]
-  def list_published_for_year(year, opts \\ []) when is_integer(year) do
-    AlbumRepository.list_published_for_year(year, opts)
-  end
+  defdelegate list_published_for_year(year, opts \\ []), to: AlbumService
 
   @doc """
   Liste les albums publiés groupés par année avec cache.
 
-  Utilise Cachex pour mettre en cache les résultats et éviter les requêtes répétées.
-  Le cache expire après 1 heure ou est invalidé lors de la publication d'un album.
-
-  Retourne une map avec les années comme clés et les albums comme valeurs.
-
-  **Note de performance:** Pour de meilleurs résultats avec de grands datasets,
-  préférez utiliser `list_published_years/0` + `list_published_for_year/2` qui
-  permettent un lazy loading plus efficace.
-
-  ## Options
-
-  - `:preload` - Associations à précharger
-  - `:skip_cache` - Ignorer le cache et forcer une requête DB (défaut: false)
-
-  ## Exemples
-
-      iex> list_published_albums_by_year()
-      %{2024 => [%Album{}], 2023 => [%Album{}]}
-
-      iex> list_published_albums_by_year(skip_cache: true)
-      %{2024 => [%Album{}], 2023 => [%Album{}]}
+  Délègue à `AlbumCacheService.list_published_albums_by_year/1`.
   """
   @spec list_published_albums_by_year(keyword()) :: %{integer() => [Album.t()]}
-  def list_published_albums_by_year(opts \\ []) do
-    if should_skip_cache?(opts) do
-      fetch_published_albums_by_year(opts)
-    else
-      fetch_from_cache_or_db(opts)
-    end
-  end
+  defdelegate list_published_albums_by_year(opts \\ []), to: AlbumCacheService
 
   @doc """
   Liste tous les albums publiés (liste plate pour sitemap, etc.).
 
-  Cette fonction retourne une liste plate de tous les albums publiés,
-  utile pour la génération de sitemaps et autres opérations SEO.
-
-  ## Options
-
-  - `:preload` - Associations à précharger (défaut: aucune)
-
-  ## Exemples
-
-      iex> list_published_albums()
-      [%Album{}, %Album{}]
-
-      iex> list_published_albums(preload: [:photos])
-      [%Album{photos: [...]}, ...]
+  Délègue à `AlbumCacheService.list_published_albums/1`.
   """
   @spec list_published_albums(keyword()) :: [Album.t()]
-  def list_published_albums(opts \\ []) do
-    list_published_albums_by_year(opts)
-    |> Map.values()
-    |> List.flatten()
-  end
+  defdelegate list_published_albums(opts \\ []), to: AlbumCacheService
 
   @doc """
   Publie un album en le rendant visible publiquement.
 
-  Délègue au AlbumPublicationService pour orchestrer l'opération complète
-  incluant la mise à jour DB, l'invalidation du cache, et l'émission d'événements.
-
-  ## Paramètres
-
-  - `album` - L'album à publier
-  - `user_id` - L'ID de l'utilisateur qui publie l'album (optionnel)
-
-  ## Exemples
-
-      iex> publish_album(album)
-      {:ok, %Album{published: true}}
-
-      iex> publish_album(album, user_id)
-      {:ok, %Album{published: true}}
+  Délègue à `AlbumPublicationService.execute/2`.
   """
   @spec publish_album(Album.t(), Ecto.UUID.t() | nil) ::
           {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
@@ -393,102 +235,61 @@ defmodule Portfolio.Photography do
   end
 
   # =============================================================================
-  # Photo API
+  # Photo API - Delegates to PhotoService
   # =============================================================================
 
   @doc """
   Liste toutes les photos avec options de filtrage.
 
-  ## Options
-
-  - `:album_id` - Filtre par ID d'album
-  - `:limit` - Limite le nombre de résultats
-  - `:offset` - Décalage pour la pagination
-  - `:preload` - Associations à précharger
-  - `:order_by` - Ordre de tri
-
-  ## Exemples
-
-      iex> list_photos()
-      [%Photo{}, %Photo{}]
+  Délègue à `PhotoService.list_photos/1`.
   """
   @spec list_photos(keyword()) :: [Photo.t()]
-  def list_photos(opts \\ []), do: PhotoRepository.list(opts)
+  defdelegate list_photos(opts \\ []), to: PhotoService
 
   @doc """
   Liste toutes les photos d'un album.
 
-  ## Exemples
-
-      iex> list_photos_by_album(album_id)
-      [%Photo{}, %Photo{}]
+  Délègue à `PhotoService.list_photos_by_album/2`.
   """
   @spec list_photos_by_album(Ecto.UUID.t(), keyword()) :: [Photo.t()]
-  def list_photos_by_album(album_id, opts \\ []),
-    do: PhotoRepository.list_by_album(album_id, opts)
+  defdelegate list_photos_by_album(album_id, opts \\ []), to: PhotoService
 
   @doc """
   Récupère une photo par son ID.
+
+  Délègue à `PhotoService.get_photo/2`.
   """
   @spec get_photo(Ecto.UUID.t(), keyword()) :: {:ok, Photo.t()} | {:error, :not_found}
-  def get_photo(id, opts \\ []), do: PhotoRepository.get(id, opts)
+  defdelegate get_photo(id, opts \\ []), to: PhotoService
 
   @doc """
   Récupère une photo par son ID, lève une exception si non trouvée.
+
+  Délègue à `PhotoService.get_photo!/2`.
   """
   @spec get_photo!(Ecto.UUID.t(), keyword()) :: Photo.t()
-  def get_photo!(id, opts \\ []), do: PhotoRepository.get!(id, opts)
+  defdelegate get_photo!(id, opts \\ []), to: PhotoService
 
   @doc """
   Crée une nouvelle photo dans un album.
 
-  Émet un événement `PhotoUploaded` après la création réussie de la photo.
-
-  ## Exemples
-
-      iex> create_photo(%{album_id: album_id, original_filename: "test.jpg", file_path: "/test.jpg"})
-      {:ok, %Photo{}}
+  Délègue à `PhotoService.create_photo/1`.
   """
   @spec create_photo(map()) :: {:ok, Photo.t()} | {:error, Ecto.Changeset.t()}
-  def create_photo(attrs) do
-    with_telemetry([:photo, :created], %{album_id: attrs[:album_id]}, fn ->
-      with {:ok, photo} <- PhotoRepository.insert(attrs) do
-        # Émettre l'événement de domaine
-        DomainEvents.publish(:photo_uploaded, %PhotoUploaded{
-          photo_id: photo.id,
-          album_id: photo.album_id,
-          file_path: photo.file_path,
-          hash: photo.hash,
-          uploaded_at: photo.inserted_at
-        })
-
-        {:ok, photo}
-      end
-    end)
-  end
+  defdelegate create_photo(attrs), to: PhotoService
 
   @doc """
   Met à jour une photo existante.
+
+  Délègue à `PhotoService.update_photo/2`.
   """
   @spec update_photo(Photo.t(), map()) :: {:ok, Photo.t()} | {:error, Ecto.Changeset.t()}
-  def update_photo(photo, attrs) do
-    with_telemetry([:photo, :updated], %{photo_id: photo.id, album_id: photo.album_id}, fn ->
-      PhotoRepository.update(photo, attrs)
-    end)
-  end
+  defdelegate update_photo(photo, attrs), to: PhotoService
 
   @doc """
   Supprime une photo ainsi que son fichier sur le disque de manière atomique.
 
-  Délègue au PhotoDeletionService pour orchestrer l'opération complète.
-
-  ## Exemples
-
-      iex> delete_photo(photo)
-      {:ok, %{photo: %Photo{}, file: :ok}}
-
-      iex> delete_photo(photo_with_invalid_file)
-      {:ok, %{photo: %Photo{}, file: :ok}}  # Les données orphelines sont acceptées
+  Délègue à `PhotoDeletionService.execute/1`.
   """
   @spec delete_photo(Photo.t()) :: {:ok, map()} | {:error, Ecto.Multi.name(), term(), map()}
   def delete_photo(%Photo{} = photo) do
@@ -498,35 +299,7 @@ defmodule Portfolio.Photography do
   @doc """
   Upload des photos dans un album en parallèle.
 
-  Utilise Task.async_stream pour paralléliser les uploads et optimiser les performances.
-  Stocke les fichiers via LocalStorage et crée les enregistrements en base.
-
-  Émet un événement telemetry `[:portfolio, :photography, :photos, :uploaded]` avec
-  la durée, le nombre de photos, et le résultat de l'opération.
-
-  ## Paramètres
-
-  - `album_slug` - Le slug de l'album (pour l'organisation des fichiers)
-  - `uploads` - Liste d'uploads avec :path, :client_name, :client_type
-
-  ## Options
-
-  - `:max_concurrency` - Nombre maximum d'uploads parallèles (défaut: 4)
-  - `:timeout` - Timeout par upload en ms (défaut: 30000)
-  - `:ordered` - Préserver l'ordre des résultats (défaut: false pour performance)
-
-  ## Retour
-
-  - `{:ok, [metadata]}` - Liste des métadonnées des photos créées
-  - `{:error, reason}` - Erreur lors du stockage ou création
-
-  ## Exemples
-
-      iex> upload_photos("mariage-2024", uploads)
-      {:ok, [%{file_path: "...", hash: "..."}, ...]}
-
-      iex> upload_photos("mariage-2024", uploads, max_concurrency: 8)
-      {:ok, [%{file_path: "...", hash: "..."}, ...]}
+  Délègue à `PhotoUploadService.execute/3`.
   """
   @spec upload_photos(String.t(), [PhotoUploadService.upload()], keyword()) ::
           {:ok, [PhotoUploadService.photo_metadata()]}
@@ -538,114 +311,39 @@ defmodule Portfolio.Photography do
   @doc """
   Récupère l'URL d'une variante d'une photo.
 
-  Délègue à l'adaptateur de stockage configuré pour récupérer l'URL publique.
-
-  ## Paramètres
-
-  - `photo_id` - L'identifiant de la photo
-  - `variant` - Le nom de la variante (:thumbnail, :small, :medium, :large, :original)
-
-  ## Exemples
-
-      iex> get_photo_url("abc12345", :thumbnail)
-      {:ok, "/uploads/photos/abc12345/thumbnail.webp"}
-
-      iex> get_photo_url("nonexistent", :thumbnail)
-      {:error, :not_found}
+  Délègue à `PhotoService.get_photo_url/2`.
   """
   @spec get_photo_url(String.t(), atom()) :: {:ok, String.t()} | {:error, term()}
-  def get_photo_url(photo_id, variant) do
-    storage_adapter().get_photo_url(photo_id, variant)
-  end
+  defdelegate get_photo_url(photo_id, variant), to: PhotoService
 
   @doc """
   Relance le traitement des variantes pour une photo.
 
-  Utile en cas d'échec du traitement initial ou pour régénérer les variantes
-  avec de nouveaux paramètres.
-
-  Enqueue un nouveau job Oban pour générer les variantes.
-
-  ## Exemples
-
-      iex> reprocess_photo(photo)
-      {:ok, %Photo{}}
+  Délègue à `PhotoService.reprocess_photo/1`.
   """
   @spec reprocess_photo(Photo.t()) :: {:ok, Photo.t()} | {:error, term()}
-  def reprocess_photo(%Photo{id: photo_id} = photo) do
-    with {:ok, updated_photo} <- update_photo(photo, %{processing_status: "pending"}),
-         {:ok, _job} <- ImageVariantWorker.enqueue(photo_id) do
-      {:ok, updated_photo}
-    end
-  end
+  defdelegate reprocess_photo(photo), to: PhotoService
 
   @doc """
   Liste les photos en attente de traitement.
 
-  Utile pour le monitoring et les dashboards admin.
-
-  ## Options
-
-  - `:limit` - Nombre maximum de résultats (défaut: 100)
-  - `:preload` - Associations à précharger
-
-  ## Exemples
-
-      iex> list_pending_photos()
-      [%Photo{processing_status: "pending"}, ...]
-
-      iex> list_pending_photos(limit: 10)
-      [%Photo{}, ...]
+  Délègue à `PhotoService.list_pending_photos/1`.
   """
   @spec list_pending_photos(keyword()) :: [Photo.t()]
-  def list_pending_photos(opts \\ []), do: list_photos_by_status("pending", opts)
+  defdelegate list_pending_photos(opts \\ []), to: PhotoService
 
   @doc """
   Liste les photos dont le traitement a échoué.
 
-  Utile pour le monitoring et les dashboards admin afin d'identifier
-  les photos nécessitant une intervention manuelle.
-
-  ## Options
-
-  - `:limit` - Nombre maximum de résultats (défaut: 100)
-  - `:preload` - Associations à précharger
-
-  ## Exemples
-
-      iex> list_failed_photos()
-      [%Photo{processing_status: "failed"}, ...]
-
-      iex> list_failed_photos(limit: 10, preload: [:album])
-      [%Photo{album: %Album{}}, ...]
+  Délègue à `PhotoService.list_failed_photos/1`.
   """
   @spec list_failed_photos(keyword()) :: [Photo.t()]
-  def list_failed_photos(opts \\ []), do: list_photos_by_status("failed", opts)
-
-  # Helper privé pour lister les photos par statut de traitement
-  defp list_photos_by_status(status, opts) do
-    limit = Keyword.get(opts, :limit, 100)
-    preload = Keyword.get(opts, :preload, [])
-
-    PhotoRepository.list_by_processing_status(status, limit: limit, preload: preload)
-  end
+  defdelegate list_failed_photos(opts \\ []), to: PhotoService
 
   @doc """
   Retourne les statistiques de traitement des photos.
 
-  Agrège les compteurs par statut de traitement pour le monitoring
-  et les dashboards admin.
-
-  ## Exemples
-
-      iex> get_processing_stats()
-      %{
-        pending: 12,
-        processing: 3,
-        completed: 1247,
-        failed: 5,
-        total: 1267
-      }
+  Délègue à `PhotoService.get_processing_stats/0`.
   """
   @spec get_processing_stats() :: %{
           pending: non_neg_integer(),
@@ -654,259 +352,74 @@ defmodule Portfolio.Photography do
           failed: non_neg_integer(),
           total: non_neg_integer()
         }
-  def get_processing_stats do
-    PhotoRepository.count_by_processing_status()
-  end
+  defdelegate get_processing_stats(), to: PhotoService
 
   @doc """
   Calcule l'espace de stockage utilisé par les photos.
 
-  Retourne la taille totale en octets de tous les fichiers photos
-  (originaux + variants) stockés sur le système.
-
-  ## Options
-
-  - `:unit` - Unité de retour (`:bytes`, `:kb`, `:mb`, `:gb`) (défaut: `:bytes`)
-
-  ## Exemples
-
-      iex> get_storage_usage()
-      3435973120  # bytes
-
-      iex> get_storage_usage(unit: :gb)
-      3.2  # gigabytes
+  Délègue à `PhotoService.get_storage_usage/1`.
   """
   @spec get_storage_usage(keyword()) :: float() | non_neg_integer()
-  def get_storage_usage(opts \\ []) do
-    unit = Keyword.get(opts, :unit, :bytes)
-    bytes = storage_adapter().get_storage_usage()
-
-    case unit do
-      :bytes -> bytes
-      :kb -> bytes / 1024
-      :mb -> bytes / (1024 * 1024)
-      :gb -> bytes / (1024 * 1024 * 1024)
-    end
-  end
+  defdelegate get_storage_usage(opts \\ []), to: PhotoService
 
   @doc """
   Retourne la photo en attente de traitement la plus ancienne.
 
-  Utile pour détecter les jobs bloqués ou qui prennent trop de temps.
-
-  ## Exemples
-
-      iex> get_oldest_pending_photo()
-      {:ok, %Photo{inserted_at: ~U[2025-01-26 10:00:00Z]}}
-
-      iex> get_oldest_pending_photo()
-      {:error, :not_found}
+  Délègue à `PhotoService.get_oldest_pending_photo/0`.
   """
   @spec get_oldest_pending_photo() :: {:ok, Photo.t()} | {:error, :not_found}
-  def get_oldest_pending_photo do
-    PhotoRepository.get_oldest_by_processing_status("pending")
-  end
+  defdelegate get_oldest_pending_photo(), to: PhotoService
 
   @doc """
   Relance le traitement de toutes les photos en échec.
 
-  Utile pour une action en masse depuis le dashboard admin.
-  Retourne le nombre de photos relancées.
-
-  ## Exemples
-
-      iex> reprocess_all_failed_photos()
-      {:ok, 5}  # 5 photos relancées
+  Délègue à `PhotoService.reprocess_all_failed_photos/0`.
   """
   @spec reprocess_all_failed_photos() :: {:ok, non_neg_integer()}
-  def reprocess_all_failed_photos do
-    failed_photos = list_failed_photos(limit: 1000)
-
-    count =
-      Enum.reduce(failed_photos, 0, fn photo, acc ->
-        case reprocess_photo(photo) do
-          {:ok, _} -> acc + 1
-          {:error, _} -> acc
-        end
-      end)
-
-    {:ok, count}
-  end
-
-  # =============================================================================
-  # Private Functions
-  # =============================================================================
-
-  # Récupère l'adaptateur de stockage configuré
-  defp storage_adapter do
-    Application.get_env(
-      :portfolio,
-      :photo_storage_adapter,
-      Portfolio.Photography.Storage.LocalStorage
-    )
-  end
-
-  # Détermine si le cache doit être ignoré
-  defp should_skip_cache?(opts) do
-    skip_cache = Keyword.get(opts, :skip_cache, false)
-    # En test, toujours skip le cache pour éviter la pollution entre tests
-    skip_cache or @env == :test
-  end
-
-  # Récupère les albums publiés par année depuis la DB
-  defp fetch_published_albums_by_year(opts) do
-    AlbumRepository.list_published_by_year(opts)
-  end
-
-  # Récupère depuis le cache ou la DB avec fallback
-  defp fetch_from_cache_or_db(opts) do
-    cache_key = CacheConfig.published_albums_key(preloads: opts[:preload] || [])
-
-    case Cachex.fetch(:portfolio_cache, cache_key, fn ->
-           result = fetch_published_albums_by_year(opts)
-           {:commit, result, ttl: CacheConfig.albums_ttl()}
-         end) do
-      {:ok, albums} -> albums
-      {:commit, albums} -> albums
-      {:ignore, albums} -> albums
-      {:error, _reason} -> fetch_published_albums_by_year(opts)
-    end
-  end
-
-  # Exécute une fonction avec instrumentation telemetry
-  #
-  # ## Paramètres
-  # - `event_name` - Liste de segments du nom de l'événement (ex: [:album, :created])
-  # - `metadata` - Map de métadonnées à ajouter à l'événement
-  # - `fun` - Fonction à exécuter et instrumenter
-  #
-  # ## Retour
-  # Retourne le résultat de la fonction
-  #
-  # ## Exemples
-  #
-  #     with_telemetry([:album, :created], %{}, fn ->
-  #       AlbumRepository.insert(attrs)
-  #     end)
-  #
-  defp with_telemetry(event_name, metadata, fun) when is_list(event_name) and is_map(metadata) do
-    start_time = System.monotonic_time()
-    result = fun.()
-    duration = System.monotonic_time() - start_time
-
-    metrics = %{duration: duration}
-    full_metadata = Map.merge(metadata, result_metadata(result))
-
-    :telemetry.execute([:portfolio, :photography | event_name], metrics, full_metadata)
-    result
-  end
-
-  # Extrait les métadonnées du résultat pour telemetry
-  defp result_metadata({:ok, _}), do: %{result: :ok}
-  defp result_metadata({:error, _}), do: %{result: :error}
-
-  # Invalide tous les caches liés aux albums publiés
-  #
-  # Cette fonction doit être appelée après toute opération qui affecte
-  # la liste des albums publiés :
-  # - Publication d'un album (publish_album/2)
-  # - Dépublication d'un album (update_album/2 avec published: false)
-  # - Mise à jour d'un album publié (update_album/2)
-  #
-  # Note: La suppression d'album (delete_album/1) est gérée par AlbumDeletionService
-  defp invalidate_albums_cache do
-    _ = Cachex.del(:portfolio_cache, CacheConfig.published_albums_key())
-    _ = Cachex.del(:portfolio_cache, CacheConfig.published_albums_key(preloads: [:photos]))
-    :ok
-  end
+  defdelegate reprocess_all_failed_photos(), to: PhotoService
 
   @doc """
   Réorganise l'ordre d'affichage des photos d'un album.
 
-  ## Exemples
-
-      iex> reorder_photos(album_id, [photo1_id, photo2_id, photo3_id])
-      {:ok, 3}
+  Délègue à `PhotoService.reorder_photos/2`.
   """
   @spec reorder_photos(Ecto.UUID.t(), [Ecto.UUID.t()]) ::
           {:ok, integer()} | {:error, :invalid_photos}
-  def reorder_photos(album_id, photo_ids), do: PhotoRepository.reorder(album_id, photo_ids)
+  defdelegate reorder_photos(album_id, photo_ids), to: PhotoService
 
   # =============================================================================
-  # Helper Functions
+  # Helper Functions - Delegates to AlbumService and PhotoService
   # =============================================================================
 
   @doc """
   Retourne la liste des types d'albums disponibles.
 
-  ## Exemples
-
-      iex> list_album_types()
-      [:couples, :wedding, :motherhood, :events, :landscape, :street, :music, :reenactment, :amvcc, :china, :japan, :taiwan]
+  Délègue à `AlbumService.list_album_types/0`.
   """
-  @spec list_album_types() :: [
-          :couples
-          | :wedding
-          | :motherhood
-          | :events
-          | :landscape
-          | :street
-          | :music
-          | :reenactment
-          | :amvcc
-          | :china
-          | :japan
-          | :taiwan,
-          ...
-        ]
-  def list_album_types do
-    [
-      :couples,
-      :wedding,
-      :motherhood,
-      :events,
-      :landscape,
-      :street,
-      :music,
-      :reenactment,
-      :amvcc,
-      :china,
-      :japan,
-      :taiwan
-    ]
-  end
+  @spec list_album_types() :: [AlbumService.album_type(), ...]
+  defdelegate list_album_types(), to: AlbumService
 
   @doc """
   Compte le nombre de photos dans un album.
 
-  ## Exemples
-
-      iex> count_photos_in_album(album_id)
-      42
+  Délègue à `AlbumService.count_photos_in_album/1`.
   """
   @spec count_photos_in_album(Ecto.UUID.t()) :: non_neg_integer()
-  def count_photos_in_album(album_id) do
-    PhotoRepository.count_by_album(album_id)
-  end
+  defdelegate count_photos_in_album(album_id), to: AlbumService
 
   @doc """
   Alias pour count_photos_in_album/1.
+
+  Délègue à `PhotoService.count_photos_by_album/1`.
   """
   @spec count_photos_by_album(Ecto.UUID.t()) :: non_neg_integer()
-  def count_photos_by_album(album_id), do: count_photos_in_album(album_id)
+  defdelegate count_photos_by_album(album_id), to: PhotoService
 
   @doc """
   Compte le nombre total de photos dans tous les albums.
 
-  Utilise une seule requête SQL optimisée.
-
-  ## Exemples
-
-      iex> count_all_photos()
-      150
+  Délègue à `PhotoService.count_all_photos/0`.
   """
   @spec count_all_photos() :: non_neg_integer()
-  def count_all_photos do
-    PhotoRepository.count_all()
-  end
+  defdelegate count_all_photos(), to: PhotoService
 end

@@ -39,6 +39,7 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
   alias Portfolio.ImageProcessor
   alias Portfolio.Photography.Storage.PhotoMetadata
   alias Portfolio.Photography.Storage.StorageUtils
+  alias Portfolio.Security.PathValidator
   alias Vix.Vips.Image
 
   require Logger
@@ -313,27 +314,15 @@ defmodule Portfolio.Photography.Storage.LocalStorage do
 
   # Validates that a path is safe and within the uploads directory.
   # Prevents directory traversal attacks.
+  # Delegates to centralized PathValidator for consistent security checks.
   @spec validate_path_safety(String.t()) :: :ok | {:error, :invalid_path}
   defp validate_path_safety(path) do
     base_path = Application.get_env(:portfolio, :uploads)[:base_path] || "priv/static/uploads"
     uploads_path = Path.join([base_path, "photos"])
 
-    # Expand to absolute paths and normalize
-    absolute_base = Path.expand(uploads_path)
-    absolute_path = Path.expand(path)
-
-    # Check if path starts with base and doesn't contain traversal patterns
-    if String.starts_with?(absolute_path, absolute_base) and
-         not String.contains?(path, "..") do
-      :ok
-    else
-      Logger.error("Path traversal attempt detected",
-        path: path,
-        expected_base: absolute_base,
-        attempted_path: absolute_path
-      )
-
-      {:error, :invalid_path}
+    case PathValidator.validate(path, uploads_path) do
+      :ok -> :ok
+      {:error, _reason} -> {:error, :invalid_path}
     end
   end
 end
