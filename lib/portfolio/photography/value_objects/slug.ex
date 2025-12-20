@@ -151,9 +151,9 @@ defmodule Portfolio.Photography.ValueObjects.Slug do
   """
   @spec equal?(t(), t()) :: boolean()
   def equal?(%__MODULE__{value: v1}, %__MODULE__{value: v2}), do: v1 == v2
-end
 
-# Implémente le protocole String.Chars pour conversion automatique
-defimpl String.Chars, for: Portfolio.Photography.ValueObjects.Slug do
-  def to_string(%{value: value}), do: value
+  # Implémente le protocole String.Chars pour conversion automatique
+  defimpl String.Chars do
+    def to_string(%{value: value}), do: value
+  end
 end
