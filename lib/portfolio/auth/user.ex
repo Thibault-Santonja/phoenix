@@ -9,7 +9,7 @@ defmodule Portfolio.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Portfolio.Auth.{DisposableEmailChecker, EmailType, MagicLink, MXValidator, UserSession}
+  alias Portfolio.Auth.{EmailType, EmailValidationService, MagicLink, UserSession}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -137,45 +137,9 @@ defmodule Portfolio.Auth.User do
     |> unique_constraint(:email)
   end
 
-  # Validation de l'email
+  # Validation de l'email déléguée au service EmailValidationService
   # Note: EmailType gère déjà la validation du format et la normalisation (lowercase, trim)
   defp validate_email(changeset) do
-    changeset
-    |> validate_required([:email])
-    |> validate_length(:email, max: 320)
-    |> validate_not_disposable_email()
-    |> validate_mx_records()
-    |> unsafe_validate_unique(:email, Portfolio.Repo)
-    |> unique_constraint(:email)
-  end
-
-  # Valide que l'email n'utilise pas un domaine jetable
-  defp validate_not_disposable_email(changeset) do
-    email = get_field(changeset, :email)
-
-    if email && DisposableEmailChecker.disposable?(email) do
-      add_error(
-        changeset,
-        :email,
-        "les adresses email temporaires ne sont pas autorisées"
-      )
-    else
-      changeset
-    end
-  end
-
-  # Valide que le domaine de l'email possède des enregistrements MX valides
-  defp validate_mx_records(changeset) do
-    email = get_field(changeset, :email)
-
-    if email && !MXValidator.valid_mx?(email) do
-      add_error(
-        changeset,
-        :email,
-        "ce domaine ne peut pas recevoir d'emails"
-      )
-    else
-      changeset
-    end
+    EmailValidationService.validate_email(changeset)
   end
 end
