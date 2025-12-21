@@ -111,7 +111,7 @@ defmodule Portfolio.Repo.FilterBuilder do
         handler.(query, value)
 
       # Fall back to common filters
-      is_common_filter?(key) ->
+      common_filter?(key) ->
         apply_common_filter(query, key, value)
 
       # Unknown filter - skip silently (allows extension)
@@ -127,15 +127,15 @@ defmodule Portfolio.Repo.FilterBuilder do
 
   ## Examples
 
-      iex> is_common_filter?(:limit)
+      iex> common_filter?(:limit)
       true
 
-      iex> is_common_filter?(:status)
+      iex> common_filter?(:status)
       false
   """
-  @spec is_common_filter?(atom()) :: boolean()
-  def is_common_filter?(key) when key in [:preload, :limit, :offset, :order_by], do: true
-  def is_common_filter?(_key), do: false
+  @spec common_filter?(atom()) :: boolean()
+  def common_filter?(key) when key in [:preload, :limit, :offset, :order_by], do: true
+  def common_filter?(_key), do: false
 
   @doc """
   Applies a common/built-in filter to a query.

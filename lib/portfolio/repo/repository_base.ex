@@ -70,6 +70,8 @@ defmodule Portfolio.Repo.RepositoryBase do
     end
   end
 
+  alias Portfolio.Repo.FilterBuilder
+
   @doc false
   defmacro __before_compile__(_env) do
     quote do
@@ -80,7 +82,7 @@ defmodule Portfolio.Repo.RepositoryBase do
       and falls back to common filters (preload, limit, offset, order_by).
       """
       def apply_repo_filters(query, opts) do
-        Portfolio.Repo.FilterBuilder.apply_filters(query, opts, @filter_handlers)
+        FilterBuilder.apply_filters(query, opts, @filter_handlers)
       end
     end
   end
