@@ -106,7 +106,10 @@ defmodule Portfolio.Photography.Album do
   end
 
   @doc """
-  Crée un changeset pour un album.
+  Crée un changeset pour la création d'un nouvel album.
+
+  Le slug est généré automatiquement depuis le titre et ne peut pas être
+  modifié après la création (invariant métier).
 
   ## Validations
 
@@ -119,11 +122,90 @@ defmodule Portfolio.Photography.Album do
 
   ## Exemples
 
-      iex> Album.changeset(%Album{}, %{title: "Mon Album", type: :wedding, date_prise_vue: ~D[2024-01-01]})
+      iex> Album.creation_changeset(%Album{}, %{title: "Mon Album", type: :wedding, date_prise_vue: ~D[2024-01-01]})
       %Ecto.Changeset{valid?: true}
 
-      iex> Album.changeset(%Album{}, %{title: "AB"})  # Titre trop court
+      iex> Album.creation_changeset(%Album{}, %{title: "AB"})  # Titre trop court
       %Ecto.Changeset{valid?: false}
+  """
+  @spec creation_changeset(t(), map()) :: Ecto.Changeset.t()
+  def creation_changeset(album, attrs) do
+    album
+    |> cast(attrs, [
+      :title,
+      :slug,
+      :type,
+      :description,
+      :location,
+      :date_prise_vue,
+      :date_fin_prise_vue,
+      :published,
+      :reference_link,
+      :exif_data
+    ])
+    |> validate_required([:title, :type, :date_prise_vue])
+    |> validate_length(:title, min: 3, max: 200)
+    |> validate_length(:description, max: 5000)
+    |> validate_date_not_future(:date_prise_vue)
+    |> validate_date_not_future(:date_fin_prise_vue)
+    |> validate_date_range()
+    |> generate_slug_if_needed()
+    |> unique_constraint(:slug)
+  end
+
+  @doc """
+  Crée un changeset pour la mise à jour d'un album existant.
+
+  Le slug NE PEUT PAS être modifié après la création (invariant métier).
+  Cela garantit la stabilité des URLs et des liens externes.
+
+  ## Validations
+
+  Mêmes validations que `creation_changeset/2`, sauf que le slug est protégé.
+
+  ## Exemples
+
+      iex> album = %Album{slug: "mon-album-existant"}
+      iex> changeset = Album.update_changeset(album, %{title: "Nouveau Titre", slug: "tentative-modification"})
+      iex> Ecto.Changeset.get_change(changeset, :slug)
+      nil  # Le slug n'est pas modifié
+  """
+  @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
+  def update_changeset(album, attrs) do
+    # Retirer le slug des attributs pour empêcher sa modification
+    attrs_without_slug = Map.drop(attrs, [:slug, "slug"])
+
+    album
+    |> cast(attrs_without_slug, [
+      :title,
+      :type,
+      :description,
+      :location,
+      :date_prise_vue,
+      :date_fin_prise_vue,
+      :published,
+      :reference_link,
+      :exif_data
+    ])
+    |> validate_required([:title, :type, :date_prise_vue])
+    |> validate_length(:title, min: 3, max: 200)
+    |> validate_length(:description, max: 5000)
+    |> validate_date_not_future(:date_prise_vue)
+    |> validate_date_not_future(:date_fin_prise_vue)
+    |> validate_date_range()
+  end
+
+  @doc """
+  Crée un changeset générique pour un album (backward compatibility).
+
+  Pour une meilleure protection des invariants, préférer:
+  - `creation_changeset/2` pour la création
+  - `update_changeset/2` pour les mises à jour
+
+  ## Deprecated
+
+  Cette fonction est conservée pour la rétrocompatibilité mais sera
+  supprimée dans une future version.
   """
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(album, attrs) do

@@ -134,6 +134,9 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   @doc """
   Insère un nouvel album.
 
+  Utilise `creation_changeset/2` pour garantir la génération du slug
+  lors de la création.
+
   ## Exemples
 
       iex> insert(%{title: "Mon Album", type: :wedding, date_prise_vue: ~D[2024-01-01]})
@@ -146,12 +149,15 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   @spec insert(map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def insert(attrs) do
     %Album{}
-    |> Album.changeset(attrs)
+    |> Album.creation_changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
   Met à jour un album existant.
+
+  Utilise `update_changeset/2` pour protéger le slug contre les modifications.
+  Le slug est un invariant qui ne peut pas être changé après la création.
 
   ## Exemples
 
@@ -165,7 +171,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   @spec update(Album.t(), map()) :: {:ok, Album.t()} | {:error, Ecto.Changeset.t()}
   def update(%Album{} = album, attrs) do
     album
-    |> Album.changeset(attrs)
+    |> Album.update_changeset(attrs)
     |> Repo.update()
   end
 

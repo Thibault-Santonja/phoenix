@@ -294,7 +294,16 @@ defmodule Portfolio.Photography.Repositories.AlbumRepositoryTest do
 
       assert {:ok, updated} = AlbumRepository.update(album, %{title: "Updated"})
       assert updated.title == "Updated"
-      assert updated.slug == "updated"
+      # Le slug est un invariant protégé - il ne change pas lors d'une mise à jour
+      assert updated.slug == album.slug
+    end
+
+    test "slug is protected from modification" do
+      album = insert_album(%{title: "Original", type: :wedding, slug: "original-slug"})
+
+      # Tentative de modification du slug (doit être ignorée)
+      assert {:ok, updated} = AlbumRepository.update(album, %{slug: "new-slug"})
+      assert updated.slug == "original-slug"
     end
 
     test "returns error with invalid attributes" do
