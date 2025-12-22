@@ -7,12 +7,23 @@ defmodule PortfolioWeb.Plugs.RateLimiterTest do
     # Activer le rate limiting pour ces tests spécifiques
     Application.put_env(:portfolio, :enable_rate_limiting_in_tests, true)
 
+    # Configure trusted proxy count for X-Forwarded-For tests
+    original_proxy_count = Application.get_env(:portfolio, :trusted_proxy_count)
+    Application.put_env(:portfolio, :trusted_proxy_count, 1)
+
     # Nettoyer le cache avant chaque test pour éviter les interférences
     Cachex.clear(:portfolio_cache)
 
     on_exit(fn ->
       # Désactiver le rate limiting après les tests
       Application.put_env(:portfolio, :enable_rate_limiting_in_tests, false)
+
+      # Restore original trusted proxy count
+      if original_proxy_count do
+        Application.put_env(:portfolio, :trusted_proxy_count, original_proxy_count)
+      else
+        Application.delete_env(:portfolio, :trusted_proxy_count)
+      end
     end)
 
     :ok
