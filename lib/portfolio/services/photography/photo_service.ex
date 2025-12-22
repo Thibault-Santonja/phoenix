@@ -204,23 +204,42 @@ defmodule Portfolio.Services.Photography.PhotoService do
   @doc """
   Relance le traitement de toutes les photos en échec.
 
-  Retourne le nombre de photos relancées.
+  Utilise le traitement concurrent pour optimiser les performances
+  lors du retraitement de nombreuses photos.
+
+  Retourne le nombre de photos relancées avec succès.
+
+  ## Options
+
+  - `:max_concurrency` - Nombre maximum de tâches concurrentes (défaut: 10)
+  - `:timeout` - Timeout par photo en millisecondes (défaut: 5000)
 
   ## Exemples
 
       iex> reprocess_all_failed_photos()
       {:ok, 5}
+
+      iex> reprocess_all_failed_photos(max_concurrency: 20)
+      {:ok, 15}
   """
-  @spec reprocess_all_failed_photos() :: {:ok, non_neg_integer()}
-  def reprocess_all_failed_photos do
+  @spec reprocess_all_failed_photos(keyword()) :: {:ok, non_neg_integer()}
+  def reprocess_all_failed_photos(opts \\ []) do
+    max_concurrency = Keyword.get(opts, :max_concurrency, 10)
+    timeout = Keyword.get(opts, :timeout, 5_000)
+
     failed_photos = list_failed_photos(limit: 1000)
 
     count =
-      Enum.reduce(failed_photos, 0, fn photo, acc ->
-        case reprocess_photo(photo) do
-          {:ok, _} -> acc + 1
-          {:error, _} -> acc
-        end
+      failed_photos
+      |> Task.async_stream(
+        &reprocess_photo/1,
+        max_concurrency: max_concurrency,
+        timeout: timeout,
+        on_timeout: :kill_task
+      )
+      |> Enum.count(fn
+        {:ok, {:ok, _}} -> true
+        _ -> false
       end)
 
     {:ok, count}
