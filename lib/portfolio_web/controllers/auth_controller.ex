@@ -6,7 +6,7 @@ defmodule PortfolioWeb.AuthController do
   use PortfolioWeb, :controller
 
   alias Portfolio.Auth
-  alias Portfolio.Auth.UserSession
+  alias Portfolio.CacheManager
 
   # Rate limiting: 10 token verification attempts per 5 minutes per IP
   # Prevents brute force attacks on magic link tokens
@@ -107,9 +107,8 @@ defmodule PortfolioWeb.AuthController do
 
     _ =
       if session_token do
-        # Invalider le cache de la session (la clé utilise le token hashé)
-        hashed_token = UserSession.hash_token_value(session_token)
-        _ = Cachex.del(:portfolio_cache, {:session, hashed_token})
+        # Invalider le cache de la session via CacheManager
+        _ = CacheManager.invalidate_session(session_token)
 
         case Auth.get_session_by_token(session_token) do
           nil -> :ok

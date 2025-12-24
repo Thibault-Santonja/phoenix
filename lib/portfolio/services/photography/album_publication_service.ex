@@ -15,6 +15,7 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
 
   use Portfolio.Services.Service
 
+  alias Portfolio.CacheManager
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.Album
   alias Portfolio.Photography.Events.AlbumPublished
@@ -94,8 +95,6 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
 
   # Invalidate all caches related to published albums
   defp invalidate_albums_cache do
-    {:ok, _} = Cachex.del(:portfolio_cache, {:published_albums_by_year, []})
-    {:ok, _} = Cachex.del(:portfolio_cache, {:published_albums_by_year, [:photos]})
-    :ok
+    CacheManager.invalidate_albums()
   end
 end
