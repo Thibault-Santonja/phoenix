@@ -3,6 +3,7 @@ defmodule PortfolioWeb.FeedbackComponentsTest do
 
   import Phoenix.LiveViewTest
 
+  alias Phoenix.LiveView.JS
   alias PortfolioWeb.FeedbackComponents
 
   describe "modal/1" do
@@ -203,16 +204,16 @@ defmodule PortfolioWeb.FeedbackComponentsTest do
     test "returns JS struct with show command" do
       js = FeedbackComponents.show("#element")
 
-      assert %Phoenix.LiveView.JS{} = js
+      assert %JS{} = js
       # JS struct contains ops for show transition
       assert js.ops != []
     end
 
     test "chains with existing JS struct" do
-      initial_js = Phoenix.LiveView.JS.push("event")
+      initial_js = JS.push("event")
       js = FeedbackComponents.show(initial_js, "#element")
 
-      assert %Phoenix.LiveView.JS{} = js
+      assert %JS{} = js
       # Should have more ops than initial
       assert length(js.ops) > length(initial_js.ops)
     end
@@ -222,15 +223,15 @@ defmodule PortfolioWeb.FeedbackComponentsTest do
     test "returns JS struct with hide command" do
       js = FeedbackComponents.hide("#element")
 
-      assert %Phoenix.LiveView.JS{} = js
+      assert %JS{} = js
       assert js.ops != []
     end
 
     test "chains with existing JS struct" do
-      initial_js = Phoenix.LiveView.JS.push("event")
+      initial_js = JS.push("event")
       js = FeedbackComponents.hide(initial_js, "#element")
 
-      assert %Phoenix.LiveView.JS{} = js
+      assert %JS{} = js
       assert length(js.ops) > length(initial_js.ops)
     end
   end
@@ -239,16 +240,16 @@ defmodule PortfolioWeb.FeedbackComponentsTest do
     test "returns JS struct with modal show commands" do
       js = FeedbackComponents.show_modal("my-modal")
 
-      assert %Phoenix.LiveView.JS{} = js
+      assert %JS{} = js
       # Should contain multiple operations for modal animation
       assert length(js.ops) >= 4
     end
 
     test "chains with existing JS struct" do
-      initial_js = Phoenix.LiveView.JS.push("event")
+      initial_js = JS.push("event")
       js = FeedbackComponents.show_modal(initial_js, "my-modal")
 
-      assert %Phoenix.LiveView.JS{} = js
+      assert %JS{} = js
       assert length(js.ops) > length(initial_js.ops)
     end
   end
@@ -257,16 +258,16 @@ defmodule PortfolioWeb.FeedbackComponentsTest do
     test "returns JS struct with modal hide commands" do
       js = FeedbackComponents.hide_modal("my-modal")
 
-      assert %Phoenix.LiveView.JS{} = js
+      assert %JS{} = js
       # Should contain multiple operations for modal animation
       assert length(js.ops) >= 4
     end
 
     test "chains with existing JS struct" do
-      initial_js = Phoenix.LiveView.JS.push("event")
+      initial_js = JS.push("event")
       js = FeedbackComponents.hide_modal(initial_js, "my-modal")
 
-      assert %Phoenix.LiveView.JS{} = js
+      assert %JS{} = js
       assert length(js.ops) > length(initial_js.ops)
     end
   end

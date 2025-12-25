@@ -66,5 +66,64 @@ defmodule PortfolioWeb.PageControllerTest do
 
       assert conn.status == 404
     end
+
+    test "prevents Host header injection attacks", %{conn: conn} do
+      # Even with malicious Host header, only whitelisted redirects work
+      conn =
+        %{conn | host: "evil.com"}
+        |> get("/malicious")
+
+      assert conn.status == 404
+    end
+
+    test "handles path with special characters", %{conn: conn} do
+      conn = get(conn, "/photo%20space")
+
+      assert conn.status == 404
+    end
+
+    test "handles path traversal attempts", %{conn: conn} do
+      conn = get(conn, "/../photo")
+
+      # Should not redirect - path traversal blocked
+      refute conn.status in [301, 302]
+    end
+  end
+
+  describe "home/2" do
+    test "renders without layout", %{conn: conn} do
+      conn = get(conn, ~p"/")
+
+      # Home page renders with layout: false
+      assert html_response(conn, 200)
+    end
+
+    test "contains expected content elements", %{conn: conn} do
+      conn = get(conn, ~p"/")
+      body = html_response(conn, 200)
+
+      # Verify key content is present
+      assert body =~ "Thibault"
+    end
+  end
+
+  describe "redirect status codes" do
+    test "photo redirect uses 302 status", %{conn: conn} do
+      conn = get(conn, ~p"/photo")
+
+      assert conn.status == 302
+    end
+
+    test "tech redirect uses 302 status", %{conn: conn} do
+      conn = get(conn, ~p"/tech")
+
+      assert conn.status == 302
+    end
+
+    test "amvcc redirect uses 302 status", %{conn: conn} do
+      conn = get(conn, ~p"/amvcc")
+
+      assert conn.status == 302
+    end
   end
 end

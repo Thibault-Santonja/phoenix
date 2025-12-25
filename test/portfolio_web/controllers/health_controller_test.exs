@@ -104,4 +104,76 @@ defmodule PortfolioWeb.HealthControllerTest do
       end
     end
   end
+
+  describe "health check response format" do
+    test "index returns JSON content-type", %{conn: conn} do
+      conn = get(conn, ~p"/health")
+
+      assert get_resp_header(conn, "content-type") |> List.first() =~ "application/json"
+    end
+
+    test "ready returns JSON content-type", %{conn: conn} do
+      conn = get(conn, ~p"/health/ready")
+
+      assert get_resp_header(conn, "content-type") |> List.first() =~ "application/json"
+    end
+
+    test "index timestamp is valid ISO8601", %{conn: conn} do
+      conn = get(conn, ~p"/health")
+
+      response = json_response(conn, 200)
+      timestamp = response["timestamp"]
+
+      # Should parse without error
+      assert {:ok, _, _} = DateTime.from_iso8601(timestamp)
+    end
+
+    test "ready timestamp is valid ISO8601", %{conn: conn} do
+      conn = get(conn, ~p"/health/ready")
+
+      response =
+        case conn.status do
+          200 -> json_response(conn, 200)
+          503 -> json_response(conn, 503)
+        end
+
+      timestamp = response["timestamp"]
+
+      # Should parse without error
+      assert {:ok, _, _} = DateTime.from_iso8601(timestamp)
+    end
+  end
+
+  describe "health check idempotency" do
+    test "multiple index calls return consistent structure", %{conn: conn} do
+      conn1 = get(conn, ~p"/health")
+      conn2 = get(conn, ~p"/health")
+
+      response1 = json_response(conn1, 200)
+      response2 = json_response(conn2, 200)
+
+      assert response1["status"] == response2["status"]
+      assert response1["service"] == response2["service"]
+    end
+
+    test "multiple ready calls return consistent checks structure", %{conn: conn} do
+      conn1 = get(conn, ~p"/health/ready")
+      conn2 = get(conn, ~p"/health/ready")
+
+      response1 =
+        case conn1.status do
+          200 -> json_response(conn1, 200)
+          503 -> json_response(conn1, 503)
+        end
+
+      response2 =
+        case conn2.status do
+          200 -> json_response(conn2, 200)
+          503 -> json_response(conn2, 503)
+        end
+
+      # Both should have same check keys
+      assert Map.keys(response1["checks"]) == Map.keys(response2["checks"])
+    end
+  end
 end
