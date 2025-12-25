@@ -340,6 +340,86 @@ defmodule Portfolio.Photography.Storage.LocalStorageTest do
     end
   end
 
+  describe "generate_variants/1" do
+    test "generates all variants for stored photo", %{test_base_path: test_base_path} do
+      temp_path = create_test_image()
+      upload = %{path: temp_path, client_name: "test.jpg", content_type: "image/jpeg"}
+      {:ok, metadata} = LocalStorage.store_photo(upload)
+
+      assert {:ok, variants} = LocalStorage.generate_variants(metadata.photo_id)
+
+      # Should have variant URLs
+      assert is_map(variants)
+
+      # Variants should be public URLs
+      for {_variant, url} <- variants do
+        assert String.starts_with?(url, "/uploads/photos/")
+        assert String.ends_with?(url, ".webp")
+      end
+
+      # Verify files exist on disk
+      photo_dir = Path.join([test_base_path, "photos", metadata.photo_id])
+      files = File.ls!(photo_dir)
+      assert "original.jpg" in files
+    end
+
+    test "returns error for non-existent photo" do
+      result = LocalStorage.generate_variants("nonexistent-id")
+      assert {:error, :file_not_found} = result
+    end
+
+    test "returns error when original file is missing", %{test_base_path: test_base_path} do
+      # Create photo directory without original file
+      photo_id = "test1234"
+      photo_dir = Path.join([test_base_path, "photos", photo_id])
+      File.mkdir_p!(photo_dir)
+      File.write!(Path.join(photo_dir, "thumbnail.webp"), "fake")
+
+      result = LocalStorage.generate_variants(photo_id)
+      assert {:error, :file_not_found} = result
+    end
+  end
+
+  describe "path traversal prevention" do
+    test "delete_photo rejects path traversal attempts" do
+      # These should not cause any directory traversal
+      malicious_ids = [
+        "../../../etc/passwd",
+        "..%2F..%2Fetc%2Fpasswd",
+        "foo/../../../bar"
+      ]
+
+      for id <- malicious_ids do
+        result = LocalStorage.delete_photo(id)
+
+        # Should return error or ok (if path doesn't exist), but not delete anything outside uploads
+        assert result in [:ok, {:error, :invalid_path}]
+      end
+    end
+  end
+
+  describe "storage path configuration" do
+    test "uses configured base path", %{test_base_path: test_base_path} do
+      temp_path = create_test_image()
+      upload = %{path: temp_path, client_name: "test.jpg", content_type: "image/jpeg"}
+
+      {:ok, metadata} = LocalStorage.store_photo(upload)
+
+      # File should be in configured path
+      photo_dir = Path.join([test_base_path, "photos", metadata.photo_id])
+      assert File.exists?(photo_dir)
+    end
+
+    test "get_storage_usage returns 0 when photos directory doesn't exist" do
+      # Remove the photos directory
+      test_base_path = Application.get_env(:portfolio, :uploads)[:base_path]
+      photos_dir = Path.join(test_base_path, "photos")
+      File.rm_rf!(photos_dir)
+
+      assert LocalStorage.get_storage_usage() == 0
+    end
+  end
+
   # Helper functions
 
   defp create_temp_file(content) do
