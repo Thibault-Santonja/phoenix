@@ -162,9 +162,183 @@ defmodule Portfolio.Auth.IPWhitelistServiceTest do
       assert IPWhitelistService.whitelisted?({9, 10, 11, 12})
     end
 
-    test "handles IPv6 tuple" do
-      # IPv6 tuple conversion
-      refute IPWhitelistService.whitelisted?({0, 0, 0, 0, 0, 0, 0, 1})
+    test "handles IPv6 tuple for whitelisted IP" do
+      user = create_user()
+      {:ok, _} = IPWhitelistService.add_to_whitelist(%{ip_address: "::1"}, user.id)
+
+      # IPv6 loopback
+      assert IPWhitelistService.whitelisted?({0, 0, 0, 0, 0, 0, 0, 1})
+    end
+
+    test "returns false for IPv6 tuple not whitelisted" do
+      refute IPWhitelistService.whitelisted?({0, 0, 0, 0, 0, 0, 0, 2})
+    end
+
+    test "handles invalid IP tuple conversion gracefully" do
+      # Test with malformed tuple - should not crash
+      refute IPWhitelistService.whitelisted?({999, 999, 999, 999})
+    end
+
+    test "returns false when cache table is not initialized" do
+      # Delete the ETS table
+      :ets.delete(:ip_whitelist_cache)
+
+      # Should return false without crashing
+      refute IPWhitelistService.whitelisted?("192.168.1.1")
+
+      # Reinitialize for other tests
+      IPWhitelistService.init_cache()
+    end
+
+    test "uses cache for subsequent lookups" do
+      user = create_user()
+      {:ok, _} = IPWhitelistService.add_to_whitelist(%{ip_address: "100.100.100.100"}, user.id)
+
+      # First lookup populates cache
+      assert IPWhitelistService.whitelisted?("100.100.100.100")
+
+      # Second lookup should hit cache
+      assert IPWhitelistService.whitelisted?("100.100.100.100")
+    end
+
+    test "cache is refreshed when IP is added" do
+      user = create_user()
+
+      # Add first IP
+      {:ok, _} = IPWhitelistService.add_to_whitelist(%{ip_address: "200.200.200.1"}, user.id)
+
+      # Verify first IP is whitelisted
+      assert IPWhitelistService.whitelisted?("200.200.200.1")
+
+      # Add second IP
+      {:ok, _} = IPWhitelistService.add_to_whitelist(%{ip_address: "200.200.200.2"}, user.id)
+
+      # Both should be whitelisted
+      assert IPWhitelistService.whitelisted?("200.200.200.1")
+      assert IPWhitelistService.whitelisted?("200.200.200.2")
+    end
+
+    test "handles empty cache gracefully" do
+      # Ensure cache is initialized but empty
+      IPWhitelistService.init_cache()
+
+      # Should return false, not crash
+      refute IPWhitelistService.whitelisted?("99.99.99.99")
+    end
+  end
+
+  describe "add_to_whitelist/2 edge cases" do
+    test "adds IP without description" do
+      user = create_user()
+
+      assert {:ok, entry} =
+               IPWhitelistService.add_to_whitelist(
+                 %{ip_address: "10.0.0.3"},
+                 user.id
+               )
+
+      assert entry.ip_address == "10.0.0.3"
+      assert is_nil(entry.description)
+    end
+
+    test "adds IPv6 address" do
+      user = create_user()
+
+      assert {:ok, entry} =
+               IPWhitelistService.add_to_whitelist(
+                 %{ip_address: "2001:db8::1", description: "IPv6 test"},
+                 user.id
+               )
+
+      assert entry.ip_address == "2001:db8::1"
+      assert entry.description == "IPv6 test"
+    end
+
+    test "normalizes IP address by trimming whitespace" do
+      user = create_user()
+
+      assert {:ok, entry} =
+               IPWhitelistService.add_to_whitelist(
+                 %{ip_address: "  10.0.0.4  "},
+                 user.id
+               )
+
+      assert entry.ip_address == "10.0.0.4"
+    end
+
+    test "returns error for empty IP address" do
+      user = create_user()
+
+      assert {:error, changeset} =
+               IPWhitelistService.add_to_whitelist(
+                 %{ip_address: ""},
+                 user.id
+               )
+
+      assert changeset.valid? == false
+    end
+
+    test "returns error for description longer than 500 characters" do
+      user = create_user()
+      long_description = String.duplicate("a", 501)
+
+      assert {:error, changeset} =
+               IPWhitelistService.add_to_whitelist(
+                 %{ip_address: "10.0.0.5", description: long_description},
+                 user.id
+               )
+
+      assert changeset.valid? == false
+    end
+  end
+
+  describe "update_whitelist_entry/2 edge cases" do
+    test "clears the description when set to nil" do
+      user = create_user()
+
+      {:ok, entry} =
+        IPWhitelistService.add_to_whitelist(
+          %{ip_address: "10.20.30.41", description: "Old"},
+          user.id
+        )
+
+      assert {:ok, updated} =
+               IPWhitelistService.update_whitelist_entry(entry, %{description: nil})
+
+      assert is_nil(updated.description)
+    end
+
+    test "returns error for description longer than 500 characters" do
+      user = create_user()
+
+      {:ok, entry} =
+        IPWhitelistService.add_to_whitelist(
+          %{ip_address: "10.20.30.42", description: "Old"},
+          user.id
+        )
+
+      long_description = String.duplicate("a", 501)
+
+      assert {:error, changeset} =
+               IPWhitelistService.update_whitelist_entry(entry, %{description: long_description})
+
+      assert changeset.valid? == false
+    end
+  end
+
+  describe "remove_from_whitelist/1 cache behavior" do
+    test "removes entry from cache" do
+      user = create_user()
+      {:ok, entry} = IPWhitelistService.add_to_whitelist(%{ip_address: "172.16.0.2"}, user.id)
+
+      # Verify IP is whitelisted
+      assert IPWhitelistService.whitelisted?("172.16.0.2")
+
+      # Remove entry
+      {:ok, _deleted} = IPWhitelistService.remove_from_whitelist(entry.id)
+
+      # Verify IP is no longer whitelisted
+      refute IPWhitelistService.whitelisted?("172.16.0.2")
     end
   end
 end

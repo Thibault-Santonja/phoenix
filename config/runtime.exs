@@ -154,6 +154,9 @@ if config_env() == :prod do
       port: port
     ],
     secret_key_base: secret_key_base,
+    # Force SSL with HSTS (HTTP Strict Transport Security)
+    # Ensures all traffic is redirected to HTTPS and browsers remember to use HTTPS
+    force_ssl: [hsts: true],
     live_view: [
       signing_salt:
         System.get_env("LIVE_VIEW_SIGNING_SALT") ||

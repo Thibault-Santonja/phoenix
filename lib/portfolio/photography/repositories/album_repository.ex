@@ -37,7 +37,8 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   @filter_handlers %{
     type: &__MODULE__.filter_by_type/2,
     published: &__MODULE__.filter_by_published/2,
-    with_photo_count: &__MODULE__.filter_with_photo_count/2
+    with_photo_count: &__MODULE__.filter_with_photo_count/2,
+    cover_photo_only: &__MODULE__.filter_cover_photo_only/2
   }
 
   @doc """
@@ -49,6 +50,7 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   - `:published` - Filtre par statut de publication (boolean)
   - `:preload` - Liste des associations à précharger (liste d'atoms)
   - `:with_photo_count` - Ajoute un champ virtuel `photo_count` au lieu de précharger toutes les photos (boolean)
+  - `:cover_photo_only` - Précharge uniquement la première photo (cover) au lieu de toutes les photos (boolean)
   - `:limit` - Nombre maximum de résultats (integer)
   - `:offset` - Nombre de résultats à sauter (integer)
 
@@ -347,6 +349,14 @@ defmodule Portfolio.Photography.Repositories.AlbumRepository do
   end
 
   def filter_with_photo_count(query, _), do: query
+
+  @doc false
+  @spec filter_cover_photo_only(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
+  def filter_cover_photo_only(query, true) do
+    AlbumQuery.with_cover_photo_only(query)
+  end
+
+  def filter_cover_photo_only(query, _), do: query
 
   @doc """
   Counts albums with optional filters.

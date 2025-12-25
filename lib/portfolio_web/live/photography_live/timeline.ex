@@ -106,7 +106,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
 
     opts = [
       published: true,
-      preload: [:photos],
+      cover_photo_only: true,
       limit: @albums_per_page + 1,
       offset: offset
     ]
