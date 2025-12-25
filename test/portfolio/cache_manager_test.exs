@@ -289,4 +289,97 @@ defmodule Portfolio.CacheManagerTest do
       assert {:ok, "album_data"} = Cachex.get(@cache_name, album_key)
     end
   end
+
+  describe "fetch_or_compute/3 edge cases" do
+    test "handles compute function returning empty list" do
+      key = {:test, "empty_list"}
+      compute_fn = fn -> [] end
+
+      result = CacheManager.fetch_or_compute(key, compute_fn)
+      assert result == []
+
+      {:ok, cached} = Cachex.get(@cache_name, key)
+      assert cached == []
+    end
+
+    test "handles compute function returning empty map" do
+      key = {:test, "empty_map"}
+      compute_fn = fn -> %{} end
+
+      result = CacheManager.fetch_or_compute(key, compute_fn)
+      assert result == %{}
+    end
+
+    test "handles compute function returning boolean false" do
+      key = {:test, "false_value"}
+      compute_fn = fn -> false end
+
+      result = CacheManager.fetch_or_compute(key, compute_fn)
+      assert result == false
+    end
+
+    test "handles compute function returning zero" do
+      key = {:test, "zero_value"}
+      compute_fn = fn -> 0 end
+
+      result = CacheManager.fetch_or_compute(key, compute_fn)
+      assert result == 0
+    end
+
+    test "works without TTL option" do
+      key = {:test, "no_ttl"}
+      compute_fn = fn -> "no_ttl_value" end
+
+      result = CacheManager.fetch_or_compute(key, compute_fn, [])
+      assert result == "no_ttl_value"
+    end
+
+    test "TTL is passed correctly when specified" do
+      key = {:test, "with_ttl"}
+      compute_fn = fn -> "ttl_value" end
+
+      result = CacheManager.fetch_or_compute(key, compute_fn, ttl: 60_000)
+      assert result == "ttl_value"
+
+      # Value should be cached
+      {:ok, cached} = Cachex.get(@cache_name, key)
+      assert cached == "ttl_value"
+    end
+  end
+
+  describe "delete_many/1 with errors" do
+    test "handles single key deletion" do
+      key = {:test, "single"}
+      Cachex.put(@cache_name, key, "value")
+
+      assert :ok = CacheManager.delete_many([key])
+      assert {:ok, nil} = Cachex.get(@cache_name, key)
+    end
+  end
+
+  describe "invalidate_albums/0 idempotency" do
+    test "can be called multiple times safely" do
+      # First call
+      assert :ok = CacheManager.invalidate_albums()
+
+      # Add some data
+      Cachex.put(@cache_name, {:published_albums_by_year, []}, [%{id: 1}])
+
+      # Second call
+      assert :ok = CacheManager.invalidate_albums()
+
+      # Third call (data already gone)
+      assert :ok = CacheManager.invalidate_albums()
+    end
+  end
+
+  describe "invalidate_session/1 idempotency" do
+    test "can be called multiple times for same token" do
+      token = "idempotent_token"
+
+      assert :ok = CacheManager.invalidate_session(token)
+      assert :ok = CacheManager.invalidate_session(token)
+      assert :ok = CacheManager.invalidate_session(token)
+    end
+  end
 end
