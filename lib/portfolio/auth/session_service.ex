@@ -23,11 +23,11 @@ defmodule Portfolio.Auth.SessionService do
   via the RequireAuth plug.
   """
 
-  alias Portfolio.Auth.Events.SessionCreated
   alias Portfolio.Auth.Repositories.SessionRepository
   alias Portfolio.Auth.{User, UserSession}
   alias Portfolio.CacheManager
   alias Portfolio.DomainEvents
+  alias Portfolio.DomainEvents.Builders
   alias Portfolio.RateLimiter
 
   # =============================================================================
@@ -365,13 +365,8 @@ defmodule Portfolio.Auth.SessionService do
     max_age_days = get_session_max_age()
     expires_at = DateTime.add(session.last_activity_at, max_age_days, :day)
 
-    DomainEvents.publish(:session_created, %SessionCreated{
-      session_id: session.id,
-      user_id: user.id,
-      email: user.email,
-      created_at: session.inserted_at,
-      expires_at: expires_at
-    })
+    event = Builders.build_session_created(session, user, expires_at)
+    DomainEvents.publish(:session_created, event)
   end
 
   # Retrieves the maximum session lifetime from configuration

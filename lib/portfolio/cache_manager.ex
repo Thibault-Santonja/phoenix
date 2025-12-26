@@ -5,6 +5,8 @@ defmodule Portfolio.CacheManager do
   Provides a unified interface for cache operations, eliminating duplication
   across services and event handlers. Uses Cachex as the underlying cache.
 
+  Implements the `Portfolio.Cache.CacheAdapter` behaviour.
+
   ## Design Principles
 
   1. **DRY**: Single implementation for cache operations
@@ -33,6 +35,8 @@ defmodule Portfolio.CacheManager do
       CacheManager.invalidate_session(token)
   """
 
+  @behaviour Portfolio.Cache.CacheAdapter
+
   require Logger
 
   alias Portfolio.Auth.UserSession
@@ -60,6 +64,7 @@ defmodule Portfolio.CacheManager do
       iex> delete({:session, "abc123"})
       :ok
   """
+  @impl Portfolio.Cache.CacheAdapter
   @spec delete(term()) :: :ok | {:error, boolean()}
   def delete(key) do
     case Cachex.del(@cache_name, key) do
@@ -87,6 +92,7 @@ defmodule Portfolio.CacheManager do
       iex> delete_many([{:session, "a"}, {:session, "b"}])
       :ok
   """
+  @impl Portfolio.Cache.CacheAdapter
   @spec delete_many([term()]) :: :ok | {:error, [{term(), term()}]}
   def delete_many([]), do: :ok
 
@@ -132,6 +138,7 @@ defmodule Portfolio.CacheManager do
       iex> invalidate_session("hashed_token_value")
       :ok
   """
+  @impl Portfolio.Cache.CacheAdapter
   @spec invalidate_session(String.t()) :: :ok
   def invalidate_session(token) when is_binary(token) do
     # Hash the token for primary cache key
@@ -156,6 +163,7 @@ defmodule Portfolio.CacheManager do
       iex> invalidate_sessions(["token1", "token2"])
       :ok
   """
+  @impl Portfolio.Cache.CacheAdapter
   @spec invalidate_sessions([String.t()]) :: :ok
   def invalidate_sessions(tokens) when is_list(tokens) do
     Enum.each(tokens, &invalidate_session/1)
@@ -177,6 +185,7 @@ defmodule Portfolio.CacheManager do
       iex> invalidate_albums()
       :ok
   """
+  @impl Portfolio.Cache.CacheAdapter
   @spec invalidate_albums() :: :ok
   def invalidate_albums do
     cache_keys = [
@@ -219,6 +228,7 @@ defmodule Portfolio.CacheManager do
       iex> fetch_or_compute({:user, id}, fn -> get_user(id) end, ttl: 60_000)
       %User{...}
   """
+  @impl Portfolio.Cache.CacheAdapter
   @spec fetch_or_compute(term(), (-> term()), keyword()) :: term()
   def fetch_or_compute(key, compute_fn, opts \\ []) do
     ttl = Keyword.get(opts, :ttl)

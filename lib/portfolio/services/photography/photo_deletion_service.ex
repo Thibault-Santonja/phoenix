@@ -16,7 +16,7 @@ defmodule Portfolio.Services.Photography.PhotoDeletionService do
   use Portfolio.Services.Service
 
   alias Portfolio.DomainEvents
-  alias Portfolio.Photography.Events.PhotoDeleted
+  alias Portfolio.DomainEvents.Builders
   alias Portfolio.Photography.FileStorageHelper
   alias Portfolio.Photography.Photo
   alias Portfolio.Repo
@@ -67,12 +67,8 @@ defmodule Portfolio.Services.Photography.PhotoDeletionService do
         # Emit domain event on success
         case result do
           {:ok, %{photo: deleted_photo}} ->
-            DomainEvents.publish(:photo_deleted, %PhotoDeleted{
-              photo_id: deleted_photo.id,
-              album_id: deleted_photo.album_id,
-              file_path: deleted_photo.file_path,
-              deleted_at: DateTime.utc_now()
-            })
+            event = Builders.build_photo_deleted(deleted_photo)
+            DomainEvents.publish(:photo_deleted, event)
 
           _ ->
             :ok

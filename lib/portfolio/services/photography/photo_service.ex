@@ -15,7 +15,7 @@ defmodule Portfolio.Services.Photography.PhotoService do
   """
 
   alias Portfolio.DomainEvents
-  alias Portfolio.Photography.Events.PhotoUploaded
+  alias Portfolio.DomainEvents.Builders
   alias Portfolio.Photography.Photo
   alias Portfolio.Photography.Repositories.PhotoRepository
   alias Portfolio.Workers.ImageVariantWorker
@@ -85,14 +85,8 @@ defmodule Portfolio.Services.Photography.PhotoService do
   def create_photo(attrs) do
     with_telemetry([:photo, :created], %{album_id: attrs[:album_id]}, fn ->
       with {:ok, photo} <- PhotoRepository.insert(attrs) do
-        DomainEvents.publish(:photo_uploaded, %PhotoUploaded{
-          photo_id: photo.id,
-          album_id: photo.album_id,
-          file_path: photo.file_path,
-          hash: photo.hash,
-          uploaded_at: photo.inserted_at
-        })
-
+        event = Builders.build_photo_uploaded(photo)
+        DomainEvents.publish(:photo_uploaded, event)
         {:ok, photo}
       end
     end)

@@ -17,8 +17,8 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
 
   alias Portfolio.CacheManager
   alias Portfolio.DomainEvents
+  alias Portfolio.DomainEvents.Builders
   alias Portfolio.Photography.Album
-  alias Portfolio.Photography.Events.AlbumPublished
   alias Portfolio.Photography.Repositories.AlbumRepository
 
   @impl true
@@ -82,14 +82,8 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
 
   # Emit domain event for album publication
   defp emit_publication_event(album, user_id) do
-    DomainEvents.publish(:album_published, %AlbumPublished{
-      album_id: album.id,
-      title: album.title,
-      slug: album.slug,
-      published_at: DateTime.utc_now(),
-      user_id: user_id
-    })
-
+    event = Builders.build_album_published(album, user_id)
+    DomainEvents.publish(:album_published, event)
     :ok
   end
 

@@ -17,11 +17,11 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
 
   use Portfolio.Services.Service
 
-  alias Portfolio.Auth.Events.MagicLinkRequested
   alias Portfolio.Auth.MagicLink
   alias Portfolio.Auth.Mailer
   alias Portfolio.Auth.Repositories.{MagicLinkRepository, UserRepository}
   alias Portfolio.DomainEvents
+  alias Portfolio.DomainEvents.Builders
   alias Portfolio.Repo
 
   # Timing-safe delay in milliseconds to prevent timing attacks
@@ -136,13 +136,8 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
       {:ok, %{magic_link: magic_link}} ->
         # Emit domain event
         # Security: token intentionally omitted from event to prevent logging exposure
-        DomainEvents.publish(:magic_link_requested, %MagicLinkRequested{
-          magic_link_id: magic_link.id,
-          email: user.email,
-          short_code: magic_link.short_code,
-          requested_at: magic_link.inserted_at,
-          expires_at: magic_link.expires_at
-        })
+        event = Builders.build_magic_link_requested(magic_link, user.email)
+        DomainEvents.publish(:magic_link_requested, event)
 
         # Send email with magic link
         _email_result = Mailer.send_magic_link_email(user, magic_link)

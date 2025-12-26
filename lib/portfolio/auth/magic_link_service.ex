@@ -25,10 +25,10 @@ defmodule Portfolio.Auth.MagicLinkService do
   6. Une session est créée (par SessionService)
   """
 
-  alias Portfolio.Auth.Events.MagicLinkVerified
   alias Portfolio.Auth.MagicLink
   alias Portfolio.Auth.Repositories.MagicLinkRepository
   alias Portfolio.DomainEvents
+  alias Portfolio.DomainEvents.Builders
 
   # Service Layer - pour éviter dépendance circulaire
   alias Portfolio.Services.Auth.MagicLinkAuthService
@@ -225,12 +225,8 @@ defmodule Portfolio.Auth.MagicLinkService do
   # Publie l'événement de vérification du magic link
   @spec publish_magic_link_verified_event(MagicLink.t(), MagicLink.t()) :: :ok
   defp publish_magic_link_verified_event(updated_ml, ml) do
-    DomainEvents.publish(:magic_link_verified, %MagicLinkVerified{
-      magic_link_id: updated_ml.id,
-      user_id: ml.user.id,
-      email: ml.user.email,
-      verified_at: DateTime.utc_now()
-    })
+    event = Builders.build_magic_link_verified(updated_ml, ml.user)
+    DomainEvents.publish(:magic_link_verified, event)
   end
 
   # Émet les métriques telemetry pour la vérification

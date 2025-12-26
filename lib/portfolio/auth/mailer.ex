@@ -1,7 +1,12 @@
 defmodule Portfolio.Auth.Mailer do
   @moduledoc """
   Module responsible for sending authentication emails via magic links.
+
+  Implements the `Portfolio.Auth.MailerAdapter` behaviour for sending
+  authentication emails using Swoosh.
   """
+
+  @behaviour Portfolio.Auth.MailerAdapter
 
   import Swoosh.Email
   alias Portfolio.Auth.{MagicLink, User}
@@ -17,6 +22,7 @@ defmodule Portfolio.Auth.Mailer do
     - `{:ok, _}` if the email was sent successfully
     - `{:error, reason}` in case of error
   """
+  @impl Portfolio.Auth.MailerAdapter
   @spec send_magic_link_email(User.t(), MagicLink.t()) :: {:ok, term()} | {:error, term()}
   def send_magic_link_email(%User{} = user, %MagicLink{} = magic_link) do
     magic_link_url = generate_magic_link_url(magic_link)
