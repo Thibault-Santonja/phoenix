@@ -75,6 +75,7 @@ defmodule PortfolioWeb.Plugs.IPUtils do
       |> String.split(",")
       |> Enum.map(&String.trim/1)
       |> Enum.reject(&(&1 == ""))
+      |> Enum.filter(&valid_ip_format?/1)
 
     case ips do
       [] ->
@@ -88,6 +89,35 @@ defmodule PortfolioWeb.Plugs.IPUtils do
         Enum.at(ips, client_index, List.first(ips))
     end
   end
+
+  @doc """
+  Validates that a string is a valid IPv4 or IPv6 address format.
+
+  Uses Erlang's :inet.parse_address/1 for robust validation.
+
+  ## Examples
+
+      iex> PortfolioWeb.Plugs.IPUtils.valid_ip_format?("192.168.1.1")
+      true
+
+      iex> PortfolioWeb.Plugs.IPUtils.valid_ip_format?("2001:db8::1")
+      true
+
+      iex> PortfolioWeb.Plugs.IPUtils.valid_ip_format?("not-an-ip")
+      false
+
+      iex> PortfolioWeb.Plugs.IPUtils.valid_ip_format?("")
+      false
+  """
+  @spec valid_ip_format?(String.t()) :: boolean()
+  def valid_ip_format?(ip_str) when is_binary(ip_str) and ip_str != "" do
+    case :inet.parse_address(String.to_charlist(ip_str)) do
+      {:ok, _} -> true
+      {:error, _} -> false
+    end
+  end
+
+  def valid_ip_format?(_), do: false
 
   @doc """
   Extracts the User-Agent from request headers.

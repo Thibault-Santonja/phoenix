@@ -475,7 +475,14 @@ export const DarkModeSwitch = {
       const newTheme = isDark ? "light" : "dark";
 
       html.classList.toggle("dark", newTheme === "dark");
-      localStorage.setItem("theme", newTheme);
+
+      // Safely persist theme preference (localStorage may throw if quota exceeded or disabled)
+      try {
+        localStorage.setItem("theme", newTheme);
+      } catch (e) {
+        // Graceful degradation: theme still toggles, just won't persist
+        log("Could not persist theme preference:", e);
+      }
     };
     this.el.addEventListener("click", this.clickHandler);
   },

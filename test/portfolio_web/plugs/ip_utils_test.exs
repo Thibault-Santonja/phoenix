@@ -79,10 +79,10 @@ defmodule PortfolioWeb.Plugs.IPUtilsTest do
 
       conn = %Plug.Conn{
         remote_ip: {10, 0, 0, 1},
-        req_headers: [{"x-forwarded-for", "spoofed, real-client, proxy1, proxy2"}]
+        req_headers: [{"x-forwarded-for", "1.1.1.1, 192.168.1.100, 10.0.0.2, 10.0.0.3"}]
       }
 
-      assert IPUtils.get_ip_address(conn) == "real-client"
+      assert IPUtils.get_ip_address(conn) == "192.168.1.100"
 
       # Restore original value
       if original do
@@ -99,6 +99,25 @@ defmodule PortfolioWeb.Plugs.IPUtilsTest do
       }
 
       assert IPUtils.get_ip_address(conn) == "::1"
+    end
+
+    test "filters out invalid IP addresses from X-Forwarded-For" do
+      conn = %Plug.Conn{
+        remote_ip: {10, 0, 0, 1},
+        req_headers: [{"x-forwarded-for", "invalid-ip, 203.0.113.50, proxy1"}]
+      }
+
+      # Should skip "invalid-ip" and return the first valid IP
+      assert IPUtils.get_ip_address(conn) == "203.0.113.50"
+    end
+
+    test "returns unknown when all IPs in X-Forwarded-For are invalid" do
+      conn = %Plug.Conn{
+        remote_ip: {10, 0, 0, 1},
+        req_headers: [{"x-forwarded-for", "not-an-ip, also-invalid, bad-format"}]
+      }
+
+      assert IPUtils.get_ip_address(conn) == "unknown"
     end
   end
 
