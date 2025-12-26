@@ -2,6 +2,8 @@ defmodule Portfolio.Auth.DisposableEmailChecker do
   @moduledoc """
   Checks if an email address uses a disposable/temporary domain.
 
+  Uses `Portfolio.Auth.Utilities.EmailExtractor` for domain extraction (DRY).
+
   Disposable email services allow creating temporary addresses
   to avoid spam. However, they are often used to bypass
   registration restrictions and create fake accounts.
@@ -31,7 +33,7 @@ defmodule Portfolio.Auth.DisposableEmailChecker do
 
   # List of most common disposable email domains
   # Source: https://github.com/disposable-email-domains/disposable-email-domains
-  @disposable_domains [
+  @disposable_domains_list [
     "10minutemail.com",
     "guerrillamail.com",
     "mailinator.com",
@@ -58,6 +60,12 @@ defmodule Portfolio.Auth.DisposableEmailChecker do
     "inboxkitten.com",
     "throwam.com"
   ]
+
+  # MapSet for O(1) lookup performance instead of O(n) linear search
+  @disposable_domains_set MapSet.new(@disposable_domains_list)
+
+  # Delegate domain extraction to centralized utility (DRY)
+  defdelegate extract_domain(email), to: Portfolio.Auth.Utilities.EmailExtractor
 
   @doc """
   Checks if an email address uses a disposable domain.
@@ -87,44 +95,24 @@ defmodule Portfolio.Auth.DisposableEmailChecker do
 
   def disposable?(email) when is_binary(email) do
     case extract_domain(email) do
-      nil ->
-        false
-
-      domain ->
-        normalized_domain = String.downcase(domain)
-
-        # Check if the domain or a parent domain is disposable
-        Enum.any?(@disposable_domains, fn disposable ->
-          # Exact match or subdomain (e.g.: subdomain.mailinator.com)
-          normalized_domain == disposable or
-            String.ends_with?(normalized_domain, "." <> disposable)
-        end)
+      nil -> false
+      domain -> check_domain_disposable(String.downcase(domain))
     end
   end
 
-  @doc """
-  Extracts the domain from an email address.
+  # O(1) lookup for exact match, then O(n) for subdomain check
+  @spec check_domain_disposable(String.t()) :: boolean()
+  defp check_domain_disposable(normalized_domain) do
+    MapSet.member?(@disposable_domains_set, normalized_domain) or
+      subdomain_of_disposable?(normalized_domain)
+  end
 
-  ## Examples
-
-      iex> DisposableEmailChecker.extract_domain("user@example.com")
-      "example.com"
-
-      iex> DisposableEmailChecker.extract_domain("invalid")
-      nil
-  """
-  @spec extract_domain(String.t() | nil) :: String.t() | nil
-  def extract_domain(nil), do: nil
-  def extract_domain(""), do: nil
-
-  def extract_domain(email) when is_binary(email) do
-    case String.split(email, "@") do
-      [_local, domain] when byte_size(domain) > 0 ->
-        String.downcase(domain)
-
-      _ ->
-        nil
-    end
+  # Check if domain is a subdomain of a disposable domain (e.g.: subdomain.mailinator.com)
+  @spec subdomain_of_disposable?(String.t()) :: boolean()
+  defp subdomain_of_disposable?(domain) do
+    Enum.any?(@disposable_domains_list, fn disposable ->
+      String.ends_with?(domain, "." <> disposable)
+    end)
   end
 
   @doc """
@@ -137,5 +125,5 @@ defmodule Portfolio.Auth.DisposableEmailChecker do
       true
   """
   @spec disposable_domains() :: [String.t()]
-  def disposable_domains, do: @disposable_domains
+  def disposable_domains, do: @disposable_domains_list
 end

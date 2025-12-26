@@ -140,30 +140,8 @@ defmodule Portfolio.Auth.MXValidator do
       {:error, :lookup_failed}
   end
 
-  @doc """
-  Extrait le domaine d'une adresse email.
-
-  ## Exemples
-
-      iex> extract_domain("user@example.com")
-      "example.com"
-
-      iex> extract_domain("invalid")
-      nil
-  """
-  @spec extract_domain(String.t() | nil) :: String.t() | nil
-  def extract_domain(nil), do: nil
-  def extract_domain(""), do: nil
-
-  def extract_domain(email) when is_binary(email) do
-    case String.split(email, "@") do
-      [_local, domain] when byte_size(domain) > 0 ->
-        String.downcase(domain)
-
-      _ ->
-        nil
-    end
-  end
+  # Delegate domain extraction to centralized utility (DRY)
+  defdelegate extract_domain(email), to: Portfolio.Auth.Utilities.EmailExtractor
 
   # Vérifie les MX records avec cache
   @spec check_mx_records_cached(String.t()) :: {:ok, [tuple()]} | {:error, term()}

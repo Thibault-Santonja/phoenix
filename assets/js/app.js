@@ -108,7 +108,7 @@ const SetLocale = () => {
     if (!locale) {
       return;
     }
-    document.cookie = `locale=${locale};path=/`;
+    document.cookie = `locale=${locale};path=/;SameSite=Lax`;
     // Only reload if cookie was successfully set (avoid infinite loop if cookies blocked)
     if (document.cookie.match(/(?:^|;\s*)locale=/)) {
       location.reload();
@@ -122,6 +122,6 @@ window.addEventListener("phx:change_locale", (e) => {
   if (!locale) {
     return;
   }
-  document.cookie = `locale=${locale};path=/`;
+  document.cookie = `locale=${locale};path=/;SameSite=Lax`;
   location.reload();
 });

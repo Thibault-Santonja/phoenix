@@ -691,7 +691,7 @@ export const MagicLinkExpiration = {
         display.textContent = "expiré";
         display.parentElement.parentElement.parentElement.classList.remove("bg-green-50");
         display.parentElement.parentElement.parentElement.classList.add("bg-red-50");
-        display.parentElement.querySelector("p").innerHTML =
+        display.parentElement.querySelector("p").textContent =
           "Le lien de connexion a expiré. Veuillez demander un nouveau lien.";
       }
     };
