@@ -60,7 +60,7 @@ defmodule Portfolio.Photography do
   alias Portfolio.Photography.{Album, Photo}
 
   # Service Layer
-  alias Portfolio.Services.Photography.{
+  alias Portfolio.Photography.Services.{
     AlbumCacheService,
     AlbumDeletionService,
     AlbumPublicationService,

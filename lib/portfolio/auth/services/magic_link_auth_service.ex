@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Auth.MagicLinkAuthService do
+defmodule Portfolio.Auth.Services.MagicLinkAuthService do
   @moduledoc """
   Service for magic link authentication workflow.
 
@@ -15,7 +15,7 @@ defmodule Portfolio.Services.Auth.MagicLinkAuthService do
   and event emission.
   """
 
-  use Portfolio.Services.Service
+  use Portfolio.Service
 
   alias Portfolio.Auth.MagicLink
   alias Portfolio.Auth.Mailer

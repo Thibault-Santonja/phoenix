@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Service do
+defmodule Portfolio.Service do
   @moduledoc """
   Behaviour for Application Services in the Service Layer.
 
@@ -24,8 +24,8 @@ defmodule Portfolio.Services.Service do
 
   ## Example Service
 
-      defmodule Portfolio.Services.Photography.AlbumPublicationService do
-        @behaviour Portfolio.Services.Service
+      defmodule Portfolio.Photography.Services.AlbumPublicationService do
+        @behaviour Portfolio.Service
 
         alias Portfolio.Photography.{Album, Photo}
         alias Portfolio.DomainEvents
@@ -60,7 +60,7 @@ defmodule Portfolio.Services.Service do
   ## Example
 
       defmodule MyService do
-        use Portfolio.Services.Service
+        use Portfolio.Service
 
         def execute(params, opts) do
           with_telemetry(
@@ -78,7 +78,7 @@ defmodule Portfolio.Services.Service do
   """
   defmacro __using__(_opts) do
     quote do
-      @behaviour Portfolio.Services.Service
+      @behaviour Portfolio.Service
 
       # Wraps a function with telemetry instrumentation.
       #

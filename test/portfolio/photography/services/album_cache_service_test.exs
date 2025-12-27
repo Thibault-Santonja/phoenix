@@ -1,8 +1,8 @@
-defmodule Portfolio.Services.Photography.AlbumCacheServiceTest do
+defmodule Portfolio.Photography.Services.AlbumCacheServiceTest do
   use Portfolio.DataCase, async: true
 
   alias Portfolio.Config.CacheConfig
-  alias Portfolio.Services.Photography.AlbumCacheService
+  alias Portfolio.Photography.Services.AlbumCacheService
 
   import PortfolioTest.Fixtures.PhotographyFixtures
 

@@ -1,11 +1,11 @@
-defmodule Portfolio.Services.Auth.MagicLinkAuthServiceTest do
+defmodule Portfolio.Auth.Services.MagicLinkAuthServiceTest do
   use Portfolio.DataCase, async: false
 
   import Swoosh.TestAssertions
 
   alias Portfolio.Auth.User
   alias Portfolio.Repo
-  alias Portfolio.Services.Auth.MagicLinkAuthService
+  alias Portfolio.Auth.Services.MagicLinkAuthService
 
   setup do
     # Reset rate limiter before each test

@@ -34,7 +34,7 @@ defmodule Portfolio.MixProject do
           # Storage requires actual file system access
           Portfolio.Photography.Storage.LocalStorage,
           # Services with complex file upload dependencies
-          Portfolio.Services.Photography.PhotoUploadService
+          Portfolio.Photography.Services.PhotoUploadService
         ]
       ],
       # Reduce parallel compilation to avoid ETS race conditions

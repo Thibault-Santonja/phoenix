@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Photography.PhotoDeletionServiceTest do
+defmodule Portfolio.Photography.Services.PhotoDeletionServiceTest do
   use Portfolio.DataCase, async: true
 
   import PortfolioTest.Fixtures.PhotographyFixtures
@@ -6,7 +6,7 @@ defmodule Portfolio.Services.Photography.PhotoDeletionServiceTest do
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.Photo
   alias Portfolio.Repo
-  alias Portfolio.Services.Photography.PhotoDeletionService
+  alias Portfolio.Photography.Services.PhotoDeletionService
 
   describe "execute/2" do
     test "deletes photo from database" do

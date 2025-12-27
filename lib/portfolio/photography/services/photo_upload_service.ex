@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Photography.PhotoUploadService do
+defmodule Portfolio.Photography.Services.PhotoUploadService do
   @moduledoc """
   Service for uploading photos with parallel processing.
 
@@ -38,7 +38,7 @@ defmodule Portfolio.Services.Photography.PhotoUploadService do
   - `count` - Number of photos uploaded
   """
 
-  use Portfolio.Services.Service
+  use Portfolio.Service
 
   alias Ecto.Multi
   alias Portfolio.Photography

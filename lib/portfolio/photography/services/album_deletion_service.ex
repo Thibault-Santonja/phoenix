@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Photography.AlbumDeletionService do
+defmodule Portfolio.Photography.Services.AlbumDeletionService do
   @moduledoc """
   Service for deleting albums with atomic multi-step operations.
 
@@ -13,7 +13,7 @@ defmodule Portfolio.Services.Photography.AlbumDeletionService do
   the entire operation is rolled back.
   """
 
-  use Portfolio.Services.Service
+  use Portfolio.Service
 
   alias Portfolio.DomainEvents
   alias Portfolio.DomainEvents.Builders

@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Photography.AlbumCacheService do
+defmodule Portfolio.Photography.Services.AlbumCacheService do
   @moduledoc """
   Service responsable du cache des albums publiés.
 
@@ -19,7 +19,7 @@ defmodule Portfolio.Services.Photography.AlbumCacheService do
   pour éviter la pollution entre tests.
   """
 
-  alias Portfolio.Services.Photography.AlbumService
+  alias Portfolio.Photography.Services.AlbumService
 
   @doc """
   Liste les albums publiés groupés par année avec cache.

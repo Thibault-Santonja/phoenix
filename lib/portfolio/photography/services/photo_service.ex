@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Photography.PhotoService do
+defmodule Portfolio.Photography.Services.PhotoService do
   @moduledoc """
   Service responsable des opérations CRUD sur les photos et du traitement.
 

@@ -31,7 +31,7 @@ defmodule Portfolio.Auth.MagicLinkService do
   alias Portfolio.DomainEvents.Builders
 
   # Service Layer - pour éviter dépendance circulaire
-  alias Portfolio.Services.Auth.MagicLinkAuthService
+  alias Portfolio.Auth.Services.MagicLinkAuthService
 
   # =============================================================================
   # Public API

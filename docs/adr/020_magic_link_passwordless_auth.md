@@ -50,7 +50,7 @@ Le service `Portfolio.Auth.MagicLinkService` g�re le cycle de vie des magic link
 
 #### 3. MagicLinkAuthService
 
-Le service d'orchestration `Portfolio.Services.Auth.MagicLinkAuthService` coordonne :
+Le service d'orchestration `Portfolio.Auth.Services.MagicLinkAuthService` coordonne :
 - La génération du token sécurisé
 - La création du magic link en base
 - L'envoi de l'email via `Portfolio.Email.send_magic_link_email/2`

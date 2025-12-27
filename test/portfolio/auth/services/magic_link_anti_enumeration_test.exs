@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Auth.MagicLinkAntiEnumerationTest do
+defmodule Portfolio.Auth.Services.MagicLinkAntiEnumerationTest do
   @moduledoc """
   Tests for email enumeration protection in magic link authentication.
 
@@ -9,7 +9,7 @@ defmodule Portfolio.Services.Auth.MagicLinkAntiEnumerationTest do
 
   import PortfolioTest.Fixtures.AuthFixtures
 
-  alias Portfolio.Services.Auth.MagicLinkAuthService
+  alias Portfolio.Auth.Services.MagicLinkAuthService
 
   setup do
     # Create a known user

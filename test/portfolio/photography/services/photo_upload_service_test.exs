@@ -1,9 +1,9 @@
-defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
+defmodule Portfolio.Photography.Services.PhotoUploadServiceTest do
   use Portfolio.DataCase, async: true
 
   import PortfolioTest.Fixtures.PhotographyFixtures
 
-  alias Portfolio.Services.Photography.PhotoUploadService
+  alias Portfolio.Photography.Services.PhotoUploadService
 
   describe "execute/3" do
     test "returns error for non-existent album" do

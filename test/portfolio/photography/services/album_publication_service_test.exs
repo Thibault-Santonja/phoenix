@@ -1,7 +1,7 @@
-defmodule Portfolio.Services.Photography.AlbumPublicationServiceTest do
+defmodule Portfolio.Photography.Services.AlbumPublicationServiceTest do
   use Portfolio.DataCase, async: true
 
-  alias Portfolio.Services.Photography.AlbumPublicationService
+  alias Portfolio.Photography.Services.AlbumPublicationService
 
   import PortfolioTest.Fixtures.PhotographyFixtures
 

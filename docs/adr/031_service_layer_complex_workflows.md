@@ -15,7 +15,7 @@ Dans une architecture Clean Architecture / DDD, la question de la séparation de
 
 La délimitation entre ces couches n'était pas clairement définie, menant à des questions récurrentes :
 - Quand créer un Service vs garder la logique dans le Context ?
-- Tous les Services doivent-ils implémenter le behaviour `Portfolio.Services.Service` ?
+- Tous les Services doivent-ils implémenter le behaviour `Portfolio.Service` ?
 - Le CRUD simple doit-il être dans le Repository ou le Context ?
 - `AlbumPublicationService` est-il vraiment nécessaire (seulement 3 étapes) ?
 
@@ -187,8 +187,8 @@ defmodule Portfolio.Photography do
 end
 
 # Service - Workflow complexe
-defmodule Portfolio.Services.Photography.PhotoUploadService do
-  use Portfolio.Services.Service  # Behaviour + telemetry macro
+defmodule Portfolio.Photography.Services.PhotoUploadService do
+  use Portfolio.Service  # Behaviour + telemetry macro
 
   @impl true
   def execute(album_slug, uploads, opts \\ []) do
@@ -384,7 +384,7 @@ end
 
 **Structure obligatoire :**
 ```elixir
-defmodule Portfolio.Services.Photography.MyService do
+defmodule Portfolio.Photography.Services.MyService do
   @moduledoc """
   Service for [description].
 
@@ -396,7 +396,7 @@ defmodule Portfolio.Services.Photography.MyService do
   This service encapsulates [complex workflow description].
   """
 
-  use Portfolio.Services.Service  # - OBLIGATOIRE
+  use Portfolio.Service  # - OBLIGATOIRE
 
   @impl true
   def execute(params, opts \\ []) do
@@ -549,7 +549,7 @@ lib/portfolio/services/auth/*.ex
 **Tâches:**
 1. Corriger les violations identifiées dans Phase 2
 2. Ajouter `with_telemetry/3` partout dans les Contexts pour CRUD simple
-3. S'assurer que tous les Services utilisent `use Portfolio.Services.Service`
+3. S'assurer que tous les Services utilisent `use Portfolio.Service`
 4. Unifier les noms des Services (pattern cohérent)
 5. Ajouter `@moduledoc` complet à tous les Services avec section "Responsibilities"
 
@@ -575,7 +575,7 @@ end
 
 **Critères de succès:**
 - Zéro violation des règles de délimitation
-- Tous les Services avec `use Portfolio.Services.Service`
+- Tous les Services avec `use Portfolio.Service`
 - Telemetry partout dans Contexts
 
 **Estimation:** 2 jours
@@ -591,10 +591,10 @@ end
 
 **Pattern de test Service :**
 ```elixir
-defmodule Portfolio.Services.Photography.PhotoUploadServiceTest do
+defmodule Portfolio.Photography.Services.PhotoUploadServiceTest do
   use Portfolio.DataCase, async: true
 
-  alias Portfolio.Services.Photography.PhotoUploadService
+  alias Portfolio.Photography.Services.PhotoUploadService
 
   describe "execute/3" do
     test "uploads photos in parallel successfully" do
@@ -778,7 +778,7 @@ Si cette architecture de Service Layer pose des problèmes critiques :
 
 ## Behaviour Service : Standardisation
 
-Tous les Services DOIVENT utiliser le behaviour `Portfolio.Services.Service` pour garantir cohérence et predictabilité.
+Tous les Services DOIVENT utiliser le behaviour `Portfolio.Service` pour garantir cohérence et predictabilité.
 
 **Behaviour défini :**
 
@@ -788,7 +788,7 @@ Tous les Services DOIVENT utiliser le behaviour `Portfolio.Services.Service` pou
   {:ok, term()} | {:error, term()}
 ```
 
-**Macro `use Portfolio.Services.Service` fourni :**
+**Macro `use Portfolio.Service` fourni :**
 - Implémente le behaviour automatiquement
 - Fournit la fonction `with_telemetry/3` pour wrapper l'exécution
 - Mesure automatiquement la durée et émet un événement telemetry
@@ -814,7 +814,7 @@ defmodule Portfolio.Services.MyContext.MyService do
   - Step 3
   """
 
-  use Portfolio.Services.Service  # - OBLIGATOIRE
+  use Portfolio.Service  # - OBLIGATOIRE
 
   @impl true  # - OBLIGATOIRE : Indique implémentation du callback
   def execute(params, opts \\ []) do

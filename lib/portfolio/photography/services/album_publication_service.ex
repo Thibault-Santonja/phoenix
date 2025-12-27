@@ -1,4 +1,4 @@
-defmodule Portfolio.Services.Photography.AlbumPublicationService do
+defmodule Portfolio.Photography.Services.AlbumPublicationService do
   @moduledoc """
   Service for publishing albums with full orchestration.
 
@@ -13,7 +13,7 @@ defmodule Portfolio.Services.Photography.AlbumPublicationService do
   and telemetry tracking.
   """
 
-  use Portfolio.Services.Service
+  use Portfolio.Service
 
   alias Portfolio.CacheManager
   alias Portfolio.DomainEvents

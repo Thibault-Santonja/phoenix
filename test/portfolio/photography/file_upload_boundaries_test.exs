@@ -14,7 +14,7 @@ defmodule Portfolio.Photography.FileUploadBoundariesTest do
 
   @moduletag :skip
 
-  alias Portfolio.Services.Photography.PhotoUploadService
+  alias Portfolio.Photography.Services.PhotoUploadService
 
   import PortfolioTest.Fixtures.PhotographyFixtures
 
