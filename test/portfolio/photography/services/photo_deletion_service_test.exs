@@ -5,8 +5,8 @@ defmodule Portfolio.Photography.Services.PhotoDeletionServiceTest do
 
   alias Portfolio.DomainEvents
   alias Portfolio.Photography.Photo
-  alias Portfolio.Repo
   alias Portfolio.Photography.Services.PhotoDeletionService
+  alias Portfolio.Repo
 
   describe "execute/2" do
     test "deletes photo from database" do

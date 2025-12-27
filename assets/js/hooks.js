@@ -1,12 +1,31 @@
-import { animate, utils, createDraggable, createSpring, onScroll } from "animejs";
-import Sortable from "sortablejs";
-
 // Conditional logging: only log in development mode
 const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 const log = isDev ? console.log.bind(console) : () => {};
 
+// Lazy-loaded module cache to avoid multiple imports
+let animeModule = null;
+let sortableModule = null;
+
+// Lazy-load animejs (only when first needed)
+const loadAnimejs = async () => {
+  if (!animeModule) {
+    animeModule = await import("animejs");
+  }
+  return animeModule;
+};
+
+// Lazy-load sortablejs (only when first needed)
+const loadSortable = async () => {
+  if (!sortableModule) {
+    sortableModule = await import("sortablejs");
+  }
+  return sortableModule.default;
+};
+
 export const AnimateThis = {
-  mounted() {
+  async mounted() {
+    const { animate, utils, createDraggable, createSpring } = await loadAnimejs();
+
     const [$logo] = utils.$(".logo.js");
     const [$button] = utils.$("#button");
     this.rotations = 0;
@@ -60,7 +79,9 @@ export const AnimateThis = {
 };
 
 export const AnimateGallery = {
-  mounted() {
+  async mounted() {
+    const { animate, utils, onScroll } = await loadAnimejs();
+
     const debug = false;
     this.images = utils.$(".gallery__image");
     const [container] = utils.$(".follower");
@@ -120,7 +141,9 @@ export const AnimateGallery = {
 };
 
 export const AnimatePath = {
-  mounted() {
+  async mounted() {
+    const { animate, utils } = await loadAnimejs();
+
     const [$path] = utils.$("#path-zigzag");
 
     const length = $path.getTotalLength();
@@ -160,7 +183,7 @@ export const AnimateTimelineScroll = {
       {
         root: null,
         // threshold: 0.2, // 20% visible
-        rootMargin: "-20% 0px -50% 0px", // zone d’activation centrée verticalement
+        rootMargin: "-20% 0px -50% 0px", // zone d'activation centrée verticalement
       }
     );
 
@@ -276,7 +299,7 @@ export const GalleryModal = {
 };
 
 export const YearTrigger = {
-  mounted() {
+  async mounted() {
     // Use instance-level flag instead of global to allow proper cleanup
     if (this.initialized) {
       return;
@@ -287,6 +310,10 @@ export const YearTrigger = {
     if (!this.yearEl) {
       return;
     }
+
+    // Lazy-load animejs only when needed
+    const { animate } = await loadAnimejs();
+    this.animate = animate;
 
     this.navLinks = document.querySelectorAll("[data-anchor-year]");
     this.sections = document.querySelectorAll("[data-year]");
@@ -339,14 +366,14 @@ export const YearTrigger = {
 
       digitWrapper.appendChild(container);
 
-      animate(fromEl, {
+      this.animate(fromEl, {
         translateY: fromElYTranslation,
         opacity: [1, 0],
         duration: 500,
         easing: "easeInOutCubic",
       });
 
-      animate(toEl, {
+      this.animate(toEl, {
         translateY: toElYTranslation,
         opacity: [0, 1],
         duration: 500,
@@ -556,18 +583,18 @@ export const SmoothScroll = {
 };
 
 export const PhotoSortable = {
-  mounted() {
+  async mounted() {
     log("PhotoSortable mounted", this.el);
     this.sortable = null;
-    this.initializeSortable();
+    await this.initializeSortable();
   },
 
-  updated() {
+  async updated() {
     log("PhotoSortable updated", {
       reordering: this.el.dataset.reordering,
     });
     // Re-initialize sortable when reordering mode changes
-    this.initializeSortable();
+    await this.initializeSortable();
   },
 
   destroyed() {
@@ -577,7 +604,7 @@ export const PhotoSortable = {
     }
   },
 
-  initializeSortable() {
+  async initializeSortable() {
     const isReordering = this.el.dataset.reordering === "true";
     log("Initializing sortable, reordering:", isReordering);
 
@@ -591,6 +618,9 @@ export const PhotoSortable = {
     // Only create sortable if in reordering mode
     if (isReordering) {
       log("Creating sortable instance");
+
+      // Lazy-load Sortable only when needed
+      const Sortable = await loadSortable();
 
       const items = this.el.querySelectorAll(".sortable-item");
       log("Found sortable items:", items.length);
