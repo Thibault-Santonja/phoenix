@@ -727,7 +727,7 @@ msgstr ""
 msgid "auth.login.success"
 msgstr ""
 
-#: lib/portfolio_web/controllers/auth_controller.ex:122
+#: lib/portfolio_web/controllers/auth_controller.ex:121
 #, elixir-autogen, elixir-format
 msgid "auth.logout.success"
 msgstr ""

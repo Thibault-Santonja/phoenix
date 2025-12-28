@@ -36,6 +36,7 @@ defmodule Portfolio.Photography.Services.PhotoCacheService do
   """
   @spec get_processing_stats(keyword()) :: %{
           pending: non_neg_integer(),
+          processing: non_neg_integer(),
           completed: non_neg_integer(),
           failed: non_neg_integer(),
           total: non_neg_integer()

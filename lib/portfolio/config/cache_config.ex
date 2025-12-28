@@ -169,7 +169,7 @@ defmodule Portfolio.Config.CacheConfig do
       iex> CacheConfig.processing_stats_key()
       :photo_processing_stats
   """
-  @spec processing_stats_key() :: atom()
+  @spec processing_stats_key() :: :photo_processing_stats
   def processing_stats_key do
     :photo_processing_stats
   end
