@@ -16,11 +16,30 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   - Gestion des erreurs de persistence
   - Isolation de la couche domaine vis-à-vis d'Ecto
 
+  ## Aggregate Boundary (DDD)
+
+  Photo est une entité appartenant à l'agrégat Album. Dans la plupart des cas,
+  les photos doivent être accédées via leur album parent pour respecter les
+  invariants de l'agrégat.
+
+  **Fonctions respectant la frontière d'agrégat** (à privilégier) :
+  - `list_by_album/2` - Liste les photos d'un album spécifique
+  - `count_by_album/1` - Compte les photos d'un album
+  - `reorder/2` - Réorganise les photos d'un album
+
+  **Fonctions traversant la frontière** (usage admin/système uniquement) :
+  - `list/1` - Liste toutes les photos (admin dashboard)
+  - `list_by_processing_status/2` - Photos par statut (monitoring)
+  - `count_by_processing_status/0` - Stats globales (dashboard)
+  - `get/2`, `get!/2` - Accès direct par ID (après validation)
+
   ## Exemples
 
+      # Accès via l'agrégat (recommandé)
       iex> PhotoRepository.list_by_album(album_id)
       [%Photo{}, %Photo{}]
 
+      # Accès direct (admin/système)
       iex> PhotoRepository.get(photo_id)
       {:ok, %Photo{}}
 
@@ -45,9 +64,13 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   @doc """
   Liste toutes les photos avec options de filtrage.
 
+  **Note DDD** : Cette fonction traverse la frontière d'agrégat Album.
+  Pour respecter les invariants de l'agrégat, privilégiez `list_by_album/2`
+  sauf pour les cas d'usage admin/système (dashboard, monitoring).
+
   ## Options
 
-  - `:album_id` - Filtre par ID d'album
+  - `:album_id` - Filtre par ID d'album (recommandé pour respecter l'agrégat)
   - `:limit` - Limite le nombre de résultats
   - `:offset` - Décalage pour la pagination
   - `:preload` - Associations à précharger
@@ -55,9 +78,11 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
 
   ## Exemples
 
+      # Usage admin (toutes les photos)
       iex> list()
       [%Photo{}, %Photo{}]
 
+      # Avec filtre album (préférez list_by_album/2 à la place)
       iex> list(album_id: album_id, limit: 10, preload: [:album])
       [%Photo{album: %Album{}}]
   """
