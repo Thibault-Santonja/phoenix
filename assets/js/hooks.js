@@ -24,43 +24,55 @@ const loadSortable = async () => {
 
 export const AnimateThis = {
   async mounted() {
-    const { animate, utils, createDraggable, createSpring } = await loadAnimejs();
+    try {
+      const { animate, utils, createDraggable, createSpring } = await loadAnimejs();
 
-    const [$logo] = utils.$(".logo.js");
-    const [$button] = utils.$("#button");
-    this.rotations = 0;
-    this.$logo = $logo;
-    this.$button = $button;
+      const [$logo] = utils.$(".logo.js");
+      const [$button] = utils.$("#button");
+      this.rotations = 0;
+      this.$logo = $logo;
+      this.$button = $button;
+      this.animate = animate;
 
-    // Created a bounce animation loop
-    this.bounceAnimation = animate(".logo.js", {
-      scale: [
-        { to: 1.1, ease: "inOut(3)", duration: 200 },
-        { to: 1, ease: createSpring({ stiffness: 300 }) },
-      ],
-      loop: true,
-      loopDelay: 250,
-    });
-
-    // Make the logo draggable around its center
-    this.draggable = createDraggable(".logo.js", {
-      container: [0, 0, 0, 0],
-      releaseEase: createSpring({ stiffness: 200 }),
-    });
-
-    // Animate logo rotation on click
-    this.rotateLogo = () => {
-      this.rotations++;
-      this.$button.innerText = `rotations: ${this.rotations}`;
-      animate(this.$logo, {
-        rotate: this.rotations * 360,
-        ease: "out(4)",
-        duration: 1500,
+      // Created a bounce animation loop
+      this.bounceAnimation = animate(".logo.js", {
+        scale: [
+          { to: 1.1, ease: "inOut(3)", duration: 200 },
+          { to: 1, ease: createSpring({ stiffness: 300 }) },
+        ],
+        loop: true,
+        loopDelay: 250,
       });
-    };
 
-    if ($button) {
-      $button.addEventListener("click", this.rotateLogo);
+      // Make the logo draggable around its center
+      this.draggable = createDraggable(".logo.js", {
+        container: [0, 0, 0, 0],
+        releaseEase: createSpring({ stiffness: 200 }),
+      });
+
+      // Animate logo rotation on click
+      this.rotateLogo = () => {
+        this.rotations++;
+        this.$button.innerText = `rotations: ${this.rotations}`;
+        this.animate(this.$logo, {
+          rotate: this.rotations * 360,
+          ease: "out(4)",
+          duration: 1500,
+        });
+      };
+
+      if ($button) {
+        $button.addEventListener("click", this.rotateLogo);
+      }
+    } catch (error) {
+      log("AnimateThis initialization failed:", error);
+    }
+  },
+
+  disconnected() {
+    // Pause animations during navigation
+    if (this.bounceAnimation) {
+      this.bounceAnimation.pause();
     }
   },
 
@@ -70,6 +82,7 @@ export const AnimateThis = {
     }
     if (this.bounceAnimation) {
       this.bounceAnimation.pause();
+      this.bounceAnimation = null;
     }
     if (this.draggable && typeof this.draggable.destroy === "function") {
       this.draggable.destroy();
@@ -80,82 +93,121 @@ export const AnimateThis = {
 
 export const AnimateGallery = {
   async mounted() {
-    const { animate, utils, onScroll } = await loadAnimejs();
-
-    const debug = false;
-    this.images = utils.$(".gallery__image");
-    const [container] = utils.$(".follower");
     this.eventHandlers = [];
+    this.images = [];
 
-    const animateImage = (el, from, to) => {
-      this.images
-        .filter((item) => item !== el)
-        .forEach(($image) => {
-          animate($image, {
-            opacity: [from, to],
-            ease: "out(6)",
-            duration: 500,
+    try {
+      const { animate, utils, onScroll } = await loadAnimejs();
+
+      const debug = false;
+      this.images = utils.$(".gallery__image");
+      const [container] = utils.$(".follower");
+
+      const animateImage = (el, from, to) => {
+        this.images
+          .filter((item) => item !== el)
+          .forEach(($image) => {
+            animate($image, {
+              opacity: [from, to],
+              ease: "out(6)",
+              duration: 500,
+            });
           });
+      };
+
+      const hover = (el) => animateImage(el, 1, 0.4);
+      const unhover = (el) => animateImage(el, 0.4, 1);
+
+      this.images.forEach(($image, i) => {
+        animate($image, {
+          opacity: [0, 1],
+          translateY: [100, 0],
+          ease: "out(3)",
+          duration: 2000,
+          delay: i * 120,
+          autoplay: onScroll({
+            target: $image,
+            container: container,
+            debug,
+          }),
         });
-    };
 
-    const hover = (el) => animateImage(el, 1, 0.4);
-    const unhover = (el) => animateImage(el, 0.4, 1);
+        const mouseenterHandler = (e) => hover(e.target);
+        const mouseleaveHandler = (e) => unhover(e.target);
 
-    this.images.forEach(($image, i) => {
-      animate($image, {
-        opacity: [0, 1],
-        translateY: [100, 0],
-        ease: "out(3)",
-        duration: 2000,
-        delay: i * 120,
-        autoplay: onScroll({
-          target: $image,
-          container: container,
-          debug,
-        }),
+        $image.addEventListener("mouseenter", mouseenterHandler, false);
+        $image.addEventListener("mouseleave", mouseleaveHandler, false);
+
+        this.eventHandlers.push({
+          element: $image,
+          mouseenter: mouseenterHandler,
+          mouseleave: mouseleaveHandler,
+        });
       });
+    } catch (error) {
+      log("AnimateGallery initialization failed:", error);
+    }
+  },
 
-      const mouseenterHandler = (e) => hover(e.target);
-      const mouseleaveHandler = (e) => unhover(e.target);
-
-      $image.addEventListener("mouseenter", mouseenterHandler, false);
-      $image.addEventListener("mouseleave", mouseleaveHandler, false);
-
-      this.eventHandlers.push({
-        element: $image,
-        mouseenter: mouseenterHandler,
-        mouseleave: mouseleaveHandler,
-      });
-    });
+  disconnected() {
+    // Clean up event handlers during navigation
+    this.cleanupEventHandlers();
   },
 
   destroyed() {
+    this.cleanupEventHandlers();
+  },
+
+  cleanupEventHandlers() {
     if (this.eventHandlers) {
       this.eventHandlers.forEach(({ element, mouseenter, mouseleave }) => {
         element.removeEventListener("mouseenter", mouseenter);
         element.removeEventListener("mouseleave", mouseleave);
       });
+      this.eventHandlers = [];
     }
   },
 };
 
 export const AnimatePath = {
   async mounted() {
-    const { animate, utils } = await loadAnimejs();
+    this.animation = null;
 
-    const [$path] = utils.$("#path-zigzag");
+    try {
+      const { animate, utils } = await loadAnimejs();
 
-    const length = $path.getTotalLength();
-    $path.style.strokeDasharray = length;
-    $path.style.strokeDashoffset = length;
+      const [$path] = utils.$("#path-zigzag");
+      if (!$path) {
+        return;
+      }
 
-    animate($path, {
-      strokeDashoffset: [length, 0],
-      duration: 2200,
-      delay: 300,
-      easing: "easeInOutSine",
-    });
+      this.$path = $path;
+      const length = $path.getTotalLength();
+      $path.style.strokeDasharray = length;
+      $path.style.strokeDashoffset = length;
+
+      this.animation = animate($path, {
+        strokeDashoffset: [length, 0],
+        duration: 2200,
+        delay: 300,
+        easing: "easeInOutSine",
+      });
+    } catch (error) {
+      log("AnimatePath initialization failed:", error);
+    }
+  },
+
+  disconnected() {
+    if (this.animation) {
+      this.animation.pause();
+    }
+  },
+
+  destroyed() {
+    if (this.animation) {
+      this.animation.pause();
+      this.animation = null;
+    }
   },
 };
 
@@ -189,6 +241,11 @@ export const AnimateTimelineScroll = {
 
     observer.observe(timeline);
     this.observer = observer;
+  },
+
+  disconnected() {
+    // Pause scroll sync during navigation
+    this.disableScrollSync(this.scrollContainer || window);
   },
 
   destroyed() {
@@ -311,9 +368,14 @@ export const YearTrigger = {
       return;
     }
 
-    // Lazy-load animejs only when needed
-    const { animate } = await loadAnimejs();
-    this.animate = animate;
+    try {
+      // Lazy-load animejs only when needed
+      const { animate } = await loadAnimejs();
+      this.animate = animate;
+    } catch (error) {
+      log("YearTrigger: Failed to load animejs:", error);
+      return;
+    }
 
     this.navLinks = document.querySelectorAll("[data-anchor-year]");
     this.sections = document.querySelectorAll("[data-year]");
@@ -586,7 +648,12 @@ export const PhotoSortable = {
   async mounted() {
     log("PhotoSortable mounted", this.el);
     this.sortable = null;
-    await this.initializeSortable();
+    try {
+      await this.initializeSortable();
+    } catch (error) {
+      log("PhotoSortable initialization failed:", error);
+      // Graceful degradation - photos remain visible but not sortable
+    }
   },
 
   async updated() {
@@ -594,13 +661,27 @@ export const PhotoSortable = {
       reordering: this.el.dataset.reordering,
     });
     // Re-initialize sortable when reordering mode changes
-    await this.initializeSortable();
+    try {
+      await this.initializeSortable();
+    } catch (error) {
+      log("PhotoSortable re-initialization failed:", error);
+    }
+  },
+
+  disconnected() {
+    // Called during LiveView navigation - cleanup but don't fully destroy
+    log("PhotoSortable disconnected");
+    if (this.sortable) {
+      this.sortable.destroy();
+      this.sortable = null;
+    }
   },
 
   destroyed() {
     log("PhotoSortable destroyed");
     if (this.sortable) {
       this.sortable.destroy();
+      this.sortable = null;
     }
   },
 
