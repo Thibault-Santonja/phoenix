@@ -58,6 +58,26 @@ defmodule Portfolio.Config.CacheConfig do
     get_config(:mx_validation_ttl, :timer.hours(1))
   end
 
+  @doc """
+  Returns the TTL for individual album cache (by slug).
+
+  Default: 1 hour. Can be overridden via config :portfolio, :cache, :album_ttl
+  """
+  @spec album_ttl() :: non_neg_integer()
+  def album_ttl do
+    get_config(:album_ttl, :timer.hours(1))
+  end
+
+  @doc """
+  Returns the TTL for photo processing stats cache.
+
+  Default: 5 minutes. Can be overridden via config :portfolio, :cache, :processing_stats_ttl
+  """
+  @spec processing_stats_ttl() :: non_neg_integer()
+  def processing_stats_ttl do
+    get_config(:processing_stats_ttl, :timer.minutes(5))
+  end
+
   # =============================================================================
   # Cache Keys
   # =============================================================================
@@ -116,6 +136,42 @@ defmodule Portfolio.Config.CacheConfig do
   @spec mx_validation_key(String.t()) :: {atom(), String.t()}
   def mx_validation_key(domain) do
     {:mx_validation, domain}
+  end
+
+  @doc """
+  Returns the cache key for an album by slug.
+
+  ## Parameters
+
+  - `slug` - The album slug
+  - `opts` - Options keyword list
+    - `:preloads` - List of preloaded associations (default: [])
+
+  ## Examples
+
+      iex> CacheConfig.album_key("wedding-2024")
+      {:album, "wedding-2024", []}
+
+      iex> CacheConfig.album_key("wedding-2024", preloads: [:photos])
+      {:album, "wedding-2024", [:photos]}
+  """
+  @spec album_key(String.t(), keyword()) :: {atom(), String.t(), list()}
+  def album_key(slug, opts \\ []) do
+    preloads = Keyword.get(opts, :preloads, [])
+    {:album, slug, preloads}
+  end
+
+  @doc """
+  Returns the cache key for photo processing stats.
+
+  ## Examples
+
+      iex> CacheConfig.processing_stats_key()
+      :photo_processing_stats
+  """
+  @spec processing_stats_key() :: atom()
+  def processing_stats_key do
+    :photo_processing_stats
   end
 
   # =============================================================================
