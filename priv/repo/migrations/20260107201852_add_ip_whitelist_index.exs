@@ -26,11 +26,5 @@ defmodule Portfolio.Repo.Migrations.AddIpWhitelistIndex do
   def change do
     # Index on ip_address for fast whitelist lookups
     create_if_not_exists index(:ip_whitelist, [:ip_address], concurrently: true)
-
-    # Composite index for queries filtering by active status
-    create_if_not_exists index(:ip_whitelist, [:ip_address, :is_active],
-      where: "is_active = true",
-      concurrently: true
-    )
   end
 end
