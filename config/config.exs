@@ -133,7 +133,7 @@ config :esbuild,
   version: "0.25.4",
   portfolio: [
     args: ~w(
-        js/app.js
+        js/app.ts
         --bundle
         --target=es2017
         --outdir=../priv/static/assets
