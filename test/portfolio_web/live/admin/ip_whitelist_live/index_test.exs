@@ -8,6 +8,9 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
   alias Portfolio.Auth.IPWhitelistService
 
   setup do
+    # Initialize ETS cache for IP whitelist tests
+    IPWhitelistService.init_cache()
+
     admin = create_user(email: "admin@example.com", role: :admin)
     {:ok, session} = Auth.create_session(admin)
 

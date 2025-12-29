@@ -8,7 +8,9 @@ config :portfolio, Portfolio.Repo,
   database: "portfolio_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  # Query timeout to prevent runaway queries (15s default, same as prod)
+  timeout: 15_000
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

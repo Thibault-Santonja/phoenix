@@ -76,7 +76,7 @@ defmodule Portfolio.Auth.Repositories.UserRepositoryTest do
       ids = Enum.map(admins, & &1.id)
 
       assert admin.id in ids
-      assert length(admins) >= 1
+      assert admins != []
     end
 
     test "returns empty list when no users match filter" do

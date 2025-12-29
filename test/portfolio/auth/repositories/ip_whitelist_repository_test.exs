@@ -1,8 +1,8 @@
 defmodule Portfolio.Auth.Repositories.IPWhitelistRepositoryTest do
   use Portfolio.DataCase, async: true
 
-  alias Portfolio.Auth.Repositories.IPWhitelistRepository
   alias Portfolio.Auth.IPWhitelist
+  alias Portfolio.Auth.Repositories.IPWhitelistRepository
 
   import PortfolioTest.Fixtures.AuthFixtures
 

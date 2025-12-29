@@ -1,8 +1,8 @@
 defmodule Portfolio.Auth.Repositories.AuditLogRepositoryTest do
   use Portfolio.DataCase, async: true
 
-  alias Portfolio.Auth.Repositories.AuditLogRepository
   alias Portfolio.Auth.AuditLog
+  alias Portfolio.Auth.Repositories.AuditLogRepository
 
   import PortfolioTest.Fixtures.AuthFixtures
 

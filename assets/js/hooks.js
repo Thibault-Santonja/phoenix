@@ -2,6 +2,69 @@
 const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 const log = isDev ? console.log.bind(console) : () => {};
 
+// Focus trap utility for accessible modals
+const createFocusTrap = (container) => {
+  const focusableSelectors = [
+    "button:not([disabled])",
+    "[href]",
+    "input:not([disabled])",
+    "select:not([disabled])",
+    "textarea:not([disabled])",
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(", ");
+
+  const getFocusableElements = () => {
+    return Array.from(container.querySelectorAll(focusableSelectors)).filter(
+      (el) => el.offsetParent !== null // Only visible elements
+    );
+  };
+
+  const handleKeydown = (e) => {
+    if (e.key !== "Tab") {
+      return;
+    }
+
+    const focusable = getFocusableElements();
+    if (focusable.length === 0) {
+      e.preventDefault();
+      return;
+    }
+
+    const firstElement = focusable[0];
+    const lastElement = focusable[focusable.length - 1];
+
+    if (e.shiftKey) {
+      // Shift+Tab: go to last element if on first
+      if (document.activeElement === firstElement || !focusable.includes(document.activeElement)) {
+        e.preventDefault();
+        lastElement.focus();
+      }
+    } else {
+      // Tab: go to first element if on last
+      if (document.activeElement === lastElement || !focusable.includes(document.activeElement)) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    }
+  };
+
+  return {
+    activate: () => {
+      container.addEventListener("keydown", handleKeydown);
+      // Focus first focusable element or container itself
+      const focusable = getFocusableElements();
+      if (focusable.length > 0) {
+        focusable[0].focus();
+      } else if (container.tabIndex >= 0) {
+        container.focus();
+      }
+    },
+    deactivate: () => {
+      container.removeEventListener("keydown", handleKeydown);
+    },
+  };
+};
+
 // Lazy-loaded module cache to avoid multiple imports
 let animeModule = null;
 let sortableModule = null;
@@ -289,20 +352,13 @@ export const GalleryModal = {
     this.backdrop = document.getElementById("modal-backdrop");
     this.transitionDuration = 150;
     this.imageClickHandlers = [];
+    this.currentIndex = -1;
+    this.images = Array.from(document.querySelectorAll(".gallery__image img"));
+    this.previouslyFocusedElement = null;
 
-    document.querySelectorAll(".gallery__image img").forEach((img) => {
+    this.images.forEach((img, index) => {
       const clickHandler = () => {
-        const src = img.getAttribute("data-full_image_src") || img.src;
-        this.modalImage.src = src;
-        this.modalImage.alt = img.alt || "";
-        this.modal.classList.remove("hidden");
-        this.modal.classList.add("flex");
-
-        // Start zoom-in animation
-        setTimeout(() => {
-          this.modalImage.classList.remove("scale-50", "opacity-0");
-          this.modalImage.classList.add("scale-100", "opacity-100");
-        }, this.transitionDuration);
+        this.openModal(index);
       };
 
       img.addEventListener("click", clickHandler);
@@ -311,30 +367,149 @@ export const GalleryModal = {
 
     // Close modal on click outside
     this.backdropClickHandler = () => {
-      this.modalImage.classList.remove("scale-100", "opacity-100");
-      this.modalImage.classList.add("scale-50", "opacity-0");
-
-      setTimeout(() => {
-        this.modal.classList.add("hidden");
-        this.modal.classList.remove("flex");
-        this.modalImage.src = "";
-      }, this.transitionDuration);
+      this.closeModal();
     };
 
     if (this.backdrop) {
       this.backdrop.addEventListener("click", this.backdropClickHandler);
     }
 
-    // Close modal on ESC key
+    // Keyboard navigation
     this.keydownHandler = (e) => {
-      if (e.key === "Escape") {
-        this.modal.classList.add("hidden");
-        this.modal.classList.remove("flex");
-        this.modalImage.src = "";
+      if (!this.isModalOpen()) {
+        return;
+      }
+
+      switch (e.key) {
+        case "Escape":
+          e.preventDefault();
+          this.closeModal();
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          this.showPrevious();
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          this.showNext();
+          break;
+        case "Home":
+          e.preventDefault();
+          this.showImage(0);
+          break;
+        case "End":
+          e.preventDefault();
+          this.showImage(this.images.length - 1);
+          break;
       }
     };
 
     window.addEventListener("keydown", this.keydownHandler);
+  },
+
+  isModalOpen() {
+    return this.modal && !this.modal.classList.contains("hidden");
+  },
+
+  openModal(index) {
+    this.previouslyFocusedElement = document.activeElement;
+    this.currentIndex = index;
+    this.updateModalImage();
+
+    this.modal.classList.remove("hidden");
+    this.modal.classList.add("flex");
+
+    // Set focus to modal for accessibility
+    this.modal.setAttribute("role", "dialog");
+    this.modal.setAttribute("aria-modal", "true");
+    this.modal.setAttribute("aria-label", "Image gallery viewer");
+
+    // Ensure modal is focusable
+    if (!this.modal.hasAttribute("tabindex")) {
+      this.modal.setAttribute("tabindex", "-1");
+    }
+
+    // Activate focus trap
+    if (!this.focusTrap) {
+      this.focusTrap = createFocusTrap(this.modal);
+    }
+    this.focusTrap.activate();
+
+    // Start zoom-in animation
+    setTimeout(() => {
+      this.modalImage.classList.remove("scale-50", "opacity-0");
+      this.modalImage.classList.add("scale-100", "opacity-100");
+    }, this.transitionDuration);
+  },
+
+  closeModal() {
+    // Deactivate focus trap
+    if (this.focusTrap) {
+      this.focusTrap.deactivate();
+    }
+
+    this.modalImage.classList.remove("scale-100", "opacity-100");
+    this.modalImage.classList.add("scale-50", "opacity-0");
+
+    setTimeout(() => {
+      this.modal.classList.add("hidden");
+      this.modal.classList.remove("flex");
+      this.modalImage.src = "";
+      this.currentIndex = -1;
+
+      // Restore focus to previously focused element
+      if (this.previouslyFocusedElement) {
+        this.previouslyFocusedElement.focus();
+        this.previouslyFocusedElement = null;
+      }
+    }, this.transitionDuration);
+  },
+
+  showPrevious() {
+    if (this.images.length === 0) {
+      return;
+    }
+    this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+    this.updateModalImage();
+  },
+
+  showNext() {
+    if (this.images.length === 0) {
+      return;
+    }
+    this.currentIndex = (this.currentIndex + 1) % this.images.length;
+    this.updateModalImage();
+  },
+
+  showImage(index) {
+    if (index >= 0 && index < this.images.length) {
+      this.currentIndex = index;
+      this.updateModalImage();
+    }
+  },
+
+  updateModalImage() {
+    const img = this.images[this.currentIndex];
+    if (!img) {
+      return;
+    }
+
+    const src = img.getAttribute("data-full_image_src") || img.src;
+    this.modalImage.src = src;
+    this.modalImage.alt = img.alt || `Image ${this.currentIndex + 1} of ${this.images.length}`;
+
+    // Update aria-label with position info
+    this.modal.setAttribute(
+      "aria-label",
+      `Image ${this.currentIndex + 1} of ${this.images.length}. Use arrow keys to navigate.`
+    );
+  },
+
+  disconnected() {
+    // Clean up during LiveView navigation
+    if (this.keydownHandler) {
+      window.removeEventListener("keydown", this.keydownHandler);
+    }
   },
 
   destroyed() {
@@ -585,20 +760,38 @@ export const DarkModeSwitch = {
 
 export const ParallaxHero = {
   mounted() {
-    this.handleScroll = () => {
+    this.ticking = false;
+    this.img = this.el.querySelector("img");
+
+    this.updateParallax = () => {
+      if (!this.img) {
+        return;
+      }
       const scrolled = window.pageYOffset;
-      const img = this.el.querySelector("img");
-      if (img) {
-        const speed = scrolled * 0.5;
-        img.style.transform = `translateY(${speed}px)`;
+      const speed = scrolled * 0.5;
+      this.img.style.transform = `translateY(${speed}px)`;
+      this.ticking = false;
+    };
+
+    this.handleScroll = () => {
+      // Throttle using requestAnimationFrame for smooth 60fps updates
+      if (!this.ticking) {
+        this.ticking = true;
+        requestAnimationFrame(this.updateParallax);
       }
     };
 
     window.addEventListener("scroll", this.handleScroll, { passive: true });
   },
 
+  disconnected() {
+    // Pause during LiveView navigation
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+
   destroyed() {
     window.removeEventListener("scroll", this.handleScroll);
+    this.img = null;
   },
 };
 

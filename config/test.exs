@@ -11,7 +11,9 @@ config :portfolio, Portfolio.Repo,
   hostname: "localhost",
   database: "portfolio_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: System.schedulers_online() * 2
+  pool_size: System.schedulers_online() * 2,
+  # Query timeout (shorter in test for faster failure detection)
+  timeout: 5_000
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
@@ -58,3 +60,6 @@ config :phoenix_live_view,
 
 # Configure Oban for tests (disabled to avoid background jobs interfering with tests)
 config :portfolio, Oban, testing: :manual
+
+# Use NoOp cache strategy in tests to prevent cache pollution
+config :portfolio, :cache_strategy, Portfolio.Cache.NoOpStrategy

@@ -8,6 +8,9 @@ defmodule PortfolioWeb.Plugs.RateLimiterWhitelistTest do
   alias PortfolioWeb.Plugs.RateLimiterPlug
 
   setup %{conn: conn} do
+    # Initialize ETS cache for IP whitelist tests
+    IPWhitelistService.init_cache()
+
     # Fetch session and flash to avoid errors in the plug
     conn =
       conn

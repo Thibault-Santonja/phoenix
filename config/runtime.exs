@@ -123,9 +123,25 @@ if config_env() == :prod do
       []
     end
 
+  # Query timeout in milliseconds (default: 15 seconds)
+  # Prevents runaway queries from consuming resources indefinitely
+  query_timeout =
+    case System.get_env("DATABASE_QUERY_TIMEOUT") do
+      nil ->
+        15_000
+
+      val ->
+        case Integer.parse(val) do
+          {int, ""} -> int
+          _ -> raise "Invalid DATABASE_QUERY_TIMEOUT: #{val}. Must be a valid integer in ms"
+        end
+    end
+
   config :portfolio, Portfolio.Repo,
     url: database_url,
     pool_size: pool_size,
+    # Query timeout to prevent runaway queries (15s default)
+    timeout: query_timeout,
     # Connection checkout queue settings for handling traffic spikes
     queue_target: 50,
     queue_interval: 1000,
