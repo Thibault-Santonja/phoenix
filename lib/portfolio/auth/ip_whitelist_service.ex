@@ -100,6 +100,11 @@ defmodule Portfolio.Auth.IPWhitelistService do
       |> Map.new()
       |> Map.put("created_by_id", created_by_id)
 
+    # Optimistic cache update: add IP to cache BEFORE DB insert
+    # This prevents race condition where requests arrive between DB commit and cache refresh
+    ip_address = attrs["ip_address"]
+    add_to_cache_optimistically(ip_address)
+
     case IPWhitelistRepository.insert(attrs) do
       {:ok, entry} ->
         Logger.info("IP added to whitelist",
@@ -107,12 +112,55 @@ defmodule Portfolio.Auth.IPWhitelistService do
           created_by_id: created_by_id
         )
 
+        # Full refresh to ensure consistency (removes optimistic entry if needed)
         refresh_cache()
         {:ok, entry}
 
       {:error, changeset} ->
+        # Rollback optimistic cache update on failure
+        remove_from_cache_optimistically(ip_address)
         {:error, changeset}
     end
+  end
+
+  # Adds IP to cache optimistically before DB insert
+  @spec add_to_cache_optimistically(String.t() | nil) :: :ok
+  defp add_to_cache_optimistically(nil), do: :ok
+
+  defp add_to_cache_optimistically(ip_address) when is_binary(ip_address) do
+    if :ets.whereis(@cache_table) != :undefined do
+      case :ets.lookup(@cache_table, :whitelist) do
+        [{:whitelist, ips, expires_at}] ->
+          new_ips = MapSet.put(ips, ip_address)
+          :ets.insert(@cache_table, {:whitelist, new_ips, expires_at})
+
+        [] ->
+          # Cache empty, create with just this IP
+          expires_at = System.system_time(:millisecond) + @cache_ttl
+          :ets.insert(@cache_table, {:whitelist, MapSet.new([ip_address]), expires_at})
+      end
+    end
+
+    :ok
+  end
+
+  # Removes IP from cache if DB insert failed (rollback optimistic update)
+  @spec remove_from_cache_optimistically(String.t() | nil) :: :ok
+  defp remove_from_cache_optimistically(nil), do: :ok
+
+  defp remove_from_cache_optimistically(ip_address) when is_binary(ip_address) do
+    if :ets.whereis(@cache_table) != :undefined do
+      case :ets.lookup(@cache_table, :whitelist) do
+        [{:whitelist, ips, expires_at}] ->
+          new_ips = MapSet.delete(ips, ip_address)
+          :ets.insert(@cache_table, {:whitelist, new_ips, expires_at})
+
+        [] ->
+          :ok
+      end
+    end
+
+    :ok
   end
 
   @doc """

@@ -40,6 +40,7 @@ defmodule Portfolio.RateLimiter do
           | :photo_upload
           | :album_creation
           | :bulk_delete
+          | :csp_report
   @type rate_identifier :: String.t()
   @type result :: {:allow, remaining :: integer()} | {:deny, retry_after :: integer()}
 
@@ -58,7 +59,9 @@ defmodule Portfolio.RateLimiter do
     # 10 album creations per hour per user (prevents database spam)
     album_creation: {10, :timer.hours(1)},
     # 5 bulk delete operations per minute per user (prevents mass deletion abuse)
-    bulk_delete: {5, :timer.minutes(1)}
+    bulk_delete: {5, :timer.minutes(1)},
+    # 100 CSP reports per minute per IP (prevents log flooding)
+    csp_report: {100, :timer.minutes(1)}
   }
 
   # GenServer API

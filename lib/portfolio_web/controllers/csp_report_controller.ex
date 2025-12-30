@@ -4,11 +4,18 @@ defmodule PortfolioWeb.CSPReportController do
 
   Receives CSP violation reports from browsers and logs them for security monitoring.
   This enables detection of XSS attempts and misconfigured CSP policies.
+
+  ## Rate Limiting
+
+  This endpoint is rate limited to 100 requests per minute per IP to prevent
+  log flooding and denial of service attacks via fake CSP reports.
   """
 
   use PortfolioWeb, :controller
 
   require Logger
+
+  plug PortfolioWeb.Plugs.RateLimiterPlug, action: :csp_report, identifier: :ip, api_mode: true
 
   @doc """
   Receives and logs CSP violation reports.

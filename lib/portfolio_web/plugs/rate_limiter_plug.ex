@@ -58,11 +58,13 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
     action = Keyword.fetch!(opts, :action)
     identifier = Keyword.fetch!(opts, :identifier)
     param_name = Keyword.get(opts, :param_name)
+    api_mode = Keyword.get(opts, :api_mode, false)
 
     %{
       action: action,
       identifier: identifier,
-      param_name: param_name
+      param_name: param_name,
+      api_mode: api_mode
     }
   end
 
@@ -118,13 +120,36 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
 
         conn
         |> put_resp_header("retry-after", to_string(retry_after_seconds))
-        |> put_flash(
-          :error,
-          "Trop de tentatives. Veuillez patienter #{format_retry_time(retry_after_ms)} avant de réessayer."
-        )
-        |> redirect(to: "/login")
+        |> send_rate_limit_response(opts.api_mode, retry_after_ms)
         |> halt()
     end
+  end
+
+  # Send appropriate rate limit response based on mode
+  defp send_rate_limit_response(conn, true = _api_mode, retry_after_ms) do
+    # API mode: return JSON 429 response
+    retry_after_seconds = div(retry_after_ms, 1000)
+
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(
+      429,
+      Jason.encode!(%{
+        error: "rate_limit_exceeded",
+        message: "Too many requests. Please retry after #{retry_after_seconds} seconds.",
+        retry_after: retry_after_seconds
+      })
+    )
+  end
+
+  defp send_rate_limit_response(conn, false = _api_mode, retry_after_ms) do
+    # Browser mode: redirect with flash message
+    conn
+    |> put_flash(
+      :error,
+      "Trop de tentatives. Veuillez patienter #{format_retry_time(retry_after_ms)} avant de réessayer."
+    )
+    |> redirect(to: "/login")
   end
 
   # Get the identifier based on the configuration
@@ -133,12 +158,39 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
   end
 
   defp get_identifier(conn, :param, param_name) when not is_nil(param_name) do
-    conn.params[to_string(param_name)] || "unknown"
+    raw_value = conn.params[to_string(param_name)]
+
+    case normalize_param_identifier(raw_value) do
+      {:ok, normalized} -> normalized
+      # Fall back to IP when param is empty/invalid to prevent shared "unknown" bucket bypass
+      :error -> IPUtils.get_ip_address(conn)
+    end
   end
 
   defp get_identifier(conn, {:custom, func}, _param_name) when is_function(func, 1) do
     func.(conn)
   end
+
+  # Normalizes parameter value for rate limiting (e.g., email)
+  # Returns {:ok, normalized} or :error if value is empty/invalid
+  @spec normalize_param_identifier(term()) :: {:ok, String.t()} | :error
+  defp normalize_param_identifier(nil), do: :error
+  defp normalize_param_identifier(""), do: :error
+
+  defp normalize_param_identifier(value) when is_binary(value) do
+    normalized =
+      value
+      |> String.trim()
+      |> String.downcase()
+
+    if normalized == "" do
+      :error
+    else
+      {:ok, normalized}
+    end
+  end
+
+  defp normalize_param_identifier(_), do: :error
 
   # Format retry time in a human-readable way
   defp format_retry_time(ms) when is_integer(ms) and ms < 3_600_000 do

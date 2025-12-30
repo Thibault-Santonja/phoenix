@@ -57,7 +57,21 @@ defmodule PortfolioWeb.Plugs.IPUtils do
 
     case get_req_header(conn, "x-forwarded-for") do
       [header | _] when trusted_count > 0 ->
-        extract_client_ip_from_header(header, trusted_count)
+        extracted_ip = extract_client_ip_from_header(header, trusted_count)
+
+        # Log extraction for audit when IP looks suspicious or header is malformed
+        if suspicious_header?(header, trusted_count) do
+          require Logger
+
+          Logger.warning("Potentially spoofed X-Forwarded-For header detected",
+            header: header,
+            extracted_ip: extracted_ip,
+            trusted_count: trusted_count,
+            remote_ip: conn.remote_ip |> :inet.ntoa() |> to_string()
+          )
+        end
+
+        extracted_ip
 
       _ ->
         # No X-Forwarded-For header or no trusted proxies configured
@@ -65,6 +79,19 @@ defmodule PortfolioWeb.Plugs.IPUtils do
         |> :inet.ntoa()
         |> to_string()
     end
+  end
+
+  # Detects potentially suspicious X-Forwarded-For headers
+  @spec suspicious_header?(String.t(), non_neg_integer()) :: boolean()
+  defp suspicious_header?(header, trusted_count) do
+    ip_count =
+      header
+      |> String.split(",")
+      |> Enum.reject(&(&1 == "" || String.trim(&1) == ""))
+      |> length()
+
+    # Suspicious if: too many IPs (> 10), or significantly more than expected
+    ip_count > 10 || ip_count > trusted_count + 5
   end
 
   # Extracts the client IP from X-Forwarded-For header based on trusted proxy count
