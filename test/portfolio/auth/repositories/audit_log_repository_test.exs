@@ -7,7 +7,7 @@ defmodule Portfolio.Auth.Repositories.AuditLogRepositoryTest do
   import PortfolioTest.Fixtures.AuthFixtures
 
   # Helper to create an audit log entry
-  defp create_audit_log(attrs \\ []) do
+  defp create_audit_log(attrs) do
     performer = Keyword.get_lazy(attrs, :performed_by, &create_user/0)
     action = Keyword.get(attrs, :action, "user_role_changed")
     resource_type = Keyword.get(attrs, :resource_type, "User")

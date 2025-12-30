@@ -7,7 +7,7 @@ defmodule Portfolio.Auth.Repositories.IPWhitelistRepositoryTest do
   import PortfolioTest.Fixtures.AuthFixtures
 
   # Helper to create an IP whitelist entry
-  defp create_ip_whitelist(attrs \\ []) do
+  defp create_ip_whitelist(attrs) do
     admin = Keyword.get_lazy(attrs, :created_by, &create_user/0)
     ip_address = Keyword.get(attrs, :ip_address, "192.168.1.#{:rand.uniform(255)}")
     description = Keyword.get(attrs, :description, "Test IP")
