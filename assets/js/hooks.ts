@@ -46,6 +46,7 @@ interface Draggable {
 
 // Conditional logging: only log in development mode
 const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+// eslint-disable-next-line no-console
 const log = isDev ? console.log.bind(console) : (): void => {};
 
 // Focus trap utility for accessible modals
