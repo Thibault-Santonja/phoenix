@@ -101,12 +101,7 @@ window.addEventListener("phx:page-loading-stop", (_info: Event) => topbar.hide()
 liveSocket.connect();
 
 // Expose liveSocket on window for debugging
-declare global {
-  interface Window {
-    liveSocket: LiveSocket;
-  }
-}
-window.liveSocket = liveSocket;
+(window as any).liveSocket = liveSocket;
 
 // =============================================================================
 // Locale Management

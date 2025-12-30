@@ -42,11 +42,7 @@ declare module "phoenix_live_view" {
     ): void;
     handleEvent(event: string, callback: (payload: unknown) => void): void;
     upload(name: string, files: FileList): void;
-    uploadTo(
-      selector: string | HTMLElement,
-      name: string,
-      files: FileList
-    ): void;
+    uploadTo(selector: string | HTMLElement, name: string, files: FileList): void;
   }
 
   export interface HookCallbacks {
@@ -58,7 +54,15 @@ declare module "phoenix_live_view" {
     reconnected?(): void;
   }
 
-  export type Hook = HookCallbacks & Partial<ViewHook>;
+  // Hook definition type - for defining hooks (el, pushEvent etc. are injected at runtime)
+  export type Hook = HookCallbacks & {
+    // Allow any additional custom methods/properties on hooks
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+  };
+
+  // Hook instance type - for use inside hook callbacks (with injected properties)
+  export type HookInstance = Hook & ViewHook;
 
   export interface LiveSocketOptions {
     params?: object | (() => object);

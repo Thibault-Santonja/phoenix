@@ -858,7 +858,7 @@ export const SmoothScroll: Hook = {
       }
     };
 
-    anchors.forEach((anchor) => {
+    anchors.forEach((anchor: Element) => {
       anchor.addEventListener("click", (this as any).handleClick);
     });
 
@@ -950,9 +950,9 @@ export const PhotoSortable: Hook = {
         onEnd: (evt: Sortable.SortableEvent): void => {
           log("Drag ended", evt.oldIndex, "->", evt.newIndex);
 
-          const photoIds = Array.from(this.el.querySelectorAll<HTMLElement>("[data-photo-id]")).map(
-            (el) => el.dataset.photoId
-          );
+          const photoIds = Array.from(
+            this.el.querySelectorAll("[data-photo-id]") as NodeListOf<HTMLElement>
+          ).map((el: HTMLElement) => el.dataset.photoId);
 
           log("New order:", photoIds);
 

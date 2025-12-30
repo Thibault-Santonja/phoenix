@@ -103,6 +103,7 @@ defmodule Mix.Tasks.Precommit do
   defp execute_check(:hex_audit, _cmd), do: run_hex_audit()
   defp execute_check(:js_lint, _cmd), do: run_js_check("lint")
   defp execute_check(:js_format, _cmd), do: run_js_check("format:check")
+  defp execute_check(:ex_unit, _cmd), do: run_tests()
   defp execute_check(_name, command), do: run_mix_task(command)
 
   defp run_dialyzer do
@@ -132,6 +133,24 @@ defmodule Mix.Tasks.Precommit do
     else
       IO.puts(yellow("  node_modules not found - run 'npm install --prefix assets' first"))
       :skipped
+    end
+  end
+
+  defp run_tests do
+    # Run tests via System.cmd to avoid issues with Mix.Task.rerun in long processes
+    case System.cmd("mix", ["coveralls"], stderr_to_stdout: true, env: [{"MIX_ENV", "test"}]) do
+      {output, 0} ->
+        # Print the coverage summary
+        output
+        |> String.split("\n")
+        |> Enum.filter(&String.contains?(&1, "[TOTAL]"))
+        |> Enum.each(&IO.puts/1)
+
+        :ok
+
+      {output, _} ->
+        IO.puts(output)
+        :error
     end
   end
 
