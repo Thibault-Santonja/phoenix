@@ -12,6 +12,7 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
 
   alias Portfolio.Auth
   alias Portfolio.Photography
+  alias PortfolioWeb.Helpers.TimeFormatter
 
   on_mount PortfolioWeb.LiveAuth
 
@@ -79,30 +80,6 @@ defmodule PortfolioWeb.Admin.DashboardLive.Index do
     }
   end
 
-  # Formats a DateTime into a human-readable "time ago" string
-  defp time_ago(datetime) do
-    now = DateTime.utc_now()
-    diff_seconds = DateTime.diff(now, datetime, :second)
-
-    cond do
-      diff_seconds < 60 ->
-        ngettext("time.second", "time.seconds", diff_seconds, count: diff_seconds)
-
-      diff_seconds < 3600 ->
-        minutes = div(diff_seconds, 60)
-        ngettext("time.minute", "time.minutes", minutes, count: minutes)
-
-      diff_seconds < 86_400 ->
-        hours = div(diff_seconds, 3600)
-        ngettext("time.hour", "time.hours", hours, count: hours)
-
-      diff_seconds < 2_592_000 ->
-        days = div(diff_seconds, 86_400)
-        ngettext("time.day", "time.days", days, count: days)
-
-      true ->
-        months = div(diff_seconds, 2_592_000)
-        ngettext("time.month", "time.months", months, count: months)
-    end
-  end
+  # Delegates to TimeFormatter for human-readable "time ago" strings
+  defp time_ago(datetime), do: TimeFormatter.time_ago(datetime)
 end

@@ -747,46 +747,46 @@ msgstr "This login link has expired. Please request a new one."
 msgid "auth.magic_link.invalid"
 msgstr "Invalid login link."
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:45
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:46
 #, elixir-autogen, elixir-format
 msgid "admin.dashboard.photos_restarted"
 msgstr "%{count} photo(s) restarted successfully"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:26
+#: lib/portfolio_web/live/admin/dashboard_live/index.ex:27
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:6
 #, elixir-autogen, elixir-format
 msgid "admin.dashboard.title"
 msgstr "Dashboard"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:101
+#: lib/portfolio_web/helpers/time_formatter.ex:104
 #, elixir-autogen, elixir-format
 msgid "time.day"
 msgid_plural "time.days"
 msgstr[0] "%{count} day"
 msgstr[1] "%{count} days"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:97
+#: lib/portfolio_web/helpers/time_formatter.ex:100
 #, elixir-autogen, elixir-format
 msgid "time.hour"
 msgid_plural "time.hours"
 msgstr[0] "%{count} hour"
 msgstr[1] "%{count} hours"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:93
+#: lib/portfolio_web/helpers/time_formatter.ex:96
 #, elixir-autogen, elixir-format
 msgid "time.minute"
 msgid_plural "time.minutes"
 msgstr[0] "%{count} minute"
 msgstr[1] "%{count} minutes"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:105
+#: lib/portfolio_web/helpers/time_formatter.ex:108
 #, elixir-autogen, elixir-format
 msgid "time.month"
 msgid_plural "time.months"
 msgstr[0] "%{count} month"
 msgstr[1] "%{count} months"
 
-#: lib/portfolio_web/live/admin/dashboard_live/index.ex:89
+#: lib/portfolio_web/helpers/time_formatter.ex:92
 #, elixir-autogen, elixir-format
 msgid "time.second"
 msgid_plural "time.seconds"
