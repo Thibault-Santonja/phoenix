@@ -1,4 +1,4 @@
-import type { Hook } from "phoenix_live_view";
+import type { Hook, HookInstance, ViewHook } from "phoenix_live_view";
 import type Sortable from "sortablejs";
 
 // =============================================================================
@@ -39,6 +39,119 @@ interface AnimeAnimation {
 interface Draggable {
   destroy: () => void;
 }
+
+// =============================================================================
+// Hook State Interfaces
+// =============================================================================
+
+interface AnimateThisState {
+  rotations: number;
+  $logo: Element | undefined;
+  $button: HTMLElement | undefined;
+  animate: AnimeModule["animate"] | undefined;
+  bounceAnimation: AnimeAnimation | undefined;
+  draggable: Draggable | undefined;
+  rotateLogo: (() => void) | undefined;
+}
+
+interface AnimateGalleryState {
+  eventHandlers: EventHandlerEntry[];
+  images: Element[];
+  cleanupEventHandlers: () => void;
+}
+
+interface AnimatePathState {
+  animation: AnimeAnimation | null;
+  $path: SVGPathElement | undefined;
+}
+
+interface AnimateTimelineScrollState {
+  scrollContainer: EventTarget | null;
+  observer: IntersectionObserver | undefined;
+  scrollHandler: ((e: WheelEvent) => void) | undefined;
+  enableScrollSync: (timeline: HTMLElement, container: EventTarget) => void;
+  disableScrollSync: (container: EventTarget) => void;
+}
+
+interface GalleryModalState {
+  modal: HTMLElement | null;
+  modalImage: HTMLImageElement | null;
+  backdrop: HTMLElement | null;
+  transitionDuration: number;
+  imageClickHandlers: ImageClickHandler[];
+  currentIndex: number;
+  images: HTMLImageElement[];
+  previouslyFocusedElement: Element | null;
+  focusTrap: FocusTrap | null;
+  backdropClickHandler: (() => void) | undefined;
+  keydownHandler: ((e: KeyboardEvent) => void) | undefined;
+  isModalOpen: () => boolean;
+  openModal: (index: number) => void;
+  closeModal: () => void;
+  showPrevious: () => void;
+  showNext: () => void;
+  showImage: (index: number) => void;
+  updateModalImage: () => void;
+}
+
+interface YearTriggerState {
+  initialized: boolean;
+  yearEl: HTMLElement | null;
+  animate: AnimeModule["animate"] | undefined;
+  navLinks: NodeListOf<HTMLElement> | undefined;
+  sections: NodeListOf<HTMLElement> | undefined;
+  currentYear: number;
+  observer: IntersectionObserver | undefined;
+  animateNavYearMenu: ((activeYear: number) => void) | undefined;
+  animateDigitRoll:
+    | ((digitWrapper: HTMLElement, fromDigit: number, toDigit: number) => void)
+    | undefined;
+}
+
+interface HorizontalScrollFadeInState {
+  handleWheel: ((e: WheelEvent) => void) | undefined;
+  animateItems: (duration: number) => void;
+}
+
+interface DarkModeSwitchState {
+  clickHandler: (() => void) | undefined;
+}
+
+interface ParallaxHeroState {
+  ticking: boolean;
+  img: HTMLImageElement | null;
+  updateParallax: (() => void) | undefined;
+  handleScroll: (() => void) | undefined;
+}
+
+interface SmoothScrollState {
+  handleClick: ((e: MouseEvent) => void) | undefined;
+  anchors: NodeListOf<Element> | undefined;
+}
+
+interface PhotoSortableState {
+  sortable: Sortable | null;
+  initializeSortable: () => Promise<void>;
+}
+
+interface CountdownState {
+  interval: ReturnType<typeof setInterval> | undefined;
+}
+
+interface InfiniteScrollState {
+  pending: boolean;
+  observer: IntersectionObserver | undefined;
+}
+
+// =============================================================================
+// Typed Hook Helper
+// =============================================================================
+
+/**
+ * Helper type to get typed access to hook state.
+ * Usage: const state = this as unknown as TypedHook<MyState>;
+ */
+type TypedHook<T> = ViewHook & T;
 
 // =============================================================================
 // Utilities
@@ -143,17 +256,19 @@ const loadSortable = async (): Promise<typeof Sortable> => {
 
 export const AnimateThis: Hook = {
   async mounted() {
+    const hook = this as unknown as TypedHook<AnimateThisState>;
+
     try {
       const { animate, utils, createDraggable, createSpring } = await loadAnimejs();
 
       const [$logo] = utils.$(".logo.js");
       const [$button] = utils.$("#button") as HTMLElement[];
-      (this as any).rotations = 0;
-      (this as any).$logo = $logo;
-      (this as any).$button = $button;
-      (this as any).animate = animate;
+      hook.rotations = 0;
+      hook.$logo = $logo;
+      hook.$button = $button;
+      hook.animate = animate;
 
-      (this as any).bounceAnimation = animate(".logo.js", {
+      hook.bounceAnimation = animate(".logo.js", {
         scale: [
           { to: 1.1, ease: "inOut(3)", duration: 200 },
           { to: 1, ease: createSpring({ stiffness: 300 }) },
@@ -162,23 +277,27 @@ export const AnimateThis: Hook = {
         loopDelay: 250,
       });
 
-      (this as any).draggable = createDraggable(".logo.js", {
+      hook.draggable = createDraggable(".logo.js", {
         container: [0, 0, 0, 0],
         releaseEase: createSpring({ stiffness: 200 }),
       });
 
-      (this as any).rotateLogo = (): void => {
-        (this as any).rotations++;
-        (this as any).$button.innerText = `rotations: ${(this as any).rotations}`;
-        (this as any).animate((this as any).$logo, {
-          rotate: (this as any).rotations * 360,
-          ease: "out(4)",
-          duration: 1500,
-        });
+      hook.rotateLogo = (): void => {
+        hook.rotations++;
+        if (hook.$button) {
+          hook.$button.innerText = `rotations: ${hook.rotations}`;
+        }
+        if (hook.animate && hook.$logo) {
+          hook.animate(hook.$logo, {
+            rotate: hook.rotations * 360,
+            ease: "out(4)",
+            duration: 1500,
+          });
+        }
       };
 
       if ($button) {
-        $button.addEventListener("click", (this as any).rotateLogo);
+        $button.addEventListener("click", hook.rotateLogo);
       }
     } catch (error) {
       log("AnimateThis initialization failed:", error);
@@ -186,40 +305,51 @@ export const AnimateThis: Hook = {
   },
 
   disconnected() {
-    if ((this as any).bounceAnimation) {
-      (this as any).bounceAnimation.pause();
+    const hook = this as unknown as TypedHook<AnimateThisState>;
+    if (hook.bounceAnimation) {
+      hook.bounceAnimation.pause();
     }
   },
 
   destroyed() {
-    if ((this as any).$button && (this as any).rotateLogo) {
-      (this as any).$button.removeEventListener("click", (this as any).rotateLogo);
+    const hook = this as unknown as TypedHook<AnimateThisState>;
+    if (hook.$button && hook.rotateLogo) {
+      hook.$button.removeEventListener("click", hook.rotateLogo);
     }
-    if ((this as any).bounceAnimation) {
-      (this as any).bounceAnimation.pause();
-      (this as any).bounceAnimation = null;
+    if (hook.bounceAnimation) {
+      hook.bounceAnimation.pause();
+      hook.bounceAnimation = undefined;
     }
-    if ((this as any).draggable && typeof (this as any).draggable.destroy === "function") {
-      (this as any).draggable.destroy();
-      (this as any).draggable = null;
+    if (hook.draggable && typeof hook.draggable.destroy === "function") {
+      hook.draggable.destroy();
+      hook.draggable = undefined;
     }
   },
 };
 
 export const AnimateGallery: Hook = {
   async mounted() {
-    (this as any).eventHandlers = [] as EventHandlerEntry[];
-    (this as any).images = [] as Element[];
+    const hook = this as unknown as TypedHook<AnimateGalleryState>;
+    hook.eventHandlers = [];
+    hook.images = [];
+
+    hook.cleanupEventHandlers = (): void => {
+      hook.eventHandlers.forEach(({ element, mouseenter, mouseleave }) => {
+        element.removeEventListener("mouseenter", mouseenter as EventListener);
+        element.removeEventListener("mouseleave", mouseleave as EventListener);
+      });
+      hook.eventHandlers = [];
+    };
 
     try {
       const { animate, utils, onScroll } = await loadAnimejs();
 
       const debug = false;
-      (this as any).images = utils.$(".gallery__image");
+      hook.images = utils.$(".gallery__image");
       const [container] = utils.$(".follower");
 
       const animateImage = (el: Element, from: number, to: number): void => {
-        (this as any).images
+        hook.images
           .filter((item: Element) => item !== el)
           .forEach(($image: Element) => {
             animate($image, {
@@ -233,7 +363,7 @@ export const AnimateGallery: Hook = {
       const hover = (el: Element): void => animateImage(el, 1, 0.4);
       const unhover = (el: Element): void => animateImage(el, 0.4, 1);
 
-      (this as any).images.forEach(($image: HTMLElement, i: number) => {
+      hook.images.forEach(($image: HTMLElement, i: number) => {
         animate($image, {
           opacity: [0, 1],
           translateY: [100, 0],
@@ -253,7 +383,7 @@ export const AnimateGallery: Hook = {
         $image.addEventListener("mouseenter", mouseenterHandler, false);
         $image.addEventListener("mouseleave", mouseleaveHandler, false);
 
-        (this as any).eventHandlers.push({
+        hook.eventHandlers.push({
           element: $image,
           mouseenter: mouseenterHandler,
           mouseleave: mouseleaveHandler,
@@ -265,29 +395,20 @@ export const AnimateGallery: Hook = {
   },
 
   disconnected() {
-    (this as any).cleanupEventHandlers();
+    const hook = this as unknown as TypedHook<AnimateGalleryState>;
+    hook.cleanupEventHandlers();
   },
 
   destroyed() {
-    (this as any).cleanupEventHandlers();
-  },
-
-  cleanupEventHandlers() {
-    if ((this as any).eventHandlers) {
-      (this as any).eventHandlers.forEach(
-        ({ element, mouseenter, mouseleave }: EventHandlerEntry) => {
-          element.removeEventListener("mouseenter", mouseenter as EventListener);
-          element.removeEventListener("mouseleave", mouseleave as EventListener);
-        }
-      );
-      (this as any).eventHandlers = [];
-    }
+    const hook = this as unknown as TypedHook<AnimateGalleryState>;
+    hook.cleanupEventHandlers();
   },
 };
 
 export const AnimatePath: Hook = {
   async mounted() {
-    (this as any).animation = null;
+    const hook = this as unknown as TypedHook<AnimatePathState>;
+    hook.animation = null;
 
     try {
       const { animate, utils } = await loadAnimejs();
@@ -297,12 +418,12 @@ export const AnimatePath: Hook = {
         return;
       }
 
-      (this as any).$path = $path;
+      hook.$path = $path;
       const length = $path.getTotalLength();
       $path.style.strokeDasharray = String(length);
       $path.style.strokeDashoffset = String(length);
 
-      (this as any).animation = animate($path, {
+      hook.animation = animate($path, {
         strokeDashoffset: [length, 0],
         duration: 2200,
         delay: 300,
@@ -314,31 +435,62 @@ export const AnimatePath: Hook = {
   },
 
   disconnected() {
-    if ((this as any).animation) {
-      (this as any).animation.pause();
+    const hook = this as unknown as TypedHook<AnimatePathState>;
+    if (hook.animation) {
+      hook.animation.pause();
     }
   },
 
   destroyed() {
-    if ((this as any).animation) {
-      (this as any).animation.pause();
-      (this as any).animation = null;
+    const hook = this as unknown as TypedHook<AnimatePathState>;
+    if (hook.animation) {
+      hook.animation.pause();
+      hook.animation = null;
     }
   },
 };
 
 export const AnimateTimelineScroll: Hook = {
   mounted() {
-    const timeline = this.el as HTMLElement;
+    const hook = this as unknown as TypedHook<AnimateTimelineScrollState>;
+    const timeline = hook.el as HTMLElement;
     const container = timeline.closest("#timeline_container") || window;
-    (this as any).scrollContainer = container;
+    hook.scrollContainer = container;
+
+    hook.enableScrollSync = (tl: HTMLElement, cont: EventTarget): void => {
+      hook.scrollHandler = (e: WheelEvent): void => {
+        const atStart = tl.scrollLeft === 0;
+        const atEnd = tl.scrollLeft + tl.clientWidth >= tl.scrollWidth - 1;
+
+        const goingUp = e.deltaY < 0;
+        const goingDown = e.deltaY > 0;
+
+        const allowVerticalScroll = (goingUp && atStart) || (goingDown && atEnd);
+
+        if (!allowVerticalScroll) {
+          tl.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      };
+
+      cont.addEventListener("wheel", hook.scrollHandler as EventListener, {
+        passive: false,
+      });
+    };
+
+    hook.disableScrollSync = (cont: EventTarget): void => {
+      if (hook.scrollHandler) {
+        cont.removeEventListener("wheel", hook.scrollHandler as EventListener);
+        hook.scrollHandler = undefined;
+      }
+    };
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          (this as any).enableScrollSync(timeline, container);
+          hook.enableScrollSync(timeline, container);
         } else {
-          (this as any).disableScrollSync(container);
+          hook.disableScrollSync(container);
         }
       },
       {
@@ -348,261 +500,227 @@ export const AnimateTimelineScroll: Hook = {
     );
 
     observer.observe(timeline);
-    (this as any).observer = observer;
+    hook.observer = observer;
   },
 
   disconnected() {
-    (this as any).disableScrollSync((this as any).scrollContainer || window);
+    const hook = this as unknown as TypedHook<AnimateTimelineScrollState>;
+    hook.disableScrollSync(hook.scrollContainer || window);
   },
 
   destroyed() {
-    (this as any).observer?.disconnect?.();
-    (this as any).disableScrollSync((this as any).scrollContainer || window);
-    (this as any).scrollContainer = null;
-  },
-
-  enableScrollSync(timeline: HTMLElement, container: EventTarget) {
-    (this as any).scrollHandler = (e: WheelEvent): void => {
-      const atStart = timeline.scrollLeft === 0;
-      const atEnd = timeline.scrollLeft + timeline.clientWidth >= timeline.scrollWidth - 1;
-
-      const goingUp = e.deltaY < 0;
-      const goingDown = e.deltaY > 0;
-
-      const allowVerticalScroll = (goingUp && atStart) || (goingDown && atEnd);
-
-      if (!allowVerticalScroll) {
-        timeline.scrollLeft += e.deltaY;
-        e.preventDefault();
-      }
-    };
-
-    container.addEventListener("wheel", (this as any).scrollHandler as EventListener, {
-      passive: false,
-    });
-  },
-
-  disableScrollSync(container: EventTarget) {
-    if ((this as any).scrollHandler) {
-      container.removeEventListener("wheel", (this as any).scrollHandler as EventListener);
-      (this as any).scrollHandler = null;
-    }
+    const hook = this as unknown as TypedHook<AnimateTimelineScrollState>;
+    hook.observer?.disconnect?.();
+    hook.disableScrollSync(hook.scrollContainer || window);
+    hook.scrollContainer = null;
   },
 };
 
 export const GalleryModal: Hook = {
   mounted() {
-    (this as any).modal = document.getElementById("image-modal");
-    (this as any).modalImage = document.getElementById("modal-image") as HTMLImageElement;
-    (this as any).backdrop = document.getElementById("modal-backdrop");
-    (this as any).transitionDuration = 150;
-    (this as any).imageClickHandlers = [] as ImageClickHandler[];
-    (this as any).currentIndex = -1;
-    (this as any).images = Array.from(
-      document.querySelectorAll<HTMLImageElement>(".gallery__image img")
-    );
-    (this as any).previouslyFocusedElement = null;
-    (this as any).focusTrap = null;
+    const hook = this as unknown as TypedHook<GalleryModalState>;
+    hook.modal = document.getElementById("image-modal");
+    hook.modalImage = document.getElementById("modal-image") as HTMLImageElement;
+    hook.backdrop = document.getElementById("modal-backdrop");
+    hook.transitionDuration = 150;
+    hook.imageClickHandlers = [];
+    hook.currentIndex = -1;
+    hook.images = Array.from(document.querySelectorAll<HTMLImageElement>(".gallery__image img"));
+    hook.previouslyFocusedElement = null;
+    hook.focusTrap = null;
 
-    (this as any).images.forEach((img: HTMLImageElement, index: number) => {
+    hook.isModalOpen = (): boolean => {
+      return hook.modal !== null && !hook.modal.classList.contains("hidden");
+    };
+
+    hook.updateModalImage = (): void => {
+      const img = hook.images[hook.currentIndex];
+      if (!img || !hook.modalImage || !hook.modal) {
+        return;
+      }
+
+      const src = img.getAttribute("data-full_image_src") || img.src;
+      hook.modalImage.src = src;
+      hook.modalImage.alt = img.alt || `Image ${hook.currentIndex + 1} of ${hook.images.length}`;
+
+      hook.modal.setAttribute(
+        "aria-label",
+        `Image ${hook.currentIndex + 1} of ${hook.images.length}. Use arrow keys to navigate.`
+      );
+    };
+
+    hook.openModal = (index: number): void => {
+      if (!hook.modal || !hook.modalImage) {return;}
+
+      hook.previouslyFocusedElement = document.activeElement;
+      hook.currentIndex = index;
+      hook.updateModalImage();
+
+      hook.modal.classList.remove("hidden");
+      hook.modal.classList.add("flex");
+
+      hook.modal.setAttribute("role", "dialog");
+      hook.modal.setAttribute("aria-modal", "true");
+      hook.modal.setAttribute("aria-label", "Image gallery viewer");
+
+      if (!hook.modal.hasAttribute("tabindex")) {
+        hook.modal.setAttribute("tabindex", "-1");
+      }
+
+      if (!hook.focusTrap) {
+        hook.focusTrap = createFocusTrap(hook.modal);
+      }
+      hook.focusTrap.activate();
+
+      setTimeout(() => {
+        if (hook.modalImage) {
+          hook.modalImage.classList.remove("scale-50", "opacity-0");
+          hook.modalImage.classList.add("scale-100", "opacity-100");
+        }
+      }, hook.transitionDuration);
+    };
+
+    hook.closeModal = (): void => {
+      if (!hook.modal || !hook.modalImage) {return;}
+
+      if (hook.focusTrap) {
+        hook.focusTrap.deactivate();
+      }
+
+      hook.modalImage.classList.remove("scale-100", "opacity-100");
+      hook.modalImage.classList.add("scale-50", "opacity-0");
+
+      setTimeout(() => {
+        if (hook.modal && hook.modalImage) {
+          hook.modal.classList.add("hidden");
+          hook.modal.classList.remove("flex");
+          hook.modalImage.src = "";
+          hook.currentIndex = -1;
+
+          if (hook.previouslyFocusedElement && "focus" in hook.previouslyFocusedElement) {
+            (hook.previouslyFocusedElement as HTMLElement).focus();
+            hook.previouslyFocusedElement = null;
+          }
+        }
+      }, hook.transitionDuration);
+    };
+
+    hook.showPrevious = (): void => {
+      if (hook.images.length === 0) {return;}
+      hook.currentIndex = (hook.currentIndex - 1 + hook.images.length) % hook.images.length;
+      hook.updateModalImage();
+    };
+
+    hook.showNext = (): void => {
+      if (hook.images.length === 0) {return;}
+      hook.currentIndex = (hook.currentIndex + 1) % hook.images.length;
+      hook.updateModalImage();
+    };
+
+    hook.showImage = (index: number): void => {
+      if (index >= 0 && index < hook.images.length) {
+        hook.currentIndex = index;
+        hook.updateModalImage();
+      }
+    };
+
+    hook.images.forEach((img: HTMLImageElement, index: number) => {
       const clickHandler = (): void => {
-        (this as any).openModal(index);
+        hook.openModal(index);
       };
 
       img.addEventListener("click", clickHandler);
-      (this as any).imageClickHandlers.push({ element: img, handler: clickHandler });
+      hook.imageClickHandlers.push({ element: img, handler: clickHandler });
     });
 
-    (this as any).backdropClickHandler = (): void => {
-      (this as any).closeModal();
+    hook.backdropClickHandler = (): void => {
+      hook.closeModal();
     };
 
-    if ((this as any).backdrop) {
-      (this as any).backdrop.addEventListener("click", (this as any).backdropClickHandler);
+    if (hook.backdrop) {
+      hook.backdrop.addEventListener("click", hook.backdropClickHandler);
     }
 
-    (this as any).keydownHandler = (e: KeyboardEvent): void => {
-      if (!(this as any).isModalOpen()) {
-        return;
-      }
+    hook.keydownHandler = (e: KeyboardEvent): void => {
+      if (!hook.isModalOpen()) {return;}
 
       switch (e.key) {
         case "Escape":
           e.preventDefault();
-          (this as any).closeModal();
+          hook.closeModal();
           break;
         case "ArrowLeft":
           e.preventDefault();
-          (this as any).showPrevious();
+          hook.showPrevious();
           break;
         case "ArrowRight":
           e.preventDefault();
-          (this as any).showNext();
+          hook.showNext();
           break;
         case "Home":
           e.preventDefault();
-          (this as any).showImage(0);
+          hook.showImage(0);
           break;
         case "End":
           e.preventDefault();
-          (this as any).showImage((this as any).images.length - 1);
+          hook.showImage(hook.images.length - 1);
           break;
       }
     };
 
-    window.addEventListener("keydown", (this as any).keydownHandler);
-  },
-
-  isModalOpen(): boolean {
-    return (this as any).modal && !(this as any).modal.classList.contains("hidden");
-  },
-
-  openModal(index: number) {
-    (this as any).previouslyFocusedElement = document.activeElement;
-    (this as any).currentIndex = index;
-    (this as any).updateModalImage();
-
-    (this as any).modal.classList.remove("hidden");
-    (this as any).modal.classList.add("flex");
-
-    (this as any).modal.setAttribute("role", "dialog");
-    (this as any).modal.setAttribute("aria-modal", "true");
-    (this as any).modal.setAttribute("aria-label", "Image gallery viewer");
-
-    if (!(this as any).modal.hasAttribute("tabindex")) {
-      (this as any).modal.setAttribute("tabindex", "-1");
-    }
-
-    if (!(this as any).focusTrap) {
-      (this as any).focusTrap = createFocusTrap((this as any).modal);
-    }
-    (this as any).focusTrap.activate();
-
-    setTimeout(
-      () => {
-        (this as any).modalImage.classList.remove("scale-50", "opacity-0");
-        (this as any).modalImage.classList.add("scale-100", "opacity-100");
-      },
-      (this as any).transitionDuration
-    );
-  },
-
-  closeModal() {
-    if ((this as any).focusTrap) {
-      (this as any).focusTrap.deactivate();
-    }
-
-    (this as any).modalImage.classList.remove("scale-100", "opacity-100");
-    (this as any).modalImage.classList.add("scale-50", "opacity-0");
-
-    setTimeout(
-      () => {
-        (this as any).modal.classList.add("hidden");
-        (this as any).modal.classList.remove("flex");
-        (this as any).modalImage.src = "";
-        (this as any).currentIndex = -1;
-
-        if ((this as any).previouslyFocusedElement) {
-          (this as any).previouslyFocusedElement.focus();
-          (this as any).previouslyFocusedElement = null;
-        }
-      },
-      (this as any).transitionDuration
-    );
-  },
-
-  showPrevious() {
-    if ((this as any).images.length === 0) {
-      return;
-    }
-    (this as any).currentIndex =
-      ((this as any).currentIndex - 1 + (this as any).images.length) % (this as any).images.length;
-    (this as any).updateModalImage();
-  },
-
-  showNext() {
-    if ((this as any).images.length === 0) {
-      return;
-    }
-    (this as any).currentIndex = ((this as any).currentIndex + 1) % (this as any).images.length;
-    (this as any).updateModalImage();
-  },
-
-  showImage(index: number) {
-    if (index >= 0 && index < (this as any).images.length) {
-      (this as any).currentIndex = index;
-      (this as any).updateModalImage();
-    }
-  },
-
-  updateModalImage() {
-    const img = (this as any).images[(this as any).currentIndex] as HTMLImageElement;
-    if (!img) {
-      return;
-    }
-
-    const src = img.getAttribute("data-full_image_src") || img.src;
-    (this as any).modalImage.src = src;
-    (this as any).modalImage.alt =
-      img.alt || `Image ${(this as any).currentIndex + 1} of ${(this as any).images.length}`;
-
-    (this as any).modal.setAttribute(
-      "aria-label",
-      `Image ${(this as any).currentIndex + 1} of ${(this as any).images.length}. Use arrow keys to navigate.`
-    );
+    window.addEventListener("keydown", hook.keydownHandler);
   },
 
   disconnected() {
-    if ((this as any).keydownHandler) {
-      window.removeEventListener("keydown", (this as any).keydownHandler);
+    const hook = this as unknown as TypedHook<GalleryModalState>;
+    if (hook.keydownHandler) {
+      window.removeEventListener("keydown", hook.keydownHandler);
     }
   },
 
   destroyed() {
-    (this as any).imageClickHandlers.forEach(({ element, handler }: ImageClickHandler) => {
+    const hook = this as unknown as TypedHook<GalleryModalState>;
+
+    hook.imageClickHandlers.forEach(({ element, handler }) => {
       element.removeEventListener("click", handler);
     });
 
-    if ((this as any).backdrop && (this as any).backdropClickHandler) {
-      (this as any).backdrop.removeEventListener("click", (this as any).backdropClickHandler);
+    if (hook.backdrop && hook.backdropClickHandler) {
+      hook.backdrop.removeEventListener("click", hook.backdropClickHandler);
     }
 
-    if ((this as any).keydownHandler) {
-      window.removeEventListener("keydown", (this as any).keydownHandler);
+    if (hook.keydownHandler) {
+      window.removeEventListener("keydown", hook.keydownHandler);
     }
   },
 };
 
 export const YearTrigger: Hook = {
   async mounted() {
-    if ((this as any).initialized) {
-      return;
-    }
-    (this as any).initialized = true;
+    const hook = this as unknown as TypedHook<YearTriggerState>;
 
-    (this as any).yearEl = document.getElementById("timeline-year");
-    if (!(this as any).yearEl) {
-      return;
-    }
+    if (hook.initialized) {return;}
+    hook.initialized = true;
+
+    hook.yearEl = document.getElementById("timeline-year");
+    if (!hook.yearEl) {return;}
 
     try {
       const { animate } = await loadAnimejs();
-      (this as any).animate = animate;
+      hook.animate = animate;
     } catch (error) {
       log("YearTrigger: Failed to load animejs:", error);
       return;
     }
 
-    (this as any).navLinks = document.querySelectorAll("[data-anchor-year]");
-    (this as any).sections = document.querySelectorAll("[data-year]");
-    (this as any).currentYear = parseInt(
-      [...(this as any).yearEl.querySelectorAll(".digit")]
-        .map((d: Element) => d.textContent)
-        .join("")
+    hook.navLinks = document.querySelectorAll("[data-anchor-year]");
+    hook.sections = document.querySelectorAll("[data-year]");
+    hook.currentYear = parseInt(
+      [...hook.yearEl.querySelectorAll(".digit")].map((d: Element) => d.textContent).join("")
     );
 
-    (this as any).animateNavYearMenu = (activeYear: number): void => {
-      (this as any).navLinks.forEach((link: HTMLElement) => {
+    hook.animateNavYearMenu = (activeYear: number): void => {
+      hook.navLinks?.forEach((link: HTMLElement) => {
         const isActive = parseInt(link.dataset.year || "0") === activeYear;
         link.classList.toggle("opacity-100", isActive);
         link.classList.toggle("opacity-60", !isActive);
@@ -610,11 +728,13 @@ export const YearTrigger: Hook = {
       });
     };
 
-    (this as any).animateDigitRoll = (
+    hook.animateDigitRoll = (
       digitWrapper: HTMLElement,
       fromDigit: number,
       toDigit: number
     ): void => {
+      if (!hook.animate) {return;}
+
       digitWrapper.innerHTML = "";
       const sign = fromDigit > toDigit;
       const toElY = sign ? "translateY(100%)" : "translateY(-100%)";
@@ -649,14 +769,14 @@ export const YearTrigger: Hook = {
 
       digitWrapper.appendChild(container);
 
-      (this as any).animate(fromEl, {
+      hook.animate(fromEl, {
         translateY: fromElYTranslation,
         opacity: [1, 0],
         duration: 500,
         easing: "easeInOutCubic",
       });
 
-      (this as any).animate(toEl, {
+      hook.animate(toEl, {
         translateY: toElYTranslation,
         opacity: [0, 1],
         duration: 500,
@@ -664,34 +784,32 @@ export const YearTrigger: Hook = {
       });
     };
 
-    (this as any).observer = new IntersectionObserver(
+    hook.observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top));
 
         const topEntry = visible[0];
-        if (!topEntry) {
-          return;
-        }
+        if (!topEntry) {return;}
 
         const newYear = parseInt((topEntry.target as HTMLElement).dataset.year || "0");
-        if (newYear !== (this as any).currentYear) {
-          const fromStr = String((this as any).currentYear).padStart(4, "0");
+        if (newYear !== hook.currentYear && hook.yearEl && hook.animateDigitRoll) {
+          const fromStr = String(hook.currentYear).padStart(4, "0");
           const toStr = String(newYear).padStart(4, "0");
-          const digitWrappers = (this as any).yearEl.querySelectorAll(".digit-wrapper");
+          const digitWrappers = hook.yearEl.querySelectorAll(".digit-wrapper");
 
           for (let i = 0; i < 4; i++) {
             const fromDigit = parseInt(fromStr[i]);
             const toDigit = parseInt(toStr[i]);
 
             if (fromDigit !== toDigit) {
-              (this as any).animateDigitRoll(digitWrappers[i], fromDigit, toDigit);
+              hook.animateDigitRoll(digitWrappers[i] as HTMLElement, fromDigit, toDigit);
             }
           }
 
-          (this as any).currentYear = newYear;
-          (this as any).animateNavYearMenu(newYear);
+          hook.currentYear = newYear;
+          hook.animateNavYearMenu?.(newYear);
         }
       },
       {
@@ -699,83 +817,87 @@ export const YearTrigger: Hook = {
       }
     );
 
-    (this as any).animateNavYearMenu((this as any).currentYear);
-    (this as any).sections.forEach((section: Element) => (this as any).observer.observe(section));
+    hook.animateNavYearMenu(hook.currentYear);
+    hook.sections?.forEach((section: Element) => hook.observer?.observe(section));
   },
 
   destroyed() {
-    if ((this as any).observer) {
-      (this as any).observer.disconnect();
+    const hook = this as unknown as TypedHook<YearTriggerState>;
+    if (hook.observer) {
+      hook.observer.disconnect();
     }
-    (this as any).initialized = false;
+    hook.initialized = false;
   },
 };
 
 export const HorizontalScrollFadeIn: Hook = {
-  animateItems(duration: number) {
-    const items = this.el.querySelectorAll("li");
-
-    items.forEach((el: Element, i: number) => {
-      if (duration) {
-        setTimeout(() => {
-          el.classList.add("opacity-100");
-        }, i * duration);
-      } else {
-        el.classList.add("opacity-100");
-      }
-    });
-  },
-
   mounted() {
-    (this as any).handleWheel = (e: WheelEvent): void => {
-      if (e.deltaY === 0) {
-        return;
-      }
+    const hook = this as unknown as TypedHook<HorizontalScrollFadeInState>;
+
+    hook.animateItems = (duration: number): void => {
+      const items = hook.el.querySelectorAll("li");
+
+      items.forEach((el: Element, i: number) => {
+        if (duration) {
+          setTimeout(() => {
+            el.classList.add("opacity-100");
+          }, i * duration);
+        } else {
+          el.classList.add("opacity-100");
+        }
+      });
+    };
+
+    hook.handleWheel = (e: WheelEvent): void => {
+      if (e.deltaY === 0) {return;}
 
       e.preventDefault();
 
-      this.el.scrollBy({
+      hook.el.scrollBy({
         left: e.deltaY,
       });
     };
 
-    this.el.addEventListener("wheel", (this as any).handleWheel, { passive: false });
-    (this as any).animateItems(100);
+    hook.el.addEventListener("wheel", hook.handleWheel, { passive: false });
+    hook.animateItems(100);
   },
 
   updated() {
-    (this as any).animateItems(0);
+    const hook = this as unknown as TypedHook<HorizontalScrollFadeInState>;
+    hook.animateItems(0);
   },
 
   destroyed() {
-    if ((this as any).handleWheel) {
-      this.el.removeEventListener("wheel", (this as any).handleWheel);
+    const hook = this as unknown as TypedHook<HorizontalScrollFadeInState>;
+    if (hook.handleWheel) {
+      hook.el.removeEventListener("wheel", hook.handleWheel);
     }
   },
 };
 
 export const AnimatePhotographyGallery: Hook = {
   mounted() {
+    const hook = this as unknown as HookInstance;
     const [header] = document.getElementsByClassName("project-title");
-    if (!header) {
-      return;
-    }
+    if (!header) {return;}
 
     setTimeout(() => {
       header.classList.replace("opacity-0", "opacity-100");
     }, 300);
 
     setTimeout(() => {
-      this.el.classList.replace("opacity-0", "opacity-100");
-      this.el.classList.replace("translate-y-8", "translate-y-0");
+      hook.el.classList.replace("opacity-0", "opacity-100");
+      hook.el.classList.replace("translate-y-8", "translate-y-0");
     }, 275);
   },
 };
 
 export const DarkModeSwitch: Hook = {
   mounted() {
+    const hook = this as unknown as TypedHook<DarkModeSwitchState>;
     const html = document.documentElement;
-    (this as any).clickHandler = (): void => {
+
+    hook.clickHandler = (): void => {
       const isDark = html.classList.contains("dark");
       const newTheme = isDark ? "light" : "dark";
 
@@ -787,61 +909,66 @@ export const DarkModeSwitch: Hook = {
         log("Could not persist theme preference:", e);
       }
     };
-    this.el.addEventListener("click", (this as any).clickHandler);
+    hook.el.addEventListener("click", hook.clickHandler);
   },
 
   destroyed() {
-    if ((this as any).clickHandler) {
-      this.el.removeEventListener("click", (this as any).clickHandler);
+    const hook = this as unknown as TypedHook<DarkModeSwitchState>;
+    if (hook.clickHandler) {
+      hook.el.removeEventListener("click", hook.clickHandler);
     }
   },
 };
 
 export const ParallaxHero: Hook = {
   mounted() {
-    (this as any).ticking = false;
-    (this as any).img = this.el.querySelector("img");
+    const hook = this as unknown as TypedHook<ParallaxHeroState>;
+    hook.ticking = false;
+    hook.img = hook.el.querySelector("img");
 
-    (this as any).updateParallax = (): void => {
-      if (!(this as any).img) {
-        return;
-      }
+    hook.updateParallax = (): void => {
+      if (!hook.img) {return;}
       const scrolled = window.pageYOffset;
       const speed = scrolled * 0.5;
-      (this as any).img.style.transform = `translateY(${speed}px)`;
-      (this as any).ticking = false;
+      hook.img.style.transform = `translateY(${speed}px)`;
+      hook.ticking = false;
     };
 
-    (this as any).handleScroll = (): void => {
-      if (!(this as any).ticking) {
-        (this as any).ticking = true;
-        requestAnimationFrame((this as any).updateParallax);
+    hook.handleScroll = (): void => {
+      if (!hook.ticking) {
+        hook.ticking = true;
+        requestAnimationFrame(hook.updateParallax!);
       }
     };
 
-    window.addEventListener("scroll", (this as any).handleScroll, { passive: true });
+    window.addEventListener("scroll", hook.handleScroll, { passive: true });
   },
 
   disconnected() {
-    window.removeEventListener("scroll", (this as any).handleScroll);
+    const hook = this as unknown as TypedHook<ParallaxHeroState>;
+    if (hook.handleScroll) {
+      window.removeEventListener("scroll", hook.handleScroll);
+    }
   },
 
   destroyed() {
-    window.removeEventListener("scroll", (this as any).handleScroll);
-    (this as any).img = null;
+    const hook = this as unknown as TypedHook<ParallaxHeroState>;
+    if (hook.handleScroll) {
+      window.removeEventListener("scroll", hook.handleScroll);
+    }
+    hook.img = null;
   },
 };
 
 export const SmoothScroll: Hook = {
   mounted() {
-    const anchors = this.el.querySelectorAll('a[href^="#"]');
+    const hook = this as unknown as TypedHook<SmoothScrollState>;
+    const anchors = hook.el.querySelectorAll('a[href^="#"]');
 
-    (this as any).handleClick = (e: MouseEvent): void => {
+    hook.handleClick = (e: MouseEvent): void => {
       e.preventDefault();
       const href = (e.currentTarget as HTMLAnchorElement).getAttribute("href");
-      if (!href) {
-        return;
-      }
+      if (!href) {return;}
 
       let target: Element | null = document.querySelector(href);
 
@@ -859,16 +986,17 @@ export const SmoothScroll: Hook = {
     };
 
     anchors.forEach((anchor: Element) => {
-      anchor.addEventListener("click", (this as any).handleClick);
+      anchor.addEventListener("click", hook.handleClick as EventListener);
     });
 
-    (this as any).anchors = anchors;
+    hook.anchors = anchors;
   },
 
   destroyed() {
-    if ((this as any).anchors) {
-      (this as any).anchors.forEach((anchor: Element) => {
-        anchor.removeEventListener("click", (this as any).handleClick);
+    const hook = this as unknown as TypedHook<SmoothScrollState>;
+    if (hook.anchors && hook.handleClick) {
+      hook.anchors.forEach((anchor: Element) => {
+        anchor.removeEventListener("click", hook.handleClick as EventListener);
       });
     }
   },
@@ -876,103 +1004,107 @@ export const SmoothScroll: Hook = {
 
 export const PhotoSortable: Hook = {
   async mounted() {
-    log("PhotoSortable mounted", this.el);
-    (this as any).sortable = null;
+    const hook = this as unknown as TypedHook<PhotoSortableState>;
+    log("PhotoSortable mounted", hook.el);
+    hook.sortable = null;
+
+    hook.initializeSortable = async (): Promise<void> => {
+      const isReordering = (hook.el as HTMLElement).dataset.reordering === "true";
+      log("Initializing sortable, reordering:", isReordering);
+
+      if (hook.sortable) {
+        log("Destroying existing sortable");
+        hook.sortable.destroy();
+        hook.sortable = null;
+      }
+
+      if (isReordering) {
+        log("Creating sortable instance");
+
+        const SortableLib = await loadSortable();
+
+        const items = hook.el.querySelectorAll(".sortable-item");
+        log("Found sortable items:", items.length);
+
+        hook.sortable = SortableLib.create(hook.el as HTMLElement, {
+          animation: 150,
+          draggable: ".sortable-item",
+          handle: ".sortable-item",
+          ghostClass: "sortable-ghost",
+          chosenClass: "sortable-chosen",
+          dragClass: "sortable-drag",
+          forceFallback: false,
+          fallbackClass: "sortable-fallback",
+          fallbackOnBody: true,
+          swapThreshold: 0.65,
+          direction: "horizontal",
+
+          onStart: (evt: Sortable.SortableEvent): void => {
+            log("Drag started", evt.oldIndex);
+          },
+
+          onEnd: (evt: Sortable.SortableEvent): void => {
+            log("Drag ended", evt.oldIndex, "->", evt.newIndex);
+
+            const photoIds = Array.from(
+              hook.el.querySelectorAll("[data-photo-id]") as NodeListOf<HTMLElement>
+            ).map((el: HTMLElement) => el.dataset.photoId);
+
+            log("New order:", photoIds);
+
+            hook.pushEvent("reorder_photos", { photo_ids: photoIds });
+          },
+        });
+
+        log("Sortable instance created:", hook.sortable);
+      }
+    };
+
     try {
-      await (this as any).initializeSortable();
+      await hook.initializeSortable();
     } catch (error) {
       log("PhotoSortable initialization failed:", error);
     }
   },
 
   async updated() {
+    const hook = this as unknown as TypedHook<PhotoSortableState>;
     log("PhotoSortable updated", {
-      reordering: (this.el as HTMLElement).dataset.reordering,
+      reordering: (hook.el as HTMLElement).dataset.reordering,
     });
     try {
-      await (this as any).initializeSortable();
+      await hook.initializeSortable();
     } catch (error) {
       log("PhotoSortable re-initialization failed:", error);
     }
   },
 
   disconnected() {
+    const hook = this as unknown as TypedHook<PhotoSortableState>;
     log("PhotoSortable disconnected");
-    if ((this as any).sortable) {
-      (this as any).sortable.destroy();
-      (this as any).sortable = null;
+    if (hook.sortable) {
+      hook.sortable.destroy();
+      hook.sortable = null;
     }
   },
 
   destroyed() {
+    const hook = this as unknown as TypedHook<PhotoSortableState>;
     log("PhotoSortable destroyed");
-    if ((this as any).sortable) {
-      (this as any).sortable.destroy();
-      (this as any).sortable = null;
-    }
-  },
-
-  async initializeSortable() {
-    const isReordering = (this.el as HTMLElement).dataset.reordering === "true";
-    log("Initializing sortable, reordering:", isReordering);
-
-    if ((this as any).sortable) {
-      log("Destroying existing sortable");
-      (this as any).sortable.destroy();
-      (this as any).sortable = null;
-    }
-
-    if (isReordering) {
-      log("Creating sortable instance");
-
-      const SortableLib = await loadSortable();
-
-      const items = this.el.querySelectorAll(".sortable-item");
-      log("Found sortable items:", items.length);
-
-      (this as any).sortable = SortableLib.create(this.el as HTMLElement, {
-        animation: 150,
-        draggable: ".sortable-item",
-        handle: ".sortable-item",
-        ghostClass: "sortable-ghost",
-        chosenClass: "sortable-chosen",
-        dragClass: "sortable-drag",
-        forceFallback: false,
-        fallbackClass: "sortable-fallback",
-        fallbackOnBody: true,
-        swapThreshold: 0.65,
-        direction: "horizontal",
-
-        onStart: (evt: Sortable.SortableEvent): void => {
-          log("Drag started", evt.oldIndex);
-        },
-
-        onEnd: (evt: Sortable.SortableEvent): void => {
-          log("Drag ended", evt.oldIndex, "->", evt.newIndex);
-
-          const photoIds = Array.from(
-            this.el.querySelectorAll("[data-photo-id]") as NodeListOf<HTMLElement>
-          ).map((el: HTMLElement) => el.dataset.photoId);
-
-          log("New order:", photoIds);
-
-          this.pushEvent("reorder_photos", { photo_ids: photoIds });
-        },
-      });
-
-      log("Sortable instance created:", (this as any).sortable);
+    if (hook.sortable) {
+      hook.sortable.destroy();
+      hook.sortable = null;
     }
   },
 };
 
 export const RateLimitCountdown: Hook = {
   mounted() {
-    const retryAfter = parseInt((this.el as HTMLElement).dataset.retryAfter || "0", 10);
+    const hook = this as unknown as TypedHook<CountdownState>;
+    const retryAfter = parseInt((hook.el as HTMLElement).dataset.retryAfter || "0", 10);
     const display = document.getElementById("countdown-display");
 
-    if (!display || !retryAfter) {
-      return;
-    }
+    if (!display || !retryAfter) {return;}
 
     let remaining = retryAfter;
 
@@ -989,11 +1121,11 @@ export const RateLimitCountdown: Hook = {
 
     updateDisplay();
 
-    (this as any).interval = setInterval(() => {
+    hook.interval = setInterval(() => {
       remaining--;
 
       if (remaining <= 0) {
-        clearInterval((this as any).interval);
+        clearInterval(hook.interval);
         window.location.reload();
       } else {
         updateDisplay();
@@ -1002,20 +1134,20 @@ export const RateLimitCountdown: Hook = {
   },
 
   destroyed() {
-    if ((this as any).interval) {
-      clearInterval((this as any).interval);
+    const hook = this as unknown as TypedHook<CountdownState>;
+    if (hook.interval) {
+      clearInterval(hook.interval);
     }
   },
 };
 
 export const MagicLinkExpiration: Hook = {
   mounted() {
-    const expiresIn = parseInt((this.el as HTMLElement).dataset.expiresIn || "0", 10);
+    const hook = this as unknown as TypedHook<CountdownState>;
+    const expiresIn = parseInt((hook.el as HTMLElement).dataset.expiresIn || "0", 10);
     const display = document.getElementById("magic-link-countdown");
 
-    if (!display || !expiresIn) {
-      return;
-    }
+    if (!display || !expiresIn) {return;}
 
     let remaining = expiresIn;
 
@@ -1044,11 +1176,11 @@ export const MagicLinkExpiration: Hook = {
 
     updateDisplay();
 
-    (this as any).interval = setInterval(() => {
+    hook.interval = setInterval(() => {
       remaining--;
 
       if (remaining < 0) {
-        clearInterval((this as any).interval);
+        clearInterval(hook.interval);
       } else {
         updateDisplay();
       }
@@ -1056,23 +1188,25 @@ export const MagicLinkExpiration: Hook = {
   },
 
   destroyed() {
-    if ((this as any).interval) {
-      clearInterval((this as any).interval);
+    const hook = this as unknown as TypedHook<CountdownState>;
+    if (hook.interval) {
+      clearInterval(hook.interval);
     }
   },
 };
 
 export const InfiniteScroll: Hook = {
   mounted() {
-    (this as any).pending = false;
+    const hook = this as unknown as TypedHook<InfiniteScrollState>;
+    hook.pending = false;
 
-    (this as any).observer = new IntersectionObserver(
+    hook.observer = new IntersectionObserver(
       (entries) => {
         const target = entries[0];
-        if (target.isIntersecting && !(this as any).pending) {
-          (this as any).pending = true;
-          this.pushEvent("load_more", {}, () => {
-            (this as any).pending = false;
+        if (target.isIntersecting && !hook.pending) {
+          hook.pending = true;
+          hook.pushEvent("load_more", {}, () => {
+            hook.pending = false;
           });
         }
       },
@@ -1083,12 +1217,13 @@ export const InfiniteScroll: Hook = {
       }
     );
 
-    (this as any).observer.observe(this.el);
+    hook.observer.observe(hook.el);
   },
 
   destroyed() {
-    if ((this as any).observer) {
-      (this as any).observer.disconnect();
+    const hook = this as unknown as TypedHook<InfiniteScrollState>;
+    if (hook.observer) {
+      hook.observer.disconnect();
     }
   },
 };
