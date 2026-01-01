@@ -74,25 +74,6 @@ defmodule PortfolioWeb.Admin.PhotoLive.Index do
     Photography.count_photos_by_album(album_id)
   end
 
-  defp pagination_range(current_page, total_pages) do
-    max_pages = 7
-    half = div(max_pages, 2)
-
-    cond do
-      total_pages <= max_pages ->
-        1..total_pages
-
-      current_page <= half + 1 ->
-        1..max_pages
-
-      current_page >= total_pages - half ->
-        (total_pages - max_pages + 1)..total_pages
-
-      true ->
-        (current_page - half)..(current_page + half)
-    end
-  end
-
   defp build_params(album_filter, page) do
     params = []
     params = if album_filter, do: [{:album, album_filter} | params], else: params

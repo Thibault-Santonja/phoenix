@@ -306,7 +306,7 @@
               </.link>
             <% end %>
 
-            <%= for page_num <- pagination_range(@page, @total_pages) do %>
+            <%= for page_num <- PaginationHelper.page_range(@page, @total_pages) do %>
               <%= if page_num == @page do %>
                 <span class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                   {page_num}

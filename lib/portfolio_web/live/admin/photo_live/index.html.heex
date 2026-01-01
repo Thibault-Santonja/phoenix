@@ -151,7 +151,7 @@
               </.link>
             <% end %>
 
-            <%= for page_num <- pagination_range(@page, @total_pages) do %>
+            <%= for page_num <- PaginationHelper.page_range(@page, @total_pages) do %>
               <.link
                 patch={~p"/admin/photos?#{build_params(@album_filter, page_num)}"}
                 class={[

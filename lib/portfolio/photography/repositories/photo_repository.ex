@@ -300,7 +300,9 @@ defmodule Portfolio.Photography.Repositories.PhotoRepository do
   @spec list_by_processing_status(String.t(), keyword()) :: [Photo.t()]
   def list_by_processing_status(status, opts \\ []) do
     limit = Keyword.get(opts, :limit, 100)
-    preload = Keyword.get(opts, :preload, [])
+    # Default to preloading album since processing status is typically viewed in admin dashboard
+    # where album context is needed. Pass preload: [] explicitly to skip.
+    preload = Keyword.get(opts, :preload, [:album])
 
     from(p in Photo, where: p.processing_status == ^status, order_by: [desc: p.inserted_at])
     |> limit(^limit)

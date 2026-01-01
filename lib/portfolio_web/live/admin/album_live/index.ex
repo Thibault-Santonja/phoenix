@@ -226,31 +226,6 @@ defmodule PortfolioWeb.Admin.AlbumLive.Index do
   defp format_type(:taiwan), do: gettext("album.type.taiwan")
   defp format_type(type), do: to_string(type)
 
-  # Fonction helper pour la pagination - génère la plage de numéros de page à afficher
-  defp pagination_range(current_page, total_pages) do
-    # Afficher au maximum 7 numéros de page
-    max_pages = 7
-    half = div(max_pages, 2)
-
-    cond do
-      # Si total <= max_pages, afficher tout
-      total_pages <= max_pages ->
-        1..total_pages
-
-      # Si on est proche du début
-      current_page <= half + 1 ->
-        1..max_pages
-
-      # Si on est proche de la fin
-      current_page >= total_pages - half ->
-        (total_pages - max_pages + 1)..total_pages
-
-      # Sinon, centrer autour de la page actuelle
-      true ->
-        (current_page - half)..(current_page + half)
-    end
-  end
-
   # Fonction helper pour le badge de type
   defp type_badge_class(:wedding), do: "bg-pink-100 text-pink-800"
   defp type_badge_class(:couples), do: "bg-purple-100 text-purple-800"

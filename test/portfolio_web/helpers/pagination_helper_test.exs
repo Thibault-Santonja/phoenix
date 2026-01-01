@@ -133,4 +133,47 @@ defmodule PortfolioWeb.Helpers.PaginationHelperTest do
       assert PaginationHelper.has_prev_page?(10) == true
     end
   end
+
+  describe "page_range/3" do
+    test "returns full range when total pages is small" do
+      assert PaginationHelper.page_range(1, 3) == 1..3
+      assert PaginationHelper.page_range(2, 5) == 1..5
+      assert PaginationHelper.page_range(3, 7) == 1..7
+    end
+
+    test "returns first max_pages when near start" do
+      assert PaginationHelper.page_range(1, 10) == 1..7
+      assert PaginationHelper.page_range(2, 10) == 1..7
+      assert PaginationHelper.page_range(3, 10) == 1..7
+      assert PaginationHelper.page_range(4, 10) == 1..7
+    end
+
+    test "returns last max_pages when near end" do
+      assert PaginationHelper.page_range(10, 10) == 4..10
+      assert PaginationHelper.page_range(9, 10) == 4..10
+      assert PaginationHelper.page_range(8, 10) == 4..10
+      assert PaginationHelper.page_range(7, 10) == 4..10
+    end
+
+    test "centers range around current page in middle" do
+      assert PaginationHelper.page_range(5, 10) == 2..8
+      assert PaginationHelper.page_range(6, 10) == 3..9
+      assert PaginationHelper.page_range(10, 20) == 7..13
+      assert PaginationHelper.page_range(15, 30) == 12..18
+    end
+
+    test "handles single page" do
+      assert PaginationHelper.page_range(1, 1) == 1..1
+    end
+
+    test "handles zero total pages" do
+      assert PaginationHelper.page_range(1, 0) == 1..1
+    end
+
+    test "respects custom max_pages option" do
+      assert PaginationHelper.page_range(5, 20, max_pages: 5) == 3..7
+      assert PaginationHelper.page_range(1, 10, max_pages: 3) == 1..3
+      assert PaginationHelper.page_range(10, 10, max_pages: 5) == 6..10
+    end
+  end
 end

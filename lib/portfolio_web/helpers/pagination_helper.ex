@@ -200,4 +200,55 @@ defmodule PortfolioWeb.Helpers.PaginationHelper do
   def has_prev_page?(current_page) do
     current_page > 1
   end
+
+  @doc """
+  Generates a range of page numbers to display in pagination controls.
+
+  Centers the range around the current page, showing at most `max_pages` numbers.
+  Handles edge cases near the start and end of the total pages.
+
+  ## Options
+
+    * `:max_pages` - Maximum number of page buttons to show (default: 7)
+
+  ## Examples
+
+      iex> PaginationHelper.page_range(1, 10)
+      1..7
+
+      iex> PaginationHelper.page_range(5, 10)
+      2..8
+
+      iex> PaginationHelper.page_range(9, 10)
+      4..10
+
+      iex> PaginationHelper.page_range(2, 3)
+      1..3
+
+      iex> PaginationHelper.page_range(1, 1)
+      1..1
+  """
+  @spec page_range(pos_integer(), pos_integer(), keyword()) :: Range.t()
+  def page_range(current_page, total_pages, opts \\ [])
+
+  def page_range(_current_page, 0, _opts), do: 1..1
+
+  def page_range(current_page, total_pages, opts) when current_page >= 1 and total_pages >= 1 do
+    max_pages = Keyword.get(opts, :max_pages, 7)
+    half = div(max_pages, 2)
+
+    cond do
+      total_pages <= max_pages ->
+        1..total_pages
+
+      current_page <= half + 1 ->
+        1..max_pages
+
+      current_page >= total_pages - half ->
+        (total_pages - max_pages + 1)..total_pages
+
+      true ->
+        (current_page - half)..(current_page + half)
+    end
+  end
 end

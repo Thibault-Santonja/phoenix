@@ -39,9 +39,18 @@ defmodule Portfolio.Auth.Repositories.IPWhitelistRepositoryTest do
       Portfolio.Repo.delete_all(IPWhitelist)
 
       admin = create_user()
-      _older = create_ip_whitelist(created_by: admin, ip_address: "10.0.0.1")
-      Process.sleep(50)
+      older = create_ip_whitelist(created_by: admin, ip_address: "10.0.0.1")
       _newer = create_ip_whitelist(created_by: admin, ip_address: "10.0.0.2")
+
+      # Manually set timestamps to ensure ordering (avoid Process.sleep)
+      past_time =
+        NaiveDateTime.utc_now()
+        |> NaiveDateTime.add(-60, :second)
+        |> NaiveDateTime.truncate(:second)
+
+      older
+      |> Ecto.Changeset.change(%{inserted_at: past_time})
+      |> Portfolio.Repo.update!()
 
       entries = IPWhitelistRepository.list_all()
 
@@ -49,7 +58,9 @@ defmodule Portfolio.Auth.Repositories.IPWhitelistRepositoryTest do
       assert length(entries) == 2
 
       [first, second] = entries
-      assert NaiveDateTime.compare(first.inserted_at, second.inserted_at) in [:gt, :eq]
+      assert first.ip_address == "10.0.0.2"
+      assert second.ip_address == "10.0.0.1"
+      assert NaiveDateTime.compare(first.inserted_at, second.inserted_at) == :gt
     end
 
     test "preloads created_by association" do

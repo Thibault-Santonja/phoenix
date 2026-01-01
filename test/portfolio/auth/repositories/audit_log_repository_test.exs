@@ -102,9 +102,17 @@ defmodule Portfolio.Auth.Repositories.AuditLogRepositoryTest do
       performer = create_user()
       target_id = Ecto.UUID.generate()
 
-      _older = create_audit_log(performed_by: performer, resource_id: target_id)
-      Process.sleep(10)
+      older = create_audit_log(performed_by: performer, resource_id: target_id)
       newer = create_audit_log(performed_by: performer, resource_id: target_id)
+
+      # Manually set older timestamp (avoid Process.sleep)
+      past_time =
+        DateTime.utc_now()
+        |> DateTime.add(-60, :second)
+
+      older
+      |> Ecto.Changeset.change(%{inserted_at: past_time})
+      |> Portfolio.Repo.update!()
 
       [first | _] = AuditLogRepository.get_by_resource("User", target_id)
       assert first.id == newer.id
@@ -191,9 +199,17 @@ defmodule Portfolio.Auth.Repositories.AuditLogRepositoryTest do
     test "returns logs ordered by inserted_at descending" do
       performer = create_user()
 
-      _older = create_audit_log(performed_by: performer)
-      Process.sleep(10)
+      older = create_audit_log(performed_by: performer)
       newer = create_audit_log(performed_by: performer)
+
+      # Manually set older timestamp (avoid Process.sleep)
+      past_time =
+        DateTime.utc_now()
+        |> DateTime.add(-60, :second)
+
+      older
+      |> Ecto.Changeset.change(%{inserted_at: past_time})
+      |> Portfolio.Repo.update!()
 
       [first | _] = AuditLogRepository.get_by_performer(performer.id)
       assert first.id == newer.id
