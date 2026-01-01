@@ -2,35 +2,47 @@ defmodule Portfolio.Photography.Adapters.ImageProcessingAdapter do
   @moduledoc """
   Anti-Corruption Layer between Photography and ImageProcessing bounded contexts.
 
-  This adapter translates between Photography domain concepts and ImageProcessing
-  domain concepts, preventing tight coupling between contexts while allowing
-  them to communicate.
+  This adapter implements the `ImageProcessingPort` behaviour and translates
+  between Photography domain concepts and ImageProcessing domain concepts,
+  preventing tight coupling between contexts while allowing them to communicate.
 
-  ## Architecture (DDD Anti-Corruption Layer)
+  ## Architecture (DDD Anti-Corruption Layer + Hexagonal)
 
-  The Photography context should not directly depend on ImageProcessing internals.
-  This adapter:
+  The Photography context defines what it needs via the Port (behaviour).
+  This adapter implements that port, translating to ImageProcessing internals:
 
   1. Translates Photography entities (Photo) to ImageProcessing inputs
   2. Translates ImageProcessing outputs back to Photography domain
   3. Handles errors in Photography-specific terms
   4. Isolates ImageProcessing implementation details
 
+  ## Configuration
+
+  This adapter is the default for the ImageProcessingPort:
+
+      config :portfolio, Portfolio.Photography.Ports.ImageProcessingPort,
+        adapter: Portfolio.Photography.Adapters.ImageProcessingAdapter
+
   ## Usage
 
-      # Instead of calling ImageProcessing directly:
-      ImageProcessingAdapter.generate_variants(photo)
+  Prefer using the Port for better decoupling:
 
-      # Or for async processing:
-      ImageProcessingAdapter.enqueue_variant_generation(photo)
+      alias Portfolio.Photography.Ports.ImageProcessingPort
+      ImageProcessingPort.generate_variants(photo)
+
+  Or use the adapter directly:
+
+      ImageProcessingAdapter.generate_variants(photo)
 
   ## Benefits
 
   - Photography context can evolve independently of ImageProcessing
-  - Easier testing (mock adapter per context)
+  - Easier testing (mock adapter implementing the same behaviour)
   - Clear translation between domain languages
   - ImageProcessing domain model doesn't leak into Photography
   """
+
+  @behaviour Portfolio.Photography.Ports.ImageProcessingPort
 
   require Logger
 
@@ -74,6 +86,7 @@ defmodule Portfolio.Photography.Adapters.ImageProcessingAdapter do
       iex> Map.keys(variants)
       [:thumbnail, :small, :medium, :large]
   """
+  @impl Portfolio.Photography.Ports.ImageProcessingPort
   @spec generate_variants(Photo.t()) :: {:ok, variant_result()} | {:error, processing_error()}
   def generate_variants(%Photo{id: photo_id, file_path: file_path} = photo) do
     output_path = build_output_path(photo)
@@ -131,6 +144,7 @@ defmodule Portfolio.Photography.Adapters.ImageProcessingAdapter do
   - `{:ok, job}` - The enqueued Oban job
   - `{:error, reason}` - Enqueueing failed
   """
+  @impl Portfolio.Photography.Ports.ImageProcessingPort
   @spec enqueue_variant_generation(Photo.t()) ::
           {:ok, Oban.Job.t()} | {:error, Oban.Job.changeset()}
   def enqueue_variant_generation(%Photo{id: photo_id}) do
@@ -147,6 +161,7 @@ defmodule Portfolio.Photography.Adapters.ImageProcessingAdapter do
   - `true` if the circuit breaker is closed (service available)
   - `false` if the circuit breaker is open (service unavailable)
   """
+  @impl Portfolio.Photography.Ports.ImageProcessingPort
   @spec service_available?() :: boolean()
   def service_available? do
     not CircuitBreaker.blown?()

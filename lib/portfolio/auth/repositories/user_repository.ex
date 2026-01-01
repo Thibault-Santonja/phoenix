@@ -6,6 +6,9 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
   Ce repository se concentre uniquement sur l'accès aux données et isole
   la couche domaine vis-à-vis d'Ecto.
 
+  Ce module implémente `Portfolio.Repo.RepositoryBehaviour` pour garantir
+  une interface cohérente et faciliter les tests avec Mox.
+
   ## Responsabilités
 
   - CRUD complet sur les Users
@@ -25,6 +28,8 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
       iex> UserRepository.count_admins()
       2
   """
+
+  @behaviour Portfolio.Repo.RepositoryBehaviour
 
   use Portfolio.Repo.RepositoryBase
 
@@ -68,10 +73,12 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
       iex> get("invalid-uuid")
       {:error, :not_found}
   """
-  @spec get(Ecto.UUID.t()) :: {:ok, User.t()} | {:error, :not_found}
-  def get(id) do
+  @impl Portfolio.Repo.RepositoryBehaviour
+  @spec get(Ecto.UUID.t(), keyword()) :: {:ok, User.t()} | {:error, :not_found}
+  def get(id, opts \\ []) do
     User
     |> Repo.get(id)
+    |> maybe_preload(Keyword.get(opts, :preload, []))
     |> wrap_result()
   end
 
@@ -105,6 +112,7 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
       iex> list(role: :admin)
       [%User{role: :admin}]
   """
+  @impl Portfolio.Repo.RepositoryBehaviour
   @spec list(keyword()) :: [User.t()]
   def list(opts \\ []) do
     from(u in User)
@@ -127,11 +135,30 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
       iex> insert(%{email: nil})
       {:error, %Ecto.Changeset{}}
   """
+  @impl Portfolio.Repo.RepositoryBehaviour
   @spec insert(map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def insert(attrs) do
     %User{}
     |> User.registration_changeset(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  Met à jour un utilisateur avec le changeset standard.
+
+  Pour des mises à jour spécifiques, préférer `update_profile/2` ou `update_as_admin/3`.
+
+  ## Exemples
+
+      iex> update(user, %{name: "New Name"})
+      {:ok, %User{}}
+  """
+  @impl Portfolio.Repo.RepositoryBehaviour
+  @spec update(User.t(), map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def update(%User{} = user, attrs) do
+    user
+    |> User.changeset(attrs)
+    |> Repo.update()
   end
 
   @doc """
@@ -190,6 +217,7 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
       iex> delete(user)
       {:ok, %User{}}
   """
+  @impl Portfolio.Repo.RepositoryBehaviour
   @spec delete(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def delete(%User{} = user) do
     Repo.delete(user)
@@ -207,6 +235,7 @@ defmodule Portfolio.Auth.Repositories.UserRepository do
       iex> count()
       5
   """
+  @impl Portfolio.Repo.RepositoryBehaviour
   @spec count() :: non_neg_integer()
   def count do
     Repo.aggregate(User, :count)
