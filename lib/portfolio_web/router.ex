@@ -236,8 +236,28 @@ defmodule PortfolioWeb.Router do
   #   pipe_through :api
   # end
 
-  # Enable Swoosh mailbox preview in development
+  # Enable Swoosh mailbox preview in development only
+  # SECURITY: This block uses compile-time checks to ensure dev routes
+  # are never available in production:
+  # 1. :dev_routes config is only set to true in config/dev.exs
+  # 2. Mix.env() compile-time check provides defense-in-depth
   if Application.compile_env(:portfolio, :dev_routes) do
+    # Defense-in-depth: compile-time assertion prevents accidental exposure
+    # even if someone mistakenly adds dev_routes: true to prod config
+    unless Mix.env() == :dev do
+      raise """
+      SECURITY ERROR: dev_routes is enabled outside of dev environment!
+
+      This is a critical security misconfiguration. The mailbox preview
+      endpoint exposes sensitive email content and must never be available
+      in production or test environments.
+
+      Current Mix.env: #{Mix.env()}
+
+      To fix: Remove `dev_routes: true` from your #{Mix.env()}.exs config.
+      """
+    end
+
     scope "/dev" do
       pipe_through :browser
 
