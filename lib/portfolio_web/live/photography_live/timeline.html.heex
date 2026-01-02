@@ -187,7 +187,18 @@
   </li>
 </ul>
 
-<div :if={@has_more} id="infinite-scroll-marker" phx-hook="InfiniteScroll" class="h-20" />
+<%!-- Infinite scroll trigger with ARIA live region for accessibility --%>
+<div
+  :if={@has_more}
+  id="infinite-scroll-marker"
+  phx-hook="InfiniteScroll"
+  class="h-20 flex items-center justify-center"
+  role="status"
+  aria-live="polite"
+  aria-label={gettext("accessibility.loading_more_content")}
+>
+  <span class="sr-only">{gettext("accessibility.loading_more_content")}</span>
+</div>
 
 <div :if={@albums_loaded == 0} class="p-6">
   <h2></h2>

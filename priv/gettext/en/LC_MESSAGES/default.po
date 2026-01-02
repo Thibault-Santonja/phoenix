@@ -2164,19 +2164,19 @@ msgstr "Thibault San Photography"
 msgid "photography.brand_name"
 msgstr "Thibault Santonja"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:224
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:235
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.empty_message"
 msgstr "I am so sorry but at the moment, this portfolio gallery is empty"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:201
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:208
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:212
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:219
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.empty_title"
 msgstr "Empty portfolio chapter"
 
 #: lib/portfolio_web/live/photography_live/timeline.html.heex:20
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:239
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:250
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.home"
 msgstr "Home"
@@ -3705,3 +3705,9 @@ msgstr "What I love in Taiwan are the streets — their calm energy. Beneath the
 #, elixir-autogen, elixir-format, fuzzy
 msgid "admin.albums.photos_partial_success"
 msgstr "Photo updated successfully"
+
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:198
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:200
+#, elixir-autogen, elixir-format
+msgid "accessibility.loading_more_content"
+msgstr "Loading more content"
