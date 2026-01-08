@@ -1,6 +1,9 @@
 import type { Hook, ViewHook } from "phoenix_live_view";
 import type Sortable from "sortablejs";
 
+// Build-time constant injected by esbuild (--define:__DEV__=true/false)
+declare const __DEV__: boolean;
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -131,11 +134,12 @@ interface SmoothScrollState {
 
 interface PhotoSortableState {
   sortable: Sortable | null;
+  pending: boolean;
   initializeSortable: () => Promise<void>;
 }
 
 interface CountdownState {
-  interval: ReturnType<typeof setInterval> | undefined;
+  countdown: CountdownController | undefined;
 }
 
 interface InfiniteScrollState {
@@ -166,9 +170,9 @@ function getHookState<T>(hook: unknown): TypedHook<T> {
 // =============================================================================
 
 // Conditional logging: only log in development mode
-const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+// Use build-time constant for dev detection (tree-shaken in production)
 // eslint-disable-next-line no-console
-const log = isDev ? console.log.bind(console) : (): void => {};
+const log = __DEV__ ? console.log.bind(console) : (): void => {};
 
 // Focus trap utility for accessible modals
 const createFocusTrap = (container: HTMLElement): FocusTrap => {
@@ -236,6 +240,72 @@ const createFocusTrap = (container: HTMLElement): FocusTrap => {
   };
 };
 
+// Countdown utility for time-based displays
+interface CountdownConfig {
+  initialSeconds: number;
+  displayElement: HTMLElement;
+  onTick?: (remaining: number) => void;
+  onComplete?: () => void;
+  formatDisplay?: (minutes: number, seconds: number) => string;
+}
+
+interface CountdownController {
+  start: () => void;
+  stop: () => void;
+  getRemaining: () => number;
+}
+
+const createCountdown = (config: CountdownConfig): CountdownController => {
+  let remaining = config.initialSeconds;
+  let intervalId: ReturnType<typeof setInterval> | null = null;
+
+  const defaultFormat = (minutes: number, seconds: number): string => {
+    if (minutes > 0) {
+      return `${minutes}min ${seconds}s`;
+    }
+    return `${seconds}s`;
+  };
+
+  const formatFn = config.formatDisplay || defaultFormat;
+
+  const updateDisplay = (): void => {
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    config.displayElement.textContent = formatFn(minutes, seconds);
+  };
+
+  const tick = (): void => {
+    remaining--;
+    config.onTick?.(remaining);
+
+    if (remaining <= 0) {
+      stop();
+      config.onComplete?.();
+    } else {
+      updateDisplay();
+    }
+  };
+
+  const start = (): void => {
+    if (intervalId) {
+      return;
+    }
+    updateDisplay();
+    intervalId = setInterval(tick, 1000);
+  };
+
+  const stop = (): void => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+
+  const getRemaining = (): number => remaining;
+
+  return { start, stop, getRemaining };
+};
+
 // =============================================================================
 // Lazy Loading
 // =============================================================================
@@ -271,6 +341,12 @@ export const AnimateThis: Hook = {
 
       const [$logo] = utils.$(".logo.js");
       const [$button] = utils.$("#button") as HTMLElement[];
+
+      if (!$logo) {
+        log("AnimateThis: .logo.js element not found, skipping initialization");
+        return;
+      }
+
       hook.rotations = 0;
       hook.$logo = $logo;
       hook.$button = $button;
@@ -348,6 +424,11 @@ export const AnimateGallery: Hook = {
       const debug = false;
       hook.images = utils.$(".gallery__image") as HTMLElement[];
       const [container] = utils.$(".follower");
+
+      if (!container || hook.images.length === 0) {
+        log("AnimateGallery: missing container or images, skipping initialization");
+        return;
+      }
 
       const animateImage = (el: HTMLElement, from: number, to: number): void => {
         hook.images
@@ -1003,56 +1084,68 @@ export const PhotoSortable: Hook = {
     const hook = getHookState<PhotoSortableState>(this);
     log("PhotoSortable mounted", hook.el);
     hook.sortable = null;
+    hook.pending = false;
 
     hook.initializeSortable = async (): Promise<void> => {
-      const isReordering = (hook.el as HTMLElement).dataset.reordering === "true";
-      log("Initializing sortable, reordering:", isReordering);
-
-      if (hook.sortable) {
-        log("Destroying existing sortable");
-        hook.sortable.destroy();
-        hook.sortable = null;
+      if (hook.pending) {
+        log("Initialization already in progress, skipping");
+        return;
       }
 
-      if (isReordering) {
-        log("Creating sortable instance");
+      hook.pending = true;
 
-        const SortableLib = await loadSortable();
+      try {
+        const isReordering = (hook.el as HTMLElement).dataset.reordering === "true";
+        log("Initializing sortable, reordering:", isReordering);
 
-        const items = hook.el.querySelectorAll(".sortable-item");
-        log("Found sortable items:", items.length);
+        if (hook.sortable) {
+          log("Destroying existing sortable");
+          hook.sortable.destroy();
+          hook.sortable = null;
+        }
 
-        hook.sortable = SortableLib.create(hook.el as HTMLElement, {
-          animation: 150,
-          draggable: ".sortable-item",
-          handle: ".sortable-item",
-          ghostClass: "sortable-ghost",
-          chosenClass: "sortable-chosen",
-          dragClass: "sortable-drag",
-          forceFallback: false,
-          fallbackClass: "sortable-fallback",
-          fallbackOnBody: true,
-          swapThreshold: 0.65,
-          direction: "horizontal",
+        if (isReordering) {
+          log("Creating sortable instance");
 
-          onStart: (evt: Sortable.SortableEvent): void => {
-            log("Drag started", evt.oldIndex);
-          },
+          const SortableLib = await loadSortable();
 
-          onEnd: (evt: Sortable.SortableEvent): void => {
-            log("Drag ended", evt.oldIndex, "->", evt.newIndex);
+          const items = hook.el.querySelectorAll(".sortable-item");
+          log("Found sortable items:", items.length);
 
-            const photoIds = Array.from(
-              hook.el.querySelectorAll("[data-photo-id]") as NodeListOf<HTMLElement>
-            ).map((el: HTMLElement) => el.dataset.photoId);
+          hook.sortable = SortableLib.create(hook.el as HTMLElement, {
+            animation: 150,
+            draggable: ".sortable-item",
+            handle: ".sortable-item",
+            ghostClass: "sortable-ghost",
+            chosenClass: "sortable-chosen",
+            dragClass: "sortable-drag",
+            forceFallback: false,
+            fallbackClass: "sortable-fallback",
+            fallbackOnBody: true,
+            swapThreshold: 0.65,
+            direction: "horizontal",
 
-            log("New order:", photoIds);
+            onStart: (evt: Sortable.SortableEvent): void => {
+              log("Drag started", evt.oldIndex);
+            },
 
-            hook.pushEvent("reorder_photos", { photo_ids: photoIds });
-          },
-        });
+            onEnd: (evt: Sortable.SortableEvent): void => {
+              log("Drag ended", evt.oldIndex, "->", evt.newIndex);
 
-        log("Sortable instance created:", hook.sortable);
+              const photoIds = Array.from(
+                hook.el.querySelectorAll("[data-photo-id]") as NodeListOf<HTMLElement>
+              ).map((el: HTMLElement) => el.dataset.photoId);
+
+              log("New order:", photoIds);
+
+              hook.pushEvent("reorder_photos", { photo_ids: photoIds });
+            },
+          });
+
+          log("Sortable instance created:", hook.sortable);
+        }
+      } finally {
+        hook.pending = false;
       }
     };
 
@@ -1095,38 +1188,20 @@ export const RateLimitCountdown: Hook = {
       return;
     }
 
-    let remaining = retryAfter;
-
-    const updateDisplay = (): void => {
-      const minutes = Math.floor(remaining / 60);
-      const seconds = remaining % 60;
-
-      if (minutes > 0) {
-        display.textContent = `${minutes}min ${seconds}s`;
-      } else {
-        display.textContent = `${seconds}s`;
-      }
-    };
-
-    updateDisplay();
-
-    hook.interval = setInterval(() => {
-      remaining--;
-
-      if (remaining <= 0) {
-        clearInterval(hook.interval);
+    hook.countdown = createCountdown({
+      initialSeconds: retryAfter,
+      displayElement: display,
+      onComplete: () => {
         window.location.reload();
-      } else {
-        updateDisplay();
-      }
-    }, 1000);
+      },
+    });
+
+    hook.countdown.start();
   },
 
   destroyed() {
     const hook = getHookState<CountdownState>(this);
-    if (hook.interval) {
-      clearInterval(hook.interval);
-    }
+    hook.countdown?.stop();
   },
 };
 
@@ -1140,17 +1215,18 @@ export const MagicLinkExpiration: Hook = {
       return;
     }
 
-    let remaining = expiresIn;
-
-    const updateDisplay = (): void => {
-      const minutes = Math.floor(remaining / 60);
-      const seconds = remaining % 60;
-
-      if (minutes > 0) {
-        display.textContent = `${minutes}min ${seconds}s`;
-      } else if (seconds > 0) {
-        display.textContent = `${seconds}s`;
-      } else {
+    hook.countdown = createCountdown({
+      initialSeconds: expiresIn,
+      displayElement: display,
+      formatDisplay: (minutes: number, seconds: number): string => {
+        if (minutes > 0) {
+          return `${minutes}min ${seconds}s`;
+        } else if (seconds > 0) {
+          return `${seconds}s`;
+        }
+        return "expiré";
+      },
+      onComplete: () => {
         display.textContent = "expiré";
         const grandparent = display.parentElement?.parentElement?.parentElement;
         if (grandparent) {
@@ -1162,27 +1238,15 @@ export const MagicLinkExpiration: Hook = {
           paragraph.textContent =
             "Le lien de connexion a expiré. Veuillez demander un nouveau lien.";
         }
-      }
-    };
+      },
+    });
 
-    updateDisplay();
-
-    hook.interval = setInterval(() => {
-      remaining--;
-
-      if (remaining < 0) {
-        clearInterval(hook.interval);
-      } else {
-        updateDisplay();
-      }
-    }, 1000);
+    hook.countdown.start();
   },
 
   destroyed() {
     const hook = getHookState<CountdownState>(this);
-    if (hook.interval) {
-      clearInterval(hook.interval);
-    }
+    hook.countdown?.stop();
   },
 };
 

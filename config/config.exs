@@ -139,6 +139,7 @@ config :esbuild,
         --outdir=../priv/static/assets
         --external:/fonts/*
         --external:/images/*
+        --define:__DEV__=false
       ),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}

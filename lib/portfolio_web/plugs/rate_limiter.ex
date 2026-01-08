@@ -68,16 +68,16 @@ defmodule PortfolioWeb.Plugs.RateLimiter do
     cache_key = {:rate_limit, ip}
     window_ms = div(window, 1000)
 
-    case Cachex.get(:portfolio_cache, cache_key) do
+    case Portfolio.CacheManager.get(cache_key) do
       {:ok, nil} ->
         # Première requête de cette IP dans la fenêtre
-        _result = Cachex.put(:portfolio_cache, cache_key, 1, ttl: window_ms)
+        _result = Portfolio.CacheManager.put(cache_key, 1, ttl: window_ms)
         :ok
 
       {:ok, count} ->
         if count < limit do
           # Incrémente le compteur (retourne la nouvelle valeur)
-          _result = Cachex.incr(:portfolio_cache, cache_key)
+          _result = Portfolio.CacheManager.incr(cache_key)
           :ok
         else
           # Limite dépassée

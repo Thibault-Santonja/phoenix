@@ -59,7 +59,7 @@ defmodule PortfolioWeb.AuthHelpers do
       hashed_token = UserSession.hash_token_value(session_token)
       cache_key = CacheConfig.session_key(hashed_token)
 
-      case Cachex.fetch(:portfolio_cache, cache_key, fn ->
+      case Portfolio.CacheManager.fetch(cache_key, fn ->
              get_session_for_cache(session_token)
            end) do
         {:ok, session} -> session

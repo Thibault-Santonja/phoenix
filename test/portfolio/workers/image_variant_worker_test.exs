@@ -12,6 +12,9 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
   # Allow Mox expectations to be verified
   setup :verify_on_exit!
 
+  # Allow concurrent mock calls
+  setup :set_mox_from_context
+
   setup do
     # Store original config and set mock
     original_config = Application.get_env(:portfolio, :file_storage)
@@ -225,6 +228,122 @@ defmodule Portfolio.Workers.ImageVariantWorkerTest do
 
       # Photo should still exist (not deleted)
       assert {:ok, _photo} = Portfolio.Photography.get_photo(photo.id)
+    end
+  end
+
+  describe "concurrent job processing" do
+    import PortfolioTest.Fixtures.PhotographyFixtures
+
+    test "handles multiple concurrent jobs for different photos" do
+      album = create_album()
+      photos = for _ <- 1..5, do: create_photo(album: album)
+
+      # Set up stub for all concurrent calls
+      MockStorage
+      |> stub(:generate_variants, fn photo_id ->
+        # Simulate some processing time to create concurrent execution
+        Process.sleep(10)
+        {:ok, %{thumbnail: "/path/#{photo_id}/thumb.webp", small: "/path/#{photo_id}/small.webp"}}
+      end)
+
+      # Execute jobs concurrently
+      tasks =
+        Enum.map(photos, fn photo ->
+          Task.async(fn ->
+            perform_job(ImageVariantWorker, %{"photo_id" => photo.id})
+          end)
+        end)
+
+      # All jobs should complete successfully
+      results = Task.await_many(tasks, 5000)
+      assert Enum.all?(results, &(&1 == :ok))
+    end
+
+    test "concurrent jobs with mixed success and failure don't interfere" do
+      album = create_album()
+      success_photos = for _ <- 1..3, do: create_photo(album: album)
+      failure_photos = for _ <- 1..2, do: create_photo(album: album)
+
+      success_ids = MapSet.new(Enum.map(success_photos, & &1.id))
+
+      MockStorage
+      |> stub(:generate_variants, fn photo_id ->
+        Process.sleep(5)
+
+        if MapSet.member?(success_ids, photo_id) do
+          {:ok, %{thumbnail: "/path/thumb.webp", small: "/path/small.webp"}}
+        else
+          {:error, :file_not_found}
+        end
+      end)
+
+      all_photos = success_photos ++ failure_photos
+
+      tasks =
+        Enum.map(all_photos, fn photo ->
+          Task.async(fn ->
+            capture_log(fn ->
+              perform_job(ImageVariantWorker, %{"photo_id" => photo.id})
+            end)
+          end)
+        end)
+
+      # All tasks should complete without hanging
+      _results = Task.await_many(tasks, 5000)
+
+      # Verify all photos still exist (no data corruption)
+      for photo <- all_photos do
+        assert {:ok, _} = Portfolio.Photography.get_photo(photo.id)
+      end
+    end
+
+    test "concurrent telemetry events are properly isolated" do
+      test_pid = self()
+      handler_id = "concurrent-test-#{System.unique_integer([:positive])}"
+
+      :telemetry.attach(
+        handler_id,
+        [:portfolio, :image, :processing, :stop],
+        fn _event, _measurements, metadata, _config ->
+          send(test_pid, {:telemetry, metadata.photo_id})
+        end,
+        nil
+      )
+
+      on_exit(fn -> :telemetry.detach(handler_id) end)
+
+      album = create_album()
+      photos = for _ <- 1..3, do: create_photo(album: album)
+      photo_ids = MapSet.new(Enum.map(photos, & &1.id))
+
+      MockStorage
+      |> stub(:generate_variants, fn _photo_id ->
+        Process.sleep(5)
+        {:ok, %{thumbnail: "/path/thumb.webp", small: "/path/small.webp"}}
+      end)
+
+      tasks =
+        Enum.map(photos, fn photo ->
+          Task.async(fn ->
+            perform_job(ImageVariantWorker, %{"photo_id" => photo.id})
+          end)
+        end)
+
+      Task.await_many(tasks, 5000)
+
+      # Verify we received telemetry for each photo (order may vary)
+      received_ids =
+        for _ <- 1..3 do
+          receive do
+            {:telemetry, photo_id} -> photo_id
+          after
+            1000 -> nil
+          end
+        end
+        |> Enum.reject(&is_nil/1)
+        |> MapSet.new()
+
+      assert MapSet.equal?(photo_ids, received_ids)
     end
   end
 end

@@ -148,7 +148,7 @@ defmodule Portfolio.Auth.MXValidator do
   defp check_mx_records_cached(domain) do
     cache_key = {:mx_records, domain}
 
-    case Cachex.fetch(:portfolio_cache, cache_key, fn ->
+    case Portfolio.CacheManager.fetch(cache_key, fn ->
            get_mx_for_cache(domain)
          end) do
       {:ok, result} -> result

@@ -251,4 +251,101 @@ defmodule Portfolio.CacheManager do
       {:error, _reason} -> compute_fn.()
     end
   end
+
+  @doc """
+  Raw fetch with full Cachex semantics for complex caching scenarios.
+
+  Unlike `fetch_or_compute/3`, this function returns the raw Cachex result
+  allowing callers to handle `:commit`, `:ignore`, and `:ok` differently.
+
+  The compute function should return one of:
+  - `{:commit, value}` - Cache the value
+  - `{:commit, value, ttl: ms}` - Cache with TTL
+  - `{:ignore, value}` - Return value without caching
+
+  ## Parameters
+
+  - `key` - The cache key
+  - `compute_fn` - Function returning `{:commit, value}` or `{:ignore, value}`
+
+  ## Returns
+
+  - `{:ok, value}` - Value was already cached
+  - `{:commit, value}` - Value was computed and cached
+  - `{:ignore, value}` - Value was computed but not cached
+  - `{:error, reason}` - Cache operation failed
+
+  ## Examples
+
+      iex> fetch({:mx, "example.com"}, fn ->
+      ...>   case lookup_mx("example.com") do
+      ...>     {:ok, records} -> {:commit, {:ok, records}, ttl: 3600_000}
+      ...>     {:error, :timeout} -> {:ignore, {:error, :timeout}}
+      ...>   end
+      ...> end)
+      {:commit, {:ok, [...]}}
+  """
+  @spec fetch(term(), (-> {:commit, term()} | {:commit, term(), keyword()} | {:ignore, term()})) ::
+          {:ok, term()} | {:commit, term()} | {:ignore, term()} | {:error, term()}
+  def fetch(key, compute_fn) do
+    Cachex.fetch(@cache_name, key, compute_fn)
+  end
+
+  # =============================================================================
+  # Low-Level Cache Operations
+  # =============================================================================
+
+  @doc """
+  Gets a value from the cache.
+
+  ## Parameters
+
+  - `key` - The cache key
+
+  ## Returns
+
+  - `{:ok, value}` - Value found (nil if not present)
+  - `{:error, reason}` - Cache operation failed
+  """
+  @spec get(term()) :: {:ok, term()} | {:error, term()}
+  def get(key) do
+    Cachex.get(@cache_name, key)
+  end
+
+  @doc """
+  Puts a value in the cache with optional TTL.
+
+  ## Parameters
+
+  - `key` - The cache key
+  - `value` - The value to cache
+  - `opts` - Options (`:ttl` for time-to-live in milliseconds)
+
+  ## Returns
+
+  - `{:ok, true}` - Value was cached
+  - `{:error, reason}` - Cache operation failed
+  """
+  @spec put(term(), term(), keyword()) :: {:ok, boolean()} | {:error, boolean()}
+  def put(key, value, opts \\ []) do
+    Cachex.put(@cache_name, key, value, opts)
+  end
+
+  @doc """
+  Increments a numeric value in the cache.
+
+  ## Parameters
+
+  - `key` - The cache key
+  - `amount` - Amount to increment (default: 1)
+
+  ## Returns
+
+  - `{:ok, new_value}` - New value after increment
+  - `{:error, reason}` - Cache operation failed
+  """
+  @spec incr(term(), integer()) :: {:ok, integer()} | {:error, integer()}
+  def incr(key, amount \\ 1) do
+    Cachex.incr(@cache_name, key, amount)
+  end
 end

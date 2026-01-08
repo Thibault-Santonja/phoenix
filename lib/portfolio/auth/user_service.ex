@@ -184,11 +184,13 @@ defmodule Portfolio.Auth.UserService do
   defp invalidate_user_session_caches(user) do
     sessions = SessionService.list_user_sessions(user.id)
 
-    Enum.each(sessions, fn session ->
-      # Cache key uses the hashed token (session.token is already hashed in DB)
-      cache_key = {:session, session.token}
-      _ = Cachex.del(:portfolio_cache, cache_key)
-    end)
+    cache_keys =
+      Enum.map(sessions, fn session ->
+        # Cache key uses the hashed token (session.token is already hashed in DB)
+        {:session, session.token}
+      end)
+
+    _ = Portfolio.CacheManager.delete_many(cache_keys)
 
     :ok
   end

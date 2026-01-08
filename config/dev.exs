@@ -27,7 +27,9 @@ config :portfolio, PortfolioWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "xLKX3H5UnLElWMVMqsGt+fA1WNwbdHXu7fErv8yCEnHSq37hXv7qVOXGTBb3OU1v",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:portfolio, ~w(--sourcemap=inline --watch)]},
+    esbuild:
+      {Esbuild, :install_and_run,
+       [:portfolio, ~w(--sourcemap=inline --watch --define:__DEV__=true)]},
     tailwind: {Tailwind, :install_and_run, [:portfolio, ~w(--watch)]}
   ]
 

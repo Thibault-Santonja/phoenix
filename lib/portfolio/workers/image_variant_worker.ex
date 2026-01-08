@@ -176,11 +176,27 @@ defmodule Portfolio.Workers.ImageVariantWorker do
   end
 
   defp update_photo_with_variants(photo_id, variants) do
-    # Try to update photo in database if it exists
-    # This is optional - the worker can complete successfully even if the photo
-    # is not in the database (e.g., during testing or standalone usage)
+    # Validate UUID format before querying to avoid Ecto.Query.CastError
+    case Ecto.UUID.cast(photo_id) do
+      :error ->
+        # Invalid UUID is acceptable (testing/standalone usage)
+        Logger.info("Non-UUID photo ID, variants generated successfully",
+          photo_id: photo_id,
+          variant_count: map_size(variants)
+        )
+
+        :ok
+
+      {:ok, _uuid} ->
+        update_valid_photo_with_variants(photo_id, variants)
+    end
+  end
+
+  defp update_valid_photo_with_variants(photo_id, variants) do
+    # Update photo in database - let errors propagate for Oban retry
     case Photography.get_photo(photo_id) do
       {:error, :not_found} ->
+        # Photo not in database is acceptable (testing/standalone usage)
         Logger.info("Photo not in database, variants generated successfully",
           photo_id: photo_id,
           variant_count: map_size(variants)
@@ -191,7 +207,7 @@ defmodule Portfolio.Workers.ImageVariantWorker do
       {:ok, photo} ->
         attrs = %{
           variants: variants,
-          processing_status: :completed
+          processing_status: "completed"
         }
 
         case Photography.update_photo(photo, attrs) do
@@ -204,42 +220,49 @@ defmodule Portfolio.Workers.ImageVariantWorker do
             :ok
 
           {:error, changeset} ->
+            # Database update failed - let Oban retry
             Logger.error("Failed to update photo",
               photo_id: photo_id,
               errors: inspect(changeset.errors)
             )
 
-            # Still return :ok as the variants were generated successfully
-            :ok
+            {:error, {:update_failed, changeset.errors}}
         end
     end
-  rescue
-    error ->
-      Logger.warning("Could not update photo record",
-        photo_id: photo_id,
-        error: inspect(error)
-      )
-
-      # Variants were generated successfully, so return :ok
-      :ok
   end
 
   defp mark_photo_as_failed(photo_id, reason) do
-    # Try to mark photo as failed in database if it exists
-    # This is optional - failures can still be logged even if the photo
-    # is not in the database (e.g., during testing or standalone usage)
+    # Mark photo as failed - errors here are logged but don't block cancellation
+    # since the job is already being cancelled due to permanent failure
+
+    # Validate UUID format before querying to avoid Ecto.Query.CastError
+    case Ecto.UUID.cast(photo_id) do
+      :error ->
+        Logger.warning("Invalid photo ID format, cannot mark as failed",
+          photo_id: photo_id,
+          original_reason: reason
+        )
+
+        :ok
+
+      {:ok, _uuid} ->
+        mark_valid_photo_as_failed(photo_id, reason)
+    end
+  end
+
+  defp mark_valid_photo_as_failed(photo_id, reason) do
     case Photography.get_photo(photo_id) do
       {:error, :not_found} ->
-        Logger.warning("Photo not in database",
+        Logger.warning("Photo not in database, cannot mark as failed",
           photo_id: photo_id,
-          reason: :photo_not_found
+          original_reason: reason
         )
 
         :ok
 
       {:ok, photo} ->
         attrs = %{
-          processing_status: :failed,
+          processing_status: "failed",
           processing_error: Atom.to_string(reason)
         }
 
@@ -253,6 +276,7 @@ defmodule Portfolio.Workers.ImageVariantWorker do
             :ok
 
           {:error, changeset} ->
+            # Log but don't fail - the job is already being cancelled
             Logger.error("Failed to mark photo as failed",
               photo_id: photo_id,
               errors: inspect(changeset.errors)
@@ -261,13 +285,5 @@ defmodule Portfolio.Workers.ImageVariantWorker do
             :ok
         end
     end
-  rescue
-    error ->
-      Logger.warning("Could not update photo status",
-        photo_id: photo_id,
-        error: inspect(error)
-      )
-
-      :ok
   end
 end
