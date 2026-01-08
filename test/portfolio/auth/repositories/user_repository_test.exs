@@ -189,7 +189,8 @@ defmodule Portfolio.Auth.Repositories.UserRepositoryTest do
 
   describe "delete/1" do
     test "deletes user" do
-      user = create_user()
+      # Create a non-admin user to avoid "Cannot delete the last admin user" trigger
+      user = create_user(role: :user)
 
       assert {:ok, deleted} = UserRepository.delete(user)
       assert deleted.id == user.id

@@ -1,4 +1,4 @@
-import type { Hook, HookInstance, ViewHook } from "phoenix_live_view";
+import type { Hook, ViewHook } from "phoenix_live_view";
 import type Sortable from "sortablejs";
 
 // =============================================================================

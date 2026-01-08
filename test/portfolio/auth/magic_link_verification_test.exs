@@ -59,9 +59,11 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
   describe "verify_magic_link/1 telemetry" do
     setup do
       test_pid = self()
+      # Use unique handler ID to avoid conflicts with parallel tests
+      handler_id = "test-magic-link-verification-#{System.unique_integer([:positive])}"
 
       :telemetry.attach(
-        "test-magic-link-verification",
+        handler_id,
         [:portfolio, :auth, :magic_link, :verified],
         fn event, measurements, metadata, _config ->
           send(test_pid, {:telemetry, event, measurements, metadata})
@@ -70,7 +72,7 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
       )
 
       on_exit(fn ->
-        :telemetry.detach("test-magic-link-verification")
+        :telemetry.detach(handler_id)
       end)
 
       :ok
@@ -122,10 +124,8 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
       # Use the link once
       {:ok, _user} = MagicLinkService.verify_magic_link(magic_link.token)
 
-      # Clear mailbox
-      receive do
-        {:telemetry, _, _, _} -> :ok
-      end
+      # Clear first telemetry message from successful verification
+      assert_received {:telemetry, [:portfolio, :auth, :magic_link, :verified], _, %{result: :ok}}
 
       # Try to use it again
       {:error, :already_used} = MagicLinkService.verify_magic_link(magic_link.token)
