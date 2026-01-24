@@ -1,5 +1,15 @@
+<%!-- Article Schema.org JSON-LD for SEO --%>
+<script :if={@article_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@article_json) %>
+</script>
+
+<%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+<script :if={@breadcrumb_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+</script>
+
 <.blog_article
-  title={gettext("Elixir's Concurrency Model")}
+  title={gettext("tech.blog.elixir.elixirs_concurrency_model")}
   overview={
     gettext(
       "Elixir is a functional and concurrent programming language built on top of the Erlang VM (BEAM), which was designed from the ground up for building scalable and fault-tolerant systems. In a world increasingly reliant on distributed, real-time applications, Elixir's model is more relevant than ever. This article explores why Elixir stands out for concurrent software development, how its runtime operates, and how developers can build reliable and performant systems using tools like GenServer, Supervisors, and OTP applications."
@@ -8,37 +18,49 @@
 >
   <.table_content color="primary" padding="extra_small" rounded="medium" animated>
     <.content_item icon="hero-hashtag">
-      <.link href="#why-elixir">{gettext("1. Why Elixir is really powerful")}</.link>
+      <.link href="#why-elixir">
+        {gettext("tech.blog.elixir.1_why_elixir_is_really_powerful")}
+      </.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#beam-machine">{gettext("2. What is the BEAM machine")}</.link>
+      <.link href="#beam-machine">{gettext("tech.blog.elixir.2_what_is_the_beam_machine")}</.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#genserver">{gettext("3. What is GenServer and concurrency")}</.link>
+      <.link href="#genserver">
+        {gettext("tech.blog.elixir.3_what_is_genserver_and_concurrency")}
+      </.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#use-cases">{gettext("4. Real-world use cases for GenServer")}</.link>
+      <.link href="#use-cases">
+        {gettext("tech.blog.elixir.4_real_world_use_cases_for_genserver")}
+      </.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#supervisor">{gettext("5. What is a Supervisor and fault tolerance")}</.link>
+      <.link href="#supervisor">
+        {gettext("tech.blog.elixir.5_what_is_a_supervisor_and_fault_tolerance")}
+      </.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#otp-application">{gettext("6. What is an OTP application")}</.link>
+      <.link href="#otp-application">
+        {gettext("tech.blog.elixir.6_what_is_an_otp_application")}
+      </.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#conclusion">{gettext("Conclusion and performance considerations")}</.link>
+      <.link href="#conclusion">
+        {gettext("tech.blog.elixir.conclusion_and_performance_considerations")}
+      </.link>
     </.content_item>
   </.table_content>
 
   <.article_section
     id="why-elixir"
-    title={gettext("1. Why Elixir is Powerful for today and tomorrow usages")}
+    title={gettext("tech.blog.elixir.1_why_elixir_is_powerful_for_today_and_tomorrow")}
   >
     <p>
       {gettext(
@@ -64,7 +86,7 @@
 
   <.article_section
     id="beam-machine"
-    title={gettext("2. What Is the BEAM? Understanding the Virtual Machine Behind Elixir")}
+    title={gettext("tech.blog.elixir.2_what_is_the_beam_understanding_the_virtual")}
   >
     <p>
       {gettext(
@@ -116,7 +138,7 @@
 
   <.article_section
     id="genserver"
-    title={gettext("3. What Is a GenServer? Concurrency with Abstraction")}
+    title={gettext("tech.blog.elixir.3_what_is_a_genserver_concurrency_with_abstraction")}
   >
     <p>
       {gettext(
@@ -136,7 +158,7 @@
       )}
     </p>
 
-    <p>{gettext("Here is a minimal example of a GenServer implementation:")}</p>
+    <p>{gettext("tech.blog.elixir.here_is_a_minimal_example_of_a_genserver")}</p>
 
     <.code_bloc>
       <code>
@@ -190,7 +212,7 @@
 
   <.article_section
     id="use-cases"
-    title={gettext("4. Real-World Use Cases: Why Elixir Shines in Production")}
+    title={gettext("tech.blog.elixir.4_real_world_use_cases_why_elixir_shines_in")}
   >
     <p>
       {gettext(
@@ -199,30 +221,30 @@
     </p>
 
     <p>
-      {gettext("Here are some concrete examples of where Elixir shines:")}
+      {gettext("tech.blog.elixir.here_are_some_concrete_examples_of_where_elixir")}
     </p>
 
     <ul class="list-disc pl-6 indent-0 list-inside">
       <li>
-        <strong>{gettext("Chat applications")}</strong>
+        <strong>{gettext("tech.blog.elixir.chat_applications")}</strong>
         : {gettext(
           "Processes are lightweight and isolated, making Elixir ideal for handling thousands of concurrent users. Phoenix Channels make real-time communication trivial."
         )}
       </li>
       <li>
-        <strong>{gettext("IoT and telemetry")}</strong>
+        <strong>{gettext("tech.blog.elixir.iot_and_telemetry")}</strong>
         : {gettext(
           "Elixir handles large volumes of incoming data efficiently, with GenServers maintaining state and processing in parallel."
         )}
       </li>
       <li>
-        <strong>{gettext("Background processing")}</strong>
+        <strong>{gettext("tech.blog.elixir.background_processing")}</strong>
         : {gettext(
           "Libraries like Oban use GenServer and supervision trees to manage job queues, retries, and scheduling reliably."
         )}
       </li>
       <li>
-        <strong>{gettext("APIs at scale")}</strong>
+        <strong>{gettext("tech.blog.elixir.apis_at_scale")}</strong>
         : {gettext(
           "Thanks to the underlying Erlang VM, Elixir applications handle high throughput with low latency, even under heavy load."
         )}
@@ -244,7 +266,7 @@
 
   <.article_section
     id="supervisor"
-    title={gettext("5. Supervisors: Building Fault-Tolerant Systems")}
+    title={gettext("tech.blog.elixir.5_supervisors_building_fault_tolerant_systems")}
   >
     <p>
       {gettext(
@@ -313,7 +335,7 @@
 
   <.article_section
     id="otp-application"
-    title={gettext("6. What is an OTP Application? Building Scalable and Distributed Systems")}
+    title={gettext("tech.blog.elixir.6_what_is_an_otp_application_building_scalable")}
   >
     <p>
       {gettext(
@@ -355,7 +377,7 @@
     </p>
 
     <h3 class="text-lg font-semibold mt-4">
-      {gettext("OTP Applications in Distributed Systems")}
+      {gettext("tech.blog.elixir.otp_applications_in_distributed_systems")}
     </h3>
 
     <p>
@@ -370,7 +392,9 @@
       )}
     </p>
 
-    <h3 class="text-lg font-semibold mt-4">{gettext("Used in Production Systems")}</h3>
+    <h3 class="text-lg font-semibold mt-4">
+      {gettext("tech.blog.elixir.used_in_production_systems")}
+    </h3>
 
     <p>
       {gettext(
@@ -387,7 +411,7 @@
 
   <.article_section
     id="conclusion"
-    title={gettext("Conclusion: Performance, Interoperability, and What's Next")}
+    title={gettext("tech.blog.elixir.conclusion_performance_interoperability_and_whats")}
   >
     <p>
       {gettext(
@@ -421,7 +445,9 @@
       )}
     </p>
 
-    <h3 class="text-lg font-semibold mt-4">{gettext("Looking Ahead: Phoenix and the Web")}</h3>
+    <h3 class="text-lg font-semibold mt-4">
+      {gettext("tech.blog.elixir.looking_ahead_phoenix_and_the_web")}
+    </h3>
 
     <p>
       {gettext(

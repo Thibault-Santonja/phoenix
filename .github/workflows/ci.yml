@@ -5,125 +5,203 @@ on:
     tags:
       - "*"
   pull_request:
-    branches: [main]
+    branches: ["*"] # Run on PRs to any branch
+
+# Cancel in-progress runs for the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
+  pull-requests: write # For coverage comments
 env:
   SHELL: /bin/bash
   DOCKER_IMAGE: "thibaultsan/portfolio"
+
 jobs:
   tools:
     name: TOOLS
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up tools
-        uses: jdx/mise-action@v2
-  lint:
-    name: LINT
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+
+  quality:
+    name: QUALITY
     needs: [tools]
     runs-on: ubuntu-24.04
     env:
       MIX_ENV: dev
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up tools
-        uses: jdx/mise-action@v2
-      - name: Cache
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+
+      - name: Cache deps
         uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/.tool-versions') }}-mix-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
+            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/.tool-versions') }}-mix-
             ${{ env.MIX_ENV }}-mise-
-      - name: Install dependencies
-        run: mix deps.get
-      - name: Compile without warnings
-        run: mix compile --warnings-as-errors
-      - name: Check code format
+
+      - name: Cache PLT
+        uses: actions/cache@v4
+        id: plt-cache
+        with:
+          path: priv/plts
+          key: plt-${{ hashFiles('**/.tool-versions') }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            plt-${{ hashFiles('**/.tool-versions') }}-
+            plt-
+
+      - run: mix deps.get
+      - run: mix compile --warnings-as-errors --all-warnings
+
+      # Code formatting
+      - name: Check formatting
         run: mix format --dry-run --check-formatted
+
+      # Unused dependencies
       - name: Check unused deps
         run: mix deps.unlock --check-unused
+
+      # Security audits
       - name: Hex audit
         run: mix hex.audit
       - name: Deps audit
         run: mix deps.audit
-      - name: Run credo
-        run: mix credo
-      - name: Run sobelow
-        run: mix sobelow --config
+
+      # Static analysis - strict mode with all priority levels
+      - name: Credo (strict + all)
+        run: mix credo --strict --all
+
+      # Security scanner - exit on any issue
+      - name: Sobelow (strict)
+        run: mix sobelow --config --exit low
+
+      # Translations up to date
+      - name: Gettext (check translations)
+        run: mix gettext.extract --check-up-to-date
+
+      # Type checking
+      - name: Create PLTs
+        if: steps.plt-cache.outputs.cache-hit != 'true'
+        run: mix dialyzer --plt
+
+      - name: Dialyzer
+        run: mix dialyzer --format github
+
+      # Documentation coverage (optional - warn only)
+      - name: Doctor (documentation coverage)
+        run: mix doctor --summary || true
+
+      # Filesystem vulnerability scan
+      - name: Trivy FS scan
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "table"
+          scanners: "vuln,misconfig,license"
+          exit-code: "1"
+          ignore-unfixed: true
+          skip-dirs: _build,deps
+          severity: "CRITICAL,HIGH"
+
   test:
     name: TEST
     needs: [tools]
     runs-on: ubuntu-24.04
     env:
       MIX_ENV: test
-    # services:
-    #   postgres:
-    #     image: postgis/postgis:17-3.5
-    #     env:
-    #       POSTGRES_PASSWORD: postgres
-    #     options: >-
-    #       --health-cmd pg_isready
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
-    #     ports:
-    #       - 5432:5432
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/portfolio_test
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: portfolio_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up tools
-        uses: jdx/mise-action@v2
-      - name: Cache
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+
+      - name: Cache deps
         uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/.tool-versions') }}-mix-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
+            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/.tool-versions') }}-mix-
             ${{ env.MIX_ENV }}-mise-
-      - name: Install dependencies
-        run: mix deps.get
-      - name: Run tests
-        run: mix test --max-failures=1 --color
+
+      - run: mix deps.get
+      - run: mix ecto.create
+      - run: mix ecto.migrate
+
+      # Run tests with coverage (minimum_coverage in coveralls.json enforces threshold)
+      - name: Run tests with coverage
+        run: mix coveralls.json
+
+      # Upload coverage to Codecov (optional but recommended)
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: cover/excoveralls.json
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   build:
     name: BUILD
-    needs: [lint, test]
+    needs: [quality, test]
     runs-on: ubuntu-24.04
     env:
       MIX_ENV: prod
-      PHX_SERVER: true
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up tools
-        uses: jdx/mise-action@v2
-        with:
-          cache_key_prefix: mise-${{ runner.os }}
-      - name: Cache
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+
+      - name: Cache deps
         uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/.tool-versions') }}-mix-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ env.MIX_ENV }}-mise-${{ hashFiles('**/mise.toml') }}-mix-
-            ${{ runner.os }}-${{ env.MIX_ENV }}-mise-
-      - name: Install web dependencies
-        run: mise run assets:install
-      - name: Install backend dependencies
-        run: mix deps.get --only prod
-      - name: Build
-        run: MIX_ENV=${{ env.MIX_ENV }} mix do assets.setup, assets.deploy, compile --warnings-as-errors, release --overwrite
+            ${{ env.MIX_ENV }}-mise-${{ hashFiles('**/.tool-versions') }}-mix-
+            ${{ env.MIX_ENV }}-mise-
+
+      - run: mix deps.get --only prod
+      - run: mix do assets.setup + compile --warnings-as-errors + assets.deploy + release --overwrite
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t image:${{ github.sha }} .
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: "image:${{ github.sha }}"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+
       - name: Docker meta
         if: ${{ contains(github.ref, 'refs/tags/') }}
         uses: docker/metadata-action@v5
@@ -133,17 +211,17 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-      - name: Set up docker buildx
-        if: ${{ contains(github.ref, 'refs/tags/') }}
-        id: buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to docker hub
+            type=semver,pattern={{major}}
+            type=raw,value=latest
+
+      - name: Login to Docker Hub
         if: ${{ contains(github.ref, 'refs/tags/') }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Release
+
+      - name: Build and push
         if: ${{ contains(github.ref, 'refs/tags/') }}
         uses: docker/build-push-action@v6
         with:
@@ -151,45 +229,5 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-  # deploy:
-  #   if: ${{ contains(github.ref, 'refs/tags/') }}
-  #   needs: [build]
-  #   runs-on: ubuntu-latest
-
-  #   env:
-  #     MIX_ENV: prod
-  #     PHX_SERVER: true
-  #     DOCKER_BUILDKIT: 1
-  #     SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-  #     KAMAL_REGISTRY_PASSWORD: ${{ secrets.DOCKER_USER }}
-  #     KAMAL_REGISTRY_USERNAME: ${{ secrets.DOCKER_TOKEN }}
-
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-
-  #     - name: Set up Ruby
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: 3.2.2
-  #         bundler-cache: true
-
-  #     - name: Install dependencies
-  #       run: |
-  #         gem install specific_install
-  #         gem specific_install https://github.com/basecamp/kamal.git
-
-  #     - uses: webfactory/ssh-agent@v0.7.0
-  #       with:
-  #         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-  #     - name: Set up Docker Buildx
-  #       id: buildx
-  #       uses: docker/setup-buildx-action@v2
-
-  #     - name: Run deploy command
-  #       run: kamal deploy --skip-push --version=latest

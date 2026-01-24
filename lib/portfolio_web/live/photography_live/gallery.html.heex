@@ -1,4 +1,19 @@
 <div class="h-screen flex flex-col gap-4 py-2">
+  <%!-- Schema.org JSON-LD for SEO --%>
+  <script :if={@schema_json} type="application/ld+json">
+    <%= Phoenix.HTML.raw(@schema_json) %>
+  </script>
+
+  <%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+  <script :if={@breadcrumb_json} type="application/ld+json">
+    <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+  </script>
+
+  <%!-- Per-album meta description for SEO --%>
+  <meta :if={@meta_description} name="description" content={@meta_description} />
+  <meta :if={@meta_description} property="og:description" content={@meta_description} />
+  <meta :if={@meta_description} name="twitter:description" content={@meta_description} />
+
   <nav class={[
     "sticky top-0 px-4",
     "flex-none flex items-center",
@@ -6,8 +21,10 @@
   ]}>
     <h1 class="flex flex-col items-end group">
       <a href={~p"/"}>
-        {gettext("Thibault Santonja")}
-        <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
+        {gettext("photography.author_name")}
+        <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">
+          {gettext("navigation.home")}
+        </p>
       </a>
     </h1>
     <div class="grow flex justify-end gap-4">
@@ -52,6 +69,28 @@
     >
       <h2 class="uppercase text-xl mb-2 md:mb-4 font-black">{@project.title}</h2>
       <p class="leading-relaxed text-sm opacity-80 font-light">{@project.description}</p>
+
+      <button
+        phx-click={JS.navigate(~p"/timeline")}
+        class="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          >
+          </path>
+        </svg>
+        {gettext("navigation.back")}
+      </button>
     </header>
 
     <a
@@ -69,7 +108,7 @@
           "-z-10 ml-auto object-contain",
           "opacity-0 duration-1000 ease-in-out translate-y-8"
         ]}
-        alt={@project.title}
+        alt={Map.get(@project, :alt_text, @project.title)}
         loading="lazy"
         decoding="async"
         data-nimg="1"
@@ -89,7 +128,7 @@
         "text-right text-xs",
         "opacity-20 group-hover:opacity-100 duration-300"
       ]}>
-        {gettext("go to album")} ({String.to_integer(@project_id) + 1} - {@pictures})
+        {gettext("photography.go_to_album")} ({String.to_integer(@project_id) + 1} - {@pictures})
       </span>
     </a>
   </section>
@@ -108,7 +147,13 @@
       <%= for {project, index} <- Enum.with_index(@data) do %>
         <li class="w-36 sm:w-48 md:w-64 mx-auto opacity-0 transition-opacity duration-300 ease-in">
           <button phx-click="show_project" phx-value-project={index} class="size-full">
-            <img class="size-full object-cover" alt={project.title} src={project.photo_url} />
+            <img
+              class="size-full object-cover"
+              alt={Map.get(project, :alt_text, project.title)}
+              src={project.photo_url}
+              loading="lazy"
+              decoding="async"
+            />
           </button>
         </li>
       <% end %>

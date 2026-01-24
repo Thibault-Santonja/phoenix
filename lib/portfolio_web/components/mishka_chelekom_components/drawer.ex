@@ -139,11 +139,11 @@ defmodule PortfolioWeb.Components.Drawer do
           <button
             type="button"
             phx-click={JS.exec(@on_hide, "phx-remove", to: "##{@id}")}
-            aria-label={gettext("Close menu")}
+            aria-label={gettext("mishka.drawer.close_menu")}
             class={@close_class}
           >
             <.icon name="hero-x-mark" />
-            <span class="sr-only">{gettext("Close menu")}</span>
+            <span class="sr-only">{gettext("mishka.drawer.close_menu")}</span>
           </button>
 
           <h5
@@ -156,7 +156,7 @@ defmodule PortfolioWeb.Components.Drawer do
         </div>
 
         <div id={"#{@id}-#{@position}-desc"} class="sr-only">
-          {gettext("Drawer content")}
+          {gettext("mishka.drawer.content")}
         </div>
 
         <div class={@content_class}>

@@ -17,6 +17,13 @@
     <meta property="og:locale:alternate" content="fr_BE" />
     <meta property="og:locale:alternate" content="fr_CH" />
     <meta property="og:locale:alternate" content="en_US" />
+    <!-- Hreflang pour ciblage France, Suisse, Belgique -->
+    <link rel="alternate" hreflang="fr" href="https://photo.thibaultsan.com/" />
+    <link rel="alternate" hreflang="fr-FR" href="https://photo.thibaultsan.com/" />
+    <link rel="alternate" hreflang="fr-CH" href="https://photo.thibaultsan.com/" />
+    <link rel="alternate" hreflang="fr-BE" href="https://photo.thibaultsan.com/" />
+    <link rel="alternate" hreflang="en" href="https://photo.thibaultsan.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://photo.thibaultsan.com/" />
     <!-- Schema.org pour le ciblage local -->
     <meta name="geo.region" content="FR" />
     <meta name="geo.region" content="BE" />
@@ -30,37 +37,16 @@
     <.live_title default="Portfolio" suffix=" · Thibault San Photography">
       {assigns[:page_title]}
     </.live_title>
-    <title>{gettext("Thibault Santonja – Creative portfolio")}</title>
-    <meta
-      name="description"
-      content={
-        gettext(
-          "Thibault San Photography — Emotion, elegance and authenticity. Reenactment, weddings, street and artistic photography."
-        )
-      }
-    />
+    <title>{gettext("layouts.photography.title")}</title>
+    <meta name="description" content={gettext("layouts.photography.description")} />
     <meta property="og:title" content="Thibault San Photography" />
-    <meta
-      name="og:description"
-      content={
-        gettext(
-          "Thibault San photography — Photographer of fleeting moments — I blend the art of historical reenactment with the intimacy of loving gazes. Weddings, couples, street photography and artistic portraits — each frame reveals a genuine emotion."
-        )
-      }
-    />
+    <meta name="og:description" content={gettext("layouts.photography.og_description")} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://thibaultsan.com/images/photography/landscape.webp" />
     <meta property="og:url" content="https://photo.thibaultsan.com" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Thibault San Photography" />
-    <meta
-      name="twitter:description"
-      content={
-        gettext(
-          "Fleeting moments and historical reenactments — Weddings, couples, street and artistic photography captured with elegance and emotion."
-        )
-      }
-    />
+    <meta name="twitter:description" content={gettext("layouts.photography.twitter_description")} />
     <meta
       name="twitter:image"
       content="https://thibaultsan.com/images/photography/landscape.webp"
@@ -70,7 +56,13 @@
     <link rel="icon" type="image/x-icon" href="/images/photography/logo.webp" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
 
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    <script
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={~p"/assets/app.js"}
+      nonce={assigns[:csp_nonce]}
+    >
     </script>
   </head>
 

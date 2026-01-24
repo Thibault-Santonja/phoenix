@@ -162,7 +162,7 @@ defmodule PortfolioWeb.Components.Blockquote do
           :if={!is_nil(caption[:image])}
           class={["w-6 h-6 rounded-full", caption[:image_class]]}
           src={caption[:image]}
-          alt={caption[:alt] || gettext("Author image")}
+          alt={caption[:alt] || gettext("mishka.blockquote.author_image")}
         />
         <div class={["flex items-center divide-x-2 rtl:divide-x-reverse", caption[:content_class]]}>
           {render_slot(caption)}

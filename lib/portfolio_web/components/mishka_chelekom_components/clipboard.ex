@@ -164,9 +164,9 @@ defmodule PortfolioWeb.Components.Clipboard do
     assigns =
       assigns
       |> assign_new(:id, fn -> "clipboard-#{random_id()}" end)
-      |> assign_new(:copy_success_text, fn -> gettext("Copied!") end)
-      |> assign_new(:copy_error_text, fn -> gettext("Copy failed") end)
-      |> assign_new(:copy_button_label, fn -> gettext("Copy to clipboard") end)
+      |> assign_new(:copy_success_text, fn -> gettext("mishka.clipboard.copied") end)
+      |> assign_new(:copy_error_text, fn -> gettext("mishka.clipboard.copy_failed") end)
+      |> assign_new(:copy_button_label, fn -> gettext("mishka.clipboard.copy_to_clipboard") end)
       |> then(fn new_assigns ->
         new_assigns
         |> assign(:status_id, "#{new_assigns.id}-status")

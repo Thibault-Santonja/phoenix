@@ -40,6 +40,28 @@ defmodule PortfolioWeb.Components.Badge do
 
   @dismiss_positions ["dismiss", "right_dismiss", "left_dismiss"]
 
+  # Defined as atoms to avoid String.to_atom at runtime (security: atom table exhaustion)
+  @drop_rest_atoms [
+    :pinging,
+    :circle,
+    :right_icon,
+    :left_icon,
+    :dismiss,
+    :right_dismiss,
+    :left_dismiss,
+    :indicator,
+    :right_indicator,
+    :left_indicator,
+    :top_left_indicator,
+    :top_center_indicator,
+    :top_right_indicator,
+    :middle_left_indicator,
+    :middle_right_indicator,
+    :bottom_left_indicator,
+    :bottom_center_indicator,
+    :bottom_right_indicator
+  ]
+
   @doc """
   The `badge` component is used to display badges with various styles and indicators.
 
@@ -903,11 +925,8 @@ defmodule PortfolioWeb.Components.Badge do
   end
 
   defp drop_rest(rest) do
-    all_rest =
-      (["pinging", "circle"] ++ @dismiss_positions ++ @indicator_positions ++ @icon_positions)
-      |> Enum.map(&if(is_binary(&1), do: String.to_atom(&1), else: &1))
-
-    Map.drop(rest, all_rest)
+    # Use pre-defined atoms to avoid String.to_atom at runtime
+    Map.drop(rest, @drop_rest_atoms)
   end
 
   ## JS Commands

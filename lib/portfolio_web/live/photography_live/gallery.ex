@@ -1,68 +1,83 @@
 defmodule PortfolioWeb.PhotographyLive.Gallery do
+  @moduledoc """
+  LiveView for displaying photo galleries and albums.
+
+  Handles navigation through photo collections, supporting album-based organization
+  with SEO-optimized Schema.org structured data and breadcrumb navigation.
+  """
   use PortfolioWeb, :live_view
   import PortfolioWeb.Components.ThemeButton
+  import PortfolioWeb.SEO.ImageHelpers
+  import PortfolioWeb.SEO.SchemaHelpers
+
+  alias Portfolio.Photography
 
   @default_data [
     %{
-      title: gettext("A title in China"),
+      title: gettext("photography.gallery.china_title"),
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       photo_url: "/images/photography/china.webp"
     },
     %{
-      title: gettext("This title Japan"),
+      title: gettext("photography.gallery.japan_title"),
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       photo_url: "/images/photography/japan.webp"
     },
     %{
-      title: gettext("A Taiwan title"),
+      title: gettext("photography.gallery.taiwan_title"),
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       photo_url: "/images/photography/taiwan.webp"
     }
   ]
-  @supported_album ["20250614_MALN", "20250621_Bours"]
 
-  defp get_folder_pictures(chapter) when chapter in @supported_album do
-    :code.priv_dir(:portfolio)
-    |> Path.join("./static/images/photography/#{chapter}/*.webp")
-    |> Path.wildcard()
-    |> Stream.map(&get_url/1)
-    |> Stream.reject(&skip_file_in_prod?/1)
-    |> Stream.map(&build_photo_data/1)
-    |> Enum.to_list()
-  end
+  # Récupère les photos d'un album depuis la base de données
+  defp get_album_photos(album_slug) when is_binary(album_slug) do
+    case Photography.get_album_by_slug(album_slug) do
+      {:ok, album} ->
+        build_photos_data(album)
 
-  defp get_folder_pictures(_), do: @default_data
-
-  defp build_photo_data(url) do
-    %{
-      title: "No title",
-      description: "No description",
-      photo_url: "/" <> url
-    }
-  end
-
-  defp skip_file_in_prod?(url) do
-    if Application.get_env(:portfolio, :env) == :prod do
-      not Regex.match?(~r/-[a-f0-9]{8,}\.webp$/, url)
-    else
-      false
+      {:error, :not_found} ->
+        @default_data
     end
   end
 
-  defp get_url(path) do
-    [_priv_path, url] = String.split(path, "/static/", trim: true)
-    url
+  defp get_album_photos(_), do: @default_data
+
+  # Construit la liste des données de photos depuis un album
+  defp build_photos_data(album) do
+    photos = Photography.list_photos_by_album(album.id)
+
+    if Enum.empty?(photos) do
+      @default_data
+    else
+      Enum.map(photos, fn photo ->
+        %{
+          title: photo.title || album.title,
+          description: photo.description || album.description || "",
+          photo_url: photo.file_path,
+          # Add alt text for SEO
+          alt_text: generate_alt_text(photo, album),
+          # Keep references for potential future use
+          photo: photo,
+          album: album
+        }
+      end)
+    end
   end
 
   @impl true
   def mount(params, session, socket) do
     chapter = Map.get(params, "chapter", nil)
-    language = Map.get(params, "hl", session["locale"])
-    Gettext.put_locale(PortfolioWeb.Gettext, language)
-    data = get_folder_pictures(chapter)
+    language = Map.get(params, "hl", session["locale"] || "fr")
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, language)
+    data = get_album_photos(chapter)
+
+    # Generate Schema.org JSON-LD for SEO
+    schema_json = generate_gallery_schema(chapter, data)
+    breadcrumb_json = generate_breadcrumb_schema(chapter)
 
     {
       :ok,
@@ -71,7 +86,9 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       |> assign(language: language)
       |> assign(data: data)
       |> assign(pictures: Enum.count(data))
-      |> assign(project_id: 1)
+      |> assign(project_id: 0)
+      |> assign(schema_json: schema_json)
+      |> assign(breadcrumb_json: breadcrumb_json)
     }
   end
 
@@ -89,7 +106,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
       socket
       |> assign(
         :page_title,
-        gettext("Thibault San Photography") <> " - #{socket.assigns.chapter} - #{project.title}"
+        gettext("photography.page_title") <> " - #{socket.assigns.chapter} - #{project.title}"
       )
       |> assign(project: project)
       |> assign(project_id: id)
@@ -98,24 +115,79 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
 
   defp apply_action(socket, :index, %{"project" => id}) do
     project = get_data(socket.assigns.data, id)
+    album_description = extract_album_description(socket.assigns.data)
 
     socket
     |> assign(
       :page_title,
-      gettext("Thibault San Photography") <> " - #{socket.assigns.chapter} - #{project.title}"
+      gettext("photography.brand") <> " - #{socket.assigns.chapter} - #{project.title}"
     )
+    |> assign(:meta_description, album_description)
     |> assign(project: project)
     |> assign(project_id: id)
   end
 
   defp apply_action(socket, :index, _params) do
     id = "0"
+    album_description = extract_album_description(socket.assigns.data)
 
     socket
-    |> assign(:page_title, gettext("Thibault San Photography") <> " - #{socket.assigns.chapter}")
+    |> assign(:page_title, gettext("photography.page_title") <> " - #{socket.assigns.chapter}")
+    |> assign(:meta_description, album_description)
     |> assign(project: get_data(socket.assigns.data, id))
     |> assign(project_id: id)
   end
 
-  defp get_data(data, id), do: Enum.at(data, String.to_integer(id))
+  defp get_data(data, id) when is_binary(id) do
+    case Integer.parse(id) do
+      {idx, ""} when idx >= 0 -> Enum.at(data, idx) || List.first(data)
+      _ -> List.first(data)
+    end
+  end
+
+  defp get_data(data, _id), do: List.first(data)
+
+  defp generate_gallery_schema(nil, _data), do: nil
+
+  defp generate_gallery_schema(_chapter, data) when data == @default_data, do: nil
+
+  defp generate_gallery_schema(chapter, data) do
+    # Extract album and photos from the data
+    if Enum.empty?(data) or not Map.has_key?(List.first(data), :album) do
+      nil
+    else
+      first_item = List.first(data)
+      album = first_item.album
+      photos = Enum.map(data, & &1.photo)
+      url = "https://photo.thibaultsan.com/#{chapter}"
+
+      image_gallery_schema(album, photos, url)
+    end
+  end
+
+  defp generate_breadcrumb_schema(nil), do: nil
+
+  defp generate_breadcrumb_schema(chapter) do
+    breadcrumbs = [
+      %{name: "Home", url: "https://photo.thibaultsan.com"},
+      %{name: "Timeline", url: "https://photo.thibaultsan.com/timeline"},
+      %{name: String.capitalize(chapter), url: "https://photo.thibaultsan.com/#{chapter}"}
+    ]
+
+    breadcrumb_schema(breadcrumbs)
+  end
+
+  defp extract_album_description(data) when data == @default_data do
+    gettext("layouts.photography.description")
+  end
+
+  defp extract_album_description(data) do
+    if Enum.empty?(data) or not Map.has_key?(List.first(data), :album) do
+      gettext("layouts.photography.description")
+    else
+      first_item = List.first(data)
+      album = first_item.album
+      album.description || album.title || gettext("layouts.photography.description")
+    end
+  end
 end

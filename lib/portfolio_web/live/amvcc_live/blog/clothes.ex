@@ -13,7 +13,8 @@ defmodule PortfolioWeb.AmvccLive.Blog.Clothes do
 
   @impl true
   def mount(_, session, socket) do
-    Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])
+    locale = session["locale"] || "fr"
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     {:ok, socket}
   end
@@ -25,6 +26,6 @@ defmodule PortfolioWeb.AmvccLive.Blog.Clothes do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, gettext("Clothes XIVc in western Europe"))
+    |> assign(:page_title, gettext("amvcc.blog.clothes.title"))
   end
 end

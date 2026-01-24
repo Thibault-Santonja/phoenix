@@ -183,7 +183,7 @@ defmodule PortfolioWeb.Components.Table do
               <.tr :if={@col}>
                 <.th :for={col <- @col} class={["font-normal", col[:label_class]]}>{col[:label]}</.th>
                 <.th :if={@action != []} class="relative">
-                  <span class="sr-only">{gettext("Actions")}</span>
+                  <span class="sr-only">{gettext("mishka.table.actions")}</span>
                 </.th>
               </.tr>
             </thead>

@@ -1,40 +1,52 @@
+<%!-- Article Schema.org JSON-LD for SEO --%>
+<script :if={@article_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@article_json) %>
+</script>
+
+<%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+<script :if={@breadcrumb_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+</script>
+
 <article class="border-tech-base-300 bg-tech-base-100 mx-auto rounded-lg border px-6 py-12 shadow-lg md:px-[3rem] md:m-[5rem]">
   <h1 class="text-tech-primary text-balance mb-16 text-center text-3xl font-thin uppercase">
-    {gettext("Deploying a Phoenix App with Kamal and Docker on a VPS")}
+    {gettext("tech.blog.kamal.deploying_a_phoenix_app_with_kamal_and_docker_on")}
   </h1>
 
   <.table_content color="primary" padding="extra_small" rounded="medium" animated>
     <.content_item icon="hero-hashtag">
-      <.link href="#1-introduction">1. {gettext("Introduction")}</.link>
+      <.link href="#1-introduction">1. {gettext("tech.blog.kamal.introduction")}</.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#2-requirements">2. {gettext("Requirements")}</.link>
+      <.link href="#2-requirements">2. {gettext("tech.blog.kamal.requirements")}</.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#3-preparing-your-app">3. {gettext("Preparing Your App")}</.link>
+      <.link href="#3-preparing-your-app">
+        3. {gettext("tech.blog.kamal.preparing_your_app")}
+      </.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#4-installing-kamal">4. {gettext("Installing Kamal")}</.link>
+      <.link href="#4-installing-kamal">4. {gettext("tech.blog.kamal.installing_kamal")}</.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#5-configuring-kamal">5. {gettext("Configuring Kamal")}</.link>
+      <.link href="#5-configuring-kamal">5. {gettext("tech.blog.kamal.configuring_kamal")}</.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#6-deployment">6. {gettext("Deployment")}</.link>
+      <.link href="#6-deployment">6. {gettext("tech.blog.kamal.deployment")}</.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#7-conclusion">7. {gettext("Conclusion")}</.link>
+      <.link href="#7-conclusion">7. {gettext("tech.blog.kamal.conclusion")}</.link>
     </.content_item>
   </.table_content>
 
   <h2 id="1-introduction" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    1. {gettext("Introduction")}
+    1. {gettext("tech.blog.kamal.introduction")}
   </h2>
   <p class="mb-6">
     {gettext(
@@ -43,18 +55,18 @@
   </p>
 
   <h2 id="2-requirements" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    2. {gettext("Requirements")}
+    2. {gettext("tech.blog.kamal.requirements")}
   </h2>
   <ul class="mb-6 list-disc pl-6">
-    <li>{gettext("An application to deploy")}</li>
-    <li>{gettext("A Dockerfile for the app")}</li>
-    <li>{gettext("A VPS with SSH access (e.g. Hetzner)")}</li>
-    <li>{gettext("A domain name managed by Cloudflare or similar")}</li>
-    <li>{gettext("Ruby >= 3.1 (for Kamal)")}</li>
+    <li>{gettext("tech.blog.kamal.an_application_to_deploy")}</li>
+    <li>{gettext("tech.blog.kamal.a_dockerfile_for_the_app")}</li>
+    <li>{gettext("tech.blog.kamal.a_vps_with_ssh_access_eg_hetzner")}</li>
+    <li>{gettext("tech.blog.kamal.a_domain_name_managed_by_cloudflare_or_similar")}</li>
+    <li>{gettext("tech.blog.kamal.ruby_31_for_kamal")}</li>
   </ul>
 
   <h2 id="3-preparing-your-app" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    3. {gettext("Preparing Your App")}
+    3. {gettext("tech.blog.kamal.preparing_your_app")}
   </h2>
   <p class="mb-6">
     {gettext(
@@ -109,23 +121,23 @@ CMD ["/app/bin/portfolio", "start"]
 </code></pre>
 
   <h2 id="4-installing-kamal" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    4. {gettext("Installing Kamal")}
+    4. {gettext("tech.blog.kamal.installing_kamal")}
   </h2>
   <p class="mb-6">
-    {gettext("To install Kamal, follow the doc using RubyGems:")}
+    {gettext("tech.blog.kamal.to_install_kamal_follow_the_doc_using_rubygems")}
   </p>
   <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
 <code>gem install kamal</code></pre>
 
   <p class="mb-6">
-    {gettext("It's easy and straight forward !")}
+    {gettext("tech.blog.kamal.its_easy_and_straight_forward")}
   </p>
 
   <h2 id="5-configuring-kamal" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    5. {gettext("Configuring Kamal")}
+    5. {gettext("tech.blog.kamal.configuring_kamal")}
   </h2>
   <p class="mb-6">
-    {gettext("Use Kamal to initialize your deployment configuration:")}
+    {gettext("tech.blog.kamal.use_kamal_to_initialize_your_deployment")}
   </p>
   <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
 <code>kamal init --deploy-to production --app my_app</code></pre>
@@ -142,7 +154,7 @@ CMD ["/app/bin/portfolio", "start"]
   </p>
 
   <h3 class="text-tech-secondary mb-2 text-xl font-semibold">
-    {gettext("5.1 Sample kamal.yml")}
+    {gettext("tech.blog.kamal.51_sample_kamalyml")}
   </h3>
 
   <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
@@ -183,14 +195,16 @@ builder:
   arch: amd64
 </code></pre>
 
-  <h3 class="text-tech-secondary mb-2 text-xl font-semibold">{gettext("5.2 Explanation")}</h3>
+  <h3 class="text-tech-secondary mb-2 text-xl font-semibold">
+    {gettext("tech.blog.kamal.52_explanation")}
+  </h3>
 
   <div class="mb-12 overflow-x-auto">
     <table class="min-w-full rounded-lg border border-gray-300 text-sm">
       <thead class="bg-gray-100">
         <tr>
-          <th class="border-b px-4 py-2 text-left">{gettext("Line")}</th>
-          <th class="border-b px-4 py-2 text-left">{gettext("Explanation")}</th>
+          <th class="border-b px-4 py-2 text-left">{gettext("tech.blog.kamal.line")}</th>
+          <th class="border-b px-4 py-2 text-left">{gettext("tech.blog.kamal.explanation")}</th>
         </tr>
       </thead>
       <tbody class="bg-white">
@@ -205,17 +219,19 @@ builder:
         <tr>
           <td class="border-b px-4 py-2">image</td>
           <td class="border-b px-4 py-2">
-            {gettext("Full Docker image name, hosted on GitHub Container Registry in this case.")}
+            {gettext("tech.blog.kamal.full_docker_image_name_hosted_on_github_container")}
           </td>
         </tr>
         <tr>
           <td class="border-b px-4 py-2">servers.web.hosts</td>
-          <td class="border-b px-4 py-2">{gettext("Public IP address of your VPS.")}</td>
+          <td class="border-b px-4 py-2">
+            {gettext("tech.blog.kamal.public_ip_address_of_your_vps")}
+          </td>
         </tr>
         <tr>
           <td class="border-b px-4 py-2">user</td>
           <td class="border-b px-4 py-2">
-            {gettext("SSH user on the VPS, typically 'deploy' or 'root'.")}
+            {gettext("tech.blog.kamal.ssh_user_on_the_vps_typically_deploy_or_root")}
           </td>
         </tr>
         <tr>
@@ -237,7 +253,7 @@ builder:
         <tr>
           <td class="border-b px-4 py-2">registry</td>
           <td class="border-b px-4 py-2">
-            {gettext("Registry credentials for pushing images (GitHub, DockerHub, etc.).")}
+            {gettext("tech.blog.kamal.registry_credentials_for_pushing_images_github")}
           </td>
         </tr>
         <tr>
@@ -253,7 +269,7 @@ builder:
   </div>
 
   <h3 class="text-tech-secondary mb-2 text-xl font-semibold">
-    {gettext("5.3 Example .env.secret")}
+    {gettext("tech.blog.kamal.53_example_envsecret")}
   </h3>
 
   <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm"><code>SECRET_KEY_BASE=super_long_secret_key
@@ -267,10 +283,10 @@ DATABASE_PASSWORD=motdepasse
   </p>
 
   <h2 id="6-deployment" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    6. {gettext("Deployment")}
+    6. {gettext("tech.blog.kamal.deployment")}
   </h2>
   <p class="mb-6">
-    {gettext("Once configured, deploy your app with:")}
+    {gettext("tech.blog.kamal.once_configured_deploy_your_app_with")}
   </p>
   <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
 <code>kamal deploy</code></pre>
@@ -292,7 +308,7 @@ DATABASE_PASSWORD=motdepasse
   </p>
 
   <h2 id="7-conclusion" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    7. {gettext("Conclusion")}
+    7. {gettext("tech.blog.kamal.conclusion")}
   </h2>
   <p class="mb-6">
     {gettext(
@@ -312,9 +328,9 @@ DATABASE_PASSWORD=motdepasse
     )}
   </p>
 
-  <h3 class="mb-2 text-xl font-semibold">{gettext("Why Kamal?")}</h3>
+  <h3 class="mb-2 text-xl font-semibold">{gettext("tech.blog.kamal.why_kamal")}</h3>
   <ul class="mb-4 list-disc space-y-2 pl-6 text-gray-800">
-    <li>{gettext("Minimal configuration: a single kamal.yml file controls everything.")}</li>
+    <li>{gettext("tech.blog.kamal.minimal_configuration_a_single_kamalyml_file")}</li>
     <li>
       {gettext(
         "Docker-native: builds and deploys containers without needing additional orchestration tools."
@@ -325,8 +341,8 @@ DATABASE_PASSWORD=motdepasse
         "Remote builder support: useful when your local architecture differs from the server (e.g., M1 Mac to amd64 VPS)."
       )}
     </li>
-    <li>{gettext("No vendor lock-in: works with any VPS or cloud provider.")}</li>
-    <li>{gettext("Secure secrets management: easily handles private .env files.")}</li>
+    <li>{gettext("tech.blog.kamal.no_vendor_lock_in_works_with_any_vps_or_cloud")}</li>
+    <li>{gettext("tech.blog.kamal.secure_secrets_management_easily_handles_private")}</li>
     <li>
       {gettext(
         "Easy rollback and redeploy with simple commands like `kamal deploy` or `kamal rollback`."

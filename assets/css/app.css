@@ -28,3 +28,38 @@ blockquote > p {
 p {
     text-justify: inter-word;
 }
+
+/* Sortable.js styles for photo reordering */
+.sortable-ghost {
+    opacity: 0.4;
+    background: #e0e7ff;
+    border: 2px dashed #6366f1;
+}
+
+.sortable-chosen {
+    cursor: grabbing !important;
+    opacity: 1;
+}
+
+.sortable-drag {
+    opacity: 0.8;
+    transform: rotate(2deg);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.sortable-fallback {
+    opacity: 0.8;
+}
+
+.sortable-item {
+    transition: transform 0.2s ease;
+    touch-action: none;
+}
+
+.sortable-item:hover {
+    transform: scale(1.02);
+}
+
+.sortable-active .sortable-item {
+    cursor: grab;
+}

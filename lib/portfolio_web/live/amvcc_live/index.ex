@@ -1,9 +1,15 @@
 defmodule PortfolioWeb.AmvccLive.Index do
+  @moduledoc """
+  LiveView for the AMVCC (Association Médiévale de la Ville et du Château de Coucy) section.
+
+  Displays information about the medieval association and its activities.
+  """
   use PortfolioWeb, :live_view
 
   @impl true
   def mount(_, session, socket) do
-    Gettext.put_locale(PortfolioWeb.Gettext, session["locale"])
+    locale = session["locale"] || "fr"
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     {:ok, socket}
   end

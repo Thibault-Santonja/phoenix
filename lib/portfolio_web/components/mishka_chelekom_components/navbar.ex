@@ -183,7 +183,12 @@ defmodule PortfolioWeb.Components.Navbar do
           navigate={@link}
           class={["flex items-center space-x-3 rtl:space-x-reverse mb-5 md:mb-0", @link_class]}
         >
-          <img :if={!is_nil(@image)} src={@image} class={@image_class} alt={gettext("Logo")} />
+          <img
+            :if={!is_nil(@image)}
+            src={@image}
+            class={@image_class}
+            alt={gettext("mishka.navbar.logo")}
+          />
           <h1 :if={!is_nil(@name)} class="text-xl font-semibold">
             {@name}
           </h1>

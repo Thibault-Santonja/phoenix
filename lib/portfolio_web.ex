@@ -17,7 +17,7 @@ defmodule PortfolioWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt sitemap.xml)
+  def static_paths, do: ~w(assets fonts images uploads favicon.ico robots.txt)
 
   def router do
     quote do
@@ -88,6 +88,9 @@ defmodule PortfolioWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
+      import PortfolioWeb.CoreComponents,
+        only: [stat_card: 1, action_card: 1, back_to_dashboard: 1, admin_logout_button: 1]
+
       use PortfolioWeb.Components.MishkaComponents
 
       # Shortcut for generating JS commands

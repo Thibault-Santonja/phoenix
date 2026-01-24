@@ -35,14 +35,10 @@ defmodule PortfolioWeb.Components.Combobox do
   - Custom placeholders and descriptions
   - Start section slots for icons or additional content
 
+  ## Example usage:
 
-   ## Example usage:
-    <.combobox
-      options={@options}
-      placeholder="Select an option"
-      on_change="handle_selection"
-    />
-    # Single selection with options
+  ```heex
+  # Single selection with options
     <.combobox placeholder="Select an item">
       <:option value="Item 1">First Item</:option>
       <:option value="Item 2">Second Item</:option>
@@ -335,7 +331,7 @@ defmodule PortfolioWeb.Components.Combobox do
                 </.option>
 
                 <div :if={@searchable} class="no-results text-center hidden">
-                  {gettext("Nothing found!")}
+                  {gettext("mishka.combobox.nothing_found")}
                 </div>
               </div>
             </.scroll_area>
@@ -523,7 +519,7 @@ defmodule PortfolioWeb.Components.Combobox do
                 </.option>
 
                 <div :if={@searchable} class="no-results text-center hidden">
-                  {gettext("Nothing found!")}
+                  {gettext("mishka.combobox.nothing_found")}
                 </div>
               </div>
             </.scroll_area>

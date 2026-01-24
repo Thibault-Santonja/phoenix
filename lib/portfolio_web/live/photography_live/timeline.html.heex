@@ -1,17 +1,28 @@
-<nav class={[
-  "sticky top-0 z-10",
-  "bg-white/70 dark:bg-black/70 backdrop-blur-md",
-  "flex items-center",
-  "px-4 py-2 text-sm"
-]}>
+<%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+<script :if={@breadcrumb_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+</script>
+
+<nav
+  id="timeline-nav"
+  class={[
+    "sticky top-0 z-10",
+    "bg-white/70 dark:bg-black/70 backdrop-blur-md",
+    "flex items-center",
+    "px-4 py-2 text-sm"
+  ]}
+  phx-hook="SmoothScroll"
+>
   <h1 class="flex flex-col items-end group">
     <a href={~p"/"}>
-      {gettext("Thibault Santonja")}
-      <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">{gettext("Home")}</p>
+      {gettext("photography.brand_name")}
+      <p class="duration-300 opacity-60 group-hover:opacity-100 text-xs">
+        {gettext("photography.timeline.home")}
+      </p>
     </a>
   </h1>
   <div class="grow flex justify-end gap-4">
-    <%= for year <- Enum.sort(@years) do %>
+    <%= for year <- Enum.sort(@years, :desc) do %>
       <a
         href={"#year-#{year}"}
         data-anchor-year
@@ -70,101 +81,126 @@
   <% end %>
 </div>
 
-<ul class="py-8 relative z-0">
-  <%= for year <- @years do %>
-    <li id={"year-#{year}"} phx-hook="YearTrigger" data-year={year}>
-      <div class="h-[67vh] flex items-center justify-center" />
+<ul
+  id="albums-list"
+  class="py-8 relative z-0 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-6"
+  phx-update="stream"
+>
+  <li
+    :for={{dom_id, album} <- @streams.albums}
+    id={dom_id}
+    phx-hook="YearTrigger"
+    data-year={album.date_prise_vue.year}
+    data-album-year-anchor={"year-#{album.date_prise_vue.year}"}
+    class={[
+      "bg-gray-300/20 dark:bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl scroll-mt-20",
+      "col-span-2 lg:col-span-3",
+      Enum.random(["sm:col-start-1", "sm:col-start-2"]),
+      Enum.random(["lg:col-start-1", "lg:col-start-2"])
+    ]}
+  >
+    <article>
+      <header class="mb-4">
+        <h2 class="text-xl font-semibold text-black dark:text-white">
+          <span class="text-xs opacity-80 mr-4">
+            {format_date_range(album.date_prise_vue, album.date_fin_prise_vue)}
+          </span>
+          {album.title}
+        </h2>
+      </header>
 
-      <ul class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-        <%= for album <- @data |> Map.get(year) |> Enum.sort(&(&1.date > &2.date)) do %>
-          <li class={[
-            "bg-gray-300/20 dark:bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl",
-            "col-span-2 lg:col-span-3",
-            Enum.random(["sm:col-start-1", "sm:col-start-2"]),
-            Enum.random(["lg:col-start-1", "lg:col-start-2"])
-          ]}>
-            <article>
-              <header class="mb-4">
-                <h2 class="text-xl font-semibold text-black dark:text-white">
-                  <span class="text-xs opacity-80 mr-4">{album.date}</span>
-                  {album.title}
-                </h2>
-              </header>
-
-              <section class="lg:grid lg:grid-cols-5">
-                <img
-                  src={album.photography}
-                  class={[
-                    "object-cover w-full rounded-lg mb-4",
-                    "max-h-120",
-                    "lg:col-span-3"
-                  ]}
-                  loading="lazy"
-                />
-                <div class={[
-                  "text-sm text-gray-600 dark:text-gray-300 leading-relaxed",
-                  "lg:px-8",
-                  "lg:col-span-2",
-                  "flex flex-col"
-                ]}>
-                  <p>
-                    {Gettext.gettext(PortfolioWeb.Gettext, album.description)}
-                  </p>
-                  <nav class="flex justify-end mt-4">
-                    <a
-                      :if={album.reference_link}
-                      href={album.reference_link}
-                      target="_blank"
-                      class={[
-                        "grow-0",
-                        "inline-flex items-center gap-2",
-                        "group hover:scale-105 duration-300",
-                        "py-2 px-4 mt-8",
-                        "text-sm"
-                      ]}
-                    >
-                      {gettext("Website")}
-                      <.icon
-                        name="hero-arrow-right-circle-solid"
-                        class={[
-                          "h-4 w-4",
-                          "group-hover:rotate-[6.283rad] duration-500 ease-out"
-                        ]}
-                      />
-                    </a>
-                    <a
-                      :if={album.url}
-                      href={album.url}
-                      class={[
-                        "grow-0",
-                        "inline-flex items-center gap-2",
-                        "group hover:scale-105 duration-300",
-                        "py-2 px-4 mt-8",
-                        "text-sm",
-                        "border-gray-300 rounded-lg border-2"
-                      ]}
-                    >
-                      {gettext("Show more")}
-                      <.icon
-                        name="hero-arrow-right-circle-solid"
-                        class={[
-                          "h-4 w-4",
-                          "group-hover:rotate-[6.283rad] duration-500 ease-out"
-                        ]}
-                      />
-                    </a>
-                  </nav>
-                </div>
-              </section>
-            </article>
-          </li>
-        <% end %>
-      </ul>
-    </li>
-  <% end %>
+      <section class="lg:grid lg:grid-cols-5">
+        <img
+          :if={cover_photo = List.first(album.photos)}
+          src={cover_photo.file_path}
+          alt={generate_album_cover_alt(album)}
+          srcset={[
+            "#{cover_photo.file_path}?w=320&q=75 320w",
+            "#{cover_photo.file_path}?w=640&q=75 640w",
+            "#{cover_photo.file_path}?w=960&q=75 960w",
+            "#{cover_photo.file_path}?w=1280&q=75 1280w"
+          ]}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 60vw"
+          class={[
+            "object-cover w-full rounded-lg mb-4",
+            "max-h-120",
+            "lg:col-span-3"
+          ]}
+          loading="lazy"
+          decoding="async"
+        />
+        <div class={[
+          "text-sm text-gray-600 dark:text-gray-300 leading-relaxed",
+          "lg:px-8",
+          "lg:col-span-2",
+          "flex flex-col"
+        ]}>
+          <p :if={album.description}>
+            {Gettext.gettext(PortfolioWeb.Gettext, album.description)}
+          </p>
+          <nav class="flex justify-end mt-4">
+            <a
+              :if={album.reference_link}
+              href={album.reference_link}
+              target="_blank"
+              class={[
+                "grow-0",
+                "inline-flex items-center gap-2",
+                "group hover:scale-105 duration-300",
+                "py-2 px-4 mt-8",
+                "text-sm"
+              ]}
+            >
+              {gettext("photography.timeline.website")}
+              <.icon
+                name="hero-arrow-right-circle-solid"
+                class={[
+                  "h-4 w-4",
+                  "group-hover:rotate-[6.283rad] duration-500 ease-out"
+                ]}
+              />
+            </a>
+            <a
+              href={~p"/gallery/#{album.slug}"}
+              class={[
+                "grow-0",
+                "inline-flex items-center gap-2",
+                "group hover:scale-105 duration-300",
+                "py-2 px-4 mt-8",
+                "text-sm",
+                "border-gray-300 rounded-lg border-2"
+              ]}
+            >
+              {gettext("photography.timeline.show_more")}
+              <.icon
+                name="hero-arrow-right-circle-solid"
+                class={[
+                  "h-4 w-4",
+                  "group-hover:rotate-[6.283rad] duration-500 ease-out"
+                ]}
+              />
+            </a>
+          </nav>
+        </div>
+      </section>
+    </article>
+  </li>
 </ul>
 
-<div :if={Enum.empty?(@years)}>
+<%!-- Infinite scroll trigger with ARIA live region for accessibility --%>
+<div
+  :if={@has_more}
+  id="infinite-scroll-marker"
+  phx-hook="InfiniteScroll"
+  class="h-20 flex items-center justify-center"
+  role="status"
+  aria-live="polite"
+  aria-label={gettext("accessibility.loading_more_content")}
+>
+  <span class="sr-only">{gettext("accessibility.loading_more_content")}</span>
+</div>
+
+<div :if={@albums_loaded == 0} class="p-6">
   <h2></h2>
   <p></p>
   <article class={[
@@ -173,19 +209,21 @@
     <header class="mb-4">
       <h2 class="text-xl font-semibold">
         <span class="text-xs mr-4 text-gray-500">{Date.utc_today()}</span>
-        {gettext("Empty portfolio chapter")}
+        {gettext("photography.timeline.empty_title")}
       </h2>
     </header>
 
     <section class="lg:grid lg:grid-cols-5">
       <img
         src="/images/photography/landscape.webp"
+        alt={gettext("photography.timeline.empty_title")}
         class={[
           "object-cover w-full rounded-lg mb-4",
           "max-h-120",
           "lg:col-span-3"
         ]}
         loading="lazy"
+        decoding="async"
       />
       <div class={[
         "text-sm text-gray-700 dark:text-gray-300 leading-relaxed",
@@ -194,7 +232,7 @@
         "flex flex-col"
       ]}>
         <p>
-          {gettext("I am so sorry but at the moment, this portfolio gallery is empty")}
+          {gettext("photography.timeline.empty_message")}
         </p>
 
         <nav class="flex justify-end mt-4">
@@ -209,7 +247,7 @@
               "border-gray-600 dark:border-gray-300 rounded-lg border-2"
             ]}
           >
-            {gettext("Home")}
+            {gettext("photography.timeline.home")}
             <.icon
               name="hero-arrow-right-circle-solid"
               class={[

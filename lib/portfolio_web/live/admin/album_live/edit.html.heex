@@ -1,0 +1,420 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <.back_to_dashboard />
+
+  <div class="md:flex md:items-center md:justify-between mb-8">
+    <div class="flex-1 min-w-0">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+        {gettext("admin.albums.edit.title")}
+      </h2>
+      <p class="mt-1 text-sm text-gray-500">
+        {@album.title}
+      </p>
+    </div>
+    <.admin_logout_button current_user={@current_user} class="mt-4 md:mt-0" />
+  </div>
+
+  <.live_component
+    module={PortfolioWeb.Admin.AlbumLive.FormComponent}
+    id="edit-album-form"
+    title={gettext("admin.albums.edit.album_information")}
+    action={:edit}
+    album={@album}
+  />
+  
+<!-- Section Photos -->
+  <div class="md:grid md:grid-cols-3 md:gap-6 mt-10">
+    <div class="md:col-span-1">
+      <div class="px-4 sm:px-0">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">
+          {gettext("admin.albums.edit.photos_section")}
+        </h3>
+        <p class="mt-1 text-sm text-gray-600">
+          {gettext("admin.albums.edit.photos_section_description")}
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-5 md:mt-0 md:col-span-2">
+      <div class="shadow sm:rounded-md">
+        <!-- Zone d'upload -->
+        <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              {gettext("admin.albums.edit.add_photos")}
+            </label>
+
+            <form phx-change="validate_upload" phx-submit="upload">
+              <div
+                class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-indigo-500 transition"
+                phx-drop-target={@uploads.photos.ref}
+              >
+                <div class="space-y-1 text-center">
+                  <svg
+                    class="mx-auto h-12 w-12 text-gray-400"
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 48 48"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <div class="flex text-sm text-gray-600">
+                    <label
+                      for="photos-upload"
+                      class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                    >
+                      <span>{gettext("admin.albums.edit.choose_files")}</span>
+                      <.live_file_input
+                        upload={@uploads.photos}
+                        class="sr-only"
+                        id="photos-upload"
+                      />
+                    </label>
+                    <p class="pl-1">{gettext("admin.albums.edit.drag_drop")}</p>
+                  </div>
+                  <p class="text-xs text-gray-500">
+                    {gettext("admin.albums.edit.file_format_info")}
+                  </p>
+                </div>
+              </div>
+
+              <%= for entry <- @uploads.photos.entries do %>
+                <div class="mt-4 flex items-center justify-between bg-gray-50 p-3 rounded">
+                  <div class="flex items-center space-x-3">
+                    <.live_img_preview entry={entry} class="h-16 w-16 object-cover rounded" />
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">{entry.client_name}</p>
+                      <p class="text-xs text-gray-500">{div(entry.client_size, 1024)} KB</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    phx-click="cancel_upload"
+                    phx-value-ref={entry.ref}
+                    class="text-red-600 hover:text-red-800 text-sm"
+                  >
+                    {gettext("admin.albums.edit.cancel")}
+                  </button>
+                </div>
+              <% end %>
+
+              <%= if @uploads.photos.entries != [] do %>
+                <div class="mt-4">
+                  <button
+                    type="submit"
+                    class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 phx-submit-loading:opacity-75"
+                  >
+                    <span class="phx-submit-loading:hidden">
+                      {gettext("admin.albums.edit.upload_count",
+                        count: length(@uploads.photos.entries)
+                      )}
+                    </span>
+                    <span class="hidden phx-submit-loading:inline">
+                      {gettext("admin.albums.edit.uploading")}
+                    </span>
+                  </button>
+                </div>
+              <% end %>
+            </form>
+          </div>
+          
+<!-- Liste des photos existantes -->
+          <%= if @album.photos != [] do %>
+            <div class="mt-6 border-t border-gray-200 pt-6">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-medium text-gray-900">
+                  {gettext("admin.albums.edit.album_photos_count", count: length(@album.photos))}
+                </h4>
+
+                <%= if !@reordering_mode do %>
+                  <button
+                    type="button"
+                    phx-click="start_reordering"
+                    class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    <svg
+                      class="h-4 w-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    </svg>
+                    {gettext("admin.albums.edit.reorder")}
+                  </button>
+                <% else %>
+                  <div class="space-x-2">
+                    <button
+                      type="button"
+                      phx-click="cancel_reordering"
+                      class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      {gettext("admin.albums.edit.cancel")}
+                    </button>
+                    <button
+                      type="button"
+                      phx-click="save_photo_order"
+                      class="inline-flex items-center px-3 py-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 phx-click-loading:opacity-50"
+                    >
+                      <span class="phx-click-loading:hidden">
+                        {gettext("admin.albums.edit.save_order")}
+                      </span>
+                      <span class="hidden phx-click-loading:inline">
+                        {gettext("admin.albums.edit.saving")}
+                      </span>
+                    </button>
+                  </div>
+                <% end %>
+              </div>
+
+              <%= if @reordering_mode do %>
+                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p class="text-sm text-blue-800">
+                    <svg class="inline h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    {gettext("admin.albums.edit.reorder_instructions")}
+                  </p>
+                </div>
+              <% end %>
+
+              <div
+                id="photos-grid"
+                phx-hook="PhotoSortable"
+                data-reordering={to_string(@reordering_mode)}
+                class={"grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 #{if @reordering_mode, do: "sortable-active"}"}
+              >
+                <%= for photo <- @album.photos do %>
+                  <div
+                    class={"relative group #{if @reordering_mode, do: "sortable-item cursor-move"}"}
+                    data-photo-id={photo.id}
+                  >
+                    <%= if @reordering_mode do %>
+                      <div class="absolute top-2 left-2 z-10 bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                        {Enum.find_index(@album.photos, &(&1.id == photo.id)) + 1}
+                      </div>
+                    <% end %>
+
+                    <%!-- Processing status badge --%>
+                    <%= if photo.processing_status in ["pending", "processing"] do %>
+                      <div class="absolute top-2 right-2 z-10 bg-yellow-500 text-white rounded-full px-2 py-1 text-xs font-medium flex items-center gap-1">
+                        <svg
+                          class="animate-spin h-3 w-3"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          >
+                          </circle>
+                          <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          >
+                          </path>
+                        </svg>
+                        <span>{gettext("admin.albums.edit.processing")}</span>
+                      </div>
+                    <% end %>
+
+                    <%= if photo.processing_status == "failed" do %>
+                      <div class="absolute top-2 right-2 z-10 bg-red-500 text-white rounded-full px-2 py-1 text-xs font-medium">
+                        {gettext("admin.albums.edit.failed")}
+                      </div>
+                    <% end %>
+
+                    <PortfolioWeb.ImageHelpers.responsive_image
+                      photo={photo}
+                      alt={photo.title || gettext("admin.albums.edit.photo_default_alt")}
+                      class={"h-32 w-full object-cover rounded-lg #{if !@reordering_mode, do: "cursor-pointer"}"}
+                      phx-click={if !@reordering_mode, do: "edit_photo"}
+                      phx-value-id={photo.id}
+                      sizes="320px"
+                    />
+                    <%= if photo.title && !@reordering_mode do %>
+                      <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-2 rounded-b-lg">
+                        {photo.title}
+                      </div>
+                    <% end %>
+
+                    <%= if !@reordering_mode do %>
+                      <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center rounded-lg">
+                        <div class="opacity-0 group-hover:opacity-100 transition space-x-2">
+                          <%= if photo.processing_status == "failed" do %>
+                            <button
+                              type="button"
+                              phx-click="reprocess_photo"
+                              phx-value-id={photo.id}
+                              class="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700"
+                            >
+                              {gettext("admin.albums.edit.retry")}
+                            </button>
+                          <% end %>
+                          <button
+                            type="button"
+                            phx-click="edit_photo"
+                            phx-value-id={photo.id}
+                            class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700"
+                          >
+                            {gettext("admin.albums.edit.edit_button")}
+                          </button>
+                          <button
+                            type="button"
+                            phx-click="delete_photo"
+                            phx-value-id={photo.id}
+                            data-confirm={gettext("admin.albums.edit.delete_photo_confirm")}
+                            class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 phx-click-loading:opacity-50"
+                          >
+                            <span class="phx-click-loading:hidden">
+                              {gettext("admin.albums.edit.delete_button")}
+                            </span>
+                            <span class="hidden phx-click-loading:inline">
+                              {gettext("admin.albums.edit.deleting")}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Photo Edit Modal -->
+<%= if @editing_photo do %>
+  <div
+    class="fixed z-10 inset-0 overflow-y-auto"
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <!-- Background overlay -->
+      <div
+        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        aria-hidden="true"
+        phx-click="close_photo_modal"
+      >
+      </div>
+      
+<!-- Center modal -->
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+        &#8203;
+      </span>
+
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <.form for={@photo_form} phx-change="validate_photo" phx-submit="save_photo">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                  {gettext("admin.albums.edit.edit_photo_modal")}
+                </h3>
+                
+<!-- Photo preview -->
+                <div class="mb-4">
+                  <img
+                    src={@editing_photo.file_path}
+                    alt={@editing_photo.title || gettext("admin.albums.edit.photo_default_alt")}
+                    class="w-full h-48 object-cover rounded-lg"
+                    loading="eager"
+                    decoding="async"
+                  />
+                  <p class="text-xs text-gray-500 mt-1">
+                    {@editing_photo.original_filename}
+                  </p>
+                </div>
+                
+<!-- Form fields -->
+                <div class="space-y-4">
+                  <div>
+                    <.input
+                      field={@photo_form[:title]}
+                      type="text"
+                      label={gettext("admin.albums.edit.photo_title_label")}
+                      placeholder={gettext("admin.albums.edit.photo_title_placeholder")}
+                    />
+                  </div>
+
+                  <div>
+                    <.input
+                      field={@photo_form[:description]}
+                      type="textarea"
+                      label={gettext("admin.albums.edit.photo_description_label")}
+                      rows="3"
+                      placeholder={gettext("admin.albums.edit.photo_description_placeholder")}
+                    />
+                  </div>
+
+                  <div>
+                    <.input
+                      field={@photo_form[:taken_at]}
+                      type="date"
+                      label={gettext("admin.albums.edit.photo_date_taken")}
+                    />
+                  </div>
+
+                  <div class="flex items-center">
+                    <.input
+                      field={@photo_form[:published]}
+                      type="checkbox"
+                      label={gettext("admin.albums.edit.photo_published")}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              type="submit"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm phx-submit-loading:opacity-75"
+            >
+              <span class="phx-submit-loading:hidden">
+                {gettext("admin.albums.edit.save_button")}
+              </span>
+              <span class="hidden phx-submit-loading:inline">
+                {gettext("admin.albums.edit.saving")}
+              </span>
+            </button>
+            <button
+              type="button"
+              phx-click="close_photo_modal"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              {gettext("admin.albums.edit.cancel")}
+            </button>
+          </div>
+        </.form>
+      </div>
+    </div>
+  </div>
+<% end %>

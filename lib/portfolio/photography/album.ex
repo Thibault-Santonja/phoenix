@@ -1,0 +1,311 @@
+defmodule Portfolio.Photography.Album do
+  @moduledoc """
+  Album Aggregate Root - Représente un album photo du portfolio.
+
+  Un album est une collection cohérente de photos autour d'un événement photographique
+  (mariage, concert, reconstitution historique, etc.). C'est l'aggregate root du
+  bounded context Photography.
+
+  ## Invariants
+
+  - Un album DOIT avoir un titre (3-200 caractères)
+  - Un album DOIT avoir un type valide parmi les types définis
+  - Un album DOIT avoir une date de début de prise de vue (≤ aujourd'hui)
+  - Un album PEUT avoir une date de fin de prise de vue (optionnel, doit être ≥ date de début et ≤ aujourd'hui)
+  - Le slug DOIT être unique globalement
+  - La photo de couverture est toujours la première photo triée par display_order
+
+  ## Types Valides
+
+  - `:couples` - Séances photos de couples
+  - `:wedding` - Mariages
+  - `:motherhood` - Maternité et familles
+  - `:events` - Événements divers
+  - `:landscape` - Paysages
+  - `:street` - Photographie de rue
+  - `:music` - Concerts et musique
+  - `:reenactment` - Reconstitution historique
+  - `:amvcc` - Association AMVCC
+  - `:china` - Voyage en Chine
+  - `:japan` - Voyage au Japon
+  - `:taiwan` - Voyage à Taïwan
+
+  ## Exemples
+
+      # Créer un nouvel album
+      iex> changeset = Album.changeset(%Album{}, %{
+      ...>   title: "Mariage de Claire & Damien",
+      ...>   type: :wedding,
+      ...>   date_prise_vue: ~D[2024-06-15],
+      ...>   location: "Château de Coucy"
+      ...> })
+      iex> changeset.valid?
+      true
+
+      # Le slug est généré automatiquement
+      iex> Ecto.Changeset.get_change(changeset, :slug)
+      "mariage-de-claire-damien"
+
+      # Validation des dates futures
+      iex> future_date = Date.add(Date.utc_today(), 1)
+      iex> changeset = Album.changeset(%Album{}, %{
+      ...>   title: "Album futur",
+      ...>   type: :wedding,
+      ...>   date_prise_vue: future_date
+      ...> })
+      iex> changeset.valid?
+      false
+  """
+
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  alias Portfolio.Photography.Photo
+  alias Portfolio.Photography.ValueObjects.Slug
+
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+
+  @type t :: %__MODULE__{
+          id: Ecto.UUID.t() | nil,
+          title: String.t() | nil,
+          slug: String.t() | nil,
+          type: atom() | nil,
+          description: String.t() | nil,
+          location: String.t() | nil,
+          date_prise_vue: Date.t() | nil,
+          date_fin_prise_vue: Date.t() | nil,
+          published: boolean(),
+          reference_link: String.t() | nil,
+          photos: [Photo.t()] | Ecto.Association.NotLoaded.t(),
+          exif_data: map(),
+          inserted_at: DateTime.t() | nil,
+          updated_at: DateTime.t() | nil
+        }
+
+  @album_types ~w(couples wedding motherhood events landscape street music reenactment amvcc china japan taiwan)a
+
+  schema "albums" do
+    field :title, :string
+    field :slug, :string
+    field :type, Ecto.Enum, values: @album_types
+    field :description, :string
+    field :location, :string
+    field :date_prise_vue, :date
+    field :date_fin_prise_vue, :date
+    field :published, :boolean, default: false
+    field :reference_link, :string
+    field :exif_data, :map, default: %{}
+
+    has_many :photos, Photo
+
+    # Champs virtuels pour optimisations SQL
+    field :photo_count, :integer, virtual: true
+
+    timestamps(type: :utc_datetime)
+  end
+
+  @doc """
+  Crée un changeset pour la création d'un nouvel album.
+
+  Le slug est généré automatiquement depuis le titre et ne peut pas être
+  modifié après la création (invariant métier).
+
+  ## Validations
+
+  - `title` : requis, longueur entre 3 et 200 caractères
+  - `type` : requis, doit être un type valide
+  - `date_prise_vue` : requis, ne peut pas être dans le futur
+  - `date_fin_prise_vue` : optionnel, ne peut pas être dans le futur, doit être ≥ date_prise_vue
+  - `description` : optionnel, max 5000 caractères
+  - `slug` : généré automatiquement depuis le titre, unique
+
+  ## Exemples
+
+      iex> Album.creation_changeset(%Album{}, %{title: "Mon Album", type: :wedding, date_prise_vue: ~D[2024-01-01]})
+      %Ecto.Changeset{valid?: true}
+
+      iex> Album.creation_changeset(%Album{}, %{title: "AB"})  # Titre trop court
+      %Ecto.Changeset{valid?: false}
+  """
+  @spec creation_changeset(t(), map()) :: Ecto.Changeset.t()
+  def creation_changeset(album, attrs) do
+    album
+    |> cast(attrs, [
+      :title,
+      :slug,
+      :type,
+      :description,
+      :location,
+      :date_prise_vue,
+      :date_fin_prise_vue,
+      :published,
+      :reference_link,
+      :exif_data
+    ])
+    |> validate_required([:title, :type, :date_prise_vue])
+    |> validate_length(:title, min: 3, max: 200)
+    |> validate_length(:description, max: 5000)
+    |> validate_date_not_future(:date_prise_vue)
+    |> validate_date_not_future(:date_fin_prise_vue)
+    |> validate_date_range()
+    |> generate_slug_if_needed()
+    |> unique_constraint(:slug)
+  end
+
+  @doc """
+  Crée un changeset pour la mise à jour d'un album existant.
+
+  Le slug NE PEUT PAS être modifié après la création (invariant métier).
+  Cela garantit la stabilité des URLs et des liens externes.
+
+  ## Validations
+
+  Mêmes validations que `creation_changeset/2`, sauf que le slug est protégé.
+
+  ## Exemples
+
+      iex> album = %Album{slug: "mon-album-existant"}
+      iex> changeset = Album.update_changeset(album, %{title: "Nouveau Titre", slug: "tentative-modification"})
+      iex> Ecto.Changeset.get_change(changeset, :slug)
+      nil  # Le slug n'est pas modifié
+  """
+  @spec update_changeset(t(), map()) :: Ecto.Changeset.t()
+  def update_changeset(album, attrs) do
+    # Retirer le slug des attributs pour empêcher sa modification
+    attrs_without_slug = Map.drop(attrs, [:slug, "slug"])
+
+    album
+    |> cast(attrs_without_slug, [
+      :title,
+      :type,
+      :description,
+      :location,
+      :date_prise_vue,
+      :date_fin_prise_vue,
+      :published,
+      :reference_link,
+      :exif_data
+    ])
+    |> validate_required([:title, :type, :date_prise_vue])
+    |> validate_length(:title, min: 3, max: 200)
+    |> validate_length(:description, max: 5000)
+    |> validate_date_not_future(:date_prise_vue)
+    |> validate_date_not_future(:date_fin_prise_vue)
+    |> validate_date_range()
+  end
+
+  @doc """
+  Crée un changeset générique pour un album (backward compatibility).
+
+  Pour une meilleure protection des invariants, préférer:
+  - `creation_changeset/2` pour la création
+  - `update_changeset/2` pour les mises à jour
+
+  ## Deprecated
+
+  Cette fonction est conservée pour la rétrocompatibilité mais sera
+  supprimée dans une future version.
+  """
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
+  def changeset(album, attrs) do
+    album
+    |> cast(attrs, [
+      :title,
+      :slug,
+      :type,
+      :description,
+      :location,
+      :date_prise_vue,
+      :date_fin_prise_vue,
+      :published,
+      :reference_link,
+      :exif_data
+    ])
+    |> validate_required([:title, :type, :date_prise_vue])
+    |> validate_length(:title, min: 3, max: 200)
+    |> validate_length(:description, max: 5000)
+    |> validate_date_not_future(:date_prise_vue)
+    |> validate_date_not_future(:date_fin_prise_vue)
+    |> validate_date_range()
+    |> generate_slug_if_needed()
+    |> unique_constraint(:slug)
+  end
+
+  # Génère un slug URL-friendly depuis le titre en utilisant le Value Object Slug
+  # Si un slug est déjà fourni (par ex. dans les tests), il est conservé
+  @spec generate_slug_if_needed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp generate_slug_if_needed(changeset) do
+    # Si un slug est déjà fourni, on le garde
+    case get_change(changeset, :slug) do
+      slug when is_binary(slug) and slug != "" ->
+        changeset
+
+      _ ->
+        generate_slug_from_title(changeset)
+    end
+  end
+
+  # Génère un slug depuis le titre du changeset
+  @spec generate_slug_from_title(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp generate_slug_from_title(changeset) do
+    case get_change(changeset, :title) do
+      nil -> changeset
+      title -> create_slug_from_title(changeset, title)
+    end
+  end
+
+  # Crée un slug depuis un titre, avec gestion des erreurs
+  @spec create_slug_from_title(Ecto.Changeset.t(), String.t()) :: Ecto.Changeset.t()
+  defp create_slug_from_title(changeset, title) do
+    case Slug.new(title) do
+      {:ok, slug} ->
+        put_change(changeset, :slug, to_string(slug))
+
+      {:error, :too_long} ->
+        handle_slug_too_long(changeset, title)
+
+      {:error, _} ->
+        add_error(changeset, :title, "ne peut pas être converti en slug valide")
+    end
+  end
+
+  # Gère le cas où le titre est trop long pour un slug
+  @spec handle_slug_too_long(Ecto.Changeset.t(), String.t()) :: Ecto.Changeset.t()
+  defp handle_slug_too_long(changeset, title) do
+    truncated = String.slice(title, 0, 100)
+
+    case Slug.new(truncated) do
+      {:ok, slug} ->
+        put_change(changeset, :slug, to_string(slug))
+
+      {:error, _} ->
+        add_error(changeset, :title, "ne peut pas être converti en slug valide")
+    end
+  end
+
+  # Valide qu'une date n'est pas dans le futur
+  @spec validate_date_not_future(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
+  defp validate_date_not_future(changeset, field) do
+    validate_change(changeset, field, fn ^field, date ->
+      if Date.compare(date, Date.utc_today()) == :gt do
+        [{field, "ne peut pas être dans le futur"}]
+      else
+        []
+      end
+    end)
+  end
+
+  # Valide que la date de fin est après la date de début
+  @spec validate_date_range(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp validate_date_range(changeset) do
+    date_debut = get_field(changeset, :date_prise_vue)
+    date_fin = get_field(changeset, :date_fin_prise_vue)
+
+    if date_debut && date_fin && Date.compare(date_fin, date_debut) == :lt do
+      add_error(changeset, :date_fin_prise_vue, "doit être après ou égale à la date de début")
+    else
+      changeset
+    end
+  end
+end

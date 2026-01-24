@@ -8,67 +8,45 @@
       <.photography_list_element
         chapter="reenactment"
         chapter_string={format_chapter_title("reenactment")}
-        image_source_string={
-          gettext(
-            "Thibault San Photography for AMVCC Seigneurie de Coucy - Re-enactment photography used as background."
-          )
-        }
+        image_source_string={gettext("photography.alt.reenactment")}
       />
       <.photography_list_element
         chapter="amvcc"
         chapter_string={format_chapter_title("amvcc")}
-        image_source_string={
-          gettext(
-            "Thibault San Photography for AMVCC Chantier with REMPART - Assiociation photography used as background."
-          )
-        }
+        image_source_string={gettext("photography.alt.amvcc")}
       />
       <.photography_list_element
         chapter="landscape"
         chapter_string={format_chapter_title("landscape")}
-        image_source_string={
-          gettext("Thibault San Photography - Landscape photography used as background.")
-        }
+        image_source_string={gettext("photography.alt.landscape")}
       />
       <.photography_list_element
         chapter="street"
         chapter_string={format_chapter_title("street")}
-        image_source_string={
-          gettext("Thibault San Photography - Street photography used as background")
-        }
+        image_source_string={gettext("photography.alt.street")}
       />
       <.photography_list_element
         class="pl-8"
         chapter="china"
         chapter_string={format_chapter_title("china")}
-        image_source_string={
-          gettext("Thibault San Photography - Artistic photography in China used as background")
-        }
+        image_source_string={gettext("photography.alt.china")}
       />
       <.photography_list_element
         class="pl-8"
         chapter="japan"
         chapter_string={format_chapter_title("japan")}
-        image_source_string={
-          gettext("Thibault San Photography - Artistic photography in Japan used as background")
-        }
+        image_source_string={gettext("photography.alt.japan")}
       />
       <.photography_list_element
         class="pl-8"
         chapter="taiwan"
         chapter_string={format_chapter_title("taiwan")}
-        image_source_string={
-          gettext("Thibault San Photography - Artistic photography in Taiwan used as background")
-        }
+        image_source_string={gettext("photography.alt.taiwan")}
       />
       <.photography_list_element
         chapter="music"
         chapter_string={format_chapter_title("music")}
-        image_source_string={
-          gettext(
-            "Thibault San Photography for L'Imperatrice @ Minuit avant la Nuit Amiens 2024 - Music photography used as background"
-          )
-        }
+        image_source_string={gettext("photography.alt.music")}
       />
       <%!-- <.photography_list_element
         chapter="events"
@@ -80,34 +58,26 @@
       <.photography_list_element
         chapter="couples"
         chapter_string={format_chapter_title("couples")}
-        image_source_string={
-          gettext("Thibault San Photography - Couple photography used as background")
-        }
+        image_source_string={gettext("photography.alt.couples")}
       />
       <.photography_list_element
         chapter="motherhood"
         chapter_string={format_chapter_title("motherhood")}
-        image_source_string={
-          gettext("Thibault San Photography - Motherhood photography used as background")
-        }
+        image_source_string={gettext("photography.alt.motherhood")}
       />
       <.photography_list_element
         chapter="wedding"
         chapter_string={format_chapter_title("wedding")}
-        image_source_string={
-          gettext("Thibault San Photography - Wedding photography used as background")
-        }
+        image_source_string={gettext("photography.alt.wedding")}
       />
       <.photography_list_element
         class="pt-8"
         chapter="timeline"
         open_modal={false}
         image_source="/images/photography/gallery/2024-07-26_amvcc.webp"
-        image_source_string={
-          gettext("Thibault San Photography - Event photography used as background")
-        }
+        image_source_string={gettext("photography.alt.timeline")}
       >
-        <a href={~p"/timeline"}>{gettext("Gallery")}</a>
+        <a href={~p"/timeline"}>{gettext("photography.gallery")}</a>
       </.photography_list_element>
     </.photography_list>
   </nav>
@@ -196,9 +166,9 @@
         "mask-cover aspect-auto object-cover"
       ]}
       src={chapter_image(@modal_chapter)}
-      alt={gettext("Thibault San Photography")}
-      title={gettext("Thibault San Photography")}
+      alt={gettext("photography.brand")}
+      title={gettext("photography.brand")}
     />
-    {render_modal_content(assigns)}
+    <.chapter_modal modal_chapter={@modal_chapter} language={@language} />
   </article>
 </div>

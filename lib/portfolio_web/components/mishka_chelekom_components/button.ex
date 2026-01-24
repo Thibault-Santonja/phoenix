@@ -39,6 +39,29 @@ defmodule PortfolioWeb.Components.Button do
     "bottom_right_indicator"
   ]
 
+  # Defined as atoms to avoid String.to_atom at runtime (security: atom table exhaustion)
+  @indicator_positions_atoms [
+    :indicator,
+    :right_indicator,
+    :left_indicator,
+    :top_left_indicator,
+    :top_center_indicator,
+    :top_right_indicator,
+    :middle_left_indicator,
+    :middle_right_indicator,
+    :bottom_left_indicator,
+    :bottom_center_indicator,
+    :bottom_right_indicator
+  ]
+
+  @drop_rest_atoms [
+    :pinging,
+    :circle,
+    :right_icon,
+    :left_icon
+    | @indicator_positions_atoms
+  ]
+
   @doc """
   The `button_group` component is used to group multiple buttons together with customizable
   attributes like `variant`, `color`, and `variation`.
@@ -2009,14 +2032,12 @@ defmodule PortfolioWeb.Components.Button do
   end
 
   defp drop_rest(rest) do
-    all_rest =
-      (["pinging", "circle", "right_icon", "left_icon"] ++ @indicator_positions)
-      |> Enum.map(&if(is_binary(&1), do: String.to_atom(&1), else: &1))
-
-    Map.drop(rest, all_rest)
+    # Use pre-defined atoms to avoid String.to_atom at runtime
+    Map.drop(rest, @drop_rest_atoms)
   end
 
   defp indicators?(rest) do
-    Enum.any?(@indicator_positions, &Map.get(rest, String.to_atom(&1)))
+    # Use pre-defined atoms to avoid String.to_atom at runtime
+    Enum.any?(@indicator_positions_atoms, &Map.get(rest, &1))
   end
 end

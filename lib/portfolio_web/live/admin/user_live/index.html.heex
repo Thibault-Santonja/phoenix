@@ -1,0 +1,352 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- En-tête avec bouton retour -->
+  <div class="flex items-start justify-between mb-4">
+    <.back_to_dashboard />
+    <.admin_logout_button current_user={@current_user} />
+  </div>
+
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">
+      {gettext("admin.users.title")}
+    </h1>
+    <p class="mt-2 text-gray-600">
+      {gettext("admin.users.subtitle", count: length(@users))}
+    </p>
+  </div>
+  
+<!-- Liste des utilisateurs -->
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            {gettext("admin.users.table.user")}
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            {gettext("admin.users.table.role")}
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            {gettext("admin.users.table.created_on")}
+          </th>
+          <th
+            scope="col"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            {gettext("admin.users.table.last_activity")}
+          </th>
+          <th scope="col" class="relative px-6 py-3">
+            <span class="sr-only">{gettext("admin.users.table.actions")}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <%= for user <- @users do %>
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-10 w-10">
+                  <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span class="text-blue-600 font-semibold text-sm">
+                      {String.first(user.email) |> String.upcase()}
+                    </span>
+                  </div>
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-gray-900">
+                    {user.email}
+                  </div>
+                  <%= if user.name do %>
+                    <div class="text-sm text-gray-500">
+                      {user.name}
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class={[
+                "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
+                if user.role == :admin do
+                  "bg-purple-100 text-purple-800"
+                else
+                  "bg-gray-100 text-gray-800"
+                end
+              ]}>
+                {user.role |> Atom.to_string() |> String.capitalize()}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {Calendar.strftime(user.inserted_at, "%d/%m/%Y")}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {Calendar.strftime(user.updated_at, "%d/%m/%Y at %H:%M")}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <%= if user.id == @current_user.id do %>
+                <span class="text-gray-400 italic">{gettext("admin.users.table.you")}</span>
+              <% else %>
+                <div class="flex items-center justify-end gap-2">
+                  <button
+                    phx-click="open_edit_modal"
+                    phx-value-user-id={user.id}
+                    class="text-indigo-600 hover:text-indigo-900"
+                    title={gettext("admin.users.table.edit")}
+                  >
+                    <.icon name="hero-pencil" class="w-5 h-5" />
+                  </button>
+                  <button
+                    phx-click="confirm_delete"
+                    phx-value-user-id={user.id}
+                    class="text-red-600 hover:text-red-900"
+                    title={gettext("admin.users.table.delete")}
+                  >
+                    <.icon name="hero-trash" class="w-5 h-5" />
+                  </button>
+                </div>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  
+<!-- Modale d'édition -->
+  <%= if @edit_user do %>
+    <div class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div
+          class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          phx-click="close_edit_modal"
+        >
+        </div>
+
+        <div
+          class="relative bg-white rounded-lg shadow-xl max-w-lg w-full p-6"
+          style="pointer-events: auto;"
+        >
+          <h3 class="text-lg font-medium text-gray-900 mb-4">
+            {gettext("admin.users.edit.title")}
+          </h3>
+
+          <form phx-submit="save_user">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">
+                  {gettext("admin.users.edit.email")}
+                </label>
+                <p class="mt-1 text-sm text-gray-900">{@edit_user.email}</p>
+              </div>
+
+              <div>
+                <label for="user-name" class="block text-sm font-medium text-gray-700">
+                  {gettext("admin.users.edit.name")}
+                </label>
+                <input
+                  type="text"
+                  id="user-name"
+                  name="user[name]"
+                  value={@edit_user.name}
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+
+              <div>
+                <label for="user-role" class="block text-sm font-medium text-gray-700">
+                  {gettext("admin.users.edit.role_label")}
+                </label>
+                <select
+                  id="user-role"
+                  name="user[role]"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="user" selected={@edit_user.role == :user}>
+                    {gettext("admin.users.edit.role_user")}
+                  </option>
+                  <option value="admin" selected={@edit_user.role == :admin}>
+                    {gettext("admin.users.edit.role_admin")}
+                  </option>
+                </select>
+              </div>
+
+              <div class="pt-4 border-t space-y-3">
+                <button
+                  type="button"
+                  phx-click="send_magic_link"
+                  phx-value-user-id={@edit_user.id}
+                  class="w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 border border-blue-300 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <.icon name="hero-envelope" class="w-4 h-4 mr-2" /> Envoyer un lien de connexion
+                </button>
+
+                <button
+                  type="button"
+                  phx-click="revoke_sessions"
+                  phx-value-user-id={@edit_user.id}
+                  class="w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-100 border border-red-300 rounded-md hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                  <.icon name="hero-no-symbol" class="w-4 h-4 mr-2" />
+                  {gettext("admin.users.edit.revoke_sessions")}
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                phx-click="close_edit_modal"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                {gettext("admin.users.edit.cancel")}
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700"
+              >
+                {gettext("admin.users.edit.save")}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+<!-- Modale de confirmation de suppression -->
+  <%= if @delete_user_id do %>
+    <% delete_user = Enum.find(@users, &(&1.id == @delete_user_id)) %>
+    <div class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+        <div class="relative bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
+          <div class="sm:flex sm:items-start">
+            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+              <.icon name="hero-exclamation-triangle" class="h-6 w-6 text-red-600" />
+            </div>
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">
+                {gettext("admin.users.delete.title")}
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  {gettext(
+                    "admin.users.delete.confirm",
+                    email: delete_user.email
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+            <button
+              type="button"
+              phx-click="delete_user"
+              phx-value-user-id={@delete_user_id}
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              {gettext("admin.users.delete.delete_button")}
+            </button>
+            <button
+              type="button"
+              phx-click="cancel_delete"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+            >
+              {gettext("admin.users.delete.cancel")}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+<!-- Message si aucun utilisateur -->
+  <%= if Enum.empty?(@users) do %>
+    <div class="text-center py-12">
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+        />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">{gettext("admin.users.empty.title")}</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        {gettext("admin.users.empty.message")}
+      </p>
+    </div>
+  <% end %>
+  
+<!-- Statistiques en bas -->
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <.link
+      patch={~p"/admin/users"}
+      class={[
+        "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
+        if @filter == nil do
+          "border-l-4 border-l-blue-500"
+        else
+          "hover:shadow-lg hover:border-blue-300"
+        end
+      ]}
+    >
+      <div class="text-sm font-medium text-gray-600">{gettext("admin.users.stats.total")}</div>
+      <div class="mt-1 text-2xl font-bold text-gray-900">
+        {@user_stats.total}
+      </div>
+    </.link>
+
+    <.link
+      patch={if @filter == "admin", do: ~p"/admin/users", else: ~p"/admin/users?filter=admin"}
+      class={[
+        "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
+        if @filter == "admin" do
+          "border-l-4 border-l-purple-500"
+        else
+          "hover:shadow-lg hover:border-purple-300"
+        end
+      ]}
+    >
+      <div class="text-sm font-medium text-gray-600">
+        {gettext("admin.users.stats.administrators")}
+      </div>
+      <div class="mt-1 text-2xl font-bold text-purple-600">
+        {@user_stats.admins}
+      </div>
+    </.link>
+
+    <.link
+      patch={if @filter == "user", do: ~p"/admin/users", else: ~p"/admin/users?filter=user"}
+      class={[
+        "bg-white rounded-lg shadow p-4 border border-gray-200 transition-all cursor-pointer block",
+        if @filter == "user" do
+          "border-l-4 border-l-gray-500"
+        else
+          "hover:shadow-lg hover:border-gray-300"
+        end
+      ]}
+    >
+      <div class="text-sm font-medium text-gray-600">
+        {gettext("admin.users.stats.regular_users")}
+      </div>
+      <div class="mt-1 text-2xl font-bold text-gray-600">
+        {@user_stats.regular_users}
+      </div>
+    </.link>
+  </div>
+</div>

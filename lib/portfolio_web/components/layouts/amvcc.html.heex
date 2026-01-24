@@ -17,6 +17,12 @@
     <meta property="og:locale:alternate" content="fr_BE" />
     <meta property="og:locale:alternate" content="fr_CH" />
     <meta property="og:locale:alternate" content="en_US" />
+    <!-- Hreflang pour ciblage France (Picardie), Belgique, Suisse -->
+    <link rel="alternate" hreflang="fr" href="https://amvcc.thibaultsan.com/" />
+    <link rel="alternate" hreflang="fr-FR" href="https://amvcc.thibaultsan.com/" />
+    <link rel="alternate" hreflang="fr-BE" href="https://amvcc.thibaultsan.com/" />
+    <link rel="alternate" hreflang="fr-CH" href="https://amvcc.thibaultsan.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://amvcc.thibaultsan.com/" />
     <!-- Schema.org pour le ciblage local -->
     <meta name="geo.region" content="FR" />
     <meta name="geo.region" content="BE" />
@@ -29,27 +35,10 @@
     <.live_title default="Reconstitution historique" suffix=" · Seigneurie de Coucy">
       {assigns[:page_title]}
     </.live_title>
-    <title>{gettext("Thibault Santonja – La Seigneurie de Coucy")}</title>
-    <meta
-      name="description"
-      content={
-        gettext(
-          "Thibault Santonja for Seigneurie de Coucy (AMVCC) – 14th-century reenactments, events and living history, with passion, rigor and humanity."
-        )
-      }
-    />
-    <meta
-      property="og:title"
-      content={gettext("Seigneurie de Coucy — 14th-Century Living History")}
-    />
-    <meta
-      property="og:description"
-      content={
-        gettext(
-          "Thibault Santonja for Seigneurie de Coucy – Discover the AMVCC’s reenactments, events and publications, bringing the 14th century to life with passion and authenticity."
-        )
-      }
-    />
+    <title>{gettext("layouts.amvcc.title")}</title>
+    <meta name="description" content={gettext("layouts.amvcc.description")} />
+    <meta property="og:title" content={gettext("layouts.amvcc.og_title")} />
+    <meta property="og:description" content={gettext("layouts.amvcc.og_description")} />
     <meta property="og:type" content="website" />
     <meta
       property="og:image"
@@ -57,18 +46,8 @@
     />
     <meta property="og:url" content="https://amvcc.thibaultsan.com/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content={gettext("Seigneurie de Coucy — 14th-Century Living History")}
-    />
-    <meta
-      name="twitter:description"
-      content={
-        gettext(
-          "Bringing the 14th century to life — The AMVCC's Seigneurie de Coucy shares the past through reenactments, events and research."
-        )
-      }
-    />
+    <meta name="twitter:title" content={gettext("layouts.amvcc.twitter_title")} />
+    <meta name="twitter:description" content={gettext("layouts.amvcc.twitter_description")} />
     <meta
       name="twitter:image"
       content="https://thibaultsan.com/images/photography/reenactment.webp"
@@ -78,7 +57,13 @@
     <link rel="icon" type="image/x-icon" href="/images/amvcc/seigneurie.webp" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
 
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    <script
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={~p"/assets/app.js"}
+      nonce={assigns[:csp_nonce]}
+    >
     </script>
   </head>
 
@@ -96,30 +81,32 @@
         "text-sm sm:text-base"
       ]}>
         <h1 class="flex items-center font-black md:text-lg">
-          <a href={~p"/"} class="hover:text-amvcc-primary">{gettext("La Seigneurie de Coucy")}</a>
+          <a href={~p"/"} class="hover:text-amvcc-primary">
+            {gettext("layouts.amvcc.header.title")}
+          </a>
         </h1>
         <nav class="flex items-center">
           <ul class="space-around flex flex-row items-stretch space-x-8">
             <li class="flex items-center">
               <a href={~p"/#about"} class="hover:text-amvcc-primary">
-                {gettext("About")}
+                {gettext("layouts.amvcc.nav.about")}
               </a>
             </li>
             <li class="flex items-center">
               <a href={~p"/#events"} class="hover:text-amvcc-primary">
-                {gettext("Events")}
+                {gettext("layouts.amvcc.nav.events")}
               </a>
             </li>
             <li class="flex items-center">
               <a href={~p"/#gallery"} class="hover:text-amvcc-primary">
-                {gettext("Gallery")}
+                {gettext("layouts.amvcc.nav.gallery")}
               </a>
             </li>
             <li class="flex items-center">
               <.dropdown clickable={false} smart_position={true} id="unique_id">
                 <:trigger>
                   <a href={~p"/blog"} class="flex items-center">
-                    {gettext("Blog")}
+                    {gettext("layouts.amvcc.nav.blog")}
                     <.icon
                       name="hero-chevron-double-down-solid"
                       class="ml-1 mt-1 h-3 w-3 hidden sm:block"
@@ -131,12 +118,12 @@
                   <.list size="medium">
                     <:item>
                       <a href={~p"/blog/vetements"} class="hover:text-amvcc-primary">
-                        {gettext("Clothes")}
+                        {gettext("layouts.amvcc.nav.clothes")}
                       </a>
                     </:item>
                     <:item>
                       <a href={~p"/blog/chaussures"} class="hover:text-amvcc-primary">
-                        {gettext("Shoes")}
+                        {gettext("layouts.amvcc.nav.shoes")}
                       </a>
                     </:item>
                   </.list>
@@ -162,26 +149,24 @@
           <div class="flex items-center gap-4 mb-6">
             <img
               src="https://www.amvcc.com/wp-content/uploads/2025/03/cropped-2024-05-03-05_Seigneuriales_8604_102833-1-scaled-1.jpg"
-              alt={gettext("Thibault San Photography for La Seigneurie de Coucy")}
-              title={gettext("Thibault San Photography for La Seigneurie de Coucy")}
+              alt={gettext("layouts.amvcc.footer.logo_alt")}
+              title={gettext("layouts.amvcc.footer.logo_alt")}
               class="w-16 h-16 object-cover rounded-lg"
               loading="lazy"
             />
             <div>
               <h3 class="text-2xl font-bold text-white">Seigneurie de Coucy</h3>
-              <p class="text-gray-400 text-sm">{gettext("Let's bring History to life!")}</p>
+              <p class="text-gray-400 text-sm">{gettext("layouts.amvcc.footer.tagline")}</p>
             </div>
           </div>
 
           <p class="mb-6">
-            {gettext(
-              "Dedicated to reconstructing the medieval history of the XIVᵉ, through rigorous research and mediation activities to the widest possible audience."
-            )}
+            {gettext("layouts.amvcc.footer.description")}
           </p>
 
           <div class="flex space-x-4 justify-evenly">
             <a href="tel:+33323524455" class="text-base hover:text-lg duration-300">
-              {gettext("Phone number")}
+              {gettext("layouts.amvcc.footer.phone")}
             </a>
 
             <a
@@ -189,14 +174,14 @@
               class="text-base hover:text-lg duration-300"
               target="_blank"
             >
-              {gettext("Official website")}
+              {gettext("layouts.amvcc.footer.website")}
             </a>
           </div>
         </article>
 
         <article class="mx-auto">
           <h4 class="text-lg font-semibold text-white mb-6">
-            {gettext("Contact information")}
+            {gettext("layouts.amvcc.footer.contact_title")}
           </h4>
 
           <nav class="space-y-4">
@@ -207,7 +192,7 @@
                 target="_blank"
               >
                 <p class="text-sm">AMVCC</p>
-                <p class="text-sm">7-9 rue du Pot d’Etain</p>
+                <p class="text-sm">7-9 rue du Pot d'Etain</p>
                 <p class="text-sm">02380 Coucy-le-Château</p>
               </a>
             </div>

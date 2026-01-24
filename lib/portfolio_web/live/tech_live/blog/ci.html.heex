@@ -1,50 +1,64 @@
+<%!-- Article Schema.org JSON-LD for SEO --%>
+<script :if={@article_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@article_json) %>
+</script>
+
+<%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
+<script :if={@breadcrumb_json} type="application/ld+json">
+  <%= Phoenix.HTML.raw(@breadcrumb_json) %>
+</script>
+
 <section class="border-tech-base-300 bg-tech-base-100 mx-auto rounded-lg border px-6 py-12 shadow-lg md:px-[3rem] md:m-[5rem]">
   <h1 class="text-tech-primary text-balance mb-16 text-center text-3xl font-thin uppercase">
-    {gettext("Continuous Integration for a Phoenix LiveView Site (Without Postgres)")}
+    {gettext("tech.blog.ci.continuous_integration_for_a_phoenix_liveview")}
   </h1>
 
   <.table_content color="primary" padding="extra_small" rounded="medium" animated>
     <.content_item icon="hero-hashtag">
-      <.link href="#1-triggers">1. {gettext("Triggers")}</.link>
+      <.link href="#1-triggers">1. {gettext("tech.blog.ci.triggers")}</.link>
     </.content_item>
 
-    <.content_item title={"2. #{gettext("What is Mise?")}"}>
+    <.content_item title={"2. #{gettext("tech.blog.ci.what_is_mise")}"}>
       <.content_wrapper>
         <.content_item icon="hero-hashtag">
-          <.link href="#2-1-defined-tool-versions">2.1 {gettext("Defined Tool Versions")}</.link>
+          <.link href="#2-1-defined-tool-versions">
+            2.1 {gettext("tech.blog.ci.defined_tool_versions")}
+          </.link>
         </.content_item>
         <.content_item icon="hero-hashtag">
-          <.link href="#2-2-reusable-tasks">2.2 {gettext("Reusable Tasks")}</.link>
+          <.link href="#2-2-reusable-tasks">2.2 {gettext("tech.blog.ci.reusable_tasks")}</.link>
         </.content_item>
         <.content_item icon="hero-hashtag">
-          <.link href="#2-3-mise-in-ci">2.3 {gettext("Mise in CI")}</.link>
+          <.link href="#2-3-mise-in-ci">2.3 {gettext("tech.blog.ci.mise_in_ci")}</.link>
         </.content_item>
       </.content_wrapper>
     </.content_item>
 
-    <.content_item title={"3. #{gettext("Job Overview")}"}>
+    <.content_item title={"3. #{gettext("tech.blog.ci.job_overview")}"}>
       <.content_wrapper>
         <.content_item icon="hero-hashtag">
-          <.link href="#3-1-tools">3.1 {gettext("Tools")}</.link>
+          <.link href="#3-1-tools">3.1 {gettext("tech.blog.ci.tools")}</.link>
         </.content_item>
         <.content_item icon="hero-hashtag">
-          <.link href="#3-2-lint">3.2 {gettext("Lint")}</.link>
+          <.link href="#3-2-lint">3.2 {gettext("tech.blog.ci.lint")}</.link>
         </.content_item>
         <.content_item icon="hero-hashtag">
-          <.link href="#3-3-test">3.3 {gettext("Test")}</.link>
+          <.link href="#3-3-test">3.3 {gettext("tech.blog.ci.test")}</.link>
         </.content_item>
         <.content_item icon="hero-hashtag">
-          <.link href="#3-4-build">3.4 {gettext("Build")}</.link>
+          <.link href="#3-4-build">3.4 {gettext("tech.blog.ci.build")}</.link>
         </.content_item>
       </.content_wrapper>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#4-docker-image-release">4. {gettext("Docker Image Release")}</.link>
+      <.link href="#4-docker-image-release">
+        4. {gettext("tech.blog.ci.docker_image_release")}
+      </.link>
     </.content_item>
 
     <.content_item icon="hero-hashtag">
-      <.link href="#5-conclusion">5. {gettext("Conclusion")}</.link>
+      <.link href="#5-conclusion">5. {gettext("tech.blog.kamal.conclusion")}</.link>
     </.content_item>
   </.table_content>
 
@@ -61,7 +75,7 @@
   </p>
 
   <p class="mb-6">
-    {gettext("We use")}
+    {gettext("tech.blog.ci.we_use")}
     <a
       href="https://github.com/features/actions"
       target="_blank"
@@ -75,7 +89,7 @@
   </p>
 
   <h2 id="1-triggers" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    1. {gettext("Triggers")}
+    1. {gettext("tech.blog.ci.triggers")}
   </h2>
 
   <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
@@ -89,24 +103,24 @@
   </pre>
 
   <p class=" mb-6">
-    {gettext("The CI pipeline runs automatically:")}
+    {gettext("tech.blog.ci.the_ci_pipeline_runs_automatically")}
     <ul class="mt-2 mb-4 list-disc pl-6 ">
       <li>
-        {gettext("On any push to the")}
+        {gettext("tech.blog.ci.on_any_push_to_the")}
         <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">main</code> {gettext(
           "branch"
         )}
       </li>
-      <li>{gettext("When a new tag is pushed (used for Docker image release)")}</li>
+      <li>{gettext("tech.blog.ci.when_a_new_tag_is_pushed_used_for_docker_image")}</li>
       <li>
-        {gettext("On pull requests targeting")}
+        {gettext("tech.blog.ci.on_pull_requests_targeting")}
         <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">main</code>
       </li>
     </ul>
   </p>
 
   <h2 id="2-what-is-mise" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    2. {gettext("What Is Mise?")}
+    2. {gettext("tech.blog.ci.what_is_mise")}
   </h2>
 
   <p class=" mb-6">
@@ -122,11 +136,11 @@
     {gettext(
       "In both local development and CI, this ensures everyone — and every job — uses the same versions."
     )}
-    {gettext("No more surprises between your machine and GitHub Actions!")}
+    {gettext("tech.blog.ci.no_more_surprises_between_your_machine_and_github")}
   </p>
 
   <h3 id="2-1-defined-tool-versions" class="text-tech-primary mb-2 text-xl font-medium">
-    2.1 {gettext("Defined Tool Versions")}
+    2.1 {gettext("tech.blog.ci.defined_tool_versions")}
   </h3>
 
   <pre class="bg-tech-neutral text-tech-neutral-content mb-4 overflow-auto rounded-lg p-4 text-sm">
@@ -138,7 +152,7 @@
   </pre>
 
   <p class="">
-    {gettext("This setup guarantees consistent runtime environments:")}
+    {gettext("tech.blog.ci.this_setup_guarantees_consistent_runtime")}
     <ul class="mt-2 mb-6 list-disc pl-6">
       <li>
         <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">bun</code>
@@ -158,14 +172,14 @@
   </p>
 
   <h3 id="2-2-reusable-tasks" class="text-tech-primary mb-2 text-xl font-medium">
-    2.2 {gettext("Reusable Tasks")}
+    2.2 {gettext("tech.blog.ci.reusable_tasks")}
   </h3>
 
   <p class=" mb-6">
     {gettext(
       "Mise also lets you define CLI tasks, so you can standardize common workflows like setup, cleanups, and deployment helpers."
     )}
-    {gettext("These tasks are great for onboarding and automation.")}
+    {gettext("tech.blog.ci.these_tasks_are_great_for_onboarding_and")}
   </p>
 
   <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
@@ -187,11 +201,11 @@
   </pre>
 
   <h3 id="2-3-mise-in-ci" class="text-tech-primary mb-2 text-xl font-medium">
-    2.3 {gettext("Mise in CI")}
+    2.3 {gettext("tech.blog.ci.mise_in_ci")}
   </h3>
 
   <p class=" mb-6">
-    {gettext("In the CI, we use the official")}
+    {gettext("tech.blog.ci.in_the_ci_we_use_the_official")}
     <a
       href="https://github.com/jdx/mise-action"
       class="text-tech-accent hover:underline"
@@ -199,7 +213,7 @@
     >
       `jdx/mise-action`
     </a>
-    {gettext("to install and cache these tools quickly.")}
+    {gettext("tech.blog.ci.to_install_and_cache_these_tools_quickly")}
     {gettext(
       "This speeds up builds, avoids mismatched versions, and keeps CI mirrors of local dev environments."
     )}
@@ -216,18 +230,18 @@
   </pre>
 
   <h2 id="3-job-overview" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    3. {gettext("Job Overview")}
+    3. {gettext("tech.blog.ci.job_overview")}
   </h2>
 
   <p class=" mb-6">
-    {gettext("The workflow defines four jobs. Let's dig into these !")}
+    {gettext("tech.blog.ci.the_workflow_defines_four_jobs_lets_dig_into_these")}
   </p>
 
   <h3 id="3-1-tools" class="text-tech-primary mb-2 text-xl font-semibold">
-    3.1 {gettext("Tools")}
+    3.1 {gettext("tech.blog.ci.tools")}
   </h3>
   <p>
-    {gettext("This job initializes the CI environment by installing all required tools using")}
+    {gettext("tech.blog.ci.this_job_initializes_the_ci_environment_by")}
     <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">mise</code>. {gettext(
       "It ensures consistency across development and CI by aligning the tool versions defined in"
     )}
@@ -246,20 +260,20 @@
     </pre>
 
   <h3 id="3-2-lint" class="text-tech-primary mb-2 text-xl font-semibold">
-    3.2 {gettext("Lint")}
+    3.2 {gettext("tech.blog.ci.lint")}
   </h3>
   <p>
     {gettext(
       "The LINT job enforces code quality and security rules. It checks for formatting, unused dependencies, security vulnerabilities, and stylistic issues."
     )}
-    {gettext("Tools like")}
+    {gettext("tech.blog.ci.tools_like")}
     <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">credo</code>, <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">sobelow</code>, <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">hex.audit</code>, {gettext(
       "and"
     )}
     <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">
       mix deps.unlock --check-unused
     </code>
-    {gettext("are used to ensure the codebase stays clean and secure.")}
+    {gettext("tech.blog.ci.are_used_to_ensure_the_codebase_stays_clean_and")}
   </p>
   <pre class="bg-tech-neutral text-tech-neutral-content mb-6 overflow-auto rounded-lg p-4 text-sm">
   <code>{~c"""
@@ -304,10 +318,10 @@
     </pre>
 
   <h3 id="3-3-test" class="text-tech-primary mb-2 text-xl font-semibold">
-    3.3 {gettext("Test")}
+    3.3 {gettext("tech.blog.ci.test")}
   </h3>
   <p>
-    {gettext("This job runs the test suite with")}
+    {gettext("tech.blog.ci.this_job_runs_the_test_suite_with")}
     <code class="bg-tech-base-300 text-tech-base-content rounded px-1 text-sm">mix test</code>. {gettext(
       "It ensures the application behaves as expected."
     )}
@@ -346,7 +360,7 @@
     </pre>
 
   <h3 id="3-4-build" class="text-tech-primary mb-2 text-xl font-semibold">
-    3.4 {gettext("Build")}
+    3.4 {gettext("tech.blog.ci.build")}
   </h3>
   <p>
     {gettext(
@@ -425,19 +439,19 @@
     </pre>
 
   <h2 id="4-docker-image-release" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    4. {gettext("Docker Image Release")}
+    4. {gettext("tech.blog.ci.docker_image_release")}
   </h2>
 
   <p class=" mb-6">
-    {gettext("On each tagged commit, the workflow:")}
+    {gettext("tech.blog.ci.on_each_tagged_commit_the_workflow")}
   </p>
 
   <ul class="mb-6 list-disc pl-6 ">
-    <li>{gettext("Builds the Phoenix release with static assets")}</li>
-    <li>{gettext("Generates Docker metadata and tags")}</li>
-    <li>{gettext("Logs into Docker Hub using secrets")}</li>
+    <li>{gettext("tech.blog.ci.builds_the_phoenix_release_with_static_assets")}</li>
+    <li>{gettext("tech.blog.ci.generates_docker_metadata_and_tags")}</li>
+    <li>{gettext("tech.blog.ci.logs_into_docker_hub_using_secrets")}</li>
     <li>
-      {gettext("Builds and pushes the image using")}
+      {gettext("tech.blog.ci.builds_and_pushes_the_image_using")}
       <a
         href="https://github.com/docker/build-push-action"
         class="text-tech-accent hover:underline"
@@ -449,7 +463,7 @@
   </ul>
 
   <h2 id="5-conclusion" class="text-tech-primary mt-10 mb-4 text-2xl font-semibold">
-    5. {gettext("Conclusion")}
+    5. {gettext("tech.blog.kamal.conclusion")}
   </h2>
 
   <p class=" mb-6">
@@ -459,6 +473,6 @@
     {gettext(
       "If you’re building a Phoenix LiveView site without a database, this is a good baseline."
     )}
-    {gettext("When you're ready to enable Postgres, the foundation is already there.")}
+    {gettext("tech.blog.ci.when_youre_ready_to_enable_postgres_the")}
   </p>
 </section>

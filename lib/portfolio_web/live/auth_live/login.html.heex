@@ -1,0 +1,113 @@
+<div class="flex min-h-screen items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+  <div class="w-full max-w-md space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+        Connexion Admin
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Entrez votre email pour recevoir un lien de connexion
+      </p>
+    </div>
+
+    <%= if @link_sent do %>
+      <div
+        id="magic-link-expiration"
+        phx-hook="MagicLinkExpiration"
+        data-expires-in={@magic_link_ttl || 900}
+        class="rounded-md bg-green-50 p-4"
+      >
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <div class="ml-3 flex-1">
+            <h3 class="text-sm font-medium text-green-800">Email envoyé !</h3>
+            <div class="mt-2 text-sm text-green-700">
+              <p>
+                Un lien de connexion a été envoyé. Le lien est valide pendant <span
+                  id="magic-link-countdown"
+                  class="font-semibold"
+                  phx-update="ignore"
+                ></span>.
+              </p>
+              <p class="mt-2">
+                Vérifiez votre boîte email et cliquez sur le lien pour vous connecter.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <%= if @retry_after do %>
+        <div
+          id="rate-limit-countdown"
+          phx-hook="RateLimitCountdown"
+          data-retry-after={@retry_after}
+          class="rounded-md bg-yellow-50 p-4 border border-yellow-200"
+        >
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg
+                class="h-5 w-5 text-yellow-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-yellow-800">Trop de tentatives</h3>
+              <div class="mt-2 text-sm text-yellow-700">
+                <p>
+                  Veuillez patienter
+                  <span id="countdown-display" class="font-semibold" phx-update="ignore"></span>
+                  avant de réessayer.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <.simple_form for={@form} phx-submit="request_link" phx-change="validate">
+        <.input
+          field={@form[:email]}
+          type="email"
+          label="Adresse email"
+          placeholder="admin@example.com"
+          autocomplete="email"
+          required
+        />
+
+        <:actions>
+          <.button
+            type="submit"
+            class="w-full phx-submit-loading:opacity-75"
+            phx-disable-with="Envoi..."
+            disabled={@retry_after != nil}
+          >
+            <span class="phx-submit-loading:hidden">Envoyer le lien de connexion</span>
+            <span class="hidden phx-submit-loading:inline">Envoi en cours...</span>
+          </.button>
+        </:actions>
+      </.simple_form>
+
+      <div class="text-center text-sm text-gray-600">
+        <p>
+          Vous recevrez un email avec un lien de connexion valide 15 minutes.
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

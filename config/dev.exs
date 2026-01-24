@@ -1,5 +1,17 @@
 import Config
 
+# Configure your database
+config :portfolio, Portfolio.Repo,
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  database: "portfolio_dev",
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10,
+  # Query timeout to prevent runaway queries (15s default, same as prod)
+  timeout: 15_000
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -15,7 +27,9 @@ config :portfolio, PortfolioWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "xLKX3H5UnLElWMVMqsGt+fA1WNwbdHXu7fErv8yCEnHSq37hXv7qVOXGTBb3OU1v",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:portfolio, ~w(--sourcemap=inline --watch)]},
+    esbuild:
+      {Esbuild, :install_and_run,
+       [:portfolio, ~w(--sourcemap=inline --watch --define:__DEV__=true)]},
     tailwind: {Tailwind, :install_and_run, [:portfolio, ~w(--watch)]}
   ]
 
@@ -55,8 +69,10 @@ config :portfolio, PortfolioWeb.Endpoint,
 # Enable dev routes for dashboard and mailbox
 config :portfolio, dev_routes: true
 
-# Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+# Include request_id in development logs for traceability
+config :logger, :console,
+  format: "[$level] $metadata$message\n",
+  metadata: [:request_id]
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
@@ -73,3 +89,12 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# Configure mailer for development (local adapter for testing)
+config :portfolio, Portfolio.Mailer, adapter: Swoosh.Adapters.Local
+
+# Configure base URL for magic links
+config :portfolio, :base_url, "http://localhost:4000"
+
+# Configure from email
+config :portfolio, :from_email, "noreply@portfolio.local"

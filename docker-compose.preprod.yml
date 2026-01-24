@@ -1,0 +1,122 @@
+# Docker Compose configuration for Pre-production Environment
+#
+# Usage:
+#   1. Copy .env.preprod.example to .env.preprod and fill in values
+#   2. docker-compose -f docker-compose.preprod.yml --env-file .env.preprod up
+#   3. docker-compose -f docker-compose.preprod.yml down
+#
+# This setup mirrors production architecture for testing:
+# - PostgreSQL database
+# - Portfolio application (Phoenix)
+# - Persistent volumes for data and uploads
+# - Health checks
+# - Resource limits
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: portfolio_preprod_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-portfolio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-portfolio_preprod}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432" # Expose on 5433 to avoid conflicts with local PostgreSQL
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-portfolio}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - portfolio_preprod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+
+  # Portfolio Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.preprod
+      args:
+        MIX_ENV: prod
+    container_name: portfolio_preprod_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database
+      DATABASE_URL: ecto://${POSTGRES_USER:-portfolio}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-portfolio_preprod}
+
+      # Application
+      PHX_HOST: ${PHX_HOST:-localhost}
+      PHX_SERVER: "true"
+      PORT: 4000
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?SECRET_KEY_BASE is required}
+
+      # Environment
+      MIX_ENV: prod
+      RELEASE_NODE: portfolio@127.0.0.1
+      RELEASE_COOKIE: ${RELEASE_COOKIE:?RELEASE_COOKIE is required}
+
+      # File Storage
+      FILE_STORAGE_BACKEND: LocalStorage
+      FILE_STORAGE_BASE_PATH: /app/priv/static/uploads
+
+      # Auth (for testing - use real values in actual preprod)
+      AUTH_SESSION_MAX_AGE_DAYS: 30
+      AUTH_MAGIC_LINK_TTL_MINUTES: 30
+      AUTH_RATE_LIMIT_MAX_REQUESTS: 5
+      AUTH_RATE_LIMIT_WINDOW_SECONDS: 300
+    volumes:
+      - uploads:/app/priv/static/uploads
+      - backups:/app/backups
+    ports:
+      - "4001:4000" # Expose on 4001 to avoid conflicts with local dev
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:4000/health",
+        ]
+      interval: 30s
+      timeout: 3s
+      start_period: 40s
+      retries: 3
+    networks:
+      - portfolio_preprod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+
+networks:
+  portfolio_preprod:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  uploads:
+    driver: local
+  backups:
+    driver: local

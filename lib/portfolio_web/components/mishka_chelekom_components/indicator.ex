@@ -17,6 +17,19 @@ defmodule PortfolioWeb.Components.Indicator do
 
   use Phoenix.Component
 
+  # Defined as atoms to avoid String.to_atom at runtime (security: atom table exhaustion)
+  @indicator_positions_atoms [
+    :top_left,
+    :top_center,
+    :top_right,
+    :middle_left,
+    :middle_right,
+    :bottom_left,
+    :bottom_center,
+    :bottom_right
+  ]
+
+  # String versions for attr include (Phoenix Component requirement)
   @indicator_positions [
     "top_left",
     "top_center",
@@ -245,10 +258,8 @@ defmodule PortfolioWeb.Components.Indicator do
   defp color_class(params) when is_binary(params), do: params
 
   defp drop_rest(rest) do
-    all_rest =
-      (["pinging"] ++ @indicator_positions)
-      |> Enum.map(&if(is_binary(&1), do: String.to_atom(&1), else: &1))
-
+    # Use pre-defined atoms to avoid String.to_atom at runtime
+    all_rest = [:pinging | @indicator_positions_atoms]
     Map.drop(rest, all_rest)
   end
 end

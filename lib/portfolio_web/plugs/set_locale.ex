@@ -16,14 +16,18 @@ defmodule PortfolioWeb.Plugs.SetLocale do
     locale = String.slice(locale, 0..1)
 
     if locale in @supported_locales do
-      Gettext.put_locale(PortfolioWeb.Gettext, locale)
+      _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
       put_session(conn, :locale, locale)
     else
-      conn
+      # Locale non supportée, utiliser la locale par défaut
+      _ = Gettext.put_locale(PortfolioWeb.Gettext, "fr")
+      put_session(conn, :locale, "fr")
     end
   end
 
   def call(conn, _) do
+    # Pas de cookie locale, utiliser la locale par défaut
+    _ = Gettext.put_locale(PortfolioWeb.Gettext, "fr")
     put_session(conn, :locale, "fr")
   end
 end

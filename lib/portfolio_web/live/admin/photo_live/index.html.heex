@@ -1,0 +1,190 @@
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Bouton retour et logout alignés -->
+  <div class="flex items-start justify-between mb-4">
+    <.back_to_dashboard />
+    <.admin_logout_button current_user={@current_user} />
+  </div>
+
+  <div class="sm:flex sm:items-center sm:justify-between mb-6">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-gray-900">{gettext("admin.photos.title")}</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        {gettext("admin.photos.subtitle", count: @total_photos)}
+      </p>
+    </div>
+  </div>
+  
+<!-- Filtres -->
+  <div class="mb-6 flex items-center gap-2">
+    <span class="text-sm font-medium text-gray-700">{gettext("admin.photos.filter_label")}</span>
+    <.link
+      patch={~p"/admin/photos"}
+      class={[
+        "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors",
+        if @album_filter == nil do
+          "bg-indigo-100 text-indigo-800"
+        else
+          "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        end
+      ]}
+    >
+      {gettext("admin.photos.filter_all")}
+    </.link>
+    <%= for album <- Enum.take(@albums, 10) do %>
+      <.link
+        patch={~p"/admin/photos?album=#{album.id}"}
+        class={[
+          "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors",
+          if @album_filter == album.id do
+            "bg-indigo-100 text-indigo-800"
+          else
+            "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          end
+        ]}
+      >
+        {album.title}
+      </.link>
+    <% end %>
+  </div>
+  
+<!-- Grille de photos -->
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div
+      id="photos-grid"
+      phx-update="stream"
+      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4"
+    >
+      <div
+        :for={{dom_id, photo} <- @streams.photos}
+        id={dom_id}
+        class="group relative aspect-square overflow-hidden rounded-lg bg-gray-100"
+      >
+        <img
+          src={photo.file_path}
+          alt={photo.title || gettext("admin.photos.photo_alt")}
+          class="h-full w-full object-cover group-hover:opacity-75 transition-opacity"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="absolute bottom-0 left-0 right-0 p-3">
+            <p class="text-white text-xs font-medium truncate">
+              {photo.title || photo.original_filename}
+            </p>
+            <p class="text-white/80 text-xs truncate">
+              {photo.album.title}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<!-- Message si aucune photo -->
+  <%= if @photos_empty? do %>
+    <div class="text-center py-12">
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+        />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">
+        {gettext("admin.photos.empty.title")}
+      </h3>
+      <p class="mt-1 text-sm text-gray-500">
+        {gettext("admin.photos.empty.message")}
+      </p>
+    </div>
+  <% end %>
+  
+<!-- Pagination -->
+  <%= if @total_pages > 1 do %>
+    <div class="mt-6 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-lg shadow">
+      <div class="flex flex-1 justify-between sm:hidden">
+        <%= if @page > 1 do %>
+          <.link
+            patch={~p"/admin/photos?#{build_params(@album_filter, @page - 1)}"}
+            class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            {gettext("admin.photos.pagination.previous")}
+          </.link>
+        <% end %>
+        <%= if @page < @total_pages do %>
+          <.link
+            patch={~p"/admin/photos?#{build_params(@album_filter, @page + 1)}"}
+            class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            {gettext("admin.photos.pagination.next")}
+          </.link>
+        <% end %>
+      </div>
+
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            {gettext("admin.photos.pagination.page")} <span class="font-medium">{@page}</span>
+            {gettext("admin.photos.pagination.of")}
+            <span class="font-medium">{@total_pages}</span>
+          </p>
+        </div>
+        <div>
+          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm">
+            <%= if @page > 1 do %>
+              <.link
+                patch={~p"/admin/photos?#{build_params(@album_filter, @page - 1)}"}
+                class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              >
+                <span class="sr-only">{gettext("admin.photos.pagination.previous")}</span>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fill-rule="evenodd"
+                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </.link>
+            <% end %>
+
+            <%= for page_num <- PaginationHelper.page_range(@page, @total_pages) do %>
+              <.link
+                patch={~p"/admin/photos?#{build_params(@album_filter, page_num)}"}
+                class={[
+                  "relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300",
+                  if page_num == @page do
+                    "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  else
+                    "text-gray-900 hover:bg-gray-50"
+                  end
+                ]}
+              >
+                {page_num}
+              </.link>
+            <% end %>
+
+            <%= if @page < @total_pages do %>
+              <.link
+                patch={~p"/admin/photos?#{build_params(@album_filter, @page + 1)}"}
+                class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              >
+                <span class="sr-only">{gettext("admin.photos.pagination.next")}</span>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </.link>
+            <% end %>
+          </nav>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

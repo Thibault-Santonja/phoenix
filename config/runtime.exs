@@ -7,6 +7,25 @@ import Config
 # any compile-time configuration in here, as it won't be applied.
 # The block below contains prod specific runtime configuration.
 
+# ## Auth Configuration
+#
+# Session expiration time in seconds (default: 2 hours, aligned with config.exs)
+# Can be overridden with SESSION_EXPIRATION_SECONDS env var
+session_expiration_seconds =
+  case System.get_env("SESSION_EXPIRATION_SECONDS") do
+    # 2 hours by default (aligned with config.exs :auth configuration)
+    nil ->
+      2 * 60 * 60
+
+    val ->
+      case Integer.parse(val) do
+        {int, ""} -> int
+        _ -> raise "Invalid SESSION_EXPIRATION_SECONDS: #{val}"
+      end
+  end
+
+config :portfolio, :auth, session_expiration_seconds: session_expiration_seconds
+
 # ## Using releases
 #
 # If you use `mix release`, you need to explicitly enable the server
@@ -33,8 +52,104 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  database_url =
+    System.get_env("DATABASE_URL") ||
+      raise """
+      environment variable DATABASE_URL is missing.
+      For example: ecto://USER:PASS@HOST/DATABASE
+      """
+
+  host =
+    System.get_env("PHX_HOST") ||
+      raise """
+      environment variable PHX_HOST is missing.
+      This is required in production for check_origin and LiveView connections.
+      For example: example.com
+      """
+
+  port =
+    case System.get_env("PORT") do
+      nil ->
+        4000
+
+      val ->
+        case Integer.parse(val) do
+          {int, ""} -> int
+          _ -> raise "Invalid PORT: #{val}. Must be a valid integer (e.g., 4000)"
+        end
+    end
+
+  # Database connection pool configuration
+  # POOL_SIZE: Number of connections in the pool (default: 10)
+  # QUEUE_TARGET: Target time for a connection to be checked out (ms, default: 50)
+  # QUEUE_INTERVAL: Interval for pool health checks (ms, default: 1000)
+  pool_size =
+    case System.get_env("POOL_SIZE") do
+      nil ->
+        10
+
+      val ->
+        case Integer.parse(val) do
+          {int, ""} -> int
+          _ -> raise "Invalid POOL_SIZE: #{val}. Must be a valid integer (e.g., 10)"
+        end
+    end
+
+  # IPv6 socket options if ECTO_IPV6 is set
+  socket_options = if System.get_env("ECTO_IPV6") == "true", do: [:inet6], else: []
+
+  # SSL configuration
+  # DATABASE_SSL: Enable SSL for database connections ("true" to enable)
+  # DATABASE_SSL_VERIFY: SSL verification mode ("verify_peer" default, "verify_none" for self-signed)
+  # DATABASE_SSL_CACERTFILE: Path to custom CA certificate file (optional, uses system CAs by default)
+  ssl_enabled = System.get_env("DATABASE_SSL") == "true"
+
+  ssl_opts =
+    if ssl_enabled do
+      verify_mode =
+        case System.get_env("DATABASE_SSL_VERIFY") do
+          "verify_none" -> :verify_none
+          _ -> :verify_peer
+        end
+
+      base_opts = [verify: verify_mode]
+
+      # Use custom CA cert file if provided, otherwise use system CAs
+      case System.get_env("DATABASE_SSL_CACERTFILE") do
+        nil -> base_opts ++ [cacerts: :public_key.cacerts_get()]
+        path -> base_opts ++ [cacertfile: path]
+      end
+    else
+      []
+    end
+
+  # Query timeout in milliseconds (default: 15 seconds)
+  # Prevents runaway queries from consuming resources indefinitely
+  query_timeout =
+    case System.get_env("DATABASE_QUERY_TIMEOUT") do
+      nil ->
+        15_000
+
+      val ->
+        case Integer.parse(val) do
+          {int, ""} -> int
+          _ -> raise "Invalid DATABASE_QUERY_TIMEOUT: #{val}. Must be a valid integer in ms"
+        end
+    end
+
+  config :portfolio, Portfolio.Repo,
+    url: database_url,
+    pool_size: pool_size,
+    # Query timeout to prevent runaway queries (15s default)
+    timeout: query_timeout,
+    # Connection checkout queue settings for handling traffic spikes
+    queue_target: 50,
+    queue_interval: 1000,
+    # Socket options for connection reliability
+    socket_options: socket_options,
+    # SSL configuration (if DATABASE_SSL is set)
+    ssl: ssl_enabled,
+    ssl_opts: ssl_opts
 
   config :portfolio, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
@@ -54,7 +169,15 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
-    secret_key_base: secret_key_base
+    secret_key_base: secret_key_base,
+    # Force SSL with HSTS (HTTP Strict Transport Security)
+    # Ensures all traffic is redirected to HTTPS and browsers remember to use HTTPS
+    force_ssl: [hsts: true],
+    live_view: [
+      signing_salt:
+        System.get_env("LIVE_VIEW_SIGNING_SALT") ||
+          raise("environment variable LIVE_VIEW_SIGNING_SALT is missing")
+    ]
 
   # ## SSL Support
   #

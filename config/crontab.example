@@ -1,0 +1,107 @@
+# Portfolio Automated Backup Crontab
+#
+# This file contains cron job definitions for automated backups.
+#
+# Installation:
+#   1. Copy this file: cp config/crontab.example config/crontab
+#   2. Edit config/crontab with your actual paths and configuration
+#   3. Install: crontab config/crontab
+#   4. Verify: crontab -l
+#
+# Note: All times are in server local time (usually UTC in production)
+
+# Environment variables (adjust paths to your installation)
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+MAILTO=admin@example.com
+
+# Portfolio application paths
+PROJECT_ROOT=/app
+DATABASE_URL=ecto://user:password@localhost/portfolio_prod
+APP_STORAGE=/app/priv/static/uploads
+STORAGE_BOX=u123456@u123456.your-storagebox.de
+STORAGE_BOX_PATH=/backups/portfolio
+BACKUP_RETENTION_DAYS=7
+
+# Optional: Healthchecks.io monitoring
+# HEALTHCHECK_PING_URL=https://hc-ping.com/your-uuid-here
+
+# Optional: Notification webhook (Slack, Discord, etc.)
+# NOTIFICATION_WEBHOOK=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+
+# ============================================================================
+# Daily Backup - 3:00 AM
+# ============================================================================
+# Performs full backup (database + storage) and uploads to Storage Box
+# Runs every day at 3:00 AM when traffic is minimal
+#
+0 3 * * * cd $PROJECT_ROOT && ./scripts/backup.sh production >> /var/log/portfolio_backup.log 2>&1
+
+# ============================================================================
+# Backup Verification - 4:00 AM
+# ============================================================================
+# Verifies that the backup from 3:00 AM completed successfully
+# Runs 1 hour after backup to ensure it finished
+#
+0 4 * * * cd $PROJECT_ROOT && ./scripts/check_backup.sh production 26 >> /var/log/portfolio_backup_check.log 2>&1
+
+# ============================================================================
+# Alternative: Hourly Healthcheck Ping
+# ============================================================================
+# If you want continuous monitoring, uncomment this to ping healthcheck every hour
+# This verifies that backups are staying fresh
+#
+# 0 * * * * cd $PROJECT_ROOT && ./scripts/check_backup.sh production 26 && curl -fsS --retry 3 $HEALTHCHECK_PING_URL > /dev/null
+
+# ============================================================================
+# Alternative: Multiple Environment Backups
+# ============================================================================
+# If you have staging environment, add separate backup job
+#
+# 0 2 * * * cd $PROJECT_ROOT && ./scripts/backup.sh staging >> /var/log/portfolio_backup_staging.log 2>&1
+
+# ============================================================================
+# Weekly Full Verification - Sunday 5:00 AM
+# ============================================================================
+# Performs integrity check on all backups (more thorough)
+#
+# 0 5 * * 0 cd $PROJECT_ROOT && for backup in backups/*.tar.gz; do tar -tzf "$backup" > /dev/null && echo "OK: $backup" || echo "FAIL: $backup"; done >> /var/log/portfolio_backup_verify.log 2>&1
+
+# ============================================================================
+# Monthly Backup Report - 1st of month 6:00 AM
+# ============================================================================
+# Lists all backups and their sizes
+#
+# 0 6 1 * * cd $PROJECT_ROOT && ls -lh backups/ >> /var/log/portfolio_backup_report.log 2>&1
+
+# ============================================================================
+# Notes
+# ============================================================================
+#
+# Log Rotation:
+#   Consider setting up logrotate for /var/log/portfolio_backup*.log
+#   Example logrotate config:
+#
+#   /var/log/portfolio_backup*.log {
+#       daily
+#       rotate 30
+#       compress
+#       delaycompress
+#       notifempty
+#       create 0640 root root
+#   }
+#
+# Monitoring:
+#   - Set up alerts on log errors: grep -i error /var/log/portfolio_backup.log
+#   - Monitor disk space: df -h /app/backups
+#   - Use Healthchecks.io for dead man's switch monitoring
+#
+# Testing:
+#   Run manually before enabling cron:
+#     cd /app && ./scripts/backup.sh production
+#     cd /app && ./scripts/check_backup.sh production
+#
+# Timezone:
+#   Verify server timezone: timedatectl
+#   Cron uses server local time (usually UTC in production)
+#   Adjust times accordingly (e.g., 3 AM UTC = 4 AM CET in winter)

@@ -1,5 +1,5 @@
 defmodule PortfolioWeb.PhotographyListTest do
-  use PortfolioWeb.ConnCase
+  use PortfolioWeb.ConnCase, async: true
   alias PortfolioWeb.Components.PhotographyList
 
   describe "chapter_image/1" do
