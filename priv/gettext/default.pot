@@ -707,6 +707,11 @@ msgstr ""
 msgid "for CI, which gives us clean, isolated environments and good integration with Docker Hub and versioned releases."
 msgstr ""
 
+#: lib/portfolio_web/live/index.html.heex:331
+#, elixir-autogen, elixir-format
+msgid "home.usage_terms"
+msgstr ""
+
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "linen"
@@ -756,6 +761,11 @@ msgstr ""
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:6
 #, elixir-autogen, elixir-format
 msgid "admin.dashboard.title"
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/index.html.heex:154
+#, elixir-autogen, elixir-format
+msgid "photography.usage_terms"
 msgstr ""
 
 #: lib/portfolio_web/helpers/time_formatter.ex:104
@@ -2153,8 +2163,8 @@ msgid "photography.alt.wedding"
 msgstr ""
 
 #: lib/portfolio_web/live/photography_live/gallery.ex:123
-#: lib/portfolio_web/live/photography_live/index.html.heex:169
-#: lib/portfolio_web/live/photography_live/index.html.heex:170
+#: lib/portfolio_web/live/photography_live/index.html.heex:187
+#: lib/portfolio_web/live/photography_live/index.html.heex:188
 #, elixir-autogen, elixir-format
 msgid "photography.brand"
 msgstr ""

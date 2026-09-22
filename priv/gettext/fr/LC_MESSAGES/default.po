@@ -707,6 +707,11 @@ msgstr "tunique ajustée, pouvant être boutonnée (du col à la taille), porté
 msgid "for CI, which gives us clean, isolated environments and good integration with Docker Hub and versioned releases."
 msgstr "pour CI, ce qui nous donne des environnements propres et isolés et une bonne intégration avec Docker Hub et les versions versionnées."
 
+#: lib/portfolio_web/live/index.html.heex:331
+#, elixir-autogen, elixir-format
+msgid "home.usage_terms"
+msgstr "Conditions d'utilisation des photos"
+
 #: lib/portfolio_web/live/amvcc_live/blog/clothes.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "linen"
@@ -757,6 +762,11 @@ msgstr "%{count} photo(s) redémarrée(s) avec succès"
 #, elixir-autogen, elixir-format
 msgid "admin.dashboard.title"
 msgstr "Tableau de bord"
+
+#: lib/portfolio_web/live/photography_live/index.html.heex:154
+#, elixir-autogen, elixir-format
+msgid "photography.usage_terms"
+msgstr "Conditions d'utilisation"
 
 #: lib/portfolio_web/helpers/time_formatter.ex:104
 #, elixir-autogen, elixir-format
@@ -2153,8 +2163,8 @@ msgid "photography.alt.wedding"
 msgstr "Thibault San Photography - Photographie de mariage utilisée en arrière-plan"
 
 #: lib/portfolio_web/live/photography_live/gallery.ex:123
-#: lib/portfolio_web/live/photography_live/index.html.heex:169
-#: lib/portfolio_web/live/photography_live/index.html.heex:170
+#: lib/portfolio_web/live/photography_live/index.html.heex:187
+#: lib/portfolio_web/live/photography_live/index.html.heex:188
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.brand"
 msgstr "Thibault San Photography"
