@@ -66,7 +66,13 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
         handler_id,
         [:portfolio, :auth, :magic_link, :verified],
         fn event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry, event, measurements, metadata})
+          # Un abonnement telemetry est global au noeud : sans ce filtre, ce
+          # test recoit aussi les evenements emis par les tests qui tournent
+          # en parallele, et lit les mesures d'un autre. Le gestionnaire
+          # s'execute dans le processus emetteur : les comparer suffit.
+          if self() == test_pid do
+            send(test_pid, {:telemetry, event, measurements, metadata})
+          end
         end,
         nil
       )

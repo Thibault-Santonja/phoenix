@@ -45,22 +45,26 @@ defmodule Portfolio.Auth.Services.MagicLinkAntiEnumerationTest do
       assert {:ok, :email_sent} = result
     end
 
-    test "same response time for existing and non-existing users" do
-      # Test that response times are similar to prevent timing attacks
-      {time_existing, _} =
-        :timer.tc(fn ->
-          MagicLinkAuthService.execute("existing@example.com")
-        end)
+    test "le chemin d'une adresse inconnue passe par le delai anti-enumeration" do
+      # Comparer deux temps murs ne mesure rien d'utile ici : le delai reel
+      # vaut trois millisecondes, soit moins que le bruit d'ordonnancement
+      # d'une suite qui tourne sur vingt processus. Un tel test echoue au
+      # hasard sans jamais detecter la disparition du delai.
+      #
+      # On verifie donc la seule chose qui compte et qui soit observable : le
+      # chemin « adresse inconnue » attend bien. Le delai est rendu mesurable
+      # pour la duree du test, et la borne est unilaterale, donc insensible a
+      # la charge : le bruit ne peut qu'allonger la mesure.
+      Application.put_env(:portfolio, :magic_link_timing_delay_ms, 150)
+      on_exit(fn -> Application.delete_env(:portfolio, :magic_link_timing_delay_ms) end)
 
-      {time_nonexistent, _} =
-        :timer.tc(fn ->
-          MagicLinkAuthService.execute("nonexistent@example.com")
-        end)
+      {duree, resultat} =
+        :timer.tc(fn -> MagicLinkAuthService.execute("nonexistent@example.com") end)
 
-      # Response times should be within 50ms of each other
-      # (allows for some variance due to system load)
-      time_diff = abs(time_existing - time_nonexistent)
-      assert time_diff < 50_000, "Response time difference too large: #{time_diff}μs"
+      assert {:ok, :email_sent} = resultat
+
+      assert duree >= 150_000,
+             "Le delai anti-enumeration n'a pas ete applique : #{duree} microsecondes"
     end
 
     test "does not create magic link for non-existing user" do

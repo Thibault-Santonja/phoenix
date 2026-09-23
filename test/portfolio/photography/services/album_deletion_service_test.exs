@@ -44,7 +44,13 @@ defmodule Portfolio.Photography.Services.AlbumDeletionServiceTest do
         "test-album-deletion",
         [:portfolio, :services, :album_deletion, :executed],
         fn event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry, event, measurements, metadata})
+          # Un abonnement telemetry est global au noeud : sans ce filtre, ce
+          # test recoit aussi les evenements emis par les tests qui tournent
+          # en parallele. Le gestionnaire s'execute dans le processus
+          # emetteur : les comparer suffit.
+          if self() == test_pid do
+            send(test_pid, {:telemetry, event, measurements, metadata})
+          end
         end,
         nil
       )
@@ -70,7 +76,13 @@ defmodule Portfolio.Photography.Services.AlbumDeletionServiceTest do
         "test-album-deletion-count",
         [:portfolio, :services, :album_deletion, :photo_count],
         fn event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry, event, measurements, metadata})
+          # Un abonnement telemetry est global au noeud : sans ce filtre, ce
+          # test recoit aussi les evenements emis par les tests qui tournent
+          # en parallele. Le gestionnaire s'execute dans le processus
+          # emetteur : les comparer suffit.
+          if self() == test_pid do
+            send(test_pid, {:telemetry, event, measurements, metadata})
+          end
         end,
         nil
       )
