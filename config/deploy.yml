@@ -35,9 +35,14 @@ registry:
     - KAMAL_REGISTRY_PASSWORD
 
 # Configure builder setup.
+#
+# Le build se fait sur le serveur, nativement en amd64. L'émulation amd64 sur
+# un Mac Apple Silicon corrompt la mémoire du BEAM pendant "mix deps.compile"
+# (erreurs "no next heap size found" puis abort), y compris avec Rosetta.
 builder:
   context: .
   arch: amd64
+  remote: ssh://amvcc@157.180.70.8
   # Pass in additional build args needed for your Dockerfile.
   # args:
   #   RUBY_VERSION: <%= ENV["RBENV_VERSION"] || ENV["rvm_ruby_string"] || "#{RUBY_ENGINE}-#{RUBY_ENGINE_VERSION}" %>
