@@ -14,6 +14,14 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
   longtemps qu'un aller-retour. Le rafraîchissement se fait hors du chemin
   critique, dans le décorateur.
 
+  ## Ce qu'un 404 veut dire
+
+  Il dépend de ce qui a été demandé. Une adresse qui nomme un thème ou un
+  slug peut ne rien désigner : c'est `{:error, :not_found}`. Une adresse de
+  collection (la liste complète des albums, la liste des thèmes) existe tant
+  que la plateforme répond : un 404 dessus est une panne ou une adresse mal
+  configurée, donc `{:error, :unavailable}`.
+
   ## Délais
 
   Deux secondes pour établir la connexion, cinq pour recevoir la réponse. Les
@@ -48,22 +56,33 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
   def list_albums(opts \\ []) do
     "/api/v1/albums"
     |> get(params: list_params(opts))
-    |> decode_with(&Decoder.decode_album_list/1)
+    |> decode_with(&Decoder.decode_album_list/1, sens_du_404(Keyword.get(opts, :theme)))
   end
 
   @impl true
   def get_album(slug, opts \\ []) when is_binary(slug) do
     "/api/v1/albums/#{URI.encode_www_form(slug)}"
     |> get(params: locale_params(opts))
-    |> decode_with(&Decoder.decode_album/1)
+    |> decode_with(&Decoder.decode_album/1, :not_found)
   end
 
   @impl true
   def list_themes(opts \\ []) do
     "/api/v1/themes"
     |> get(params: locale_params(opts))
-    |> decode_with(&Decoder.decode_theme_list/1)
+    |> decode_with(&Decoder.decode_theme_list/1, :unavailable)
   end
+
+  # Ce qu'un 404 veut dire, pour la requête qui vient d'être envoyée.
+  #
+  # Une adresse qui nomme quelque chose (un thème, un slug) peut
+  # légitimement ne rien désigner : le 404 est alors une absence. Une adresse
+  # de collection existe, elle, tant que la plateforme répond : un 404 dessus
+  # ne dit rien du catalogue, il dit que la réponse ne vient pas de la
+  # plateforme attendue, ou qu'elle est cassée. C'est une panne, donc le
+  # palier 4, et une page en 200 plutôt qu'un 404.
+  defp sens_du_404(nil), do: :unavailable
+  defp sens_du_404(_identifiant), do: :not_found
 
   # ============================================================================
   # Transport
@@ -89,7 +108,8 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
     |> Req.request()
   end
 
-  defp decode_with({:ok, %Req.Response{status: 200, body: body}}, decoder) when is_map(body) do
+  defp decode_with({:ok, %Req.Response{status: 200, body: body}}, decoder, _sens_du_404)
+       when is_map(body) do
     case decoder.(body) do
       {:ok, decoded} ->
         {:ok, decoded}
@@ -100,14 +120,21 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
     end
   end
 
-  defp decode_with({:ok, %Req.Response{status: 404}}, _decoder), do: {:error, :not_found}
+  defp decode_with({:ok, %Req.Response{status: 404}}, _decoder, :not_found) do
+    {:error, :not_found}
+  end
 
-  defp decode_with({:ok, %Req.Response{status: status}}, _decoder) do
+  defp decode_with({:ok, %Req.Response{status: 404}}, _decoder, :unavailable) do
+    Logger.warning("catalogue : 404 sur une collection, la plateforme photo n'a pas répondu")
+    {:error, :unavailable}
+  end
+
+  defp decode_with({:ok, %Req.Response{status: status}}, _decoder, _sens_du_404) do
     Logger.warning("catalogue : la plateforme photo a répondu #{status}")
     {:error, :unavailable}
   end
 
-  defp decode_with({:error, reason}, _decoder) do
+  defp decode_with({:error, reason}, _decoder, _sens_du_404) do
     Logger.warning("catalogue : appel impossible vers la plateforme photo (#{inspect(reason)})")
     {:error, :unavailable}
   end

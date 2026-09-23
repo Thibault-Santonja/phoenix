@@ -29,7 +29,10 @@ defmodule Portfolio.Photography.Ports.AlbumCatalogPort do
 
   - `{:error, :not_found}` : l'album ou le thème demandé n'existe pas, ou
     n'est pas publié. La plateforme ne distingue pas les deux, et c'est
-    voulu : l'existence d'un brouillon est elle-même une information.
+    voulu : l'existence d'un brouillon est elle-même une information. Seule
+    une lecture qui nomme quelque chose peut rendre cette erreur : la liste
+    complète des albums et la liste des thèmes ne nomment rien, donc elles ne
+    la rendent jamais.
   - `{:error, :unavailable}` : la plateforme n'a pas répondu, a répondu hors
     contrat, ou a répondu une erreur serveur. L'appelant affiche alors ce
     qu'il peut et ne montre jamais ni page vide ni erreur.

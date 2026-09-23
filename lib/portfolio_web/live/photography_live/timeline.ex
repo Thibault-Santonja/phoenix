@@ -8,7 +8,9 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
   - Une page d'albums : elle s'affiche, par tranches de vingt, chargées à la
     demande au défilement.
   - `:not_found` : le thème demandé n'existe pas, donc 404. Rendre une liste
-    vide masquerait une faute de frappe dans l'adresse.
+    vide masquerait une faute de frappe dans l'adresse. Sur la chronologie
+    complète, rien n'a été nommé qui puisse manquer : le cas y est traité
+    comme une panne, en 200.
   - `:unavailable` : la page s'affiche quand même, avec un message explicite,
     en 200.
 
@@ -115,12 +117,24 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
         display(socket, page, albums)
 
       {:error, :not_found} ->
-        raise AlbumNotFoundError, message: "theme inconnu : #{socket.assigns.chapter}"
+        theme_inconnu_ou_panne(socket)
 
       {:error, :unavailable} ->
-        assign(socket, unavailable: true, has_more: false)
+        indisponible(socket)
     end
   end
+
+  # Un thème demandé peut ne pas exister : c'est un 404. La chronologie
+  # complète, elle, ne nomme rien qui puisse manquer : un `:not_found` ne peut
+  # alors venir que d'une plateforme en panne ou d'une adresse mal configurée,
+  # et la page doit dégrader en 200 comme le promet le palier 4.
+  defp theme_inconnu_ou_panne(%{assigns: %{chapter: nil}} = socket), do: indisponible(socket)
+
+  defp theme_inconnu_ou_panne(socket) do
+    raise AlbumNotFoundError, message: "theme inconnu : #{socket.assigns.chapter}"
+  end
+
+  defp indisponible(socket), do: assign(socket, unavailable: true, has_more: false)
 
   defp maybe_put_theme(opts, nil), do: opts
   defp maybe_put_theme(opts, chapter), do: Keyword.put(opts, :theme, chapter)

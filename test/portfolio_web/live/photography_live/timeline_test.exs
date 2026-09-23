@@ -253,6 +253,18 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
 
       assert_error_sent 404, fn -> get(conn, "/timeline/nexiste-pas") end
     end
+
+    test "une liste complète introuvable est une panne, pas un thème inconnu", %{conn: conn} do
+      # Rien n'a été demandé qui puisse manquer : sans thème, un :not_found ne
+      # peut venir que d'une plateforme en panne ou d'une adresse mal
+      # configurée. La chronologie doit alors dégrader en 200, pas rendre 404.
+      Scenario.script(:list_albums, {:error, :not_found})
+
+      html = conn |> get("/timeline") |> html_response(200)
+
+      assert html =~ "momentanément indisponible"
+      assert html =~ "Thibault Santonja"
+    end
   end
 
   describe "la plateforme ne répond pas" do

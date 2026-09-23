@@ -66,6 +66,15 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
       assert {:error, :not_found} = HttpAlbumCatalogAdapter.list_albums(theme: "inexistant")
     end
 
+    test "traduit un 404 sur la liste complète en :unavailable" do
+      # Sans thème, l'adresse demandée est celle de la collection entière :
+      # elle existe tant que la plateforme répond. Un 404 dit alors que ce
+      # n'est pas la plateforme qui a répondu, ou qu'elle est cassée.
+      stub(fn conn -> Plug.Conn.send_resp(conn, 404, "<html>not found</html>") end)
+
+      assert {:error, :unavailable} = HttpAlbumCatalogAdapter.list_albums([])
+    end
+
     test "traduit une erreur serveur en :unavailable" do
       stub(fn conn ->
         conn
@@ -143,6 +152,12 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
 
     test "traduit une panne de transport en :unavailable" do
       stub(fn conn -> Req.Test.transport_error(conn, :econnrefused) end)
+
+      assert {:error, :unavailable} = HttpAlbumCatalogAdapter.list_themes()
+    end
+
+    test "traduit un 404 en :unavailable, aucun thème n'ayant été nomme" do
+      stub(fn conn -> Plug.Conn.send_resp(conn, 404, "<html>not found</html>") end)
 
       assert {:error, :unavailable} = HttpAlbumCatalogAdapter.list_themes()
     end

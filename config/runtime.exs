@@ -49,6 +49,17 @@ end
 # plateforme. Sans répertoire, ce palier de dégradation est simplement absent.
 catalog_base_url = System.get_env("CATALOG_BASE_URL")
 
+if config_env() == :prod and is_nil(catalog_base_url) do
+  raise """
+  environment variable CATALOG_BASE_URL is missing.
+  It is the address of the photography platform on the host's internal
+  network, and the album catalog reads it. Without it the default is
+  http://localhost:4000, which is the portfolio itself: it would query its
+  own router, get a 404, and serve a broken photography section.
+  For example: http://photography:4000
+  """
+end
+
 if catalog_base_url do
   config :portfolio, :album_catalog,
     base_url: catalog_base_url,
