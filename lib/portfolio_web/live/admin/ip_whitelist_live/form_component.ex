@@ -25,19 +25,21 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponent do
         <.input
           field={@form[:ip_address]}
           type="text"
-          label="IP Address"
-          placeholder="192.168.1.100 or 2001:db8::1"
+          label={gettext("admin.ip_whitelist.form.ip_address")}
+          placeholder={gettext("admin.ip_whitelist.form.ip_address_placeholder")}
           disabled={@action == :edit}
         />
         <.input
           field={@form[:description]}
           type="text"
-          label="Description (optional)"
-          placeholder="Main office, VPN, etc."
+          label={gettext("admin.ip_whitelist.form.description")}
+          placeholder={gettext("admin.ip_whitelist.form.description_placeholder")}
         />
 
         <:actions>
-          <.button phx-disable-with="Saving...">Save</.button>
+          <.button phx-disable-with={gettext("admin.ip_whitelist.form.saving")}>
+            {gettext("admin.ip_whitelist.form.save")}
+          </.button>
         </:actions>
       </.simple_form>
     </div>

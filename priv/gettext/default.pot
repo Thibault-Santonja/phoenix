@@ -3384,7 +3384,7 @@ msgstr ""
 msgid "tech.blog.kamal.why_kamal"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:76
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:78
 #, elixir-autogen, elixir-format
 msgid "admin.ip_whitelist.add_success"
 msgstr ""
@@ -3414,7 +3414,7 @@ msgstr ""
 msgid "admin.ip_whitelist.title"
 msgstr ""
 
-#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:89
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:91
 #, elixir-autogen, elixir-format
 msgid "admin.ip_whitelist.update_success"
 msgstr ""
@@ -3801,4 +3801,84 @@ msgstr ""
 #: lib/portfolio_web/components/layouts/admin.html.heex:82
 #, elixir-autogen, elixir-format
 msgid "admin.shell.view_site"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:35
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.description"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:36
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.description_placeholder"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:28
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.ip_address"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:29
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.ip_address_placeholder"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:41
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.save"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:40
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.saving"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.add"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:32
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_actions"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:26
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_created_by"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_date"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:23
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_description"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_ip"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:68
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.delete"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.delete_confirm"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:60
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.edit"
+msgstr ""
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:13
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.empty"
 msgstr ""

@@ -3384,7 +3384,7 @@ msgstr "Use Kamal to initialize your deployment configuration:"
 msgid "tech.blog.kamal.why_kamal"
 msgstr "Why Kamal?"
 
-#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:76
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:78
 #, elixir-autogen, elixir-format
 msgid "admin.ip_whitelist.add_success"
 msgstr "IP added to whitelist successfully"
@@ -3414,7 +3414,7 @@ msgstr "New IP"
 msgid "admin.ip_whitelist.title"
 msgstr "IP Whitelist"
 
-#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:89
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:91
 #, elixir-autogen, elixir-format
 msgid "admin.ip_whitelist.update_success"
 msgstr "IP updated successfully"
@@ -3802,3 +3802,83 @@ msgstr "Administration"
 #, elixir-autogen, elixir-format
 msgid "admin.shell.view_site"
 msgstr "View site"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:35
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.description"
+msgstr "Description (optional)"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:36
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.description_placeholder"
+msgstr "Main office, VPN, etc."
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:28
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.ip_address"
+msgstr "IP Address"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:29
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.ip_address_placeholder"
+msgstr "192.168.1.100 or 2001:db8::1"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:41
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.save"
+msgstr "Save"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/form_component.ex:40
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.form.saving"
+msgstr "Saving..."
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.add"
+msgstr "Add IP"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:32
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_actions"
+msgstr "Actions"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:26
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_created_by"
+msgstr "Created By"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_date"
+msgstr "Date"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:23
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_description"
+msgstr "Description"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.column_ip"
+msgstr "IP Address"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:68
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.delete"
+msgstr "Delete"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.delete_confirm"
+msgstr "Are you sure you want to delete this IP?"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:60
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.edit"
+msgstr "Edit"
+
+#: lib/portfolio_web/live/admin/ip_whitelist_live/index.html.heex:13
+#, elixir-autogen, elixir-format
+msgid "admin.ip_whitelist.index.empty"
+msgstr "No whitelisted IPs"
