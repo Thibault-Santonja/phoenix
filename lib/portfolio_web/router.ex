@@ -69,6 +69,23 @@ defmodule PortfolioWeb.Router do
     plug PortfolioWeb.Plugs.RequireAuth, :redirect_if_user_is_authenticated
   end
 
+  # `:photography`, au format `application/xml` pres. Un robot demande un plan
+  # de site en xml : sans ce format accepte, il reçoit un 406, qui ne dit rien
+  # de l'absence de la ressource. Ouvrir le xml a tout l'hôte servirait en
+  # revanche les pages HTML sous un type xml, d'ou ces deux pipelines. La
+  # protection anti-CSRF est inutile ici : ces routes ne servent que des GET
+  # sans formulaire.
+  pipeline :photo_sitemap do
+    plug :accepts, ["xml", "html"]
+    plug :fetch_session
+    plug PortfolioWeb.Plugs.CSPNonce
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {PortfolioWeb.Layouts, :photography}
+    plug :put_secure_browser_headers
+    plug PortfolioWeb.Plugs.SetLocale
+    plug PortfolioWeb.Plugs.PhotoHostSeo
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -126,15 +143,19 @@ defmodule PortfolioWeb.Router do
     live "/blog/chaussures", AmvccLive.Blog.Shoes, :index
   end
 
+  # Les plans de site sont servis par les hôtes indexes, pas par celui-ci :
+  # cet hôte porte une directive noindex, l'inviter à l'exploration serait
+  # contradictoire. Ce bloc passe avant "/:chapter", sans quoi la page
+  # d'accueil repondrait 200 a "/sitemap.xml".
   scope "/", PortfolioWeb, host: "photo." do
-    pipe_through :photography
+    pipe_through :photo_sitemap
 
-    # Les plans de site sont servis par les hôtes indexes, pas par celui-ci :
-    # cet hôte porte une directive noindex, l'inviter à l'exploration serait
-    # contradictoire. Ces deux routes passent avant "/:chapter", sans quoi la
-    # page d'accueil repondrait 200 a "/sitemap.xml".
     get "/sitemap.xml", PageController, :not_found
     get "/image-sitemap.xml", PageController, :not_found
+  end
+
+  scope "/", PortfolioWeb, host: "photo." do
+    pipe_through :photography
 
     # Pages publiques avec utilisateur optionnel
     live_session :current_user,

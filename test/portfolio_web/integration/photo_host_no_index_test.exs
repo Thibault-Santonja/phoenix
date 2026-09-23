@@ -92,6 +92,22 @@ defmodule PortfolioWeb.Integration.PhotoHostNoIndexTest do
       assert conn.status == 404
     end
 
+    # Un robot qui lit un plan de site demande `application/xml`. Tant que ce
+    # format n'est pas accepte, il reçoit un 406 : ce n'est pas un contenu
+    # duplique, mais ce n'est pas non plus la reponse que ces routes
+    # pretendent garder, et la requete reelle n'est jamais eprouvee.
+    for chemin <- ~w(/sitemap.xml /image-sitemap.xml) do
+      test "#{chemin} répond 404 au robot qui demande du xml", %{conn: conn} do
+        conn =
+          conn
+          |> Map.put(:host, "photo.thibaultsan.com")
+          |> put_req_header("accept", "application/xml")
+          |> get(unquote(chemin))
+
+        assert conn.status == 404
+      end
+    end
+
     test "sitemap.xml reste servi sur l'hôte principal", %{conn: conn} do
       conn =
         conn
