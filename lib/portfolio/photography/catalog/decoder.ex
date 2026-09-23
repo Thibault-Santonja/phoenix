@@ -1,6 +1,6 @@
 defmodule Portfolio.Photography.Catalog.Decoder do
   @moduledoc """
-  Traduit les chargés utiles JSON du catalogue distant en structures du
+  Traduit les charges utiles JSON du catalogue distant en structures du
   domaine.
 
   C'est la frontière de confiance du portfolio : tout ce qui entre par le
@@ -246,7 +246,7 @@ defmodule Portfolio.Photography.Catalog.Decoder do
   defp reject_empty([]), do: {:error, :invalid_payload}
   defp reject_empty(list), do: {:ok, list}
 
-  # Applique `fun` à chaque élément et s'arrêté au premier échec.
+  # Applique `fun` à chaque élément et s'arrête au premier échec.
   defp map_ok(list, fun) when is_list(list) do
     Enum.reduce_while(list, {:ok, []}, fn element, {:ok, acc} ->
       case fun.(element) do

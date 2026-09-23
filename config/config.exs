@@ -113,7 +113,7 @@ config :portfolio, Oban,
     cdn: 3
   ],
   plugins: [
-    # Pruner: Supprime les jobs complètes/annules de plus de 7 jours
+    # Pruner: Supprime les jobs terminés/annulés de plus de 7 jours
     {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7},
     # Cron: Planification des tâches recurrentes de nettoyage
     {Oban.Plugins.Cron,
@@ -270,7 +270,7 @@ config :portfolio, :album_catalog,
   # hors du chemin de la requête.
   fresh_for_ms: 600_000,
   # Sans répertoire d'instantané, le palier de relecture sur disque est
-  # simplement absent : la dégradation s'arrêté au palier précédent.
+  # simplement absent : la dégradation s'arrête au palier précédent.
   snapshot_dir: nil,
   inner_adapter: Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter
 

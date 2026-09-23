@@ -11,7 +11,7 @@ defmodule PortfolioTest.Support.ScriptedCatalogAdapter do
   @behaviour Portfolio.Photography.Ports.AlbumCatalogPort
 
   @doc """
-  Démarré le scénario. À appeler dans le `setup` du test.
+  Démarre le scénario. À appeler dans le `setup` du test.
   """
   @spec start_link() :: {:ok, pid()}
   def start_link do

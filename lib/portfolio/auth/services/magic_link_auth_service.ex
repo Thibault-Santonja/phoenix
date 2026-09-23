@@ -95,7 +95,7 @@ defmodule Portfolio.Auth.Services.MagicLinkAuthService do
     end
   end
 
-  # Internal implémentation after rate limit check
+  # Internal implementation after rate limit check
   defp do_request_magic_link(email, opts) do
     bypass_rate_limit = Keyword.get(opts, :bypass_rate_limit, false)
 

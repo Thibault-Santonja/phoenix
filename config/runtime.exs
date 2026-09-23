@@ -132,7 +132,7 @@ if config_env() == :prod do
 
   # SSL configuration
   # DATABASE_SSL: Enable SSL for database connections ("true" to enable)
-  # DATABASE_SSL_VERIFY: SSL vérification mode ("verify_peer" default, "verify_none" for self-signed)
+  # DATABASE_SSL_VERIFY: SSL verification mode ("verify_peer" default, "verify_none" for self-signed)
   # DATABASE_SSL_CACERTFILE: Path to custom CA certificate file (optional, uses system CAs by default)
   ssl_enabled = System.get_env("DATABASE_SSL") == "true"
 

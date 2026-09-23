@@ -22,7 +22,7 @@ defmodule Portfolio.Application do
       {Finch, name: Portfolio.Finch},
       # Start Oban for background job processing
       {Oban, Application.fetch_env!(:portfolio, Oban)},
-      # Task supervisor for fire-and-forget async opérations (session activity updates, etc.)
+      # Task supervisor for fire-and-forget async operations (session activity updates, etc.)
       {Task.Supervisor, name: Portfolio.TaskSupervisor},
       # Start Hammer v7 for rate limiting
       {Portfolio.RateLimiter, clean_period: :timer.minutes(10)},

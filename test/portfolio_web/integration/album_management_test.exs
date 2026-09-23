@@ -1,6 +1,6 @@
 defmodule PortfolioWeb.Integration.AlbumManagementTest do
   @moduledoc """
-  Integration tests for the complète album management workflow.
+  Integration tests for the complete album management workflow.
 
   These tests verify the entire album lifecycle from creation to publication,
   including photo uploads and timeline visibility.
@@ -173,7 +173,7 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
     test "la publication locale ne touche pas la chronologie publique", %{conn: _conn} do
       # La chronologie de photo.thibaultsan.com lit le catalogue de la
       # plateforme photo, jamais la base locale du portfolio. Publier ici ne
-      # publié rien la-bas : ce test garde cette frontière, qui est la raison
+      # publie rien là-bas : ce test garde cette frontière, qui est la raison
       # d'être de l'administration de la plateforme.
       _album =
         create_published_album(3,
@@ -352,7 +352,7 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
           end)
         end
 
-      # Wait for all tasks to complète
+      # Wait for all tasks to complete
       results = Enum.map(tasks, &Task.await/1)
 
       # Verify all succeeded
