@@ -155,6 +155,14 @@ defmodule Portfolio.MixProject do
       {:ex_check, "~> 0.16", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
       {:mox, "~> 1.2", only: :test},
+      # Lecture de `config/deploy.yml` par `test/portfolio/config/deploy_test.exs`,
+      # qui garde les valeurs imposées par l'infrastructure (plafonds mémoire,
+      # part processeur, port de la base, réglages PostgreSQL). Une assertion
+      # par sous-chaîne ne distinguerait pas le plafond de l'application de
+      # celui de la base : il faut la structure, donc un vrai analyseur YAML.
+      # Déjà présent dans le verrou comme dépendance de `mix_audit` ; déclaré
+      # ici parce qu'on l'appelle directement.
+      {:yaml_elixir, "~> 2.11", only: [:dev, :test]},
       {:stream_data, "~> 1.2", only: [:dev, :test]},
       {:benchee, "~> 1.5", only: :dev},
       {:benchee_html, "~> 1.0", only: :dev}
