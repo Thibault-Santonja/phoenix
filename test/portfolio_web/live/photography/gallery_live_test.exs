@@ -1,478 +1,177 @@
 defmodule PortfolioWeb.Photography.GalleryLiveTest do
-  use PortfolioWeb.ConnCase, async: true
+  @moduledoc """
+  Comportements de la page d'album, une fois l'album lu chez la plateforme.
+
+  Le contenu et le referencement de cette page sont couverts par
+  `PortfolioWeb.Photography.GalleryCatalogTest` ; ce fichier-ci garde la
+  navigation, la langue et les metadonnees de page.
+  """
+
+  # Le scenario de catalogue est un processus nomme, partage par le noeud.
+  use PortfolioWeb.ConnCase, async: false
+
   import Phoenix.LiveViewTest
-  import PortfolioTest.Fixtures.PhotographyFixtures
+  import PortfolioTest.Fixtures.CatalogFixtures
 
-  defp open_subdomain(%{conn: conn}) do
-    {:error, {:redirect, %{to: subdomain}}} = live(conn, ~p"/photo")
+  alias Portfolio.Photography.Catalog.Decoder
+  alias PortfolioTest.Support.ScriptedCatalogAdapter, as: Scenario
 
-    %{conn: conn, subdomain: subdomain}
+  @hote "https://photo.thibaultsan.com"
+
+  setup do
+    {:ok, _pid} = Scenario.start_link()
+    :ok
   end
 
-  describe "Photography gallery index" do
-    setup [:open_subdomain]
+  defp publie(opts) do
+    {:ok, album} = Decoder.decode_album(album_detail_response(opts))
+    Scenario.script(:get_album, {:ok, album})
+    album
+  end
 
-    test "/gallery path render default page", %{conn: conn, subdomain: subdomain} do
-      {:ok, _gallery_live, html} = live(conn, subdomain <> "/gallery")
-      assert html =~ "Thibault San Photographie"
-    end
+  defp trois_photos do
+    [
+      photo_payload(id: "un", position: 1, alt: "Premiere", caption: "Legende une"),
+      photo_payload(id: "deux", position: 2, alt: "Deuxieme", caption: "Legende deux"),
+      photo_payload(id: "trois", position: 3, alt: "Troisieme", caption: "Legende trois")
+    ]
+  end
 
-    test "redirection to home ", %{conn: conn, subdomain: subdomain} do
-      {:ok, gallery_live, _html} = live(conn, subdomain <> "/gallery")
+  describe "navigation" do
+    test "l'accueil est joignable depuis la page d'album", %{conn: conn} do
+      publie(slug: "un-album")
 
-      gallery_live
+      {:ok, vue, _html} = live(conn, @hote <> "/gallery/un-album")
+
+      vue
       |> element("a", "Accueil")
       |> render_click()
       |> follow_redirect(conn, ~p"/")
     end
-  end
 
-  describe "Redirect from Photography index to gallery" do
-    setup [:open_subdomain]
+    test "le chapitre china renvoie vers la chronologie filtree", %{conn: conn} do
+      {:ok, vue, _html} = live(conn, @hote <> "/?chapter=china")
 
-    test "redirect from index/china to gallery", %{conn: conn, subdomain: subdomain} do
-      {:ok, index_live, _html} = live(conn, subdomain <> "/?chapter=china")
-
-      index_live
+      vue
       |> element("a", "Voir plus")
       |> render_click()
-      |> follow_redirect(conn, ~p"/gallery/china")
+      |> follow_redirect(conn, ~p"/timeline/china")
     end
   end
 
-  describe "mount with album from database" do
-    setup [:open_subdomain]
+  describe "selection d'une photo" do
+    test "affiche la premiere photo par defaut", %{conn: conn} do
+      publie(slug: "un-album", photos: trois_photos())
 
-    test "loads album by slug with photos", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", title: "Beautiful Wedding", published: true)
-      create_photo(album: album, title: "First Dance")
-      create_photo(album: album, title: "Ceremony")
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
 
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Page should render with album
-      assert html =~ "wedding-2024" or html =~ "Thibault"
+      assert html =~ "Legende une"
     end
 
-    test "sets correct page title with album", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", title: "Beautiful Wedding", published: true)
-      create_photo(album: album)
+    test "affiche la photo demandee par le parametre project", %{conn: conn} do
+      publie(slug: "un-album", photos: trois_photos())
 
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album?project=2")
 
-      # Page should render
-      assert html =~ "wedding-2024" or html =~ "Thibault"
+      assert html =~ "Legende trois"
     end
 
-    test "displays default data when album not found", %{conn: conn, subdomain: subdomain} do
-      {:ok, _view, html} = live(conn, subdomain <> "/nonexistent-album")
+    test "retombe sur la premiere photo quand l'index est hors limites", %{conn: conn} do
+      publie(slug: "un-album", photos: trois_photos())
 
-      # Should display default images
-      assert html =~ "china.webp" or html =~ "japan.webp" or html =~ "taiwan.webp"
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album?project=99")
+
+      assert html =~ "Legende une"
     end
 
-    test "displays default data when album has no photos", %{conn: conn, subdomain: subdomain} do
-      _album = create_album(slug: "empty-album", title: "Empty Album")
+    test "retombe sur la premiere photo quand l'index n'est pas un nombre", %{conn: conn} do
+      publie(slug: "un-album", photos: trois_photos())
 
-      {:ok, _view, html} = live(conn, subdomain <> "/empty-album")
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album?project=abc")
 
-      # Should fallback to default data
-      assert html =~ "china.webp" or html =~ "japan.webp" or html =~ "taiwan.webp"
+      assert html =~ "Legende une"
     end
 
-    test "respects language parameter from session", %{conn: conn, subdomain: subdomain} do
-      conn_with_locale = Plug.Test.init_test_session(conn, %{"locale" => "en"})
+    test "parcourt les photos l'une apres l'autre", %{conn: conn} do
+      publie(slug: "un-album", photos: trois_photos())
 
-      {:ok, _view, html} = live(conn_with_locale, subdomain <> "/gallery")
+      {:ok, vue, _html} = live(conn, @hote <> "/gallery/un-album")
 
-      # English content should be present
-      assert html =~ "Gallery" or html =~ "Galerie"
-    end
-
-    test "uses language from URL parameter if provided", %{conn: conn, subdomain: subdomain} do
-      {:ok, _view, html} = live(conn, subdomain <> "/gallery?hl=en")
-
-      # Page should render without error
-      assert html =~ "Thibault"
-    end
-
-    test "defaults to french when no language specified", %{conn: conn, subdomain: subdomain} do
-      {:ok, _view, html} = live(conn, subdomain <> "/gallery")
-
-      # French content should be present
-      assert html =~ "Galerie" or html =~ "Photographie"
+      assert render_click(vue, "show_project", %{"project" => "1"}) =~ "Legende deux"
+      assert render_click(vue, "show_project", %{"project" => "2"}) =~ "Legende trois"
+      assert render_click(vue, "show_project", %{"project" => "0"}) =~ "Legende une"
     end
   end
 
-  describe "handle_params with project parameter" do
-    setup [:open_subdomain]
+  describe "compteur de photos" do
+    test "annonce le nombre de photos de l'album", %{conn: conn} do
+      publie(slug: "un-album", photos: trois_photos())
 
-    test "displays specific project when project param is provided", %{
-      conn: conn,
-      subdomain: subdomain
-    } do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "First Photo")
-      create_photo(album: album, title: "Second Photo")
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
 
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024?project=1")
-
-      # Page renders successfully
-      assert html =~ "Thibault" or html =~ "wedding-2024"
-    end
-
-    test "displays first project when no project param", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "First Photo")
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Page renders successfully
-      assert html =~ "Thibault" or html =~ "wedding-2024"
-    end
-
-    test "updates page title when project changes", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", title: "Wedding Album", published: true)
-      create_photo(album: album, title: "Photo One")
-      create_photo(album: album, title: "Photo Two")
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024?project=1")
-
-      # Page renders successfully
-      assert html =~ "Thibault" or html =~ "wedding-2024"
-    end
-
-    test "sets meta description from album description", %{conn: conn, subdomain: subdomain} do
-      album =
-        create_album(
-          slug: "wedding-2024",
-          description: "A beautiful wedding day",
-          published: true
-        )
-
-      create_photo(album: album)
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Page renders successfully
-      assert html =~ "Thibault" or html =~ "wedding-2024"
-    end
-
-    test "falls back to album title for meta description", %{conn: conn, subdomain: subdomain} do
-      album =
-        create_album(
-          slug: "wedding-2024",
-          title: "Beautiful Wedding",
-          description: nil,
-          published: true
-        )
-
-      create_photo(album: album)
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Page renders successfully
-      assert html =~ "Thibault" or html =~ "wedding-2024"
-    end
-
-    test "uses default description when album has no description or title", %{
-      conn: conn,
-      subdomain: subdomain
-    } do
-      {:ok, _view, html} = live(conn, subdomain <> "/gallery")
-
-      # Should render the gallery page
-      assert html =~ "Thibault"
+      assert html =~ "(1 - 3)"
     end
   end
 
-  describe "handle_event show_project" do
-    setup [:open_subdomain]
+  describe "metadonnees de page" do
+    test "le titre porte le nom de l'album", %{conn: conn} do
+      publie(slug: "un-album", title: "Sortie de ceremonie")
 
-    test "updates project display when clicked", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "Photo One")
-      create_photo(album: album, title: "Photo Two")
-      create_photo(album: album, title: "Photo Three")
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
 
-      {:ok, view, _html} = live(conn, subdomain <> "/gallery/wedding-2024")
-
-      # Click on second project thumbnail
-      html = render_click(view, "show_project", %{"project" => "1"})
-
-      # Page should update with new project
-      assert html =~ "Photo Two" or html =~ "wedding-2024"
+      assert html =~ "Sortie de ceremonie"
     end
 
-    test "updates page title when showing project", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "Photo One")
-      create_photo(album: album, title: "Special Photo")
+    test "la description de page reprend celle de l'album", %{conn: conn} do
+      publie(slug: "un-album", description: "Une journee de juin au chateau")
 
-      {:ok, view, _html} = live(conn, subdomain <> "/gallery/wedding-2024")
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
 
-      # Click on second project
-      render_click(view, "show_project", %{"project" => "1"})
-
-      # Verify page title updates
-      assert render(view) =~ "Special Photo" or render(view) =~ "wedding-2024"
+      assert html =~ ~s(name="description" content="Une journee de juin au chateau")
     end
 
-    test "clicking project updates project_id assign", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "First")
-      create_photo(album: album, title: "Second")
-      create_photo(album: album, title: "Third")
+    test "la description de page retombe sur le titre quand l'album n'en a pas", %{conn: conn} do
+      publie(slug: "un-album", title: "Sans description", description: nil)
 
-      {:ok, view, _html} = live(conn, subdomain <> "/gallery/wedding-2024")
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
 
-      # Click on third project (index 2)
-      html = render_click(view, "show_project", %{"project" => "2"})
-
-      # Should show third photo content
-      assert html =~ "Third" or html =~ "project-image-2"
+      assert html =~ ~s(name="description" content="Sans description")
     end
   end
 
-  describe "Schema.org structured data" do
-    setup [:open_subdomain]
+  describe "langue" do
+    test "suit le cookie de langue", %{conn: conn} do
+      publie(slug: "un-album")
+      conn = put_req_cookie(conn, "locale", "en")
 
-    test "renders album page with photos from database", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", title: "Wedding Album", published: true)
-      create_photo(album: album, title: "Photo 1")
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
 
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Album page should render with photo data
-      assert html =~ "Photo 1" or html =~ "Wedding Album" or html =~ "wedding-2024"
+      assert html =~ "Home"
     end
 
-    test "does not generate schema for default data", %{conn: conn, subdomain: subdomain} do
-      {:ok, _view, html} = live(conn, subdomain <> "/gallery")
+    test "suit le parametre d'URL quand il est fourni", %{conn: conn} do
+      publie(slug: "un-album")
 
-      # Default data should not have ImageGallery schema
-      refute html =~ "ImageGallery"
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album?hl=en")
+
+      assert html =~ "Home"
     end
 
-    test "does not generate schema when chapter is nil", %{conn: conn, subdomain: subdomain} do
-      {:ok, _view, html} = live(conn, subdomain <> "/")
+    test "sert le francais par defaut", %{conn: conn} do
+      publie(slug: "un-album")
 
-      # Page renders correctly without gallery schema
-      assert html =~ "Thibault"
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
+
+      assert html =~ "Accueil"
     end
 
-    test "generates breadcrumb schema for valid chapter", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album)
+    test "transmet la langue demandee a la plateforme", %{conn: conn} do
+      publie(slug: "un-album")
 
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
+      {:ok, _vue, _html} = live(conn, @hote <> "/gallery/un-album?hl=en")
 
-      # Should have breadcrumb schema with chapter name
-      assert html =~ "BreadcrumbList" or html =~ "wedding-2024"
-    end
-
-    test "does not generate breadcrumb when chapter is nil", %{conn: conn, subdomain: subdomain} do
-      {:ok, _view, html} = live(conn, subdomain <> "/")
-
-      # Home page should not have breadcrumb schema for gallery
-      assert html =~ "Thibault"
-    end
-
-    test "album with photos renders correctly", %{conn: conn, subdomain: subdomain} do
-      album =
-        create_album(slug: "wedding-2024", title: "Beautiful Wedding Day", published: true)
-
-      create_photo(album: album, title: "First Dance")
-      create_photo(album: album, title: "Ceremony")
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Album data should be loaded
-      assert html =~ "First Dance" or html =~ "Beautiful Wedding Day" or html =~ "wedding-2024"
-    end
-  end
-
-  describe "photo counter" do
-    setup [:open_subdomain]
-
-    test "displays correct photo count", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "Photo 1")
-      create_photo(album: album, title: "Photo 2")
-      create_photo(album: album, title: "Photo 3")
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Album with photos should render - the album data is loaded
-      assert html =~ "wedding-2024" or html =~ "Photo"
-    end
-
-    test "displays default photo count when using default data", %{
-      conn: conn,
-      subdomain: subdomain
-    } do
-      {:ok, _view, html} = live(conn, subdomain <> "/gallery")
-
-      # Default gallery page renders
-      assert html =~ "Thibault"
-    end
-  end
-
-  describe "alt text generation for SEO" do
-    setup [:open_subdomain]
-
-    test "includes alt text in photo data", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", title: "Wedding Album", published: true)
-      create_photo(album: album, title: "First Dance", description: "Beautiful moment")
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Page renders with album content
-      assert html =~ "wedding-2024" or html =~ "Wedding Album" or html =~ "Galerie"
-    end
-  end
-
-  describe "project navigation" do
-    setup [:open_subdomain]
-
-    test "can navigate between projects sequentially", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "Photo 1")
-      create_photo(album: album, title: "Photo 2")
-      create_photo(album: album, title: "Photo 3")
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Album page should render
-      assert html =~ "wedding-2024" or html =~ "Galerie"
-    end
-  end
-
-  describe "album with multiple photos" do
-    setup [:open_subdomain]
-
-    test "displays all photos in the album", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "Photo 1")
-      create_photo(album: album, title: "Photo 2")
-      create_photo(album: album, title: "Photo 3")
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Album page should render with album content
-      assert html =~ "wedding-2024" or html =~ "Galerie"
-    end
-  end
-
-  describe "meta description extraction" do
-    setup [:open_subdomain]
-
-    test "uses album description when available", %{conn: conn, subdomain: subdomain} do
-      album =
-        create_album(
-          slug: "wedding-2024",
-          title: "Wedding",
-          description: "A magical day celebration",
-          published: true
-        )
-
-      create_photo(album: album)
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Meta description should contain album description
-      assert html =~ "A magical day celebration" or html =~ "meta"
-    end
-
-    test "falls back to album title when no description", %{conn: conn, subdomain: subdomain} do
-      album =
-        create_album(
-          slug: "wedding-2024",
-          title: "Beautiful Wedding Ceremony",
-          description: nil,
-          published: true
-        )
-
-      create_photo(album: album)
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Should use title as fallback
-      assert html =~ "Beautiful Wedding Ceremony" or html =~ "wedding-2024"
-    end
-
-    test "uses default description for gallery without album", %{
-      conn: conn,
-      subdomain: subdomain
-    } do
-      {:ok, _view, html} = live(conn, subdomain <> "/gallery")
-
-      # Should use default photography description
-      assert html =~ "Thibault" or html =~ "Photographie"
-    end
-  end
-
-  describe "get_album_photos edge cases" do
-    setup [:open_subdomain]
-
-    test "handles nil chapter gracefully", %{conn: conn, subdomain: subdomain} do
-      {:ok, _view, html} = live(conn, subdomain <> "/")
-
-      # Should fall back to default data
-      assert html =~ "china.webp" or html =~ "japan.webp" or html =~ "Thibault"
-    end
-
-    test "handles empty string chapter", %{conn: conn, subdomain: subdomain} do
-      {:ok, _view, html} = live(conn, subdomain <> "/gallery")
-
-      # Should use default data for gallery path
-      assert html =~ "Thibault"
-    end
-  end
-
-  describe "photo data structure" do
-    setup [:open_subdomain]
-
-    test "builds complete photo data from album", %{conn: conn, subdomain: subdomain} do
-      album =
-        create_album(
-          slug: "wedding-2024",
-          title: "Wedding Album",
-          description: "Our special day",
-          published: true
-        )
-
-      photo =
-        create_photo(
-          album: album,
-          title: "First Dance",
-          description: "The romantic first dance"
-        )
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Photo title should appear
-      assert html =~ photo.title or html =~ "wedding-2024"
-    end
-
-    test "uses album title when photo has no title", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", title: "Wedding Album", published: true)
-      create_photo(album: album, title: nil)
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Should use album title as fallback
-      assert html =~ "Wedding Album" or html =~ "wedding-2024"
-    end
-
-    test "handles photo with empty description", %{conn: conn, subdomain: subdomain} do
-      album = create_album(slug: "wedding-2024", published: true)
-      create_photo(album: album, title: "Photo", description: nil)
-
-      {:ok, _view, html} = live(conn, subdomain <> "/wedding-2024")
-
-      # Should render without error
-      assert html =~ "Photo" or html =~ "wedding-2024"
+      assert {"un-album", opts} = Scenario.last_args(:get_album)
+      assert Keyword.get(opts, :locale) == "en"
     end
   end
 end

@@ -1118,24 +1118,10 @@ msgid "photography.concerts_music"
 msgstr ""
 
 #: lib/portfolio_web/helpers/album_type_formatter.ex:65
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:67
 #: lib/portfolio_web/live/photography_live/index.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "photography.gallery"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/gallery.ex:17
-#, elixir-autogen, elixir-format
-msgid "photography.gallery.china_title"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/gallery.ex:23
-#, elixir-autogen, elixir-format
-msgid "photography.gallery.japan_title"
-msgstr ""
-
-#: lib/portfolio_web/live/photography_live/gallery.ex:29
-#, elixir-autogen, elixir-format
-msgid "photography.gallery.taiwan_title"
 msgstr ""
 
 #: lib/portfolio_web/helpers/album_type_formatter.ex:59
@@ -1143,14 +1129,13 @@ msgstr ""
 msgid "photography.motherhood_families"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:109
-#: lib/portfolio_web/live/photography_live/gallery.ex:135
+#: lib/portfolio_web/live/photography_live/gallery.ex:90
 #: lib/portfolio_web/live/photography_live/index.ex:70
 #, elixir-autogen, elixir-format
 msgid "photography.page_title"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/modal_content.ex:82
+#: lib/portfolio_web/live/photography_live/modal_content.ex:83
 #, elixir-autogen, elixir-format
 msgid "photography.show_more"
 msgstr ""
@@ -2162,7 +2147,7 @@ msgstr ""
 msgid "photography.alt.wedding"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:123
+#: lib/portfolio_web/live/photography_live/gallery.ex:111
 #: lib/portfolio_web/live/photography_live/index.html.heex:187
 #: lib/portfolio_web/live/photography_live/index.html.heex:188
 #, elixir-autogen, elixir-format
@@ -2253,25 +2238,23 @@ msgstr ""
 msgid "components.table.actions"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:41
-#: lib/portfolio_web/live/photography_live/gallery.ex:181
-#: lib/portfolio_web/live/photography_live/gallery.ex:186
-#: lib/portfolio_web/live/photography_live/gallery.ex:190
+#: lib/portfolio_web/components/layouts/photography.html.heex:38
+#: lib/portfolio_web/live/photography_live/gallery.ex:91
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.description"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:43
+#: lib/portfolio_web/components/layouts/photography.html.heex:40
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.og_description"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:40
+#: lib/portfolio_web/components/layouts/photography.html.heex:37
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.title"
 msgstr ""
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:49
+#: lib/portfolio_web/components/layouts/photography.html.heex:46
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.twitter_description"
 msgstr ""
@@ -3596,22 +3579,22 @@ msgstr ""
 msgid "mishka.video.not_supported"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:92
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "navigation.back"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:26
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "navigation.home"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:24
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:14
 #, elixir-autogen, elixir-format
 msgid "photography.author_name"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:131
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:142
 #, elixir-autogen, elixir-format
 msgid "photography.go_to_album"
 msgstr ""
@@ -3720,4 +3703,9 @@ msgstr ""
 #: lib/portfolio_web/live/photography_live/timeline.html.heex:200
 #, elixir-autogen, elixir-format
 msgid "accessibility.loading_more_content"
+msgstr ""
+
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:56
+#, elixir-autogen, elixir-format
+msgid "photography.catalog_unavailable"
 msgstr ""

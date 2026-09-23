@@ -245,9 +245,10 @@ defmodule PortfolioWeb.PhotographyLive.IndexTest do
     test "china chapter has gallery link", %{conn: conn} do
       {:ok, view, html} = live(conn, ~p"/?chapter=china")
 
-      # Should have link to gallery
-      assert html =~ "/gallery/china"
-      assert has_element?(view, "a[href='/gallery/china']")
+      # Un chapitre renvoie vers la chronologie filtree, pas vers une page
+      # d'album : "china" est un theme, pas un slug d'album.
+      assert html =~ "/timeline/china"
+      assert has_element?(view, "a[href='/timeline/china']")
     end
   end
 

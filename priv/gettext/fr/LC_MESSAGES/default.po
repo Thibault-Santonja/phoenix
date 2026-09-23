@@ -1118,39 +1118,24 @@ msgid "photography.concerts_music"
 msgstr "Concerts & Musique"
 
 #: lib/portfolio_web/helpers/album_type_formatter.ex:65
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:67
 #: lib/portfolio_web/live/photography_live/index.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "photography.gallery"
 msgstr "Galerie"
-
-#: lib/portfolio_web/live/photography_live/gallery.ex:17
-#, elixir-autogen, elixir-format
-msgid "photography.gallery.china_title"
-msgstr "Un titre en Chine"
-
-#: lib/portfolio_web/live/photography_live/gallery.ex:23
-#, elixir-autogen, elixir-format
-msgid "photography.gallery.japan_title"
-msgstr "Ce titre Japon"
-
-#: lib/portfolio_web/live/photography_live/gallery.ex:29
-#, elixir-autogen, elixir-format
-msgid "photography.gallery.taiwan_title"
-msgstr "Un titre Taïwan"
 
 #: lib/portfolio_web/helpers/album_type_formatter.ex:59
 #, elixir-autogen, elixir-format
 msgid "photography.motherhood_families"
 msgstr "Maternité & Familles"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:109
-#: lib/portfolio_web/live/photography_live/gallery.ex:135
+#: lib/portfolio_web/live/photography_live/gallery.ex:90
 #: lib/portfolio_web/live/photography_live/index.ex:70
 #, elixir-autogen, elixir-format
 msgid "photography.page_title"
 msgstr "Thibault San Photographie"
 
-#: lib/portfolio_web/live/photography_live/modal_content.ex:82
+#: lib/portfolio_web/live/photography_live/modal_content.ex:83
 #, elixir-autogen, elixir-format
 msgid "photography.show_more"
 msgstr "Voir plus"
@@ -2162,7 +2147,7 @@ msgstr "Thibault San Photography - Photographie d'événements utilisée en arri
 msgid "photography.alt.wedding"
 msgstr "Thibault San Photography - Photographie de mariage utilisée en arrière-plan"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:123
+#: lib/portfolio_web/live/photography_live/gallery.ex:111
 #: lib/portfolio_web/live/photography_live/index.html.heex:187
 #: lib/portfolio_web/live/photography_live/index.html.heex:188
 #, elixir-autogen, elixir-format, fuzzy
@@ -2253,25 +2238,23 @@ msgstr "Fermer"
 msgid "components.table.actions"
 msgstr "Actions"
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:41
-#: lib/portfolio_web/live/photography_live/gallery.ex:181
-#: lib/portfolio_web/live/photography_live/gallery.ex:186
-#: lib/portfolio_web/live/photography_live/gallery.ex:190
+#: lib/portfolio_web/components/layouts/photography.html.heex:38
+#: lib/portfolio_web/live/photography_live/gallery.ex:91
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.description"
 msgstr "Portfolio de photographie de Thibault Santonja – Paysages, reconstitutions historiques, portraits et projets personnels."
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:43
+#: lib/portfolio_web/components/layouts/photography.html.heex:40
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.og_description"
 msgstr "Découvrez le portfolio photographique de Thibault San – Paysages, histoire vivante, portraits et travaux visuels."
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:40
+#: lib/portfolio_web/components/layouts/photography.html.heex:37
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.title"
 msgstr "Thibault San Photographie – Portfolio & Galerie"
 
-#: lib/portfolio_web/components/layouts/photography.html.heex:49
+#: lib/portfolio_web/components/layouts/photography.html.heex:46
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.twitter_description"
 msgstr "Découvrez le portfolio photographique de Thibault San – Paysages, histoire vivante, portraits et travaux visuels."
@@ -3596,22 +3579,22 @@ msgstr "Fermer la barre latérale"
 msgid "mishka.video.not_supported"
 msgstr "Votre navigateur ne supporte pas la balise vidéo."
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:92
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "navigation.back"
 msgstr "Retour"
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:26
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "navigation.home"
 msgstr "Accueil"
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:24
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:14
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.author_name"
 msgstr "Thibault Santonja"
 
-#: lib/portfolio_web/live/photography_live/gallery.html.heex:131
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:142
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.go_to_album"
 msgstr "voir l'album"
@@ -3721,3 +3704,8 @@ msgstr "Photo mise à jour avec succès"
 #, elixir-autogen, elixir-format
 msgid "accessibility.loading_more_content"
 msgstr "Chargement de contenu supplémentaire"
+
+#: lib/portfolio_web/live/photography_live/gallery.html.heex:56
+#, elixir-autogen, elixir-format
+msgid "photography.catalog_unavailable"
+msgstr "Le catalogue des albums est momentanément indisponible. Les images reviendront d'elles-mêmes, sans rien faire de votre côté."
