@@ -63,6 +63,7 @@ defmodule Portfolio.Photography.Properties.SlugGeneratorPropertiesTest do
               title <- valid_title_generator(),
               date <- date_generator()
             ) do
+        title = unseen_title(title)
         {:ok, base_slug} = SlugGenerator.generate_unique_slug(title, date)
 
         # Create album with base slug
@@ -173,6 +174,7 @@ defmodule Portfolio.Photography.Properties.SlugGeneratorPropertiesTest do
               title <- valid_title_generator(),
               date <- date_generator()
             ) do
+        title = unseen_title(title)
         {:ok, base_slug} = SlugGenerator.generate_unique_slug(title, date)
         _album = create_album_with_slug(base_slug, date)
 
@@ -211,6 +213,13 @@ defmodule Portfolio.Photography.Properties.SlugGeneratorPropertiesTest do
       end
     end
   end
+
+  # Les albums crees par une iteration vivent dans la meme transaction que les
+  # suivantes. Sans titre neuf, une iteration qui retombe sur un titre deja
+  # genere demarre a un niveau de suffixe avance : le premier appel rend deja
+  # "titre-2023" et le second "titre-2023-12", ce qui met en defaut les
+  # proprietes qui decrivent l escalade depuis le slug nu.
+  defp unseen_title(title), do: "#{title} #{System.unique_integer([:positive])}"
 
   # Helper to create album with specific slug
   defp create_album_with_slug(slug, date) do
