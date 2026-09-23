@@ -1129,8 +1129,8 @@ msgstr "Galerie"
 msgid "photography.motherhood_families"
 msgstr "Maternité & Familles"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:90
-#: lib/portfolio_web/live/photography_live/index.ex:70
+#: lib/portfolio_web/live/photography_live/gallery.ex:91
+#: lib/portfolio_web/live/photography_live/index.ex:71
 #, elixir-autogen, elixir-format
 msgid "photography.page_title"
 msgstr "Thibault San Photographie"
@@ -1145,12 +1145,12 @@ msgstr "Voir plus"
 msgid "photography.street_photography"
 msgstr "Photographie de rue"
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:95
+#: lib/portfolio_web/live/photography_live/timeline.ex:106
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.gallery_prefix"
 msgstr "Galerie photos - "
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:91
+#: lib/portfolio_web/live/photography_live/timeline.ex:103
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.title"
 msgstr "Galerie chronologique de photographies"
@@ -2147,7 +2147,7 @@ msgstr "Thibault San Photography - Photographie d'événements utilisée en arri
 msgid "photography.alt.wedding"
 msgstr "Thibault San Photography - Photographie de mariage utilisée en arrière-plan"
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:111
+#: lib/portfolio_web/live/photography_live/gallery.ex:112
 #: lib/portfolio_web/live/photography_live/index.html.heex:187
 #: lib/portfolio_web/live/photography_live/index.html.heex:188
 #, elixir-autogen, elixir-format, fuzzy
@@ -2159,29 +2159,29 @@ msgstr "Thibault San Photography"
 msgid "photography.brand_name"
 msgstr "Thibault Santonja"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:235
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:241
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.empty_message"
 msgstr "Je suis désolé mais pour le moment, cette galerie de portfolio est vide"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:212
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:219
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:218
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:225
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.empty_title"
 msgstr "Chapitre de portfolio vide"
 
 #: lib/portfolio_web/live/photography_live/timeline.html.heex:15
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:253
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:259
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.home"
 msgstr "Accueil"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:174
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:180
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.show_more"
 msgstr "En savoir plus"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:154
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:160
 #, elixir-autogen, elixir-format, fuzzy
 msgid "photography.timeline.website"
 msgstr "Site web"
@@ -2239,7 +2239,7 @@ msgid "components.table.actions"
 msgstr "Actions"
 
 #: lib/portfolio_web/components/layouts/photography.html.heex:38
-#: lib/portfolio_web/live/photography_live/gallery.ex:91
+#: lib/portfolio_web/live/photography_live/gallery.ex:92
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.description"
 msgstr "Portfolio de photographie de Thibault Santonja – Paysages, reconstitutions historiques, portraits et projets personnels."
@@ -3699,14 +3699,14 @@ msgstr "Ce que j’aime à Taïwan, ce sont les rues — leur énergie tranquill
 msgid "admin.albums.photos_partial_success"
 msgstr "Photo mise à jour avec succès"
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:198
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:200
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:204
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:206
 #, elixir-autogen, elixir-format
 msgid "accessibility.loading_more_content"
 msgstr "Chargement de contenu supplémentaire"
 
 #: lib/portfolio_web/live/photography_live/gallery.html.heex:56
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:238
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:244
 #, elixir-autogen, elixir-format
 msgid "photography.catalog_unavailable"
 msgstr "Le catalogue des albums est momentanément indisponible. Les images reviendront d'elles-mêmes, sans rien faire de votre côté."

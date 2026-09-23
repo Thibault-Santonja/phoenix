@@ -1129,8 +1129,8 @@ msgstr ""
 msgid "photography.motherhood_families"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:90
-#: lib/portfolio_web/live/photography_live/index.ex:70
+#: lib/portfolio_web/live/photography_live/gallery.ex:91
+#: lib/portfolio_web/live/photography_live/index.ex:71
 #, elixir-autogen, elixir-format
 msgid "photography.page_title"
 msgstr ""
@@ -1145,12 +1145,12 @@ msgstr ""
 msgid "photography.street_photography"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:95
+#: lib/portfolio_web/live/photography_live/timeline.ex:106
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.gallery_prefix"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:91
+#: lib/portfolio_web/live/photography_live/timeline.ex:103
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.title"
 msgstr ""
@@ -2147,7 +2147,7 @@ msgstr ""
 msgid "photography.alt.wedding"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/gallery.ex:111
+#: lib/portfolio_web/live/photography_live/gallery.ex:112
 #: lib/portfolio_web/live/photography_live/index.html.heex:187
 #: lib/portfolio_web/live/photography_live/index.html.heex:188
 #, elixir-autogen, elixir-format
@@ -2159,29 +2159,29 @@ msgstr ""
 msgid "photography.brand_name"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:235
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:241
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.empty_message"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:212
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:219
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:218
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:225
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.empty_title"
 msgstr ""
 
 #: lib/portfolio_web/live/photography_live/timeline.html.heex:15
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:253
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:259
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.home"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:174
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:180
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.show_more"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:154
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.website"
 msgstr ""
@@ -2239,7 +2239,7 @@ msgid "components.table.actions"
 msgstr ""
 
 #: lib/portfolio_web/components/layouts/photography.html.heex:38
-#: lib/portfolio_web/live/photography_live/gallery.ex:91
+#: lib/portfolio_web/live/photography_live/gallery.ex:92
 #, elixir-autogen, elixir-format
 msgid "layouts.photography.description"
 msgstr ""
@@ -3699,14 +3699,14 @@ msgstr ""
 msgid "admin.albums.photos_partial_success"
 msgstr ""
 
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:198
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:200
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:204
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:206
 #, elixir-autogen, elixir-format
 msgid "accessibility.loading_more_content"
 msgstr ""
 
 #: lib/portfolio_web/live/photography_live/gallery.html.heex:56
-#: lib/portfolio_web/live/photography_live/timeline.html.heex:238
+#: lib/portfolio_web/live/photography_live/timeline.html.heex:244
 #, elixir-autogen, elixir-format
 msgid "photography.catalog_unavailable"
 msgstr ""
