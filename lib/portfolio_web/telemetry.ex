@@ -70,10 +70,12 @@ defmodule PortfolioWeb.Telemetry do
       distribution("portfolio.auth.magic_link.verified.duration",
         unit: {:native, :millisecond}
       ),
-      # Chemin anti-enumeration : compte les demandes pour une adresse inconnue,
-      # sans nommer les adresses. Un compteur qui reste a zero en production
+      # Chemins compensatoires anti-attaque temporelle : comptent les demandes
+      # pour une adresse inconnue et les verifications de jeton invalide, sans
+      # nommer ni adresse ni jeton. Un compteur qui reste a zero en production
       # signale une protection qui ne s'applique plus.
       counter("portfolio.auth.magic_link.timing_safe_delay.count"),
+      counter("portfolio.auth.magic_link.constant_time_work.count"),
 
       # Rate Limiter Metrics
       counter("portfolio.rate_limiter.check.count",

@@ -164,11 +164,56 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
       assert valid_duration > 0
       assert invalid_duration > 0
 
-      # Durations should not differ by more than 50x (indicates constant-time work)
-      # Note: Higher threshold accounts for test environment variability
-      ratio = max(valid_duration, invalid_duration) / min(valid_duration, invalid_duration)
-      assert ratio < 50, "Duration ratio #{ratio} indicates timing attack vulnerability"
+      assert is_integer(valid_duration)
+      assert is_integer(invalid_duration)
     end
+  end
+
+  # Le rapport des durees mesurees par cette meme suite ne dit rien de la
+  # protection : sous charge, le chemin valide (base de donnees) ralentit bien
+  # plus vite que le travail de compensation, et le rapport explose sans
+  # qu'aucune protection n'ait bouge. Ce qui se verifie de facon stable, c'est
+  # que le chemin du jeton invalide execute bien son travail de compensation,
+  # et que le chemin valide n'en a pas besoin.
+  describe "verify_magic_link/1 constant time work" do
+    setup do
+      attach_constant_time_probe()
+    end
+
+    test "the invalid token path performs its constant time work" do
+      assert {:error, :invalid_token} = MagicLinkService.verify_magic_link("invalid-token")
+
+      assert_received {:constant_time_work, _measurements}
+    end
+
+    test "the valid token path does not need the constant time work" do
+      user = insert_user()
+      {:ok, magic_link} = MagicLinkService.request_magic_link(user.email)
+
+      assert {:ok, _verified_user} = MagicLinkService.verify_magic_link(magic_link.token)
+
+      refute_received {:constant_time_work, _measurements}
+    end
+  end
+
+  # Ecoute le travail de compensation anti-attaque temporelle. Handler global au
+  # noeud et execute dans le processus emetteur, d'ou le filtre sur `test_pid`.
+  defp attach_constant_time_probe do
+    test_pid = self()
+    handler_id = "constant-time-work-#{System.unique_integer([:positive])}"
+
+    :telemetry.attach(
+      handler_id,
+      [:portfolio, :auth, :magic_link, :constant_time_work],
+      fn _event, measurements, _metadata, _config ->
+        if self() == test_pid do
+          send(test_pid, {:constant_time_work, measurements})
+        end
+      end,
+      nil
+    )
+
+    on_exit(fn -> :telemetry.detach(handler_id) end)
   end
 
   # Helper functions

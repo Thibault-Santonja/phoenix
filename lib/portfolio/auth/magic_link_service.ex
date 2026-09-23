@@ -246,12 +246,21 @@ defmodule Portfolio.Auth.MagicLinkService do
 
   # Performs constant-time work to prevent timing attacks
   # When token is invalid, we still do similar work as valid token validation
+  #
+  # The work is emitted as a telemetry event so that the control can be
+  # observed rather than timed from the outside: comparing the two paths with
+  # a stopwatch says more about how busy the machine is than about whether the
+  # compensating work ran. The event names no token and no account, it only
+  # counts how often the invalid token path was taken.
   @spec constant_time_comparison() :: :ok
   defp constant_time_comparison do
     # Simulate the work done during token validation
     # Use secure_compare with dummy values to add constant overhead
     dummy_hash = :crypto.strong_rand_bytes(32)
     _ = Plug.Crypto.secure_compare(dummy_hash, dummy_hash)
+
+    :telemetry.execute([:portfolio, :auth, :magic_link, :constant_time_work], %{count: 1}, %{})
+
     :ok
   end
 end
