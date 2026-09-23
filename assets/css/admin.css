@@ -441,6 +441,31 @@
 
 /* --- Barre mobile + menu escamotable (sans JavaScript : `<details>` natif). */
 .app-mobilebar { display: none; }
+
+/* Bouton icone du menu mobile. Sous 900px la barre laterale disparait : ce
+   `<summary>` devient la seule commande de navigation, il lui faut donc un
+   marqueur de divulgation supprime, une cible tactile d'au moins 44px
+   (WCAG 2.2 SC 2.5.8) et un focus visible au clavier. */
+.app .app-iconbtn {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  border: var(--hairline-strong);
+  color: var(--color-ink-soft);
+  background: transparent;
+  transition: border-color var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out);
+}
+.app .app-iconbtn::-webkit-details-marker { display: none; }
+.app .app-iconbtn:hover { border-color: var(--color-ink); color: var(--color-ink); }
+.app .app-iconbtn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.app .app-mobile-nav[open] .app-iconbtn {
+  border-color: var(--color-ink);
+  color: var(--color-ink);
+}
 @media (max-width: 900px) {
   .app { grid-template-columns: minmax(0, 1fr); }
   .app-side { display: none; }
