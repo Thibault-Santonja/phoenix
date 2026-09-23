@@ -158,8 +158,8 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
   end
 
   defp schedule_refresh(key, opts) do
-    # Le verrou passe par `Cachex.fetch/3` : la bibliotheque garantit qu'une
-    # seule execution de la fonction est en vol pour une clé donnée, ce qui
+    # Le verrou passe par `Cachex.fetch/3` : la bibliothèque garantit qu'une
+    # seule exécution de la fonction est en vol pour une clé donnée, ce qui
     # évite d'écrire un verrou à la main.
     _ =
       Task.Supervisor.start_child(Portfolio.TaskSupervisor, fn ->

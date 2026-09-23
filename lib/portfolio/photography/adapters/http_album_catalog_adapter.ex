@@ -75,6 +75,11 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
       url: path,
       method: :get,
       retry: false,
+      # Pas de compression annoncée : l'appel reste sur le réseau interne de
+      # l'hôte, où compresser ne fait gagner ni temps ni bande passante, et
+      # où décompresser une réponse de taille inconnue est le seul risque
+      # mémoire que ce chemin porte sur une machine à 4 Go.
+      compressed: false,
       connect_options: [timeout: config(:connect_timeout, @default_connect_timeout)],
       receive_timeout: config(:receive_timeout, @default_receive_timeout),
       decode_json: [keys: :strings]
