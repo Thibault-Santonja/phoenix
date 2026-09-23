@@ -99,6 +99,16 @@ defmodule Portfolio.Config.DeployTest do
       assert config["minimum_version"] == "2.12.0"
     end
 
+    test "publie sur le même registre que l'autre application", %{config: config} do
+      # Décision du propriétaire : registre unique, ghcr.io. Sans
+      # `registry.server`, Kamal retombe sur Docker Hub. Le serveur retire
+      # l'image du registre à chaque déploiement, et le quota de
+      # téléchargement d'un compte Docker Hub gratuit se compte donc en
+      # déploiements : il s'épuise sans prévenir, et fait échouer une remise
+      # en service au moment où elle compte.
+      assert dig(config, ["registry", "server"]) == "ghcr.io"
+    end
+
     test "l'adresse du serveur n'est écrite qu'une fois", %{config: config} do
       # L'adresse était répétée en dur à trois endroits. Une variable unique
       # supprime la classe d'erreur « on en a changé deux sur trois ».

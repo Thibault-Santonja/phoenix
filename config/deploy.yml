@@ -30,7 +30,8 @@ minimum_version: 2.12.0
 # `kamal rollback`.
 service: portfolio
 
-# Name of the container image.
+# Nom du dépôt d'images, sans le registre : celui-ci est déclaré plus bas.
+# Résolu en `ghcr.io/thibaultsan/portfolio`.
 image: thibaultsan/portfolio
 
 # Compte d'exploitation SSH. NON NÉGOCIABLE : la MÊME variable, donc la même
@@ -165,8 +166,28 @@ proxy:
     version: v0.9.2
     log_max_size: 10m
 
-# Credentials for your image host.
+# Registre d'images : ghcr.io, le MÊME que la plateforme photographique.
+#
+# Cette application publiait sur Docker Hub, faute de `registry.server`, qui
+# vaut Docker Hub par défaut. Deux registres pour deux applications sur la
+# même machine étaient une complication gratuite ; la raison décisive de
+# trancher est ailleurs.
+#
+# Le serveur **retire l'image du registre à chaque déploiement** : c'est lui
+# qui fait le `docker pull`, pas le poste de travail. Le quota de
+# téléchargement d'un compte Docker Hub gratuit se compte donc en
+# déploiements, et il s'épuise sans prévenir. Un quota atteint fait échouer un
+# déploiement au moment précis où l'on en a le plus besoin, c'est-à-dire
+# pendant une remise en service. ghcr.io n'impose pas ce quota sur les images
+# d'un compte.
+#
+# `KAMAL_REGISTRY_USERNAME` est donc désormais le compte GitHub, et
+# `KAMAL_REGISTRY_PASSWORD` un jeton personnel portant `write:packages` (et
+# `read:packages` pour le serveur). L'ancien jeton Docker Hub ne convient plus,
+# et un jeton Docker Hub laissé dans le shell de déploiement échouera à
+# l'authentification, pas au `pull` : l'erreur est franche.
 registry:
+  server: ghcr.io
   username:
     - KAMAL_REGISTRY_USERNAME
   password:

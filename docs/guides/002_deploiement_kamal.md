@@ -14,7 +14,7 @@ Docker, puis cette image est lancée sur un serveur.
 Le déploiement enchaîne donc quatre opérations :
 
 1. **Build** : construire l'image Docker à partir du code source.
-2. **Push** : envoyer l'image sur un registre (Docker Hub), qui sert de dépôt
+2. **Push** : envoyer l'image sur un registre (ghcr.io), qui sert de dépôt
    d'images.
 3. **Pull** : le serveur télécharge l'image depuis le registre.
 4. **Boot** : le serveur démarre un conteneur avec la nouvelle image, attend
@@ -37,7 +37,7 @@ nouveau conteneur qu'une fois son contrôle de santé validé.
 | Serveur | variable de shell `KAMAL_WEB_HOST` (Hetzner CX22, 2 vCPU, 4 Go) | `config/deploy.yml`, clés `servers`, `accessories.db.host`, `builder.remote` |
 | Utilisateur SSH | variable de shell `KAMAL_SSH_USER` | `config/deploy.yml`, clé `ssh`. **La même valeur que la plateforme photographique**, faute de quoi le garde-fou de `kamal remove` devient aveugle et un retrait mal ciblé supprime le proxy partagé |
 | Domaines servis | `thibaultsan.com`, `amvcc.`, `photo.`, `tech.` | `config/deploy.yml`, clé `proxy.hosts` |
-| Image | `thibaultsan/portfolio` sur Docker Hub | `config/deploy.yml`, clé `image` |
+| Image | `ghcr.io/thibaultsan/portfolio` | `config/deploy.yml`, clés `image` et `registry.server`. **Le même registre que la plateforme photographique** : le serveur retire l'image à chaque déploiement, et le quota de téléchargement d'un compte Docker Hub gratuit se compte donc en déploiements |
 | Port applicatif | 4000 dans le conteneur | `Dockerfile`, `proxy.app_port` |
 | Contrôle de santé | `GET /health` toutes les 30 s | `config/deploy.yml`, `Dockerfile` |
 | Base de données | conteneur `postgres:16-alpine` sur le même serveur, publié sur `127.0.0.1:5432` uniquement | `config/deploy.yml`, clé `accessories.db` |
@@ -69,8 +69,8 @@ shell. Les variables attendues :
 
 | Variable | À quoi elle sert |
 | --- | --- |
-| `KAMAL_REGISTRY_USERNAME` | compte Docker Hub qui reçoit l'image |
-| `KAMAL_REGISTRY_PASSWORD` | jeton d'accès Docker Hub (pas le mot de passe du compte) |
+| `KAMAL_REGISTRY_USERNAME` | compte GitHub qui reçoit l'image sur ghcr.io |
+| `KAMAL_REGISTRY_PASSWORD` | jeton personnel GitHub portant `write:packages` (le serveur n'a besoin que de `read:packages`). Un ancien jeton Docker Hub échoue ici à l'authentification, pas au `pull` : l'erreur est franche |
 | `SECRET_KEY_BASE` | signature des sessions et des jetons Phoenix |
 | `DATABASE_URL` | adresse complète de la base pour l'application |
 | `POSTGRES_PASSWORD` | mot de passe du conteneur PostgreSQL |
@@ -164,7 +164,7 @@ Déroulé, avec ce qu'il faut vérifier à chaque étape :
 
 | Étape | Ce que Kamal fait | Si ça casse |
 | --- | --- | --- |
-| `Log into image registry` | connexion Docker Hub | jeton expiré ou absent de l'environnement |
+| `Log into image registry` | connexion à ghcr.io | jeton expiré, absent de l'environnement, ou dépourvu de `write:packages` |
 | `Build and push app image` | build sur le serveur, envoi au registre | erreurs de compilation, voir §6 |
 | `Ensure app can pass healthcheck` | démarre le conteneur, interroge `/health` | l'application démarre mais ne répond pas : variables d'environnement ou base |
 | `Detect stale containers` | repère les vieux conteneurs | sans conséquence |
