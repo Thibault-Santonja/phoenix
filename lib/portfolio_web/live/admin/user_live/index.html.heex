@@ -1,15 +1,6 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <!-- En-tête avec bouton retour -->
-  <div class="flex items-start justify-between mb-4">
-    <.back_to_dashboard />
-    <.admin_logout_button current_user={@current_user} />
-  </div>
-
   <div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900">
-      {gettext("admin.users.title")}
-    </h1>
-    <p class="mt-2 text-gray-600">
+    <p class="text-gray-600">
       {gettext("admin.users.subtitle", count: length(@users))}
     </p>
   </div>

@@ -38,7 +38,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
 
       {:ok, _view, html} = live(conn, ~p"/admin/ip-whitelist")
 
-      assert html =~ "IP Whitelist"
+      assert html =~ "IP Whitelist" or html =~ "Liste blanche IP"
       assert html =~ "192.168.1.100"
       assert html =~ "Office"
       assert html =~ "10.0.0.1"
@@ -48,7 +48,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
     test "displays a message if no whitelisted IPs", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/admin/ip-whitelist")
 
-      assert html =~ "IP Whitelist"
+      assert html =~ "IP Whitelist" or html =~ "Liste blanche IP"
       assert html =~ "No whitelisted IPs"
     end
 

@@ -1,120 +1,53 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <!-- En-tête -->
-  <header class="mb-8 flex items-start justify-between">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900">
-        {gettext("admin.dashboard.title")}
-      </h1>
-      <p class="mt-2 text-gray-600">
-        {gettext("admin.dashboard.welcome", email: @current_user.email)}
-      </p>
-    </div>
-    <.admin_logout_button current_user={@current_user} />
-  </header>
-  
-<!-- Statistiques -->
-  <section class="mb-12">
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">
-      {gettext("admin.dashboard.statistics")}
-    </h2>
+  <!-- Statistiques -->
+  <section class="app-section mb-12">
+    <p class="app-eyebrow">{gettext("admin.dashboard.statistics")}</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Total Albums -->
-      <.stat_card
-        title={gettext("admin.dashboard.stats.total_albums")}
-        value={@stats.total_albums}
-        icon="hero-folder"
-        color="blue"
-        navigate={~p"/admin/albums"}
-      >
-        <:footer>
-          <div class="flex items-center text-sm text-blue-600 font-medium">
-            <span>{gettext("admin.dashboard.stats.view_list")}</span>
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </div>
-        </:footer>
-      </.stat_card>
-      
-<!-- Total Photos -->
-      <.stat_card
-        title={gettext("admin.dashboard.stats.total_photos")}
-        value={@stats.total_photos}
-        icon="hero-photo"
-        color="green"
-        navigate={~p"/admin/photos"}
-      />
-      
-<!-- Albums Publiés -->
-      <.stat_card
-        title={gettext("admin.dashboard.stats.published_albums")}
-        value={@stats.published_albums}
-        icon="hero-check-circle"
-        color="purple"
-        navigate={~p"/admin/albums?filter=published"}
-      >
-        <:footer>
-          <div class="text-sm text-gray-600">
-            <%= if @stats.total_albums > 0 do %>
-              {Float.round(@stats.published_albums / @stats.total_albums * 100, 1)}% {gettext(
-                "admin.dashboard.stats.of_total"
-              )}
-            <% else %>
-              0% {gettext("admin.dashboard.stats.of_total")}
-            <% end %>
-          </div>
-        </:footer>
-      </.stat_card>
-      
-<!-- Albums Brouillons -->
-      <.stat_card
-        title={gettext("admin.dashboard.stats.draft_albums")}
-        value={@stats.draft_albums}
-        icon="hero-pencil-square"
-        color="red"
-        navigate={~p"/admin/albums?filter=draft"}
-      >
-        <:footer>
-          <div class="text-sm text-gray-600">
-            <%= if @stats.total_albums > 0 do %>
-              {Float.round(@stats.draft_albums / @stats.total_albums * 100, 1)}% {gettext(
-                "admin.dashboard.stats.of_total"
-              )}
-            <% else %>
-              0% {gettext("admin.dashboard.stats.of_total")}
-            <% end %>
-          </div>
-        </:footer>
-      </.stat_card>
-      
-<!-- Utilisateurs -->
-      <.stat_card
-        title={gettext("admin.dashboard.stats.users")}
-        value={@stats.total_users}
-        icon="hero-users"
-        color="orange"
-        navigate={~p"/admin/users"}
-      >
-        <:footer>
-          <div class="flex items-center text-sm text-orange-600 font-medium">
-            <span>{gettext("admin.dashboard.stats.view_list")}</span>
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </div>
-        </:footer>
-      </.stat_card>
+    <div class="app-metrics">
+      <.link navigate={~p"/admin/albums"} class="metric">
+        <span class="metric__label">{gettext("admin.dashboard.stats.total_albums")}</span>
+        <span class="metric__value">{@stats.total_albums}</span>
+        <span class="metric__trend">{gettext("admin.dashboard.stats.view_list")}</span>
+      </.link>
+
+      <.link navigate={~p"/admin/photos"} class="metric">
+        <span class="metric__label">{gettext("admin.dashboard.stats.total_photos")}</span>
+        <span class="metric__value">{@stats.total_photos}</span>
+      </.link>
+
+      <.link navigate={~p"/admin/albums?filter=published"} class="metric">
+        <span class="metric__label">{gettext("admin.dashboard.stats.published_albums")}</span>
+        <span class="metric__value">{@stats.published_albums}</span>
+        <span class="metric__trend">
+          <%= if @stats.total_albums > 0 do %>
+            {Float.round(@stats.published_albums / @stats.total_albums * 100, 1)}% {gettext(
+              "admin.dashboard.stats.of_total"
+            )}
+          <% else %>
+            0% {gettext("admin.dashboard.stats.of_total")}
+          <% end %>
+        </span>
+      </.link>
+
+      <.link navigate={~p"/admin/albums?filter=draft"} class="metric">
+        <span class="metric__label">{gettext("admin.dashboard.stats.draft_albums")}</span>
+        <span class="metric__value">{@stats.draft_albums}</span>
+        <span class="metric__trend">
+          <%= if @stats.total_albums > 0 do %>
+            {Float.round(@stats.draft_albums / @stats.total_albums * 100, 1)}% {gettext(
+              "admin.dashboard.stats.of_total"
+            )}
+          <% else %>
+            0% {gettext("admin.dashboard.stats.of_total")}
+          <% end %>
+        </span>
+      </.link>
+
+      <.link navigate={~p"/admin/users"} class="metric">
+        <span class="metric__label">{gettext("admin.dashboard.stats.users")}</span>
+        <span class="metric__value">{@stats.total_users}</span>
+        <span class="metric__trend">{gettext("admin.dashboard.stats.view_list")}</span>
+      </.link>
     </div>
   </section>
   
@@ -231,19 +164,12 @@
         <div class="mb-4">
           <div class="flex items-end justify-between mb-2">
             <span class="text-sm font-medium text-gray-700">
-              {gettext("admin.dashboard.storage.space_used")}
-            </span>
-            <span class="text-2xl font-bold text-gray-900">
-              {@processing_stats.storage_gb} GB
-            </span>
-          </div>
-          <div class="flex items-center justify-between text-sm text-gray-600">
-            <span>
-              {gettext("admin.dashboard.storage.capacity",
+              {gettext("admin.dashboard.storage.space_used",
+                used: @processing_stats.storage_gb,
                 capacity: @processing_stats.storage_capacity_gb
               )}
             </span>
-            <span class="font-medium">{@processing_stats.storage_percentage}%</span>
+            <span class="font-medium text-gray-900">{@processing_stats.storage_percentage}%</span>
           </div>
         </div>
         
