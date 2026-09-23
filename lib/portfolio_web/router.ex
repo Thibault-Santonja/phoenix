@@ -72,15 +72,14 @@ defmodule PortfolioWeb.Router do
   # `:photography`, au format `application/xml` pres. Un robot demande un plan
   # de site en xml : sans ce format accepte, il reçoit un 406, qui ne dit rien
   # de l'absence de la ressource. Ouvrir le xml a tout l'hôte servirait en
-  # revanche les pages HTML sous un type xml, d'ou ces deux pipelines. La
-  # protection anti-CSRF est inutile ici : ces routes ne servent que des GET
-  # sans formulaire.
+  # revanche les pages HTML sous un type xml, d'ou ces deux pipelines.
   pipeline :photo_sitemap do
     plug :accepts, ["xml", "html"]
     plug :fetch_session
     plug PortfolioWeb.Plugs.CSPNonce
     plug :fetch_live_flash
     plug :put_root_layout, html: {PortfolioWeb.Layouts, :photography}
+    plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug PortfolioWeb.Plugs.SetLocale
     plug PortfolioWeb.Plugs.PhotoHostSeo
