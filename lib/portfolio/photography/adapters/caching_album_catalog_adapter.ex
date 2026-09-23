@@ -117,12 +117,11 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
         # Comparaison stricte : une fenêtre de fraîcheur à zéro milliseconde
         # signifie « revalide à chaque lecture », ce qui est une configuration
         # légitime et pas un cas dégénéré.
-        if age_ms < fresh_for_ms() do
-          {:ok, value}
-        else
-          schedule_refresh(key, opts)
-          {:ok, value}
-        end
+        #
+        # Dans les deux cas la valeur en cache part immédiatement : le
+        # rafraîchissement ne retarde jamais une réponse.
+        if age_ms >= fresh_for_ms(), do: schedule_refresh(key, opts)
+        {:ok, value}
 
       :miss ->
         fetch_now(key, opts)
