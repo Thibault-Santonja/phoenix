@@ -37,6 +37,24 @@ defmodule PortfolioWeb.PhotographyLive.IndexTest do
     end
   end
 
+  describe "paramètre de langue" do
+    test "ne reflète pas dans l'adresse une langue que le portfolio ne parle pas", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/?hl=fr-FR")
+
+      render_click(view, "close_modal", %{})
+
+      assert_patched(view, ~p"/?hl=fr")
+    end
+
+    test "retient une langue effectivement servie", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/?hl=en")
+
+      render_click(view, "close_modal", %{})
+
+      assert_patched(view, ~p"/?hl=en")
+    end
+  end
+
   describe "Modal handling" do
     test "opens modal when chapter parameter is provided", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/?chapter=china")

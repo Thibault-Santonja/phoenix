@@ -131,6 +131,30 @@ defmodule PortfolioWeb.Photography.GalleryCatalogTest do
     end
   end
 
+  describe "paramètre de langue" do
+    test "ne relaie pas une langue que le portfolio ne parle pas", %{conn: conn} do
+      # `hl` est le paramètre de langue de Google : un lien partagé peut
+      # porter n'importe quoi. Relayé tel quel, il vaut un 400 de la
+      # plateforme, donc une page « momentanément indisponible » à la place de
+      # l'album, et une clé de cache de plus par valeur distincte.
+      publie(slug: "coucy")
+
+      {:ok, _vue, _html} = live(conn, @hote <> "/gallery/coucy?hl=fr-FR")
+
+      {_slug, opts} = Scenario.last_args(:get_album)
+      assert Keyword.get(opts, :locale) == "fr"
+    end
+
+    test "relaie une langue effectivement servie", %{conn: conn} do
+      publie(slug: "coucy")
+
+      {:ok, _vue, _html} = live(conn, @hote <> "/gallery/coucy?hl=en")
+
+      {_slug, opts} = Scenario.last_args(:get_album)
+      assert Keyword.get(opts, :locale) == "en"
+    end
+  end
+
   describe "/gallery sans album" do
     test "renvoie vers la chronologie, qui est l'index des albums", %{conn: conn} do
       assert {:error, {:live_redirect, %{to: "/timeline"}}} = live(conn, @hote <> "/gallery")

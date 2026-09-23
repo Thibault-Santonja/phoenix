@@ -26,6 +26,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   alias Portfolio.Photography.Catalog.Photo
   alias Portfolio.Photography.Ports.AlbumCatalogPort
   alias PortfolioWeb.AlbumNotFoundError
+  alias PortfolioWeb.Locale
 
   # Les quatre presets responsives exposés par la plateforme, du plus léger au
   # plus lourd. L'ordre est celui du `srcset`.
@@ -33,7 +34,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
 
   @impl true
   def mount(params, session, socket) do
-    locale = Map.get(params, "hl", session["locale"] || "fr")
+    locale = Locale.from_params(params, session["locale"] || "fr")
     _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
     socket = assign(socket, language: locale)

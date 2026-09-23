@@ -12,13 +12,14 @@ defmodule PortfolioWeb.PhotographyLive.Index do
   use PortfolioWeb, :live_view
 
   alias PortfolioWeb.Helpers.AlbumTypeFormatter
+  alias PortfolioWeb.Locale
 
   defdelegate format_chapter_title(chapter), to: AlbumTypeFormatter
 
   @impl true
   def mount(params, session, socket) do
     chapter = Map.get(params, "chapter", nil)
-    language = Map.get(params, "hl", session["locale"] || "fr")
+    language = Locale.from_params(params, session["locale"] || "fr")
     _ = Gettext.put_locale(PortfolioWeb.Gettext, language)
 
     {
