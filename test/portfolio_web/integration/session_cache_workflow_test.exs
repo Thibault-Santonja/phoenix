@@ -205,26 +205,43 @@ defmodule PortfolioWeb.Integration.SessionCacheWorkflowTest do
   end
 
   describe "cache performance" do
-    test "cache reduces database queries on repeated session fetches" do
+    # This used to time 100 fetches against a 500ms wall clock. It measured
+    # the machine, not the code: it failed at random on a loaded runner, and
+    # it could not have proved its own name, since `get_session_by_token/1`
+    # reads the repository directly. Counting queries says something the
+    # stopwatch never did, and says it the same way on every machine.
+    test "fetching a session by token stays at a fixed number of queries" do
       user = create_user()
       {:ok, session} = SessionService.create_session(user)
 
-      # Warm up cache
-      assert SessionService.get_session_by_token(session.token) != nil
+      one = count_queries(fn -> SessionService.get_session_by_token(session.token) end)
 
-      # Measure fetches with cache (should be fast)
-      start_time = System.monotonic_time(:microsecond)
+      ten =
+        count_queries(fn ->
+          for _ <- 1..10, do: SessionService.get_session_by_token(session.token)
+        end)
 
-      for _i <- 1..100 do
-        SessionService.get_session_by_token(session.token)
-      end
+      assert one > 0, "without a single query, the comparison would prove nothing"
+      assert ten == one * 10
+    end
+  end
 
-      end_time = System.monotonic_time(:microsecond)
-      elapsed = end_time - start_time
+  defp count_queries(fun) do
+    counter = :counters.new(1, [])
+    handler = "queries-#{System.unique_integer([:positive])}"
 
-      # Cached fetches should complete quickly
-      # (Actual threshold depends on system)
-      assert elapsed < 500_000, "Cached fetches too slow: #{elapsed}μs"
+    :telemetry.attach(
+      handler,
+      [:portfolio, :repo, :query],
+      fn _event, _measurements, _metadata, _config -> :counters.add(counter, 1, 1) end,
+      nil
+    )
+
+    try do
+      fun.()
+      :counters.get(counter, 1)
+    after
+      :telemetry.detach(handler)
     end
   end
 
