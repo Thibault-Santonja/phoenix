@@ -101,7 +101,7 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
       compressed: false,
       connect_options: [timeout: config(:connect_timeout, @default_connect_timeout)],
       receive_timeout: config(:receive_timeout, @default_receive_timeout),
-      decode_json: [keys: :strings]
+      decoders: [json: &Jason.decode(&1, keys: :strings)]
     ]
     |> Keyword.merge(request_opts)
     |> Keyword.merge(config(:req_options, []))
