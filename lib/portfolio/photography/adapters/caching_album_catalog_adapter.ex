@@ -98,12 +98,13 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
   @spec invalidate_all() :: :ok
   def invalidate_all do
     _ = Cachex.clear(@cache)
+    efface_instantanes(snapshot_dir())
+  end
 
-    case snapshot_dir() do
-      nil -> :ok
-      dir -> _ = File.rm_rf(dir)
-    end
+  defp efface_instantanes(nil), do: :ok
 
+  defp efface_instantanes(dir) do
+    {:ok, _supprimes} = File.rm_rf(dir)
     :ok
   end
 
@@ -131,8 +132,8 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
   defp fetch_now(key, opts) do
     case Keyword.fetch!(opts, :fetch).() do
       {:ok, value} ->
-        store(key, value, fresh?: true)
-        write_snapshot(key, value, opts)
+        :ok = store(key, value, fresh?: true)
+        :ok = write_snapshot(key, value, opts)
         {:ok, value}
 
       {:error, :not_found} ->
@@ -149,7 +150,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
          {:ok, value} <- from_payload.(payload) do
       # L'instantané est par nature périmé : on le stocke comme tel, pour que
       # la requête suivante déclenche un rafraîchissement en tâche de fond.
-      store(key, value, fresh?: false)
+      :ok = store(key, value, fresh?: false)
       {:ok, value}
     else
       _autre -> {:error, :unavailable}
@@ -157,26 +158,28 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
   end
 
   defp schedule_refresh(key, opts) do
-    Task.Supervisor.start_child(Portfolio.TaskSupervisor, fn ->
-      Cachex.fetch(
-        @cache,
-        {:refreshing, key},
-        fn ->
-          refresh(key, opts)
+    # Le verrou passe par `Cachex.fetch/3` : la bibliotheque garantit qu'une
+    # seule execution de la fonction est en vol pour une clé donnée, ce qui
+    # évite d'écrire un verrou à la main.
+    _ =
+      Task.Supervisor.start_child(Portfolio.TaskSupervisor, fn ->
+        Cachex.fetch(@cache, {:refreshing, key}, fn ->
+          :ok = refresh(key, opts)
           {:commit, :en_cours, expire: @refresh_lock_ms}
-        end
-      )
-    end)
+        end)
+      end)
 
     :ok
   end
 
+  # Rend `:ok` : `:telemetry.execute/3` est la dernière expression, et
+  # `schedule_refresh/2` apparie ce retour.
   defp refresh(key, opts) do
     resultat =
       case Keyword.fetch!(opts, :fetch).() do
         {:ok, value} ->
-          store(key, value, fresh?: true)
-          write_snapshot(key, value, opts)
+          :ok = store(key, value, fresh?: true)
+          :ok = write_snapshot(key, value, opts)
           :ok
 
         {:error, reason} ->
@@ -205,24 +208,37 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
     end
   end
 
+  # Rend toujours `:ok` : un cache indisponible ne doit pas faire échouer une
+  # lecture, il la rend simplement plus coûteuse.
   defp store(key, value, fresh?: true) do
-    Cachex.put(@cache, key, %{value: value, stored_at: System.monotonic_time(:millisecond)})
+    put(key, value, System.monotonic_time(:millisecond))
   end
 
   defp store(key, value, fresh?: false) do
-    perime = System.monotonic_time(:millisecond) - fresh_for_ms() - 1
-    Cachex.put(@cache, key, %{value: value, stored_at: perime})
+    put(key, value, System.monotonic_time(:millisecond) - fresh_for_ms() - 1)
+  end
+
+  defp put(key, value, stored_at) do
+    _ = Cachex.put(@cache, key, %{value: value, stored_at: stored_at})
+    :ok
   end
 
   # ============================================================================
   # Instantané
   # ============================================================================
 
+  # Rend toujours `:ok` : un instantané est un filet, son échec d'écriture est
+  # journalisé par `Snapshot` et ne doit rien interrompre.
   defp write_snapshot(key, value, opts) do
     case Keyword.get(opts, :to_payload) do
       nil -> :ok
-      to_payload -> Snapshot.write(snapshot_dir(), key, to_payload.(value))
+      to_payload -> ecrit(key, to_payload.(value))
     end
+  end
+
+  defp ecrit(key, payload) do
+    _ = Snapshot.write(snapshot_dir(), key, payload)
+    :ok
   end
 
   defp album_page_payload(%{albums: albums, meta: meta}) do
