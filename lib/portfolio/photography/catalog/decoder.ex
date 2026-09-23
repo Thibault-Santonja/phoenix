@@ -1,17 +1,17 @@
 defmodule Portfolio.Photography.Catalog.Decoder do
   @moduledoc """
-  Traduit les charges utiles JSON du catalogue distant en structures du
+  Traduit les chargés utiles JSON du catalogue distant en structures du
   domaine.
 
-  C'est la frontiere de confiance du portfolio : tout ce qui entre par le
-  reseau passe ici, et rien n'en ressort qui ne respecte pas le contrat. Le
-  decodeur echoue franchement (`{:error, :invalid_payload}`) plutot que de
-  fabriquer une valeur de remplacement, parce qu'une reponse hors contrat est
-  une panne de la plateforme : l'echelle de degradation sait quoi en faire,
-  alors qu'un album a moitie decode s'afficherait casse sans que personne ne
+  C'est la frontière de confiance du portfolio : tout ce qui entre par le
+  réseau passe ici, et rien n'en ressort qui ne respecte pas le contrat. Le
+  décodeur échoue franchement (`{:error, :invalid_payload}`) plutôt que de
+  fabriquer une valeur de remplacement, parce qu'une réponse hors contrat est
+  une panne de la plateforme : l'échelle de dégradation sait quoi en faire,
+  alors qu'un album a moitié décode s'afficherait casse sans que personne ne
   le sache.
 
-  Le meme decodeur sert aux reponses HTTP et a la relecture de l'instantane
+  Le même décodeur sert aux réponses HTTP et à la relecture de l'instantané
   sur disque : un seul chemin de validation, donc une seule chose a garder
   juste.
   """
@@ -24,7 +24,7 @@ defmodule Portfolio.Photography.Catalog.Decoder do
   @type page :: %{albums: [Album.t()], meta: map()}
 
   @doc """
-  Decode la reponse de la liste d'albums.
+  Décode la réponse de la liste d'albums.
   """
   @spec decode_album_list(map()) :: {:ok, page()} | {:error, :invalid_payload}
   def decode_album_list(%{"data" => data} = payload) when is_list(data) do
@@ -36,7 +36,7 @@ defmodule Portfolio.Photography.Catalog.Decoder do
   def decode_album_list(_payload), do: {:error, :invalid_payload}
 
   @doc """
-  Decode la reponse d'un album complet, photos triees par position croissante.
+  Décode la réponse d'un album complet, photos triées par position croissante.
   """
   @spec decode_album(map()) :: {:ok, Album.t()} | {:error, :invalid_payload}
   def decode_album(%{"data" => data}) when is_map(data) do
@@ -49,7 +49,7 @@ defmodule Portfolio.Photography.Catalog.Decoder do
   def decode_album(_payload), do: {:error, :invalid_payload}
 
   @doc """
-  Decode la reponse de la liste des themes, ordonnee par position.
+  Décode la réponse de la liste des thèmes, ordonnee par position.
   """
   @spec decode_theme_list(map()) :: {:ok, [Theme.t()]} | {:error, :invalid_payload}
   def decode_theme_list(%{"data" => data}) when is_list(data) do
@@ -61,7 +61,7 @@ defmodule Portfolio.Photography.Catalog.Decoder do
   def decode_theme_list(_payload), do: {:error, :invalid_payload}
 
   # ============================================================================
-  # Decodage element par element
+  # Décodage élément par élément
   # ============================================================================
 
   defp decode_album_summary(%{} = data) do
@@ -246,7 +246,7 @@ defmodule Portfolio.Photography.Catalog.Decoder do
   defp reject_empty([]), do: {:error, :invalid_payload}
   defp reject_empty(list), do: {:ok, list}
 
-  # Applique `fun` a chaque element et s'arrete au premier echec.
+  # Applique `fun` à chaque élément et s'arrêté au premier échec.
   defp map_ok(list, fun) when is_list(list) do
     Enum.reduce_while(list, {:ok, []}, fn element, {:ok, acc} ->
       case fun.(element) do

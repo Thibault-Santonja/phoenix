@@ -1,36 +1,36 @@
 defmodule Portfolio.Photography.Catalog.Snapshot do
   @moduledoc """
-  Instantane JSON du catalogue, conserve sur disque.
+  Instantané JSON du catalogue, conserve sur disque.
 
   ## A quoi il sert
 
-  Au redemarrage de l'hote, les deux applications repartent ensemble et le
-  portfolio, plus leger, est pret avant la plateforme photo. Sans instantane,
-  son cache memoire est vide et la plateforme est muette : il n'aurait rien a
-  montrer. L'instantane est exactement ce palier-la, et rien d'autre.
+  Au redémarrage de l'hôte, les deux applications repartent ensemble et le
+  portfolio, plus léger, est prêt avant la plateforme photo. Sans instantané,
+  son cache mémoire est vide et la plateforme est muette : il n'aurait rien a
+  montrer. L'instantané est exactement ce palier-là, et rien d'autre.
 
   ## Ce qui est conserve
 
-  La charge utile JSON brute, telle qu'elle est arrivee, pas les structures
-  decodees. Relire par le meme decodeur que le reseau garantit qu'un
-  instantane ecrit par une version precedente est valide ou rejete, jamais
+  La charge utile JSON brute, telle qu'elle est arrivée, pas les structures
+  décodées. Relire par le même décodeur que le réseau garantit qu'un
+  instantané écrit par une version precedente est valide ou rejete, jamais
   interprete de travers.
 
-  L'ecriture passe par un fichier temporaire puis un `rename`, qui est
-  atomique sur un meme systeme de fichiers : une coupure pendant l'ecriture
-  laisse l'ancien instantane intact plutot qu'un fichier tronque.
+  L'écriture passe par un fichier temporaire puis un `rename`, qui est
+  atomique sur un même système de fichiers : une coupure pendant l'écriture
+  laisse l'ancien instantané intact plutôt qu'un fichier tronque.
 
-  Aucune erreur ne remonte a l'appelant sous forme d'exception : un
-  instantane est un filet, pas une dependance.
+  Aucune erreur ne remonte à l'appelant sous forme d'exception : un
+  instantané est un filet, pas une dépendance.
   """
 
   require Logger
 
   @doc """
-  Ecrit un instantane pour `key`.
+  Écrit un instantané pour `key`.
 
-  Un `dir` a `nil` desactive la fonctionnalite : l'appel reussit sans rien
-  ecrire, ce qui evite d'avoir a tester la configuration chez l'appelant.
+  Un `dir` à `nil` désactive la fonctionnalité : l'appel réussit sans rien
+  écrire, ce qui evite d'avoir a tester la configuration chez l'appelant.
   """
   @spec write(Path.t() | nil, term(), map()) :: :ok | {:error, term()}
   def write(nil, _key, _payload), do: :ok
@@ -45,13 +45,13 @@ defmodule Portfolio.Photography.Catalog.Snapshot do
       :ok
     else
       {:error, reason} ->
-        Logger.warning("catalogue: instantane non ecrit (#{inspect(reason)})")
+        Logger.warning("catalogue : instantané non écrit (#{inspect(reason)})")
         {:error, reason}
     end
   end
 
   @doc """
-  Relit l'instantane de `key`, ou `:error` s'il n'existe pas ou n'est pas
+  Relit l'instantané de `key`, ou `:error` s'il n'existe pas ou n'est pas
   exploitable.
   """
   @spec read(Path.t() | nil, term()) :: {:ok, map()} | :error
@@ -66,8 +66,8 @@ defmodule Portfolio.Photography.Catalog.Snapshot do
     end
   end
 
-  # Le nom de fichier est derive de la cle par condensat : une cle est un
-  # terme quelconque (tuple, atome, binaire) et le systeme de fichiers ne
+  # Le nom de fichier est derive de la clé par condensat : une clé est un
+  # terme quelconque (tuple, atome, binaire) et le système de fichiers ne
   # sait pas les nommer.
   defp path(dir, key) do
     nom =

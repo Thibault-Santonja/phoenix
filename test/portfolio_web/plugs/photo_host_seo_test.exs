@@ -10,7 +10,7 @@ defmodule PortfolioWeb.Plugs.PhotoHostSeoTest do
     |> PhotoHostSeo.call(PhotoHostSeo.init([]))
   end
 
-  describe "sur l'hote photo." do
+  describe "sur l'hôte photo." do
     test "pose l'en-tete X-Robots-Tag noindex, follow" do
       conn = appelle("photo.thibaultsan.com")
 
@@ -23,22 +23,22 @@ defmodule PortfolioWeb.Plugs.PhotoHostSeoTest do
       assert conn.assigns.robots == "noindex, follow"
     end
 
-    test "pose une canonique par defaut vers la plateforme photo" do
+    test "pose une canonique par défaut vers la plateforme photo" do
       conn = appelle("photo.thibaultsan.com")
 
       assert conn.assigns.canonical_url == "https://photography.thibaultsan.com"
     end
   end
 
-  describe "sur les autres hotes du portfolio" do
-    test "ne desindexe pas thibaultsan.com" do
+  describe "sur les autres hôtes du portfolio" do
+    test "ne désindexe pas thibaultsan.com" do
       conn = appelle("thibaultsan.com")
 
       assert get_resp_header(conn, "x-robots-tag") == []
       refute Map.has_key?(conn.assigns, :robots)
     end
 
-    test "ne desindexe pas tech." do
+    test "ne désindexe pas tech." do
       conn = appelle("tech.thibaultsan.com")
 
       assert get_resp_header(conn, "x-robots-tag") == []

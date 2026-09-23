@@ -1,5 +1,5 @@
 defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
-  # Le cache Cachex est un espace partage par le noeud : ces tests ne peuvent
+  # Le cache Cachex est un espace partagé par le noeud : ces tests ne peuvent
   # pas tourner en parallele des autres.
   use ExUnit.Case, async: false
 
@@ -75,7 +75,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
   end
 
   describe "palier 1 : cache frais" do
-    test "ne touche pas au reseau sur la seconde lecture" do
+    test "ne touche pas au réseau sur la seconde lecture" do
       Scenario.script(:list_albums, {:ok, page("premier")})
 
       assert {:ok, %{albums: [%Album{slug: "premier"}]}} = Cache.list_albums([])
@@ -84,7 +84,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
       assert Scenario.calls(:list_albums) == 1
     end
 
-    test "separe les entrees par theme, locale, limite et decalage" do
+    test "separe les entrées par thème, locale, limite et décalage" do
       Scenario.script(:list_albums, {:ok, page("un")})
       assert {:ok, _} = Cache.list_albums(theme: "wedding")
 
@@ -95,16 +95,16 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
     end
   end
 
-  describe "palier 2 : cache perime, rafraichissement hors du chemin de la requete" do
+  describe "palier 2 : cache périmé, rafraîchissement hors du chemin de la requête" do
     @tag fresh_for_ms: 0
-    test "sert le contenu perime immediatement et rafraichit en tache de fond" do
+    test "sert le contenu périmé immédiatement et rafraîchit en tâche de fond" do
       Scenario.script(:list_albums, {:ok, page("ancien")})
       assert {:ok, %{albums: [%Album{slug: "ancien"}]}} = Cache.list_albums([])
 
       Scenario.script(:list_albums, {:ok, page("nouveau")})
 
-      # La requete rend le contenu perime, pas le nouveau : aucun appel reseau
-      # n'a lieu dans le chemin de la requete.
+      # La requête rend le contenu périmé, pas le nouveau : aucun appel réseau
+      # n'a lieu dans le chemin de la requête.
       assert {:ok, %{albums: [%Album{slug: "ancien"}]}} = Cache.list_albums([])
 
       assert_receive {:refresh, :ok}, 1_000
@@ -112,7 +112,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
     end
 
     @tag fresh_for_ms: 0
-    test "conserve le contenu perime quand le rafraichissement echoue" do
+    test "conserve le contenu périmé quand le rafraîchissement échoue" do
       Scenario.script(:list_albums, {:ok, page("ancien")})
       assert {:ok, _} = Cache.list_albums([])
 
@@ -121,7 +121,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
 
       assert_receive {:refresh, :unavailable}, 1_000
 
-      # L'echec n'a pas remplace l'entree valide : elle vieillit, elle ne
+      # L'échec n'a pas remplace l'entrée valide : elle vieillit, elle ne
       # disparait pas.
       assert {:ok, %{albums: [%Album{slug: "ancien"}]}} = Cache.list_albums([])
     end
@@ -129,12 +129,12 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
 
   describe "palier 3 : cache vide et plateforme muette" do
     @tag :instantane
-    test "relit l'instantane ecrit au dernier rafraichissement reussi", %{dir: dir} do
+    test "relit l'instantané écrit au dernier rafraîchissement réussi", %{dir: dir} do
       Scenario.script(:list_albums, {:ok, page("depuis-instantane")})
       assert {:ok, _} = Cache.list_albums([])
       assert {:ok, _payload} = Snapshot.read(dir, {:albums, {nil, nil, nil, nil}})
 
-      # Redemarrage : le cache memoire repart vide, la plateforme est muette.
+      # Redémarrage : le cache mémoire repart vide, la plateforme est muette.
       {:ok, _} = Cachex.clear(:catalog_cache)
       Scenario.script(:list_albums, {:error, :unavailable})
 
@@ -142,7 +142,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
     end
 
     @tag :instantane
-    test "conserve aussi les themes sur disque", %{dir: dir} do
+    test "conserve aussi les thèmes sur disque", %{dir: dir} do
       {:ok, themes} = Decoder.decode_theme_list(theme_list_response())
       Scenario.script(:list_themes, {:ok, themes})
       assert {:ok, _} = Cache.list_themes()
@@ -164,7 +164,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
     end
 
     @tag :instantane
-    test "l'instantane relu est traite comme perime et declenche un rafraichissement" do
+    test "l'instantané relu est traite comme périmé et déclenche un rafraîchissement" do
       Scenario.script(:list_albums, {:ok, page("depuis-instantane")})
       assert {:ok, _} = Cache.list_albums([])
 
@@ -181,7 +181,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
   end
 
   describe "palier 4 : plus rien" do
-    test "signale l'indisponibilite plutot que de rendre une liste vide" do
+    test "signale l'indisponibilité plutôt que de rendre une liste vide" do
       Scenario.script(:list_albums, {:error, :unavailable})
 
       assert {:error, :unavailable} = Cache.list_albums([])
@@ -207,7 +207,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
       assert {:ok, %Album{slug: "pas-encore-publie"}} = Cache.get_album("pas-encore-publie")
     end
 
-    test "ne retombe pas sur un instantane pour une fiche" do
+    test "ne retombe pas sur un instantané pour une fiche" do
       Scenario.script(:get_album, {:error, :unavailable})
 
       assert {:error, :unavailable} = Cache.get_album("mariage-claire-et-damien")
@@ -216,7 +216,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
 
   describe "invalidate_all/0" do
     @tag :instantane
-    test "efface le cache memoire et les instantanes", %{dir: dir} do
+    test "efface le cache mémoire et les instantanés", %{dir: dir} do
       Scenario.script(:list_albums, {:ok, page("a-retirer")})
       assert {:ok, _} = Cache.list_albums([])
       assert File.dir?(dir)

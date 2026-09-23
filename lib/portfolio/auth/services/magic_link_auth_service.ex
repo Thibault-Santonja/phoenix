@@ -95,7 +95,7 @@ defmodule Portfolio.Auth.Services.MagicLinkAuthService do
     end
   end
 
-  # Internal implementation after rate limit check
+  # Internal implémentation after rate limit check
   defp do_request_magic_link(email, opts) do
     bypass_rate_limit = Keyword.get(opts, :bypass_rate_limit, false)
 
@@ -249,9 +249,9 @@ defmodule Portfolio.Auth.Services.MagicLinkAuthService do
   # - Variance and system overhead: ~100-500µs
   # Total: ~1000-2500µs, using 3ms provides good coverage with buffer
   defp add_timing_safe_delay do
-    # La duree est lue a l'execution plutot que figee a la compilation : trois
-    # millisecondes sont trop courtes pour etre distinguees du bruit
-    # d'ordonnancement, et le test a besoin d'une duree mesurable pour
+    # La durée est lue à l'execution plutôt que figee à la compilation : trois
+    # millisecondes sont trop courtes pour être distinguees du bruit
+    # d'ordonnancement, et le test a besoin d'une durée mesurable pour
     # constater que ce chemin attend bien.
     :portfolio
     |> Application.get_env(:magic_link_timing_delay_ms, @timing_safe_delay_ms)

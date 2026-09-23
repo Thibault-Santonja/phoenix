@@ -22,7 +22,7 @@ defmodule Portfolio.Application do
       {Finch, name: Portfolio.Finch},
       # Start Oban for background job processing
       {Oban, Application.fetch_env!(:portfolio, Oban)},
-      # Task supervisor for fire-and-forget async operations (session activity updates, etc.)
+      # Task supervisor for fire-and-forget async opérations (session activity updates, etc.)
       {Task.Supervisor, name: Portfolio.TaskSupervisor},
       # Start Hammer v7 for rate limiting
       {Portfolio.RateLimiter, clean_period: :timer.minutes(10)},
@@ -36,10 +36,10 @@ defmodule Portfolio.Application do
          )
        ]},
       # Catalogue d'albums lu chez la plateforme photo. Espace separe du cache
-      # general parce que ses entrees sont grosses (une liste d'albums pese
+      # general parce que ses entrées sont grosses (une liste d'albums pese
       # quelques dizaines de kilo-octets) et qu'elles n'expirent jamais : une
-      # entree perimee est servie pendant que le rafraichissement tourne. Le
-      # plafond de cent entrees borne la memoire sur une machine a 4 Go.
+      # entrée périmée est servie pendant que le rafraîchissement tourne. Le
+      # plafond de cent entrées borne la mémoire sur une machine a 4 Go.
       Supervisor.child_spec(
         {Cachex,
          name: :catalog_cache,

@@ -1,13 +1,13 @@
 defmodule Portfolio.Photography.Catalog.Album do
   @moduledoc """
-  Un album publie, tel que le catalogue distant l'expose.
+  Un album publié, tel que le catalogue distant l'expose.
 
   `canonical_url` est calculee par la plateforme photo et jamais reconstruite
-  ici par concatenation : une reorganisation de ses URL ne demande alors aucun
-  deploiement du portfolio.
+  ici par concaténation : une réorganisation de ses URL ne demande alors aucun
+  déploiement du portfolio.
 
-  Un resume d'album (liste) porte `cover` et une liste `photos` vide ; un
-  album complet (fiche) porte ses `photos` triees par position.
+  Un résumé d'album (liste) porte `cover` et une liste `photos` vide ; un
+  album complet (fiche) porte ses `photos` triées par position.
   """
 
   alias Portfolio.Photography.Catalog.Photo

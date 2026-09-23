@@ -1,51 +1,52 @@
 defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
   @moduledoc """
-  Decorateur de cache et echelle de degradation devant un autre adaptateur de
+  Décorateur de cache et échelle de dégradation devant un autre adaptateur de
   catalogue.
 
-  Il implemente le meme port que l'adaptateur qu'il enveloppe : la couche web
+  Il implémente le même port que l'adaptateur qu'il enveloppe : la couche web
   ne sait pas qu'il existe. Sa seule promesse tient en une phrase : le
-  visiteur ne voit jamais de page vide et jamais d'erreur, meme plateforme
-  eteinte.
+  visiteur ne voit jamais de page vide et jamais d'erreur, même plateforme
+  éteinte.
 
   ## Les quatre paliers
 
-  1. **Cache frais** (moins de `:fresh_for_ms`, dix minutes par defaut) :
-     reponse immediate, aucun appel reseau.
-  2. **Cache perime** : le contenu perime part immediatement, et un
-     rafraichissement est lance hors du chemin de la requete, un seul en vol
-     par cle. C'est le `stale-while-revalidate` du cache HTTP, applique ici.
-  3. **Cache vide et plateforme muette** : relecture de l'instantane sur
-     disque. C'est le palier du redemarrage de l'hote, ou les deux
-     applications repartent ensemble et ou le portfolio, plus leger, est pret
+  1. **Cache frais** (moins de `:fresh_for_ms`, dix minutes par défaut) :
+     réponse immédiate, aucun appel réseau.
+  2. **Cache périmé** : le contenu périmé part immédiatement, et un
+     rafraîchissement est lancé hors du chemin de la requête, un seul en vol
+     par clé. C'est le `stale-while-revalidate` du cache HTTP, appliqué ici.
+  3. **Cache vide et plateforme muette** : relecture de l'instantané sur
+     disque. C'est le palier du redémarrage de l'hôte, où les deux
+     applications repartent ensemble et où le portfolio, plus léger, est prêt
      avant la plateforme.
   4. **Rien du tout** : `{:error, :unavailable}`. La couche web affiche alors
      sa navigation statique et le dit explicitement au visiteur, en 200.
 
   ## Ce qui n'est jamais mis en cache
 
-  Les erreurs. Un echec ne remplace pas une entree valide : il la laisse
+  Les erreurs. Un échec ne remplace pas une entrée valide : il la laisse
   vieillir. Un `:not_found` n'est pas mis en cache non plus, sinon la
-  publication d'un album resterait invisible jusqu'a expiration.
+  publication d'un album resterait invisible jusqu'à expiration.
 
-  ## Instantane
+  ## Instantané
 
-  Seules la liste d'albums et la liste des themes sont conservees sur disque :
+  Seules la liste d'albums et la liste des thèmes sont conservées sur disque :
   ce sont les deux pages dont le vide serait inacceptable. Une fiche d'album
   indisponible retombe sur la liste, ce qui est acceptable.
 
-  ## Memoire
+  ## Mémoire
 
-  Le cache vit dans son propre espace Cachex (`:catalog_cache`), plafonne a
-  cent entrees. L'ordre de grandeur mesure est d'environ 1,3 kilo-octet par
-  photo decodee, voir `test/portfolio/photography/adapters/catalog_memory_test.exs`
-  qui garde ce chiffre.
+  Le cache vit dans son propre espace Cachex (`:catalog_cache`), plafonné à
+  cent entrées. La mesure, et non l'estimation, donne 2,2 kilo-octets par
+  photo décodée avec ses neuf sources : les URL dominent la structure. Le
+  fichier `test/portfolio/photography/catalog/memory_budget_test.exs` garde
+  ce chiffre et le plafond de vingt mégaoctets pour cent entrées.
 
   ## Invalidation
 
-  `invalidate_all/0` vide le cache et les instantanes. C'est ce que la
-  procedure de retrait de consentement doit appeler : sans elle, un album
-  depublie resterait visible jusqu'au prochain rafraichissement.
+  `invalidate_all/0` vide le cache et les instantanés. C'est ce que la
+  procédure de retrait de consentement doit appeler : sans elle, un album
+  dépublié resterait visible jusqu'au prochain rafraîchissement.
   """
 
   @behaviour Portfolio.Photography.Ports.AlbumCatalogPort
@@ -89,10 +90,10 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
   end
 
   @doc """
-  Vide le cache memoire et les instantanes sur disque.
+  Vide le cache mémoire et les instantanés sur disque.
 
-  A appeler lors d'un retrait de consentement ou de toute depublication qui
-  ne peut pas attendre le prochain rafraichissement.
+  À appeler lors d'un retrait de consentement ou de toute dépublication qui
+  ne peut pas attendre le prochain rafraîchissement.
   """
   @spec invalidate_all() :: :ok
   def invalidate_all do
@@ -107,15 +108,15 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
   end
 
   # ============================================================================
-  # Echelle de degradation
+  # Échelle de dégradation
   # ============================================================================
 
   defp read(key, opts) do
     case cached(key) do
       {:hit, value, age_ms} ->
-        # Comparaison stricte : une fenetre de fraicheur a zero milliseconde
-        # signifie « revalide a chaque lecture », ce qui est une configuration
-        # legitime et pas un cas degenere.
+        # Comparaison stricte : une fenêtre de fraîcheur à zéro milliseconde
+        # signifie « revalide à chaque lecture », ce qui est une configuration
+        # légitime et pas un cas dégénéré.
         if age_ms < fresh_for_ms() do
           {:ok, value}
         else
@@ -147,8 +148,8 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
     with {:ok, from_payload} <- Keyword.fetch(opts, :from_payload),
          {:ok, payload} <- Snapshot.read(snapshot_dir(), key),
          {:ok, value} <- from_payload.(payload) do
-      # L'instantane est par nature perime : on le stocke comme tel, pour que
-      # la requete suivante declenche un rafraichissement en tache de fond.
+      # L'instantané est par nature périmé : on le stocke comme tel, pour que
+      # la requête suivante déclenche un rafraîchissement en tâche de fond.
       store(key, value, fresh?: false)
       {:ok, value}
     else
@@ -180,7 +181,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
           :ok
 
         {:error, reason} ->
-          # L'entree perimee reste en place : un echec ne remplace jamais une
+          # L'entrée périmée reste en place : un échec ne remplace jamais une
           # valeur valide.
           reason
       end
@@ -215,7 +216,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter do
   end
 
   # ============================================================================
-  # Instantane
+  # Instantané
   # ============================================================================
 
   defp write_snapshot(key, value, opts) do

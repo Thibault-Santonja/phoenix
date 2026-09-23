@@ -1,16 +1,16 @@
 defmodule PortfolioWeb.PhotographyLive.Gallery do
   @moduledoc """
-  Page d'album : les photos d'un album publie par la plateforme photo.
+  Page d'album : les photos d'un album publié par la plateforme photo.
 
   L'album n'appartient pas au portfolio. Il est lu par le port
-  `AlbumCatalogPort`, qui porte a lui seul le cache et la degradation : cette
-  vue ne connait ni HTTP, ni cache, ni instantane. Elle ne traite que trois
-  reponses.
+  `AlbumCatalogPort`, qui porte à lui seul le cache et la dégradation : cette
+  vue ne connaît ni HTTP, ni cache, ni instantané. Elle ne traite que trois
+  réponses.
 
-  - Un album : la page s'affiche, et sa canonique designe la plateforme.
+  - Un album : la page s'affiche, et sa canonique désigne la plateforme.
   - `:not_found` : 404. Inventer un contenu de remplacement serait mentir au
     visiteur et au moteur.
-  - `:unavailable` : la page s'affiche quand meme, avec un message explicite
+  - `:unavailable` : la page s'affiche quand même, avec un message explicite
     et un chemin vers la chronologie, en 200. Jamais de page vide, jamais
     d'erreur.
 
@@ -27,7 +27,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   alias Portfolio.Photography.Ports.AlbumCatalogPort
   alias PortfolioWeb.AlbumNotFoundError
 
-  # Les quatre presets responsives exposes par la plateforme, du plus leger au
+  # Les quatre presets responsives exposes par la plateforme, du plus léger au
   # plus lourd. L'ordre est celui du `srcset`.
   @presets ~w(thumbnail medium large full)
 
@@ -40,7 +40,7 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
 
     case Map.get(params, "chapter") do
       nil ->
-        # Sans album demande, il n'y a rien a montrer ici : la chronologie est
+        # Sans album demandé, il n'y a rien à montrer ici : la chronologie est
         # l'index des albums.
         {:ok, push_navigate(socket, to: ~p"/timeline")}
 
@@ -122,31 +122,31 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   end
 
   # ============================================================================
-  # Presentation des images
+  # Présentation des images
   # ============================================================================
 
   @doc """
-  Jeu de sources responsives d'une photo pour un format donne.
+  Jeu de sources responsives d'une photo pour un format donné.
   """
   @spec srcset(Photo.t(), String.t()) :: String.t() | nil
   def srcset(photo, format), do: Photo.srcset(photo, format, @presets)
 
   @doc """
-  URL posee dans l'attribut `src`, pour les navigateurs qui ne lisent pas
+  URL posée dans l'attribut `src`, pour les navigateurs qui ne lisent pas
   `srcset`.
   """
   @spec fallback_url(Photo.t()) :: String.t() | nil
   def fallback_url(photo), do: Photo.fallback_url(photo, "large")
 
   @doc """
-  URL d'une vignette de la bande de selection.
+  URL d'une vignette de la bande de sélection.
   """
   @spec thumbnail_url(Photo.t()) :: String.t() | nil
   def thumbnail_url(photo), do: Photo.fallback_url(photo, "thumbnail")
 
   @doc """
-  Rapport largeur sur hauteur de l'original, pose sur l'image pour reserver sa
-  place avant le chargement et eviter tout decalage de mise en page.
+  Rapport largeur sur hauteur de l'original, pose sur l'image pour réserver sa
+  place avant le chargement et éviter tout décalage de mise en page.
   """
   @spec aspect_ratio(Photo.t()) :: String.t() | nil
   def aspect_ratio(%Photo{width: width, height: height})

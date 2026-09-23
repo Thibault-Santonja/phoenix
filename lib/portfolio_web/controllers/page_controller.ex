@@ -16,7 +16,7 @@ defmodule PortfolioWeb.PageController do
   end
 
   @doc """
-  Repond 404 pour une ressource qui n'a pas lieu d'exister sur cet hote.
+  Répond 404 pour une ressource qui n'a pas lieu d'exister sur cet hôte.
 
   Sert aux plans de site sous `photo.thibaultsan.com`, qui porte une
   directive de non-indexation.

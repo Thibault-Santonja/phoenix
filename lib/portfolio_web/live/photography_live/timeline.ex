@@ -1,23 +1,23 @@
 defmodule PortfolioWeb.PhotographyLive.Timeline do
   @moduledoc """
-  Chronologie : l'index des albums publies par la plateforme photo.
+  Chronologie : l'index des albums publiés par la plateforme photo.
 
   Les albums sont lus par le port `AlbumCatalogPort`, qui porte le cache et
-  l'echelle de degradation. Cette vue ne traite que trois reponses.
+  l'échelle de dégradation. Cette vue ne traite que trois réponses.
 
-  - Une page d'albums : elle s'affiche, par tranches de vingt, chargees a la
-    demande au defilement.
-  - `:not_found` : le theme demande n'existe pas, donc 404. Rendre une liste
+  - Une page d'albums : elle s'affiche, par tranches de vingt, chargées à la
+    demande au défilement.
+  - `:not_found` : le thème demandé n'existe pas, donc 404. Rendre une liste
     vide masquerait une faute de frappe dans l'adresse.
-  - `:unavailable` : la page s'affiche quand meme, avec un message explicite,
+  - `:unavailable` : la page s'affiche quand même, avec un message explicite,
     en 200.
 
-  La liste des annees affichee dans la navigation est deduite des albums
-  charges : l'API ne l'expose pas. Elle s'etoffe donc au fil du defilement.
+  La liste des années affichée dans la navigation est déduite des albums
+  chargés : l'API ne l'expose pas. Elle s'étoffe donc au fil du défilement.
 
-  Les albums sont lus a l'affichage initial comme a la connexion du socket,
-  et non seulement a la connexion : la page est ainsi complete sans
-  JavaScript, et un theme inconnu repond bien 404 a un robot.
+  Les albums sont lus à l'affichage initial comme à la connexion du socket,
+  et non seulement à la connexion : la page est ainsi complète sans
+  JavaScript, et un thème inconnu répond bien 404 à un robot.
   """
 
   use PortfolioWeb, :live_view
@@ -29,7 +29,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
 
   @albums_per_page Application.compile_env(:portfolio, [:timeline, :albums_per_page], 20)
 
-  # Presets responsives utilises pour la vignette de couverture. La couverture
+  # Presets responsives utilisés pour la vignette de couverture. La couverture
   # occupe au plus trois colonnes sur cinq : le preset `full` n'y sert a rien.
   @cover_presets ~w(thumbnail medium large)
 
@@ -42,7 +42,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
      socket
      |> assign(locale: locale, chapter: nil)
      |> assign(years: [], page: 1, has_more: true, albums_loaded: 0, unavailable: false)
-     # Le slug est l'identite stable d'un album cote plateforme : c'est lui
+     # Le slug est l'identité stable d'un album côté plateforme : c'est lui
      # qui doit porter l'identifiant de flux, pas un identifiant de base que
      # le catalogue n'expose pas.
      |> stream_configure(:albums, dom_id: &"album-#{&1.slug}")
@@ -97,8 +97,8 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     opts =
       [
         locale: socket.assigns.locale,
-        # Une entree de plus que la page demandee : c'est elle qui dit s'il
-        # reste quelque chose a charger, sans reclamer un comptage.
+        # Une entrée de plus que la page demandée : c'est elle qui dit s'il
+        # reste quelque chose à charger, sans réclamer un comptage.
         limit: @albums_per_page + 1,
         offset: (page - 1) * @albums_per_page
       ]
@@ -145,19 +145,19 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
   end
 
   # ============================================================================
-  # Presentation
+  # Présentation
   # ============================================================================
 
   @doc """
-  Annee de prise de vue d'un album, ou `nil` si la plateforme n'en fournit
-  pas. Sert d'ancre de defilement.
+  Année de prise de vue d'un album, ou `nil` si la plateforme n'en fournit
+  pas. Sert d'ancre de défilement.
   """
   @spec album_year(Album.t()) :: integer() | nil
   def album_year(%Album{shoot_date: %Date{year: year}}), do: year
   def album_year(_album), do: nil
 
   @doc """
-  Periode de prise de vue, sous forme de date unique ou de plage.
+  Période de prise de vue, sous forme de date unique ou de plage.
   """
   @spec date_range(Album.t()) :: String.t() | nil
   def date_range(%Album{shoot_date: nil}), do: nil
@@ -168,13 +168,13 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
   end
 
   @doc """
-  Jeu de sources responsives de la couverture pour un format donne.
+  Jeu de sources responsives de la couverture pour un format donné.
   """
   @spec cover_srcset(Photo.t(), String.t()) :: String.t() | nil
   def cover_srcset(photo, format), do: Photo.srcset(photo, format, @cover_presets)
 
   @doc """
-  URL de la couverture posee dans l'attribut `src`.
+  URL de la couverture posée dans l'attribut `src`.
   """
   @spec cover_url(Photo.t()) :: String.t() | nil
   def cover_url(photo), do: Photo.fallback_url(photo, "large")

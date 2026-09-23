@@ -322,9 +322,9 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlugTest do
       assert body["retry_after"] > 0
     end
 
-    test "arrondit au-dessus une attente inferieure a la seconde" do
+    test "arrondit au-dessus une attente inférieure à la seconde" do
       # Une attente de 472 millisecondes rendue en nombre entier de secondes
-      # vaut zero si on tronque, et un client obeissant reessaie aussitot : la
+      # vaut zero si on tronque, et un client obéissant reessaie aussitot : la
       # limitation ne limite plus rien. On arrondit donc au-dessus.
       assert RateLimiterPlug.retry_after_seconds(472) == 1
       assert RateLimiterPlug.retry_after_seconds(1) == 1

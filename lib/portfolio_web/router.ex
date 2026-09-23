@@ -129,8 +129,8 @@ defmodule PortfolioWeb.Router do
   scope "/", PortfolioWeb, host: "photo." do
     pipe_through :photography
 
-    # Les plans de site sont servis par les hotes indexes, pas par celui-ci :
-    # cet hote porte une directive noindex, l'inviter a l'exploration serait
+    # Les plans de site sont servis par les hôtes indexes, pas par celui-ci :
+    # cet hôte porte une directive noindex, l'inviter à l'exploration serait
     # contradictoire. Ces deux routes passent avant "/:chapter", sans quoi la
     # page d'accueil repondrait 200 a "/sitemap.xml".
     get "/sitemap.xml", PageController, :not_found

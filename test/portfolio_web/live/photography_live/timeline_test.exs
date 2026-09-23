@@ -3,11 +3,11 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
   La chronologie est l'index des albums du portfolio.
 
   Elle lit le catalogue de la plateforme photo par le port : ce fichier
-  eprouve ce qu'elle en fait, du chargement par tranches jusqu'a ce qu'elle
-  affiche quand la plateforme ne repond plus.
+  éprouve ce qu'elle en fait, du chargement par tranches jusqu'à ce qu'elle
+  affiche quand la plateforme ne répond plus.
   """
 
-  # Le scenario de catalogue est un processus nomme, partage par le noeud.
+  # Le scénario de catalogue est un processus nommé, partagé par le noeud.
   use PortfolioWeb.ConnCase, async: false
 
   import Phoenix.LiveViewTest
@@ -54,7 +54,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
   end
 
   describe "affichage" do
-    test "rend la page meme sans album", %{conn: conn} do
+    test "rend la page même sans album", %{conn: conn} do
       publie([])
 
       {:ok, _vue, html} = live(conn, ~p"/timeline")
@@ -63,7 +63,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert html =~ "Accueil"
     end
 
-    test "affiche le titre et la periode de chaque album", %{conn: conn} do
+    test "affiche le titre et la période de chaque album", %{conn: conn} do
       publie([
         album_payload(
           slug: "coucy",
@@ -97,7 +97,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       refute html =~ "?w=320&amp;q=75"
     end
 
-    test "donne a la couverture le texte alternatif de la plateforme", %{conn: conn} do
+    test "donne à la couverture le texte alternatif de la plateforme", %{conn: conn} do
       publie([
         album_payload(cover: photo_payload(alt: "Le donjon vu depuis la basse-cour"))
       ])
@@ -107,7 +107,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert html =~ "Le donjon vu depuis la basse-cour"
     end
 
-    test "affiche le lien de reference quand l'album en porte un", %{conn: conn} do
+    test "affiche le lien de référence quand l'album en porte un", %{conn: conn} do
       publie([album_payload(reference_url: "https://amvcc.test/coucy")])
 
       {:ok, vue, _html} = live(conn, ~p"/timeline")
@@ -140,8 +140,8 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     end
   end
 
-  describe "navigation par annee" do
-    test "liste les annees des albums charges", %{conn: conn} do
+  describe "navigation par année" do
+    test "liste les années des albums chargés", %{conn: conn} do
       publie([
         album_payload(slug: "a", shoot_date: "2023-06-15"),
         album_payload(slug: "b", shoot_date: "2024-06-15")
@@ -153,7 +153,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert html =~ "#year-2024"
     end
 
-    test "ne repete pas une annee vue plusieurs fois", %{conn: conn} do
+    test "ne repete pas une année vue plusieurs fois", %{conn: conn} do
       publie([
         album_payload(slug: "a", shoot_date: "2024-01-15"),
         album_payload(slug: "b", shoot_date: "2024-06-15")
@@ -164,7 +164,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert html |> String.split("#year-2024") |> length() == 2
     end
 
-    test "n'affiche aucune annee quand aucun album n'en porte", %{conn: conn} do
+    test "n'affiche aucune année quand aucun album n'en porte", %{conn: conn} do
       publie([album_payload(shoot_date: nil)])
 
       {:ok, _vue, html} = live(conn, ~p"/timeline")
@@ -174,7 +174,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
   end
 
   describe "chargement par tranches" do
-    test "charge vingt albums a l'ouverture", %{conn: conn} do
+    test "charge vingt albums à l'ouverture", %{conn: conn} do
       publie(albums(25))
 
       {:ok, _vue, html} = live(conn, ~p"/timeline")
@@ -184,7 +184,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       refute html =~ "Album 21"
     end
 
-    test "demande une entree de plus que la tranche, pour savoir s'il en reste", %{conn: conn} do
+    test "demande une entrée de plus que la tranche, pour savoir s'il en reste", %{conn: conn} do
       publie(albums(25))
 
       {:ok, _vue, _html} = live(conn, ~p"/timeline")
@@ -209,7 +209,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       refute has_element?(vue, "#infinite-scroll-marker")
     end
 
-    test "charge la tranche suivante au decalage attendu", %{conn: conn} do
+    test "charge la tranche suivante au décalage attendu", %{conn: conn} do
       publie(albums(25))
       {:ok, vue, _html} = live(conn, ~p"/timeline")
 
@@ -220,7 +220,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert Keyword.get(Scenario.last_args(:list_albums), :offset) == 20
     end
 
-    test "ne redemande rien une fois la derniere tranche atteinte", %{conn: conn} do
+    test "ne redemande rien une fois la dernière tranche atteinte", %{conn: conn} do
       publie(albums(10))
       {:ok, vue, _html} = live(conn, ~p"/timeline")
       appels = Scenario.calls(:list_albums)
@@ -231,8 +231,8 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     end
   end
 
-  describe "filtrage par theme" do
-    test "transmet le theme demande a la plateforme", %{conn: conn} do
+  describe "filtrage par thème" do
+    test "transmet le thème demande à la plateforme", %{conn: conn} do
       publie([album_payload(slug: "coucy", title: "Coucy")])
 
       {:ok, _vue, _html} = live(conn, ~p"/timeline/reenactment")
@@ -240,7 +240,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert Keyword.get(Scenario.last_args(:list_albums), :theme) == "reenactment"
     end
 
-    test "ne transmet aucun theme sur la chronologie complete", %{conn: conn} do
+    test "ne transmet aucun thème sur la chronologie complète", %{conn: conn} do
       publie([album_payload()])
 
       {:ok, _vue, _html} = live(conn, ~p"/timeline")
@@ -248,15 +248,15 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       refute Keyword.has_key?(Scenario.last_args(:list_albums), :theme)
     end
 
-    test "repond 404 pour un theme inconnu plutot qu'une liste vide", %{conn: conn} do
+    test "répond 404 pour un thème inconnu plutôt qu'une liste vide", %{conn: conn} do
       Scenario.script(:list_albums, {:error, :not_found})
 
       assert_error_sent 404, fn -> get(conn, "/timeline/nexiste-pas") end
     end
   end
 
-  describe "la plateforme ne repond pas" do
-    test "affiche une page complete et un message explicite, en 200", %{conn: conn} do
+  describe "la plateforme ne répond pas" do
+    test "affiche une page complète et un message explicite, en 200", %{conn: conn} do
       Scenario.script(:list_albums, {:error, :unavailable})
 
       html = conn |> get("/timeline") |> html_response(200)
@@ -274,7 +274,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
     end
   end
 
-  describe "referencement" do
+  describe "référencement" do
     test "la chronologie est exclue de l'index", %{conn: conn} do
       publie([album_payload()])
 
@@ -285,7 +285,7 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
   end
 
   describe "langue" do
-    test "transmet la langue de la session a la plateforme", %{conn: conn} do
+    test "transmet la langue de la session à la plateforme", %{conn: conn} do
       publie([album_payload()])
 
       {:ok, _vue, _html} = live(conn, ~p"/timeline")

@@ -3,11 +3,11 @@ defmodule PortfolioWeb.Photography.GalleryCatalogTest do
   La page d'album lit le catalogue de la plateforme photo.
 
   Deux exigences priment sur les autres : le visiteur ne voit jamais de page
-  vide ni d'erreur quand la plateforme ne repond pas, et la page designe
-  toujours la plateforme comme adresse de reference.
+  vide ni d'erreur quand la plateforme ne répond pas, et la page désigne
+  toujours la plateforme comme adresse de référence.
   """
 
-  # Le scenario de catalogue est un processus nomme, partage par le noeud.
+  # Le scénario de catalogue est un processus nommé, partagé par le noeud.
   use PortfolioWeb.ConnCase, async: false
 
   import Phoenix.LiveViewTest
@@ -29,7 +29,7 @@ defmodule PortfolioWeb.Photography.GalleryCatalogTest do
     album
   end
 
-  describe "un album publie" do
+  describe "un album publié" do
     test "affiche le titre de l'album et le nombre de photos", %{conn: conn} do
       publie(
         slug: "coucy-a-la-merveille",
@@ -46,14 +46,14 @@ defmodule PortfolioWeb.Photography.GalleryCatalogTest do
       assert html =~ "Le donjon au crepuscule"
     end
 
-    test "sert les variantes responsives de la plateforme, pas des URL fabriquees", %{conn: conn} do
+    test "sert les variantes responsives de la plateforme, pas des URL fabriquées", %{conn: conn} do
       publie(slug: "coucy-a-la-merveille")
 
       {:ok, _vue, html} = live(conn, @hote <> "/gallery/coucy-a-la-merveille")
 
       assert html =~ "https://cdn.thibaultsan.com/variants/large/photo.avif 1600w"
       assert html =~ "https://cdn.thibaultsan.com/variants/large/photo.jpeg"
-      # L'ancienne page fabriquait des URL a coups de parametres de requete que
+      # L'ancienne page fabriquait des URL à coups de paramètres de requête que
       # rien ne sert.
       refute html =~ "?w=320&amp;q=80"
     end
@@ -70,7 +70,7 @@ defmodule PortfolioWeb.Photography.GalleryCatalogTest do
       assert get_resp_header(conn, "x-robots-tag") == ["noindex, follow"]
     end
 
-    test "donne a chaque image un texte alternatif issu de la plateforme", %{conn: conn} do
+    test "donne à chaque image un texte alternatif issu de la plateforme", %{conn: conn} do
       publie(
         slug: "coucy-a-la-merveille",
         photos: [photo_payload(alt: "Une joueuse de vielle a roue devant le feu")]
@@ -100,8 +100,8 @@ defmodule PortfolioWeb.Photography.GalleryCatalogTest do
     end
   end
 
-  describe "la plateforme ne repond pas" do
-    test "affiche une page complete plutot qu'une page vide", %{conn: conn} do
+  describe "la plateforme ne répond pas" do
+    test "affiche une page complète plutôt qu'une page vide", %{conn: conn} do
       Scenario.script(:get_album, {:error, :unavailable})
 
       conn = get(Map.put(conn, :host, "photo.thibaultsan.com"), "/gallery/un-album")
@@ -122,7 +122,7 @@ defmodule PortfolioWeb.Photography.GalleryCatalogTest do
   end
 
   describe "album inconnu" do
-    test "repond 404 plutot que d'inventer un contenu", %{conn: conn} do
+    test "répond 404 plutôt que d'inventer un contenu", %{conn: conn} do
       Scenario.script(:get_album, {:error, :not_found})
 
       assert_error_sent 404, fn ->

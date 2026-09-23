@@ -32,7 +32,7 @@ defmodule Portfolio.Photography.Catalog.PhotoTest do
   end
 
   describe "fallback_url/2" do
-    test "prefere le JPEG, le seul format que tous les navigateurs lisent", %{photo: photo} do
+    test "préfère le JPEG, le seul format que tous les navigateurs lisent", %{photo: photo} do
       assert Photo.fallback_url(photo, "large") =~ "large/photo.jpeg"
     end
 

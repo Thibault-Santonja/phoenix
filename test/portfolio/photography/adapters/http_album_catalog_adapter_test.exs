@@ -11,7 +11,7 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
   end
 
   describe "list_albums/1" do
-    test "appelle /api/v1/albums et decode la reponse" do
+    test "appelle /api/v1/albums et décode la réponse" do
       stub(fn conn ->
         assert conn.request_path == "/api/v1/albums"
         Req.Test.json(conn, album_list_response())
@@ -23,7 +23,7 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
       assert meta.total == 1
     end
 
-    test "transmet theme, locale, limit et offset en parametres de requete" do
+    test "transmet thème, locale, limit et offset en paramètres de requête" do
       stub(fn conn ->
         params = URI.decode_query(conn.query_string)
 
@@ -46,7 +46,7 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
                )
     end
 
-    test "omet les parametres non renseignes plutot que d'envoyer des valeurs vides" do
+    test "omet les paramètres non renseignes plutôt que d'envoyer des valeurs vides" do
       stub(fn conn ->
         assert conn.query_string == ""
         Req.Test.json(conn, album_list_response(albums: []))
@@ -82,13 +82,13 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
       assert {:error, :unavailable} = HttpAlbumCatalogAdapter.list_albums([])
     end
 
-    test "traduit une reponse hors contrat en :unavailable" do
+    test "traduit une réponse hors contrat en :unavailable" do
       stub(fn conn -> Req.Test.json(conn, %{"data" => %{"pas" => "une liste"}}) end)
 
       assert {:error, :unavailable} = HttpAlbumCatalogAdapter.list_albums([])
     end
 
-    test "n'effectue aucune reprise dans le chemin de la requete" do
+    test "n'effectue aucune reprise dans le chemin de la requête" do
       counter = :counters.new(1, [])
 
       stub(fn conn ->
@@ -102,7 +102,7 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
   end
 
   describe "get_album/2" do
-    test "appelle /api/v1/albums/:slug et decode l'album complet" do
+    test "appelle /api/v1/albums/:slug et décode l'album complet" do
       stub(fn conn ->
         assert conn.request_path == "/api/v1/albums/mariage-claire-et-damien"
         Req.Test.json(conn, album_detail_response())
@@ -123,7 +123,7 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
       assert {:error, :not_found} = HttpAlbumCatalogAdapter.get_album("un/slug")
     end
 
-    test "traduit un album absent ou non publie en :not_found" do
+    test "traduit un album absent ou non publié en :not_found" do
       stub(fn conn -> Plug.Conn.send_resp(conn, 404, ~s({"error":{"code":"not_found"}})) end)
 
       assert {:error, :not_found} = HttpAlbumCatalogAdapter.get_album("brouillon")
@@ -131,7 +131,7 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapterTest do
   end
 
   describe "list_themes/1" do
-    test "appelle /api/v1/themes et decode les themes" do
+    test "appelle /api/v1/themes et décode les thèmes" do
       stub(fn conn ->
         assert conn.request_path == "/api/v1/themes"
         Req.Test.json(conn, theme_list_response())

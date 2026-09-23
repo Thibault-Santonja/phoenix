@@ -1,14 +1,14 @@
 defmodule Portfolio.Photography.Catalog.MemoryBudgetTest do
   @moduledoc """
-  Garde le cout memoire du cache de catalogue.
+  Garde le cout mémoire du cache de catalogue.
 
   Le serveur cible est une machine a 4 Go partagee entre les deux
   applications, la base, la supervision et la mesure d'audience. Le budget du
   portfolio est de l'ordre de 400 Mo : un cache de catalogue qui deraperait
   s'y verrait tout de suite.
 
-  Ce test mesure au lieu de supposer. Les bornes sont larges a dessein : leur
-  role n'est pas de figer un octet pres, c'est de faire echouer la CI le jour
+  Ce test mesure au lieu de supposer. Les bornes sont larges à dessein : leur
+  role n'est pas de figer un octet pres, c'est de faire échouer la CI le jour
   ou une photo coutera dix fois plus cher qu'aujourd'hui.
   """
 
@@ -18,14 +18,14 @@ defmodule Portfolio.Photography.Catalog.MemoryBudgetTest do
 
   alias Portfolio.Photography.Catalog.Decoder
 
-  # `:erts_debug.size/1` compte des mots machine ; huit octets sur un systeme
+  # `:erts_debug.size/1` compte des mots machine ; huit octets sur un système
   # 64 bits.
   defp octets(terme), do: :erts_debug.size(terme) * 8
 
   # Mesure du 23/09/2026 : 2 200 octets pour une photo et ses neuf sources,
   # avec des URL de soixante caracteres. La conception tablait sur 1,7 ko :
-  # l'ecart vient de la longueur des URL, qui dominent la structure.
-  test "une photo decodee, ses neuf sources comprises, tient sous 3 kilo-octets" do
+  # l'écart vient de la longueur des URL, qui dominent la structure.
+  test "une photo décodée, ses neuf sources comprises, tient sous 3 kilo-octets" do
     {:ok, album} = Decoder.decode_album(album_detail_response())
     [photo] = album.photos
 
@@ -40,7 +40,7 @@ defmodule Portfolio.Photography.Catalog.MemoryBudgetTest do
     assert octets(album) < 100_000
   end
 
-  test "une liste de soixante resumes d'albums tient sous 200 kilo-octets" do
+  test "une liste de soixante résumés d'albums tient sous 200 kilo-octets" do
     albums = for numero <- 1..60, do: album_payload(slug: "album-#{numero}")
     {:ok, page} = Decoder.decode_album_list(album_list_response(albums: albums))
 
@@ -48,11 +48,11 @@ defmodule Portfolio.Photography.Catalog.MemoryBudgetTest do
     assert octets(page) < 200_000
   end
 
-  test "cent entrees de la taille d'une liste complete restent sous 20 megaoctets" do
+  test "cent entrées de la taille d'une liste complète restent sous 20 megaoctets" do
     albums = for numero <- 1..60, do: album_payload(slug: "album-#{numero}")
     {:ok, page} = Decoder.decode_album_list(album_list_response(albums: albums))
 
-    # Le plafond du cache est de cent entrees (voir Portfolio.Application).
+    # Le plafond du cache est de cent entrées (voir Portfolio.Application).
     assert octets(page) * 100 < 20_000_000
   end
 end

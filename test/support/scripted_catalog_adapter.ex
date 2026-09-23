@@ -1,17 +1,17 @@
 defmodule PortfolioTest.Support.ScriptedCatalogAdapter do
   @moduledoc """
-  Catalogue pilote depuis le test, pour eprouver le decorateur de cache.
+  Catalogue pilote depuis le test, pour éprouver le décorateur de cache.
 
-  Ce n'est pas un bouchon universel : c'est le service externe substitue, le
-  seul que la strategie de test du depot autorise a remplacer. Il compte les
-  appels, ce qui permet de verifier qu'un palier de degradation n'a
-  effectivement pas touche au reseau.
+  Ce n'est pas un bouchon universel : c'est le service externe substitué, le
+  seul que la strategie de test du dépôt autorise a remplacer. Il compte les
+  appels, ce qui permet de vérifier qu'un palier de dégradation n'a
+  effectivement pas touche au réseau.
   """
 
   @behaviour Portfolio.Photography.Ports.AlbumCatalogPort
 
   @doc """
-  Demarre le scenario. A appeler dans le `setup` du test.
+  Démarré le scénario. À appeler dans le `setup` du test.
   """
   @spec start_link() :: {:ok, pid()}
   def start_link do
@@ -19,7 +19,7 @@ defmodule PortfolioTest.Support.ScriptedCatalogAdapter do
   end
 
   @doc """
-  Definit la reponse rendue par `fonction` (`:list_albums`, `:get_album` ou
+  Definit la réponse rendue par `fonction` (`:list_albums`, `:get_album` ou
   `:list_themes`).
   """
   @spec script(atom(), term()) :: :ok
@@ -28,7 +28,7 @@ defmodule PortfolioTest.Support.ScriptedCatalogAdapter do
   end
 
   @doc """
-  Nombre d'appels recus par `fonction` depuis le demarrage.
+  Nombre d'appels reçus par `fonction` depuis le démarrage.
   """
   @spec calls(atom()) :: non_neg_integer()
   def calls(fonction) do
@@ -36,7 +36,7 @@ defmodule PortfolioTest.Support.ScriptedCatalogAdapter do
   end
 
   @doc """
-  Derniers arguments recus par `fonction`, ou `nil` si elle n'a pas ete
+  Derniers arguments reçus par `fonction`, ou `nil` si elle n'a pas ete
   appelee.
   """
   @spec last_args(atom()) :: term() | nil
@@ -53,23 +53,22 @@ defmodule PortfolioTest.Support.ScriptedCatalogAdapter do
   @impl true
   def list_themes(opts \\ []), do: respond(:list_themes, opts)
 
-  # Un test qui n'a pas demarre de scenario voit une plateforme eteinte. C'est
-  # le defaut le plus sur : aucune page ne doit casser pour autant, et c'est
-  # justement ce que les paliers de degradation promettent.
+  # Un test qui n'a pas démarré de scénario voit une plateforme éteinte. C'est
+  # le défaut le plus sûr : aucune page ne doit casser pour autant, et c'est
+  # justement ce que les paliers de dégradation promettent.
   defp respond(fonction, args) do
     case Process.whereis(__MODULE__) do
-      nil ->
-        {:error, :unavailable}
-
-      _pid ->
-        Agent.get_and_update(__MODULE__, fn state ->
-          state =
-            state
-            |> update_in([:calls], &Map.update(&1, fonction, 1, fn n -> n + 1 end))
-            |> update_in([:args], &Map.put(&1, fonction, args))
-
-          {Map.get(state.responses, fonction, {:error, :unavailable}), state}
-        end)
+      nil -> {:error, :unavailable}
+      _pid -> Agent.get_and_update(__MODULE__, &enregistre(&1, fonction, args))
     end
+  end
+
+  defp enregistre(state, fonction, args) do
+    state =
+      state
+      |> update_in([:calls], &Map.update(&1, fonction, 1, fn n -> n + 1 end))
+      |> update_in([:args], &Map.put(&1, fonction, args))
+
+    {Map.get(state.responses, fonction, {:error, :unavailable}), state}
   end
 end

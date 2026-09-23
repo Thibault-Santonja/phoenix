@@ -10,7 +10,7 @@ defmodule Portfolio.Photography.Catalog.DecoderTest do
   alias Portfolio.Photography.Catalog.Theme
 
   describe "decode_album_list/1" do
-    test "transforme la charge utile en resumes d'albums" do
+    test "transforme la charge utile en résumés d'albums" do
       assert {:ok, page} = Decoder.decode_album_list(album_list_response())
 
       assert %{total: 1, limit: 50, offset: 0, locale: "fr"} = page.meta
@@ -32,7 +32,7 @@ defmodule Portfolio.Photography.Catalog.DecoderTest do
       assert album.photos == []
     end
 
-    test "accepte un album sans couverture, sans dates de fin et sans lien de reference" do
+    test "accepte un album sans couverture, sans dates de fin et sans lien de référence" do
       payload =
         album_list_response(
           albums: [album_payload(cover: nil, shoot_end_date: nil, reference_url: nil)]
@@ -44,7 +44,7 @@ defmodule Portfolio.Photography.Catalog.DecoderTest do
       assert album.reference_url == nil
     end
 
-    test "refuse une charge utile dont la cle data n'est pas une liste" do
+    test "refuse une charge utile dont la clé data n'est pas une liste" do
       assert {:error, :invalid_payload} = Decoder.decode_album_list(%{"data" => "nope"})
     end
 
@@ -62,7 +62,7 @@ defmodule Portfolio.Photography.Catalog.DecoderTest do
   end
 
   describe "decode_album/1" do
-    test "transforme la charge utile en album complet, photos triees par position" do
+    test "transforme la charge utile en album complet, photos triées par position" do
       payload =
         album_detail_response(
           photos: [
@@ -97,7 +97,7 @@ defmodule Portfolio.Photography.Catalog.DecoderTest do
   end
 
   describe "decode_theme_list/1" do
-    test "transforme la charge utile en themes ordonnes" do
+    test "transforme la charge utile en thèmes ordonnes" do
       assert {:ok, themes} = Decoder.decode_theme_list(theme_list_response())
 
       assert [%Theme{slug: "wedding", name: "Mariage", position: 1, album_count: 12}, second] =
@@ -107,7 +107,7 @@ defmodule Portfolio.Photography.Catalog.DecoderTest do
       assert second.description == nil
     end
 
-    test "refuse un theme sans slug" do
+    test "refuse un thème sans slug" do
       payload = theme_list_response(themes: [%{"name" => "Mariage"}])
 
       assert {:error, :invalid_payload} = Decoder.decode_theme_list(payload)

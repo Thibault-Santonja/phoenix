@@ -246,7 +246,7 @@ defmodule PortfolioWeb.PhotographyLive.IndexTest do
       {:ok, view, html} = live(conn, ~p"/?chapter=china")
 
       # Un chapitre renvoie vers la chronologie filtree, pas vers une page
-      # d'album : "china" est un theme, pas un slug d'album.
+      # d'album : "china" est un thème, pas un slug d'album.
       assert html =~ "/timeline/china"
       assert has_element?(view, "a[href='/timeline/china']")
     end
@@ -268,11 +268,11 @@ defmodule PortfolioWeb.PhotographyLive.IndexTest do
     end
   end
 
-  describe "Theme button" do
-    test "renders theme button component", %{conn: conn} do
+  describe "Thème button" do
+    test "renders thème button component", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/")
 
-      # Theme button should be present
+      # Thème button should be present
       assert has_element?(view, "button[phx-click='change_locale']")
     end
   end

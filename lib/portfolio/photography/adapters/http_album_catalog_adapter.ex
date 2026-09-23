@@ -4,23 +4,23 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
 
   ## Ce qu'il fait, et ce qu'il ne fait pas
 
-  Il parle, decode, et traduit les pannes en `{:error, :unavailable}`. Il ne
-  met rien en cache et ne rejoue aucune requete : ces deux responsabilites
-  appartiennent au decorateur `CachingAlbumCatalogAdapter`.
+  Il parle, décode, et traduit les pannes en `{:error, :unavailable}`. Il ne
+  met rien en cache et ne rejoue aucune requête : ces deux responsabilites
+  appartiennent au décorateur `CachingAlbumCatalogAdapter`.
 
   L'absence de reprise est un choix, pas un oubli. Rejouer dans le chemin de
-  la requete doublerait la latence d'une page deja degradee, pour une chance
+  la requête doublerait la latence d'une page déjà dégradée, pour une chance
   faible de succes : la plateforme est soit la, soit absente pour plus
-  longtemps qu'un aller-retour. Le rafraichissement se fait hors du chemin
-  critique, dans le decorateur.
+  longtemps qu'un aller-retour. Le rafraîchissement se fait hors du chemin
+  critique, dans le décorateur.
 
-  ## Delais
+  ## Délais
 
-  Deux secondes pour etablir la connexion, cinq pour recevoir la reponse. Les
-  deux applications tournent sur le meme hote, derriere le reseau Docker
+  Deux secondes pour établir la connexion, cinq pour recevoir la réponse. Les
+  deux applications tournent sur le même hôte, derrière le réseau Docker
   interne : ces valeurs sont larges, et c'est voulu, elles couvrent le cas ou
   la plateforme est vivante mais lente, pas le cas ou elle est absente, que
-  l'echec de connexion tranche en quelques millisecondes.
+  l'échec de connexion tranche en quelques millisecondes.
 
   ## Configuration
 
@@ -29,9 +29,9 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
         connect_timeout: 2_000,
         receive_timeout: 5_000
 
-  La cle `:req_options` permet d'injecter des options `Req` supplementaires,
-  ce dont les tests se servent pour brancher un bouchon `Req.Test` a la place
-  du reseau.
+  La clé `:req_options` permet d'injecter des options `Req` supplementaires,
+  ce dont les tests se servent pour brancher un bouchon `Req.Test` à la place
+  du réseau.
   """
 
   @behaviour Portfolio.Photography.Ports.AlbumCatalogPort
@@ -90,7 +90,7 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
         {:ok, decoded}
 
       {:error, :invalid_payload} ->
-        Logger.warning("catalogue: reponse hors contrat de la plateforme photo")
+        Logger.warning("catalogue : réponse hors contrat de la plateforme photo")
         {:error, :unavailable}
     end
   end
@@ -98,22 +98,22 @@ defmodule Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter do
   defp decode_with({:ok, %Req.Response{status: 404}}, _decoder), do: {:error, :not_found}
 
   defp decode_with({:ok, %Req.Response{status: status}}, _decoder) do
-    Logger.warning("catalogue: la plateforme photo a repondu #{status}")
+    Logger.warning("catalogue : la plateforme photo a répondu #{status}")
     {:error, :unavailable}
   end
 
   defp decode_with({:error, reason}, _decoder) do
-    Logger.warning("catalogue: appel impossible vers la plateforme photo (#{inspect(reason)})")
+    Logger.warning("catalogue : appel impossible vers la plateforme photo (#{inspect(reason)})")
     {:error, :unavailable}
   end
 
   # ============================================================================
-  # Parametres
+  # Paramètres
   # ============================================================================
 
-  # Les parametres absents sont omis de l'URL plutot qu'envoyes vides : une
-  # locale vide serait un parametre invalide pour la plateforme, qui repond
-  # alors 400 au lieu de servir le contenu par defaut.
+  # Les paramètres absents sont omis de l'URL plutôt qu'envoyes vides : une
+  # locale vide serait un paramètre invalide pour la plateforme, qui répond
+  # alors 400 au lieu de servir le contenu par défaut.
   defp list_params(opts) do
     [
       theme: Keyword.get(opts, :theme),

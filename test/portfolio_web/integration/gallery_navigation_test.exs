@@ -4,12 +4,12 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
   un album, et retour.
 
   Les albums viennent de la plateforme photo, lus par le port. Ce fichier
-  verifie l'enchainement des pages ; le detail de chaque page est couvert par
+  vérifie l'enchainement des pages ; le détail de chaque page est couvert par
   `PortfolioWeb.PhotographyLive.TimelineTest` et
   `PortfolioWeb.Photography.GalleryCatalogTest`.
   """
 
-  # Le scenario de catalogue est un processus nomme, partage par le noeud.
+  # Le scénario de catalogue est un processus nommé, partagé par le noeud.
   use PortfolioWeb.ConnCase, async: false
 
   import Phoenix.LiveViewTest
@@ -37,8 +37,8 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
     Scenario.script(:get_album, {:ok, album})
   end
 
-  describe "de la chronologie a l'album" do
-    test "la chronologie mene a la page d'album", %{conn: conn} do
+  describe "de la chronologie à l'album" do
+    test "la chronologie mene à la page d'album", %{conn: conn} do
       publie_catalogue("coucy-a-la-merveille", "Coucy a la Merveille")
 
       {:ok, chronologie, _html} = live(conn, ~p"/timeline")
@@ -55,7 +55,7 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
       assert html =~ "Coucy a la Merveille"
     end
 
-    test "la page d'album ramene a la chronologie", %{conn: conn} do
+    test "la page d'album ramene à la chronologie", %{conn: conn} do
       publie_catalogue("coucy-a-la-merveille", "Coucy a la Merveille")
 
       {:ok, album, _html} = live(conn, ~p"/gallery/coucy-a-la-merveille")
@@ -67,16 +67,16 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
     end
   end
 
-  describe "ce qui n'est pas publie" do
-    test "un album non publie est indiscernable d'un album inexistant", %{conn: conn} do
+  describe "ce qui n'est pas publié" do
+    test "un album non publié est indiscernable d'un album inexistant", %{conn: conn} do
       Scenario.script(:get_album, {:error, :not_found})
 
       assert_error_sent 404, fn -> get(conn, "/gallery/brouillon-secret") end
     end
   end
 
-  describe "la plateforme ne repond pas" do
-    test "les deux pages restent completes et sans erreur", %{conn: conn} do
+  describe "la plateforme ne répond pas" do
+    test "les deux pages restent complètes et sans erreur", %{conn: conn} do
       Scenario.script(:list_albums, {:error, :unavailable})
       Scenario.script(:get_album, {:error, :unavailable})
 
@@ -89,7 +89,7 @@ defmodule PortfolioWeb.Integration.GalleryNavigationTest do
   end
 
   describe "langue" do
-    test "la langue choisie suit d'une page a l'autre", %{conn: conn} do
+    test "la langue choisie suit d'une page à l'autre", %{conn: conn} do
       publie_catalogue("coucy-a-la-merveille", "Coucy a la Merveille")
       conn = put_req_cookie(conn, "locale", "en")
 

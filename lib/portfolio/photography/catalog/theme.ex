@@ -1,9 +1,9 @@
 defmodule Portfolio.Photography.Catalog.Theme do
   @moduledoc """
-  Theme du catalogue distant : la categorie editoriale d'un album.
+  Thème du catalogue distant : la catégorie éditoriale d'un album.
 
   Remplace la taxonomie de chapitres codee en dur dans les gabarits du
-  portfolio. Le `slug` est la cle stable, c'est lui qui circule dans les URL.
+  portfolio. Le `slug` est la clé stable, c'est lui qui circule dans les URL.
   """
 
   @derive Jason.Encoder

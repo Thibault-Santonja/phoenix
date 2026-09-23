@@ -1,10 +1,10 @@
 defmodule PortfolioWeb.Integration.PhotoHostNoIndexTest do
   @moduledoc """
-  La seule protection du portfolio contre le contenu duplique.
+  La seule protection du portfolio contre le contenu dupliqué.
 
-  `photo.thibaultsan.com` et la plateforme photo servent le meme catalogue.
+  `photo.thibaultsan.com` et la plateforme photo servent le même catalogue.
   Si ces assertions tombent, les deux adresses se font concurrence dans
-  l'index et le moteur choisit lui-meme laquelle presenter.
+  l'index et le moteur choisit lui-même laquelle presenter.
   """
 
   use PortfolioWeb.ConnCase, async: true
@@ -39,7 +39,7 @@ defmodule PortfolioWeb.Integration.PhotoHostNoIndexTest do
       refute html =~ ~s(<link rel="canonical" href="#{@photo}/">)
     end
 
-    test "og:url designe la plateforme, pour qu'un partage y ramene", %{conn: conn} do
+    test "og:url désigne la plateforme, pour qu'un partage y ramene", %{conn: conn} do
       html = conn |> photo_conn("/") |> html_response(200)
 
       assert html =~ ~s(<meta property="og:url" content="#{@plateforme}">)
@@ -65,19 +65,19 @@ defmodule PortfolioWeb.Integration.PhotoHostNoIndexTest do
   end
 
   describe "plans de site" do
-    test "sitemap.xml repond 404 sous photo.", %{conn: conn} do
+    test "sitemap.xml répond 404 sous photo.", %{conn: conn} do
       conn = photo_conn(conn, "/sitemap.xml")
 
       assert conn.status == 404
     end
 
-    test "image-sitemap.xml repond 404 sous photo.", %{conn: conn} do
+    test "image-sitemap.xml répond 404 sous photo.", %{conn: conn} do
       conn = photo_conn(conn, "/image-sitemap.xml")
 
       assert conn.status == 404
     end
 
-    test "sitemap.xml reste servi sur l'hote principal", %{conn: conn} do
+    test "sitemap.xml reste servi sur l'hôte principal", %{conn: conn} do
       conn =
         conn
         |> Map.put(:host, "thibaultsan.com")

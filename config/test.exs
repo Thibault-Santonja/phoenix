@@ -72,7 +72,7 @@ config :portfolio, :album_catalog,
   inner_adapter: PortfolioTest.Support.ScriptedCatalogAdapter,
   snapshot_dir: nil
 
-# La couche web lit le catalogue par le port : c'est la frontiere substituee,
+# La couche web lit le catalogue par le port : c'est la frontière substituee,
 # et seul le service externe est remplace.
 config :portfolio, Portfolio.Photography.Ports.AlbumCatalogPort,
   adapter: PortfolioTest.Support.ScriptedCatalogAdapter

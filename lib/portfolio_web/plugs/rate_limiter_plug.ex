@@ -156,10 +156,10 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
   Convertit une attente en millisecondes en nombre entier de secondes, arrondi
   au-dessus.
 
-  Tronquer donnerait `Retry-After: 0` pour toute attente inferieure a la
-  seconde : un client obeissant reessaierait aussitot, et la limitation ne
+  Tronquer donnerait `Retry-After: 0` pour toute attente inférieure à la
+  seconde : un client obéissant reessaierait aussitot, et la limitation ne
   limiterait plus rien. Arrondir au-dessus fait toujours attendre au moins une
-  seconde des lors qu'il reste quelque chose a attendre.
+  seconde des lors qu'il reste quelque chose à attendre.
   """
   @spec retry_after_seconds(non_neg_integer()) :: non_neg_integer()
   def retry_after_seconds(0), do: 0

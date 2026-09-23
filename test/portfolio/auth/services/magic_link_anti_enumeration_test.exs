@@ -45,15 +45,15 @@ defmodule Portfolio.Auth.Services.MagicLinkAntiEnumerationTest do
       assert {:ok, :email_sent} = result
     end
 
-    test "le chemin d'une adresse inconnue passe par le delai anti-enumeration" do
-      # Comparer deux temps murs ne mesure rien d'utile ici : le delai reel
+    test "le chemin d'une adresse inconnue passe par le délai anti-enumeration" do
+      # Comparer deux temps murs ne mesure rien d'utile ici : le délai réel
       # vaut trois millisecondes, soit moins que le bruit d'ordonnancement
-      # d'une suite qui tourne sur vingt processus. Un tel test echoue au
-      # hasard sans jamais detecter la disparition du delai.
+      # d'une suite qui tourne sur vingt processus. Un tel test échoue au
+      # hasard sans jamais detecter la disparition du délai.
       #
-      # On verifie donc la seule chose qui compte et qui soit observable : le
-      # chemin « adresse inconnue » attend bien. Le delai est rendu mesurable
-      # pour la duree du test, et la borne est unilaterale, donc insensible a
+      # On vérifie donc la seule chose qui compte et qui soit observable : le
+      # chemin « adresse inconnue » attend bien. Le délai est rendu mesurable
+      # pour la durée du test, et la borne est unilaterale, donc insensible a
       # la charge : le bruit ne peut qu'allonger la mesure.
       Application.put_env(:portfolio, :magic_link_timing_delay_ms, 150)
       on_exit(fn -> Application.delete_env(:portfolio, :magic_link_timing_delay_ms) end)

@@ -1,11 +1,11 @@
 defmodule Portfolio.Photography.Catalog.Photo do
   @moduledoc """
-  Une photo publiee, telle que le catalogue distant l'expose.
+  Une photo publiée, telle que le catalogue distant l'expose.
 
-  `id` est l'identifiant opaque de la jointure album-photo cote plateforme :
-  il ne sert qu'a identifier l'element dans un flux LiveView, jamais a
+  `id` est l'identifiant opaque de la jointure album-photo côté plateforme :
+  il ne sert qu'a identifier l'élément dans un flux LiveView, jamais a
   reconstruire une URL. `alt` n'est jamais vide, la plateforme le garantit et
-  le decodeur le verifie : une image sans texte alternatif est inaccessible et
+  le décodeur le vérifie : une image sans texte alternatif est inaccessible et
   n'a pas sa place sur une page publique.
   """
 
@@ -28,11 +28,11 @@ defmodule Portfolio.Photography.Catalog.Photo do
         }
 
   @doc """
-  Retourne la source du preset demande, dans le premier format disponible
+  Retourne la source du preset demandé, dans le premier format disponible
   parmi `formats`, ou `nil` si aucune ne convient.
 
-  L'ordre de `formats` est celui de la preference : le gabarit demande l'AVIF
-  puis retombe sur le WebP, comme le veut la regle de performance du depot.
+  L'ordre de `formats` est celui de la préférence : le gabarit demande l'AVIF
+  puis retombe sur le WebP, comme le veut la règle de performance du dépôt.
   """
   @spec source(t(), String.t(), [String.t()]) :: Source.t() | nil
   def source(%__MODULE__{sources: sources}, preset, formats) do
@@ -42,9 +42,9 @@ defmodule Portfolio.Photography.Catalog.Photo do
   end
 
   @doc """
-  Retourne l'URL a poser dans l'attribut `src`.
+  Retourne l'URL à poser dans l'attribut `src`.
 
-  Le `src` est le filet de securite des navigateurs qui ne comprennent ni
+  Le `src` est le filet de sécurité des navigateurs qui ne comprennent ni
   `srcset` ni `<picture>` : il porte donc le format le plus universel
   disponible, le JPEG quand il existe, le WebP sinon.
   """
@@ -57,7 +57,7 @@ defmodule Portfolio.Photography.Catalog.Photo do
   end
 
   @doc """
-  Construit la valeur d'un attribut `srcset` pour un format donne.
+  Construit la valeur d'un attribut `srcset` pour un format donné.
 
   Retourne `nil` quand aucune source n'existe dans ce format, ce qui permet au
   gabarit d'omettre entierement la balise `<source>` correspondante.

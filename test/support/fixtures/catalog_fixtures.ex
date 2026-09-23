@@ -2,14 +2,14 @@ defmodule PortfolioTest.Fixtures.CatalogFixtures do
   @moduledoc """
   Charges utiles JSON conformes au contrat de l'API publique des albums.
 
-  Ces fixtures decrivent ce que la plateforme photo renvoie, telle qu'elle le
-  renvoie : des cles binaires, des dates ISO 8601, aucune valeur deja decodee.
-  Elles servent a la fois aux tests du decodeur, de l'adaptateur HTTP et de
+  Ces fixtures décrivent ce que la plateforme photo renvoie, telle qu'elle le
+  renvoie : des clés binaires, des dates ISO 8601, aucune valeur déjà décodée.
+  Elles servent à la fois aux tests du décodeur, de l'adaptateur HTTP et de
   l'adaptateur en dur.
   """
 
   @doc """
-  Une photo complete, avec ses neuf sources responsives.
+  Une photo complète, avec ses neuf sources responsives.
   """
   @spec photo_payload(keyword()) :: map()
   def photo_payload(opts \\ []) do
@@ -57,7 +57,7 @@ defmodule PortfolioTest.Fixtures.CatalogFixtures do
   end
 
   @doc """
-  Un resume d'album tel que renvoye par la liste.
+  Un résumé d'album tel que renvoye par la liste.
   """
   @spec album_payload(keyword()) :: map()
   def album_payload(opts \\ []) do
@@ -82,7 +82,7 @@ defmodule PortfolioTest.Fixtures.CatalogFixtures do
   end
 
   @doc """
-  La reponse complete de `GET /api/v1/albums`.
+  La réponse complète de `GET /api/v1/albums`.
   """
   @spec album_list_response(keyword()) :: map()
   def album_list_response(opts \\ []) do
@@ -101,7 +101,7 @@ defmodule PortfolioTest.Fixtures.CatalogFixtures do
   end
 
   @doc """
-  La reponse complete de `GET /api/v1/albums/:slug`.
+  La réponse complète de `GET /api/v1/albums/:slug`.
   """
   @spec album_detail_response(keyword()) :: map()
   def album_detail_response(opts \\ []) do
@@ -122,7 +122,7 @@ defmodule PortfolioTest.Fixtures.CatalogFixtures do
   end
 
   @doc """
-  La reponse complete de `GET /api/v1/themes`.
+  La réponse complète de `GET /api/v1/themes`.
   """
   @spec theme_list_response(keyword()) :: map()
   def theme_list_response(opts \\ []) do

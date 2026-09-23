@@ -1,8 +1,8 @@
 defmodule Portfolio.Auth.MagicLinkVerificationTest do
   @moduledoc """
-  Tests for magic link verification error handling and telemetry.
+  Tests for magic link vérification error handling and telemetry.
 
-  Covers edge cases and error conditions during magic link verification.
+  Covers edge cases and error conditions during magic link vérification.
   """
   use Portfolio.DataCase, async: true
 
@@ -36,10 +36,10 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
       user = insert_user(email: email)
       {:ok, magic_link} = MagicLinkService.request_magic_link(user.email)
 
-      # First verification succeeds
+      # First vérification succeeds
       {:ok, _user} = MagicLinkService.verify_magic_link(magic_link.token)
 
-      # Second verification fails
+      # Second vérification fails
       assert {:error, :already_used} = MagicLinkService.verify_magic_link(magic_link.token)
     end
 
@@ -84,7 +84,7 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
       :ok
     end
 
-    test "emits telemetry on successful verification" do
+    test "emits telemetry on successful vérification" do
       user = insert_user()
       {:ok, magic_link} = MagicLinkService.request_magic_link(user.email)
 
@@ -130,7 +130,7 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
       # Use the link once
       {:ok, _user} = MagicLinkService.verify_magic_link(magic_link.token)
 
-      # Clear first telemetry message from successful verification
+      # Clear first telemetry message from successful vérification
       assert_received {:telemetry, [:portfolio, :auth, :magic_link, :verified], _, %{result: :ok}}
 
       # Try to use it again
@@ -147,13 +147,13 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
       user = insert_user()
       {:ok, magic_link} = MagicLinkService.request_magic_link(user.email)
 
-      # Measure valid token verification time
+      # Measure valid token vérification time
       {:ok, _user} = MagicLinkService.verify_magic_link(magic_link.token)
 
       assert_received {:telemetry, _, valid_measurements, _}
       valid_duration = valid_measurements.duration
 
-      # Measure invalid token verification time
+      # Measure invalid token vérification time
       MagicLinkService.verify_magic_link("invalid-token")
 
       assert_received {:telemetry, _, invalid_measurements, _}

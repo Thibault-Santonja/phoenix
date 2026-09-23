@@ -40,26 +40,26 @@ config :portfolio, PortfolioWeb.Gettext, locales: ~w(en fr)
 
 # Configure session settings
 config :portfolio, :session,
-  # Duree de vie maximale du cookie de session cote navigateur (24 heures)
-  # Note: La session expire reellement selon auth.session_expiration_seconds (2h)
+  # Durée de vie maximale du cookie de session cote navigateur (24 heures)
+  # Note: La session expire réellement selon auth.session_expiration_seconds (2h)
   max_age_seconds: 24 * 60 * 60
 
 # Configure authentication
 config :portfolio, :auth,
-  # Duree d'inactivite maximale avant expiration de session (2 heures)
+  # Durée d'inactivite maximale avant expiration de session (2 heures)
   # Une session inactive > 2h est supprimee et l'utilisateur doit se reconnecter
   # Nettoyage automatique par SessionCleanerWorker toutes les 15 minutes
   session_expiration_seconds: 2 * 60 * 60,
-  # Throttle des mises a jour de last_activity_at pour reduire la charge DB (5 minutes)
-  # last_activity_at n'est mis a jour que si la derniere MAJ remonte a > 5 minutes
+  # Throttle des mises à jour de last_activity_at pour reduire la charge DB (5 minutes)
+  # last_activity_at n'est mis à jour que si la dernière MAJ remonte a > 5 minutes
   # Impact: reduction ~95% des ecritures DB, marge acceptable de 5 min sur 2h d'expiration
   activity_update_throttle_seconds: 5 * 60,
-  # Duree de vie d'un magic link (15 minutes)
-  # Un magic link expire 15 minutes apres sa creation
+  # Durée de vie d'un magic link (15 minutes)
+  # Un magic link expire 15 minutes après sa creation
   # Nettoyage automatique par MagicLinkCleanerWorker toutes les heures
   magic_link_ttl_minutes: 15,
-  # Duree de vie maximale d'une session (30 jours)
-  # Meme si active, une session expire apres 30 jours (renouvellement requis)
+  # Durée de vie maximale d'une session (30 jours)
+  # Même si active, une session expire après 30 jours (renouvellement requis)
   # Utilise pour les evenements et metadata (non enforce en DB actuellement)
   session_max_age_days: 30
 
@@ -113,9 +113,9 @@ config :portfolio, Oban,
     cdn: 3
   ],
   plugins: [
-    # Pruner: Supprime les jobs completes/annules de plus de 7 jours
+    # Pruner: Supprime les jobs complètes/annules de plus de 7 jours
     {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7},
-    # Cron: Planification des taches recurrentes de nettoyage
+    # Cron: Planification des tâches recurrentes de nettoyage
     {Oban.Plugins.Cron,
      crontab: [
        # MagicLinkCleaner: Supprime les magic links expires (expires_at < now)
@@ -253,6 +253,29 @@ config :logger, :console,
     :remote_ip,
     :raw_params
   ]
+
+# Catalogue d'albums lu chez la plateforme photo.
+#
+# Les deux applications tournent sur le même hôte : l'appel passe par le
+# réseau interne, sans proxy, sans poignee de main TLS et sans aller-retour
+# sortant. Les valeurs réelles sont posees dans runtime.exs à partir de
+# l'environnement.
+config :portfolio, :album_catalog,
+  base_url: "http://localhost:4000",
+  platform_url: "https://photography.thibaultsan.com",
+  connect_timeout: 2_000,
+  receive_timeout: 5_000,
+  # Fenêtre de fraîcheur : en deca, aucune lecture ne touche au réseau ;
+  # au-delà, le contenu périmé part quand même et le rafraîchissement se fait
+  # hors du chemin de la requête.
+  fresh_for_ms: 600_000,
+  # Sans répertoire d'instantané, le palier de relecture sur disque est
+  # simplement absent : la dégradation s'arrêté au palier précédent.
+  snapshot_dir: nil,
+  inner_adapter: Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter
+
+config :portfolio, Portfolio.Photography.Ports.AlbumCatalogPort,
+  adapter: Portfolio.Photography.Adapters.CachingAlbumCatalogAdapter
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason

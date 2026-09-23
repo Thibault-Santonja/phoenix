@@ -2,12 +2,12 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
   @moduledoc """
   Comportements de la page d'album, une fois l'album lu chez la plateforme.
 
-  Le contenu et le referencement de cette page sont couverts par
+  Le contenu et le référencement de cette page sont couverts par
   `PortfolioWeb.Photography.GalleryCatalogTest` ; ce fichier-ci garde la
-  navigation, la langue et les metadonnees de page.
+  navigation, la langue et les métadonnées de page.
   """
 
-  # Le scenario de catalogue est un processus nomme, partage par le noeud.
+  # Le scénario de catalogue est un processus nommé, partagé par le noeud.
   use PortfolioWeb.ConnCase, async: false
 
   import Phoenix.LiveViewTest
@@ -59,8 +59,8 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
     end
   end
 
-  describe "selection d'une photo" do
-    test "affiche la premiere photo par defaut", %{conn: conn} do
+  describe "sélection d'une photo" do
+    test "affiche la première photo par défaut", %{conn: conn} do
       publie(slug: "un-album", photos: trois_photos())
 
       {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
@@ -68,7 +68,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
       assert html =~ "Legende une"
     end
 
-    test "affiche la photo demandee par le parametre project", %{conn: conn} do
+    test "affiche la photo demandée par le paramètre project", %{conn: conn} do
       publie(slug: "un-album", photos: trois_photos())
 
       {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album?project=2")
@@ -76,7 +76,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
       assert html =~ "Legende trois"
     end
 
-    test "retombe sur la premiere photo quand l'index est hors limites", %{conn: conn} do
+    test "retombe sur la première photo quand l'index est hors limites", %{conn: conn} do
       publie(slug: "un-album", photos: trois_photos())
 
       {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album?project=99")
@@ -84,7 +84,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
       assert html =~ "Legende une"
     end
 
-    test "retombe sur la premiere photo quand l'index n'est pas un nombre", %{conn: conn} do
+    test "retombe sur la première photo quand l'index n'est pas un nombre", %{conn: conn} do
       publie(slug: "un-album", photos: trois_photos())
 
       {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album?project=abc")
@@ -92,7 +92,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
       assert html =~ "Legende une"
     end
 
-    test "parcourt les photos l'une apres l'autre", %{conn: conn} do
+    test "parcourt les photos l'une après l'autre", %{conn: conn} do
       publie(slug: "un-album", photos: trois_photos())
 
       {:ok, vue, _html} = live(conn, @hote <> "/gallery/un-album")
@@ -113,7 +113,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
     end
   end
 
-  describe "metadonnees de page" do
+  describe "métadonnées de page" do
     test "le titre porte le nom de l'album", %{conn: conn} do
       publie(slug: "un-album", title: "Sortie de ceremonie")
 
@@ -149,7 +149,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
       assert html =~ "Home"
     end
 
-    test "suit le parametre d'URL quand il est fourni", %{conn: conn} do
+    test "suit le paramètre d'URL quand il est fourni", %{conn: conn} do
       publie(slug: "un-album")
 
       {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album?hl=en")
@@ -157,7 +157,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
       assert html =~ "Home"
     end
 
-    test "sert le francais par defaut", %{conn: conn} do
+    test "sert le francais par défaut", %{conn: conn} do
       publie(slug: "un-album")
 
       {:ok, _vue, html} = live(conn, @hote <> "/gallery/un-album")
@@ -165,7 +165,7 @@ defmodule PortfolioWeb.Photography.GalleryLiveTest do
       assert html =~ "Accueil"
     end
 
-    test "transmet la langue demandee a la plateforme", %{conn: conn} do
+    test "transmet la langue demandée à la plateforme", %{conn: conn} do
       publie(slug: "un-album")
 
       {:ok, _vue, _html} = live(conn, @hote <> "/gallery/un-album?hl=en")
