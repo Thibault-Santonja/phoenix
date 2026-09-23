@@ -1145,12 +1145,12 @@ msgstr "Voir plus"
 msgid "photography.street_photography"
 msgstr "Photographie de rue"
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:89
+#: lib/portfolio_web/live/photography_live/timeline.ex:95
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.gallery_prefix"
 msgstr "Galerie photos - "
 
-#: lib/portfolio_web/live/photography_live/timeline.ex:85
+#: lib/portfolio_web/live/photography_live/timeline.ex:91
 #, elixir-autogen, elixir-format
 msgid "photography.timeline.title"
 msgstr "Galerie chronologique de photographies"

@@ -113,4 +113,94 @@ defmodule Portfolio.Photography.Catalog.DecoderTest do
       assert {:error, :invalid_payload} = Decoder.decode_theme_list(payload)
     end
   end
+
+  describe "refus des charges utiles hors contrat" do
+    # Ces cas ne viennent pas d'une plateforme saine : ils viennent d'une
+    # plateforme en panne, d'un mandataire qui renvoie une page d'erreur, ou
+    # d'un instantané écrit par une version antérieure. Le décodeur doit les
+    # refuser franchement, pas fabriquer un album à moitié rempli.
+
+    test "refuse un album dont la charge utile n'est pas un objet" do
+      assert {:error, :invalid_payload} = Decoder.decode_album(%{"data" => "pas un objet"})
+      assert {:error, :invalid_payload} = Decoder.decode_album("pas un objet")
+    end
+
+    test "refuse une liste de thèmes qui n'en est pas une" do
+      assert {:error, :invalid_payload} = Decoder.decode_theme_list(%{"data" => "pas une liste"})
+      assert {:error, :invalid_payload} = Decoder.decode_theme_list([])
+    end
+
+    test "refuse un album qui n'est pas un objet dans la liste" do
+      assert {:error, :invalid_payload} = Decoder.decode_album_list(%{"data" => ["pas un objet"]})
+    end
+
+    test "refuse une photo qui n'est pas un objet" do
+      payload = album_detail_response(photos: ["pas un objet"])
+
+      assert {:error, :invalid_payload} = Decoder.decode_album(payload)
+    end
+
+    test "refuse une source qui n'est pas un objet" do
+      payload = album_detail_response(photos: [photo_payload(sources: ["pas un objet"])])
+
+      assert {:error, :invalid_payload} = Decoder.decode_album(payload)
+    end
+
+    test "refuse une liste de sources qui n'en est pas une" do
+      payload = album_detail_response(photos: [photo_payload(sources: "pas une liste")])
+
+      assert {:error, :invalid_payload} = Decoder.decode_album(payload)
+    end
+
+    test "refuse une source privée de dimensions" do
+      source = Map.delete(source_payload("large", "jpeg", 1600, 1067), "width")
+      payload = album_detail_response(photos: [photo_payload(sources: [source])])
+
+      assert {:error, :invalid_payload} = Decoder.decode_album(payload)
+    end
+
+    test "refuse un thème qui n'est pas un objet" do
+      payload = theme_list_response(themes: ["pas un objet"])
+
+      assert {:error, :invalid_payload} = Decoder.decode_theme_list(payload)
+    end
+
+    test "refuse une date qui n'est pas une chaîne" do
+      payload = album_list_response(albums: [album_payload(shoot_date: 20_240_615)])
+
+      assert {:error, :invalid_payload} = Decoder.decode_album_list(payload)
+    end
+
+    test "refuse un horodatage illisible" do
+      payload = album_list_response(albums: [album_payload(published_at: "hier")])
+
+      assert {:error, :invalid_payload} = Decoder.decode_album_list(payload)
+    end
+
+    test "refuse un horodatage qui n'est pas une chaîne" do
+      payload = album_list_response(albums: [album_payload(updated_at: 1_720_000_000)])
+
+      assert {:error, :invalid_payload} = Decoder.decode_album_list(payload)
+    end
+  end
+
+  describe "métadonnées de liste" do
+    test "se passe d'un bloc meta absent plutôt que d'échouer" do
+      assert {:ok, page} = Decoder.decode_album_list(%{"data" => []})
+
+      assert page.meta == %{
+               total: nil,
+               limit: nil,
+               offset: nil,
+               locale: nil,
+               generated_at: nil
+             }
+    end
+
+    test "ignore un bloc meta qui n'est pas un objet" do
+      assert {:ok, page} = Decoder.decode_album_list(%{"data" => [], "meta" => "rien"})
+
+      assert page.meta.total == nil
+    end
+  end
 end

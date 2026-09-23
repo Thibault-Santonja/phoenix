@@ -24,7 +24,11 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
         chemin
       end
 
-    configure(fresh_for_ms: context[:fresh_for_ms] || :timer.minutes(10), snapshot_dir: dir)
+    configure(
+      fresh_for_ms: context[:fresh_for_ms] || :timer.minutes(10),
+      snapshot_dir: dir,
+      inner_adapter: Scenario
+    )
 
     test_pid = self()
     handler = "catalog-refresh-#{System.unique_integer([:positive])}"
@@ -48,12 +52,7 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
 
   defp configure(opts) do
     base = Application.get_env(:portfolio, :album_catalog, [])
-
-    Application.put_env(
-      :portfolio,
-      :album_catalog,
-      Keyword.merge(base, Keyword.put(opts, :inner_adapter, Scenario))
-    )
+    Application.put_env(:portfolio, :album_catalog, Keyword.merge(base, opts))
   end
 
   defp restore do
@@ -211,6 +210,43 @@ defmodule Portfolio.Photography.Adapters.CachingAlbumCatalogAdapterTest do
       Scenario.script(:get_album, {:error, :unavailable})
 
       assert {:error, :unavailable} = Cache.get_album("mariage-claire-et-damien")
+    end
+  end
+
+  describe "montage de production : le cache au-dessus du transport HTTP" do
+    setup do
+      # Les deux adaptateurs sont éprouvés séparément. Ici on vérifie qu'ils
+      # s'emboîtent : c'est le montage réellement déployé, et rien d'autre ne
+      # le couvre.
+      configure(
+        fresh_for_ms: :timer.minutes(10),
+        snapshot_dir: nil,
+        inner_adapter: Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter
+      )
+
+      :ok
+    end
+
+    test "un album lu par HTTP n'est demandé qu'une fois" do
+      compteur = :counters.new(1, [])
+
+      Req.Test.stub(Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter, fn conn ->
+        :counters.add(compteur, 1, 1)
+        Req.Test.json(conn, album_list_response())
+      end)
+
+      assert {:ok, %{albums: [%Album{slug: "mariage-claire-et-damien"}]}} = Cache.list_albums([])
+      assert {:ok, %{albums: [%Album{slug: "mariage-claire-et-damien"}]}} = Cache.list_albums([])
+
+      assert :counters.get(compteur, 1) == 1
+    end
+
+    test "une plateforme injoignable ne rend ni exception ni liste vide" do
+      Req.Test.stub(Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter, fn conn ->
+        Req.Test.transport_error(conn, :econnrefused)
+      end)
+
+      assert {:error, :unavailable} = Cache.list_albums([])
     end
   end
 

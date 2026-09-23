@@ -36,7 +36,6 @@ defmodule PortfolioWeb.SEO.Canonical do
   @doc """
   Canonique d'une page de thème.
   """
-  @spec theme(String.t() | nil) :: String.t()
-  def theme(nil), do: home()
+  @spec theme(String.t()) :: String.t()
   def theme(slug) when is_binary(slug), do: base() <> "/galeries/" <> slug
 end

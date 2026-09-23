@@ -53,6 +53,5 @@ defmodule PortfolioWeb.Plugs.PhotoHostSeo do
   Indique si `host` est l'hôte non indexe du portfolio.
   """
   @spec photo_host?(String.t()) :: boolean()
-  def photo_host?(host) when is_binary(host), do: String.starts_with?(host, "photo.")
-  def photo_host?(_host), do: false
+  def photo_host?(host), do: String.starts_with?(host, "photo.")
 end

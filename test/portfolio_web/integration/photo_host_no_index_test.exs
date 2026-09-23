@@ -64,6 +64,21 @@ defmodule PortfolioWeb.Integration.PhotoHostNoIndexTest do
     end
   end
 
+  describe "canoniques par page" do
+    test "une page de chapitre désigne la page de thème de la plateforme", %{conn: conn} do
+      html = conn |> photo_conn("/timeline/reenactment") |> html_response(200)
+
+      assert html =~ ~s(rel="canonical" href="#{@plateforme}/galeries/reenactment")
+    end
+
+    test "la chronologie complète désigne l'accueil de la plateforme", %{conn: conn} do
+      html = conn |> photo_conn("/timeline") |> html_response(200)
+
+      assert html =~ ~s(rel="canonical" href="#{@plateforme}")
+      refute html =~ "/galeries/"
+    end
+  end
+
   describe "plans de site" do
     test "sitemap.xml répond 404 sous photo.", %{conn: conn} do
       conn = photo_conn(conn, "/sitemap.xml")

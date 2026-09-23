@@ -26,6 +26,7 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
   alias Portfolio.Photography.Catalog.Photo
   alias Portfolio.Photography.Ports.AlbumCatalogPort
   alias PortfolioWeb.AlbumNotFoundError
+  alias PortfolioWeb.SEO.Canonical
 
   @albums_per_page Application.compile_env(:portfolio, [:timeline, :albums_per_page], 20)
 
@@ -75,6 +76,11 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     else
       socket
       |> assign(chapter: chapter, page_title: build_title(chapter))
+      # La canonique suit le chapitre : une page de thème du portfolio
+      # désigne la page de thème correspondante de la plateforme, pas son
+      # accueil. Sans cela, tous les chapitres se consolideraient sur la
+      # même adresse.
+      |> assign(canonical_url: Canonical.theme(chapter))
       |> assign(years: [], page: 1, has_more: true, albums_loaded: 0, unavailable: false)
       |> stream(:albums, [], reset: true)
       |> load_albums(1)
