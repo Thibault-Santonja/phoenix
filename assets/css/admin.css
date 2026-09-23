@@ -1,9 +1,11 @@
 /* Coquille d'administration du backoffice (charte graphique alignee sur la
    plateforme photo, thibault-san-photography/assets/css/design_system.css).
    Sous-ensemble volontairement reduit au shell (barre laterale, fil d'Ariane,
-   compte connecte) et aux quelques composants de contenu directement reutilises
-   (metriques, tableaux) : le reste des pages garde son habillage Tailwind
-   existant tant qu'il n'est pas repris page par page.
+   compte connecte) et aux seuls composants de contenu effectivement appeles
+   aujourd'hui (rubriques et metriques du tableau de bord) : le reste des pages
+   garde son habillage Tailwind existant tant qu'il n'est pas repris page par
+   page. Aucune regle n'est ecrite en avance d'une page a venir : un selecteur
+   sans site d'appel dans `lib/` n'a pas sa place ici.
 
    Compile par Tailwind (`@import` depuis app.css), comme photography.css et
    amvcc.css : ce fichier est un sous-ensemble cible, pas les ~5000 lignes du
@@ -361,13 +363,6 @@
 
 /* Titres de section (utilises par le tableau de bord). */
 .app-section { display: flex; flex-direction: column; gap: var(--space-4); }
-.app-section__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-3) var(--space-6);
-}
 .app-eyebrow {
   margin: 0;
   font-family: var(--font-sans);
@@ -377,14 +372,6 @@
   text-transform: uppercase;
   color: var(--color-mute);
 }
-.app-section__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--fs-24);
-  font-weight: var(--fw-regular);
-  color: var(--color-ink);
-}
-
 /* Metriques (compteurs du tableau de bord). */
 .app-metrics {
   display: grid;
@@ -416,28 +403,6 @@
   letter-spacing: var(--tracking-wide);
   color: var(--color-ink-mute);
 }
-
-/* Bouton monochrome partage (`.mbtn`), repris tel quel de la plateforme photo. */
-.app .mbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  font-family: var(--font-sans);
-  font-size: var(--fs-12);
-  font-weight: var(--fw-medium);
-  letter-spacing: var(--tracking-wider);
-  text-transform: uppercase;
-  border: 1px solid var(--color-ink);
-  background: transparent;
-  color: var(--color-ink);
-  cursor: pointer;
-  transition: background-color var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out);
-}
-.app .mbtn--primary { background: var(--color-ink); color: var(--color-paper); }
-.app .mbtn--primary:hover { opacity: 0.86; }
-.app .mbtn--sm { padding: var(--space-2) var(--space-4); }
 
 /* --- Barre mobile + menu escamotable (sans JavaScript : `<details>` natif). */
 .app-mobilebar { display: none; }
