@@ -56,6 +56,8 @@ env:
   secret:
     - SECRET_KEY_BASE
     - DATABASE_URL
+    # Exigée par config/runtime.exs : l'application refuse de démarrer sans elle.
+    - LIVE_VIEW_SIGNING_SALT
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal app logs -r job" will tail logs from the first server in the job section.
