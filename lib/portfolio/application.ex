@@ -35,6 +35,22 @@ defmodule Portfolio.Application do
            args: {1000, [], []}
          )
        ]},
+      # Catalogue d'albums lu chez la plateforme photo. Espace separe du cache
+      # general parce que ses entrees sont grosses (une liste d'albums pese
+      # quelques dizaines de kilo-octets) et qu'elles n'expirent jamais : une
+      # entree perimee est servie pendant que le rafraichissement tourne. Le
+      # plafond de cent entrees borne la memoire sur une machine a 4 Go.
+      Supervisor.child_spec(
+        {Cachex,
+         name: :catalog_cache,
+         hooks: [
+           hook(
+             module: Cachex.Limit.Scheduled,
+             args: {100, [], []}
+           )
+         ]},
+        id: :catalog_cache
+      ),
       # Bootstrap admin user automatically (skipped in :test env)
       Portfolio.Bootstrap.Worker
       # Note: Session cleanup is handled by Oban cron job (SessionCleanerWorker)

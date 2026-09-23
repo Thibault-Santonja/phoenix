@@ -63,3 +63,11 @@ config :portfolio, Oban, testing: :manual
 
 # Use NoOp cache strategy in tests to prevent cache pollution
 config :portfolio, :cache_strategy, Portfolio.Cache.NoOpStrategy
+
+# Catalogue d'albums : le transport HTTP est remplace par un bouchon Req.Test,
+# le seul service externe que la strategie de test autorise a substituer.
+config :portfolio, :album_catalog,
+  base_url: "http://plateforme-photo.test",
+  req_options: [plug: {Req.Test, Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter}],
+  inner_adapter: PortfolioTest.Support.ScriptedCatalogAdapter,
+  snapshot_dir: nil
