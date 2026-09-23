@@ -3,6 +3,7 @@
 @import "tailwindcss/utilities";
 @import "./photography.css";
 @import "./amvcc.css";
+@import "./admin.css";
 
 /* This file is for your main application CSS */
 blockquote {
