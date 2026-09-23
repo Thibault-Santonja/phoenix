@@ -179,6 +179,39 @@ if config_env() == :prod do
           raise("environment variable LIVE_VIEW_SIGNING_SALT is missing")
     ]
 
+  # ## Mailer
+  #
+  # config/config.exs falls back to Swoosh.Adapters.Local, which keeps mails in
+  # an in-memory mailbox instead of sending them. Left as is in production, a
+  # magic link would never reach anyone, and without raising a single error, so
+  # a real SMTP relay is required here.
+  smtp_relay =
+    System.get_env("SMTP_RELAY") ||
+      raise """
+      environment variable SMTP_RELAY is missing.
+      For example: smtp.protonmail.ch
+      """
+
+  config :portfolio, Portfolio.Mailer,
+    adapter: Swoosh.Adapters.SMTP,
+    relay: smtp_relay,
+    username:
+      System.get_env("SMTP_USERNAME") ||
+        raise("environment variable SMTP_USERNAME is missing"),
+    password:
+      System.get_env("SMTP_PASSWORD") ||
+        raise("environment variable SMTP_PASSWORD is missing"),
+    port: String.to_integer(System.get_env("SMTP_PORT") || "587"),
+    auth: :always,
+    tls: :always,
+    tls_options: [
+      verify: :verify_peer,
+      cacerts: :public_key.cacerts_get(),
+      server_name_indication: String.to_charlist(smtp_relay),
+      depth: 4
+    ],
+    retries: 1
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

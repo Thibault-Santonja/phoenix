@@ -130,6 +130,8 @@ defmodule Portfolio.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.19"},
+      # SMTP adapter for Swoosh: an optional dependency, so it must be declared
+      {:gen_smtp, "~> 1.2"},
       {:req, "~> 0.5"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},

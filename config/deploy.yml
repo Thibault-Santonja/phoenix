@@ -53,11 +53,19 @@ env:
     PHX_SERVER: true
     POOL_SIZE: "10"
     PHX_HOST: "thibaultsan.com"
+    # SMTP relay for the magic links. Without it the app refuses to boot rather
+    # than silently falling back to the local adapter, which sends nothing.
+    SMTP_RELAY: "smtp.protonmail.ch"
+    SMTP_PORT: "587"
   secret:
     - SECRET_KEY_BASE
     - DATABASE_URL
-    # Exigée par config/runtime.exs : l'application refuse de démarrer sans elle.
+    # Required by config/runtime.exs: the app refuses to boot without it.
     - LIVE_VIEW_SIGNING_SALT
+    - SMTP_USERNAME
+    - SMTP_PASSWORD
+    # Read by Portfolio.Bootstrap to create the administrator account.
+    - ADMIN_EMAIL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal app logs -r job" will tail logs from the first server in the job section.
