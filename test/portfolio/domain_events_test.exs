@@ -3,8 +3,11 @@ defmodule Portfolio.DomainEventsTest do
 
   alias Portfolio.DomainEvents
 
-  # Short timeout for synchronous pub/sub (events are delivered immediately)
-  @receive_timeout 50
+  # Ce que ces tests affirment, c'est qu'un abonne recoit l'evenement, pas
+  # qu'il le recoit en moins de tant de millisecondes. La borne ne fait que
+  # decider au bout de combien de temps un echec reel se manifeste : la serrer
+  # n'ajoute aucune garantie et fait tomber la suite sur une machine chargee.
+  @receive_timeout 1_000
 
   describe "publish/2 and subscribe/1" do
     test "publishes events to subscribed processes" do
