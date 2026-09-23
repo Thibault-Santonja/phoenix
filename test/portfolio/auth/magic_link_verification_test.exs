@@ -66,7 +66,13 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
         handler_id,
         [:portfolio, :auth, :magic_link, :verified],
         fn event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry, event, measurements, metadata})
+          # Un handler telemetry est global au noeud et s'execute dans le
+          # processus emetteur : sans ce filtre, les verifications d'un test
+          # concurrent (suite async) arrivent aussi dans cette boite aux
+          # lettres et `assert_received` lit leur resultat a la place.
+          if self() == test_pid do
+            send(test_pid, {:telemetry, event, measurements, metadata})
+          end
         end,
         nil
       )

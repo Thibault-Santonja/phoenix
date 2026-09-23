@@ -57,12 +57,16 @@ defmodule Portfolio.Photography.Services.AlbumPublicationServiceTest do
 
       AlbumPublicationService.execute(album)
 
+      album_id = album.id
+
+      # Le handler telemetry est global au noeud : filtrer sur l'album de ce
+      # test, sinon la publication d'un test concurrent (suite async) est lue
+      # a la place.
       assert_receive {:telemetry, [:portfolio, :services, :album_publication, :executed],
-                      measurements, metadata}
+                      measurements, %{album_id: ^album_id} = metadata}
 
       assert measurements.duration > 0
       assert metadata.result == :ok
-      assert metadata.album_id == album.id
 
       :telemetry.detach("test-album-publication")
     end
@@ -75,9 +79,11 @@ defmodule Portfolio.Photography.Services.AlbumPublicationServiceTest do
 
       assert {:ok, _album} = AlbumPublicationService.execute(album, user_id: "test-user")
 
-      # Should receive domain event
-      assert_receive {:album_published, event}
-      assert event.album_id == album.id
+      album_id = album.id
+
+      # Le sujet PubSub est partage : filtrer sur l'album de ce test, sinon la
+      # publication d'un test concurrent (suite async) est lue a la place.
+      assert_receive {:album_published, %{album_id: ^album_id} = event}
       assert event.title == album.title
       assert event.slug == album.slug
       assert event.user_id == "test-user"
