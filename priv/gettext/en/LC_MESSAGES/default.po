@@ -1638,9 +1638,9 @@ msgid "admin.dashboard.actions.my_profile_desc"
 msgstr "Dashboard"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:242
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "admin.dashboard.failed_photos.album"
-msgstr "Album: %{title}"
+msgstr "Album:"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:226
 #, elixir-autogen, elixir-format, fuzzy
@@ -1648,9 +1648,9 @@ msgid "admin.dashboard.failed_photos.retry_all"
 msgstr "Retry all"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:247
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "admin.dashboard.failed_photos.time_ago"
-msgstr "%{hours}h ago"
+msgstr "%{time} ago"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:216
 #, elixir-autogen, elixir-format, fuzzy
@@ -1772,9 +1772,9 @@ msgid "admin.dashboard.stats.view_list"
 msgstr "View list"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:199
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "admin.dashboard.storage.oldest_pending"
-msgstr "Oldest pending photo: %{hours}h"
+msgstr "Oldest pending photo"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:167
 #, elixir-autogen, elixir-format, fuzzy
@@ -1782,9 +1782,9 @@ msgid "admin.dashboard.storage.space_used"
 msgstr "Space used: %{used} GB of %{capacity} GB"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:202
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "admin.dashboard.storage.time_ago"
-msgstr "%{hours}h"
+msgstr "%{time} ago"
 
 #: lib/portfolio_web/live/admin/dashboard_live/index.html.heex:161
 #, elixir-autogen, elixir-format, fuzzy

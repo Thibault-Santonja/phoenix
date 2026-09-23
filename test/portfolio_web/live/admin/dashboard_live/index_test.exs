@@ -89,6 +89,32 @@ defmodule PortfolioWeb.Admin.DashboardLive.IndexTest do
       assert html =~ "stockage" or html =~ "storage" or html =~ "Storage" or html =~ "Go" or
                html =~ "GB"
     end
+
+    test "traduit l'anciennete de la photo en attente au lieu d'afficher la cle", %{conn: conn} do
+      PhotographyFixtures.create_photo(processing_status: "pending")
+
+      {:ok, _view, html} = live(conn, ~p"/admin")
+
+      assert html =~ "Photo en attente la plus ancienne"
+
+      refute html =~ "%{hours}",
+             "une variable de traduction non substituee est affichee a l'utilisateur"
+    end
+
+    test "traduit la liste des photos en echec au lieu d'afficher la cle", %{conn: conn} do
+      album = PhotographyFixtures.create_album(title: "Album en echec")
+      PhotographyFixtures.create_photo(album: album, processing_status: "failed")
+
+      {:ok, _view, html} = live(conn, ~p"/admin")
+
+      assert html =~ "Album en echec"
+
+      refute html =~ "%{hours}",
+             "une variable de traduction non substituee est affichee a l'utilisateur"
+
+      refute html =~ "%{title}",
+             "une variable de traduction non substituee est affichee a l'utilisateur"
+    end
   end
 
   describe "authorization" do
