@@ -240,6 +240,22 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       assert Keyword.get(Scenario.last_args(:list_albums), :theme) == "reenactment"
     end
 
+    test "une page de thème ne coûte pas plus d'appels que la chronologie complète", %{conn: conn} do
+      # Lire le catalogue avant de connaitre le chapitre, c'est lire la liste
+      # non filtrée pour la jeter aussitôt : un aller-retour de plus vers la
+      # plateforme et une entrée de cache de plus, par thème.
+      publie([album_payload()])
+
+      {:ok, _vue, _html} = live(conn, ~p"/timeline")
+      complete = Scenario.calls(:list_albums)
+
+      {:ok, _vue, _html} = live(conn, ~p"/timeline/reenactment")
+      theme = Scenario.calls(:list_albums) - complete
+
+      assert complete > 0, "sans appel du tout, l'égalité ne prouverait rien"
+      assert theme == complete
+    end
+
     test "ne transmet aucun thème sur la chronologie complète", %{conn: conn} do
       publie([album_payload()])
 

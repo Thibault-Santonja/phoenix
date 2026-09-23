@@ -19,7 +19,9 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
 
   Les albums sont lus à l'affichage initial comme à la connexion du socket,
   et non seulement à la connexion : la page est ainsi complète sans
-  JavaScript, et un thème inconnu répond bien 404 à un robot.
+  JavaScript, et un thème inconnu répond bien 404 à un robot. La lecture a
+  lieu une fois le chapitre connu, donc dans `handle_params/3` et non dans
+  `mount/3`.
   """
 
   use PortfolioWeb, :live_view
@@ -41,16 +43,20 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     locale = session["locale"] || "fr"
     _ = Gettext.put_locale(PortfolioWeb.Gettext, locale)
 
+    # Le catalogue n'est pas lu ici : le chapitre n'est connu qu'à
+    # `handle_params/3`, et lire avant lui reviendrait à demander la liste non
+    # filtrée pour la jeter aussitôt. Une page de thème coûterait alors deux
+    # fois plus d'appels, et une entrée de cache de plus, que la chronologie
+    # complète.
     {:ok,
      socket
-     |> assign(locale: locale, chapter: nil)
+     |> assign(locale: locale, chapter: nil, catalogue_lu: false)
      |> assign(years: [], page: 1, has_more: true, albums_loaded: 0, unavailable: false)
      # Le slug est l'identité stable d'un album côté plateforme : c'est lui
      # qui doit porter l'identifiant de flux, pas un identifiant de base que
      # le catalogue n'expose pas.
      |> stream_configure(:albums, dom_id: &"album-#{&1.slug}")
-     |> stream(:albums, [])
-     |> load_albums(1)}
+     |> stream(:albums, [])}
   end
 
   @impl true
@@ -72,26 +78,29 @@ defmodule PortfolioWeb.PhotographyLive.Timeline do
     end
   end
 
-  defp apply_action(socket, :index, %{"chapter" => chapter}) do
-    if socket.assigns.chapter == chapter do
+  defp apply_action(socket, :index, params) do
+    chapter = Map.get(params, "chapter")
+
+    if socket.assigns.catalogue_lu and socket.assigns.chapter == chapter do
       socket
     else
       socket
-      |> assign(chapter: chapter, page_title: build_title(chapter))
-      # La canonique suit le chapitre : une page de thème du portfolio
-      # désigne la page de thème correspondante de la plateforme, pas son
-      # accueil. Sans cela, tous les chapitres se consolideraient sur la
-      # même adresse.
-      |> assign(canonical_url: Canonical.theme(chapter))
+      |> assign(chapter: chapter, catalogue_lu: true, page_title: build_title(chapter))
+      |> put_canonical(chapter)
       |> assign(years: [], page: 1, has_more: true, albums_loaded: 0, unavailable: false)
       |> stream(:albums, [], reset: true)
       |> load_albums(1)
     end
   end
 
-  defp apply_action(socket, :index, _params) do
-    assign(socket, page_title: gettext("photography.timeline.title"))
-  end
+  # La canonique suit le chapitre : une page de thème du portfolio désigne la
+  # page de thème correspondante de la plateforme, pas son accueil. Sans cela,
+  # tous les chapitres se consolideraient sur la même adresse. La chronologie
+  # complète, elle, garde la canonique posée par le plug de l'hôte.
+  defp put_canonical(socket, nil), do: socket
+  defp put_canonical(socket, chapter), do: assign(socket, canonical_url: Canonical.theme(chapter))
+
+  defp build_title(nil), do: gettext("photography.timeline.title")
 
   defp build_title(chapter) do
     gettext("photography.timeline.gallery_prefix") <> String.capitalize(chapter)
