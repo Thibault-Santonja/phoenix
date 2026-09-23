@@ -57,6 +57,21 @@ defmodule Portfolio.Photography.Catalog.Photo do
   end
 
   @doc """
+  Rapport largeur sur hauteur de l'original, à poser en `aspect-ratio` sur
+  l'image, ou `nil` quand la plateforme n'annonce pas les dimensions.
+
+  Il réserve la place de l'image avant son chargement : sans lui, une image
+  différée décale tout ce qui la suit quand elle arrive.
+  """
+  @spec aspect_ratio(t()) :: String.t() | nil
+  def aspect_ratio(%__MODULE__{width: width, height: height})
+      when is_integer(width) and is_integer(height) and height > 0 do
+    "#{width} / #{height}"
+  end
+
+  def aspect_ratio(%__MODULE__{}), do: nil
+
+  @doc """
   Construit la valeur d'un attribut `srcset` pour un format donné.
 
   Retourne `nil` quand aucune source n'existe dans ce format, ce qui permet au

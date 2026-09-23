@@ -63,4 +63,26 @@ defmodule Portfolio.Photography.Catalog.PhotoTest do
       assert Photo.srcset(photo, "heic", ["thumbnail", "medium"]) == nil
     end
   end
+
+  describe "aspect_ratio/1" do
+    test "rend le rapport de l'original, qui réserve la place de l'image", %{photo: photo} do
+      assert Photo.aspect_ratio(photo) == "4000 / 2667"
+    end
+
+    test "rend nil quand la plateforme n'annonce pas les dimensions" do
+      {:ok, album} =
+        Decoder.decode_album(
+          album_detail_response(photos: [photo_payload(width: nil, height: nil)])
+        )
+
+      assert album.photos |> hd() |> Photo.aspect_ratio() == nil
+    end
+
+    test "rend nil plutôt qu'une division par zéro sur une hauteur nulle" do
+      {:ok, album} =
+        Decoder.decode_album(album_detail_response(photos: [photo_payload(height: 0)]))
+
+      assert album.photos |> hd() |> Photo.aspect_ratio() == nil
+    end
+  end
 end

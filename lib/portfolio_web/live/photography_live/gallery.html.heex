@@ -129,7 +129,7 @@
           alt={@photo.alt}
           loading="lazy"
           decoding="async"
-          style={aspect_ratio(@photo) && "aspect-ratio: #{aspect_ratio(@photo)}"}
+          style={Photo.aspect_ratio(@photo) && "aspect-ratio: #{Photo.aspect_ratio(@photo)}"}
           src={fallback_url(@photo)}
         />
       </picture>

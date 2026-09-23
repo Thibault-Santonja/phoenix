@@ -144,16 +144,4 @@ defmodule PortfolioWeb.PhotographyLive.Gallery do
   """
   @spec thumbnail_url(Photo.t()) :: String.t() | nil
   def thumbnail_url(photo), do: Photo.fallback_url(photo, "thumbnail")
-
-  @doc """
-  Rapport largeur sur hauteur de l'original, pose sur l'image pour réserver sa
-  place avant le chargement et éviter tout décalage de mise en page.
-  """
-  @spec aspect_ratio(Photo.t()) :: String.t() | nil
-  def aspect_ratio(%Photo{width: width, height: height})
-      when is_integer(width) and is_integer(height) and height > 0 do
-    "#{width} / #{height}"
-  end
-
-  def aspect_ratio(_photo), do: nil
 end

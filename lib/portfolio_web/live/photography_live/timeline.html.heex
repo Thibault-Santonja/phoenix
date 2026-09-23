@@ -121,10 +121,16 @@
           <img
             src={cover_url(album.cover)}
             alt={album.cover.alt}
+            width={album.cover.width}
+            height={album.cover.height}
             class={[
               "object-cover w-full rounded-lg mb-4",
               "max-h-120"
             ]}
+            style={
+              Photo.aspect_ratio(album.cover) &&
+                "aspect-ratio: #{Photo.aspect_ratio(album.cover)}"
+            }
             loading="lazy"
             decoding="async"
           />

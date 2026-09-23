@@ -97,6 +97,26 @@ defmodule PortfolioWeb.PhotographyLive.TimelineTest do
       refute html =~ "?w=320&amp;q=75"
     end
 
+    test "réserve la place de la couverture avant son chargement", %{conn: conn} do
+      # La chronologie est l'index des albums : c'est la page la plus chargée
+      # en images différées. Sans rapport de forme, chaque couverture qui
+      # arrive décale ce qui la suit, et le budget CLS part avec.
+      publie([album_payload(cover: photo_payload(width: 6000, height: 4000))])
+
+      {:ok, _vue, html} = live(conn, ~p"/timeline")
+
+      assert html =~ "aspect-ratio: 6000 / 4000"
+    end
+
+    test "sert une couverture sans dimensions sans casser la page", %{conn: conn} do
+      publie([album_payload(cover: photo_payload(width: nil, height: nil))])
+
+      {:ok, _vue, html} = live(conn, ~p"/timeline")
+
+      assert html =~ "Mariage de Claire et Damien"
+      refute html =~ "aspect-ratio:"
+    end
+
     test "donne à la couverture le texte alternatif de la plateforme", %{conn: conn} do
       publie([
         album_payload(cover: photo_payload(alt: "Le donjon vu depuis la basse-cour"))

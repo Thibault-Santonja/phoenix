@@ -58,6 +58,14 @@ defmodule PortfolioWeb.Photography.GalleryCatalogTest do
       refute html =~ "?w=320&amp;q=80"
     end
 
+    test "réserve la place de la photo avant son chargement", %{conn: conn} do
+      publie(slug: "coucy", photos: [photo_payload(width: 6000, height: 4000)])
+
+      {:ok, _vue, html} = live(conn, @hote <> "/gallery/coucy")
+
+      assert html =~ "aspect-ratio: 6000 / 4000"
+    end
+
     test "pose la canonique fournie par l'API, sans la reconstruire", %{conn: conn} do
       publie(slug: "coucy-a-la-merveille")
 
