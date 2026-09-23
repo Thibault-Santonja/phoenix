@@ -17,6 +17,27 @@ defmodule Portfolio.Auth.Services.MagicLinkAntiEnumerationTest do
     %{existing_user: existing_user}
   end
 
+  # Ecoute l'evenement de temporisation anti-enumeration. Le handler est global
+  # au noeud et s'execute dans le processus emetteur : le filtre sur `test_pid`
+  # evite de lire la requete d'un test concurrent.
+  defp attach_delay_probe do
+    test_pid = self()
+    handler_id = "timing-safe-delay-#{System.unique_integer([:positive])}"
+
+    :telemetry.attach(
+      handler_id,
+      [:portfolio, :auth, :magic_link, :timing_safe_delay],
+      fn _event, measurements, metadata, _config ->
+        if self() == test_pid do
+          send(test_pid, {:timing_safe_delay, measurements, metadata})
+        end
+      end,
+      nil
+    )
+
+    on_exit(fn -> :telemetry.detach(handler_id) end)
+  end
+
   describe "anti-enumeration in production" do
     setup do
       # Simulate production environment
@@ -45,22 +66,32 @@ defmodule Portfolio.Auth.Services.MagicLinkAntiEnumerationTest do
       assert {:ok, :email_sent} = result
     end
 
-    test "same response time for existing and non-existing users" do
-      # Test that response times are similar to prevent timing attacks
-      {time_existing, _} =
-        :timer.tc(fn ->
-          MagicLinkAuthService.execute("existing@example.com")
-        end)
+    # Ce test comparait les deux chemins a un ecart de chronometre de 50 ms.
+    # Il eprouvait la machine, pas la protection : sous charge, l'ecart mesure
+    # entre les deux chemins ne distingue plus une temporisation appliquee
+    # d'une temporisation absente, parce que le chemin existant (base et
+    # evenements) ralentit plus vite qu'un `sleep`. Il observe desormais la
+    # temporisation elle-meme, qui est rendue observable par le service : une
+    # pause ne rend jamais la main en avance, donc la borne basse reste vraie
+    # quelle que soit la charge.
+    test "the missing user path actually spends its timing safe delay" do
+      attach_delay_probe()
 
-      {time_nonexistent, _} =
-        :timer.tc(fn ->
-          MagicLinkAuthService.execute("nonexistent@example.com")
-        end)
+      assert {:ok, :email_sent} = MagicLinkAuthService.execute("nonexistent@example.com")
 
-      # Response times should be within 50ms of each other
-      # (allows for some variance due to system load)
-      time_diff = abs(time_existing - time_nonexistent)
-      assert time_diff < 50_000, "Response time difference too large: #{time_diff}μs"
+      assert_received {:timing_safe_delay, measurements, metadata}
+
+      assert measurements.elapsed_us >= metadata.configured_ms * 1000,
+             "la temporisation a rendu la main en #{measurements.elapsed_us}us, " <>
+               "sous les #{metadata.configured_ms}ms demandes"
+    end
+
+    test "the existing user path does not need the timing safe delay", %{existing_user: user} do
+      attach_delay_probe()
+
+      assert {:ok, _magic_link} = MagicLinkAuthService.execute(user.email)
+
+      refute_received {:timing_safe_delay, _measurements, _metadata}
     end
 
     test "does not create magic link for non-existing user" do
