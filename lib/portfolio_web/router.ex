@@ -179,7 +179,10 @@ defmodule PortfolioWeb.Router do
 
     live_session :require_authenticated_admin,
       layout: {PortfolioWeb.Layouts, :admin},
-      on_mount: [{PortfolioWeb.UserAuth, :require_admin_role}] do
+      on_mount: [
+        {PortfolioWeb.UserAuth, :require_admin_role},
+        {PortfolioWeb.AdminNav, :current_path}
+      ] do
       # Tableau de bord
       live "/", DashboardLive.Index, :index
 

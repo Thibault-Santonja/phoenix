@@ -1,80 +1,23 @@
 <div class="app" id="admin-shell">
-  <a href="#main" class="skip-link">Aller au contenu</a>
+  <a href="#main" class="skip-link">{gettext("admin.shell.skip_to_content")}</a>
 
-  <aside class="app-side" aria-label="Navigation de l'administration">
+  <aside class="app-side" aria-label={gettext("admin.shell.sidebar_label")}>
     <div class="app-side__brand">
       <.link navigate={~p"/admin"} class="app-side__name">Thibault San</.link>
-      <span class="app-side__space">Administration</span>
+      <span class="app-side__space">{gettext("admin.shell.space")}</span>
     </div>
 
-    <nav class="app-side__nav" aria-label="Sections de l'administration">
-      <div class="app-nav-group">
-        <p class="app-nav-group__title" id="nav-pilotage">Pilotage</p>
-        <ul class="app-nav-group__list" aria-labelledby="nav-pilotage">
-          <li>
+    <nav class="app-side__nav" aria-label={gettext("admin.shell.nav_label")}>
+      <div :for={group <- admin_nav_groups()} class="app-nav-group">
+        <p class="app-nav-group__title" id={"nav-#{group.id}"}>{group.title}</p>
+        <ul class="app-nav-group__list" aria-labelledby={"nav-#{group.id}"}>
+          <li :for={item <- group.items}>
             <.link
-              navigate={~p"/admin"}
+              navigate={item.path}
               class="app-nav-link"
-              aria-current={admin_nav_current?(assigns, "Tableau de bord")}
+              aria-current={admin_nav_current?(assigns, item.path)}
             >
-              Tableau de bord
-            </.link>
-          </li>
-        </ul>
-      </div>
-
-      <div class="app-nav-group">
-        <p class="app-nav-group__title" id="nav-galerie">Galerie</p>
-        <ul class="app-nav-group__list" aria-labelledby="nav-galerie">
-          <li>
-            <.link
-              navigate={~p"/admin/albums"}
-              class="app-nav-link"
-              aria-current={admin_nav_current?(assigns, "Albums")}
-            >
-              Albums
-            </.link>
-          </li>
-          <li>
-            <.link
-              navigate={~p"/admin/photos"}
-              class="app-nav-link"
-              aria-current={admin_nav_current?(assigns, "Photos")}
-            >
-              Photos
-            </.link>
-          </li>
-        </ul>
-      </div>
-
-      <div class="app-nav-group">
-        <p class="app-nav-group__title" id="nav-compte">Compte</p>
-        <ul class="app-nav-group__list" aria-labelledby="nav-compte">
-          <li>
-            <.link
-              navigate={~p"/admin/users"}
-              class="app-nav-link"
-              aria-current={admin_nav_current?(assigns, "Utilisateurs")}
-            >
-              Utilisateurs
-            </.link>
-          </li>
-          <li>
-            <.link
-              navigate={~p"/admin/profile"}
-              class="app-nav-link"
-              aria-current={admin_nav_current?(assigns, "Mon profil")}
-            >
-              Mon profil
-            </.link>
-          </li>
-          <li>
-            <.link
-              navigate={~p"/admin/ip-whitelist"}
-              class="app-nav-link"
-              aria-current={admin_nav_current?(assigns, "Adresses autorisees")}
-            >
-              Adresses autorisees
+              {item.label}
             </.link>
           </li>
         </ul>
@@ -92,7 +35,8 @@
         </span>
       </div>
       <.link href={~p"/logout"} method="delete" class="app-side__logout">
-        <.icon name="hero-arrow-right-start-on-rectangle" class="size-4" /> Deconnexion
+        <.icon name="hero-arrow-right-start-on-rectangle" class="size-4" />
+        {gettext("admin.shell.logout")}
       </.link>
     </div>
   </aside>
@@ -101,19 +45,18 @@
     <div class="app-mobilebar">
       <.link navigate={~p"/admin"} class="app-mobilebar__name">Thibault San</.link>
       <details class="app-mobile-nav">
-        <summary class="app-iconbtn" aria-label="Ouvrir le menu">
+        <summary class="app-iconbtn" aria-label={gettext("admin.shell.open_menu")}>
           <.icon name="hero-bars-3" class="size-4" />
         </summary>
-        <nav class="app-mobile-nav__panel" aria-label="Sections de l'administration (mobile)">
+        <nav class="app-mobile-nav__panel" aria-label={gettext("admin.shell.nav_label_mobile")}>
           <ul class="app-nav-group__list">
-            <li><.link navigate={~p"/admin"} class="app-nav-link">Tableau de bord</.link></li>
-            <li><.link navigate={~p"/admin/albums"} class="app-nav-link">Albums</.link></li>
-            <li><.link navigate={~p"/admin/photos"} class="app-nav-link">Photos</.link></li>
-            <li><.link navigate={~p"/admin/users"} class="app-nav-link">Utilisateurs</.link></li>
-            <li><.link navigate={~p"/admin/profile"} class="app-nav-link">Mon profil</.link></li>
-            <li>
-              <.link navigate={~p"/admin/ip-whitelist"} class="app-nav-link">
-                Adresses autorisees
+            <li :for={item <- admin_nav_items()}>
+              <.link
+                navigate={item.path}
+                class="app-nav-link"
+                aria-current={admin_nav_current?(assigns, item.path)}
+              >
+                {item.label}
               </.link>
             </li>
           </ul>
@@ -123,30 +66,33 @@
 
     <header class="app-top">
       <div class="app-top__head">
-        <nav aria-label="Fil d'Ariane">
+        <nav aria-label={gettext("admin.shell.breadcrumb_label")}>
           <ol class="app-crumbs">
-            <li aria-current="page">{assigns[:page_title] || "Administration"}</li>
+            <li :for={crumb <- admin_crumbs(assigns)}>
+              <.link :if={crumb.path} navigate={crumb.path}>{crumb.label}</.link>
+              <span :if={is_nil(crumb.path)} aria-current="page">{crumb.label}</span>
+            </li>
           </ol>
         </nav>
-        <h1 class="app-top__title">{assigns[:page_title] || "Administration"}</h1>
+        <h1 class="app-top__title">{assigns[:page_title] || gettext("admin.shell.space")}</h1>
       </div>
 
       <div class="app-top__actions">
         <.link href={~p"/"} class="app-top__site">
-          <.icon name="hero-globe-alt" class="size-4" /> Voir le site
+          <.icon name="hero-globe-alt" class="size-4" /> {gettext("admin.shell.view_site")}
         </.link>
 
         <details class="app-menu">
-          <summary class="app-menu__summary" aria-label="Menu du compte">
-            Compte <.icon name="hero-chevron-down" class="size-3" />
+          <summary class="app-menu__summary" aria-label={gettext("admin.shell.account_menu")}>
+            {gettext("admin.shell.account")} <.icon name="hero-chevron-down" class="size-3" />
           </summary>
           <div class="app-menu__panel" role="menu">
             <.link class="app-menu__item" role="menuitem" navigate={~p"/admin/profile"}>
-              Mon profil
+              {gettext("admin.nav.profile")}
             </.link>
             <hr class="app-menu__sep" />
             <.link class="app-menu__item" role="menuitem" href={~p"/logout"} method="delete">
-              Deconnexion
+              {gettext("admin.shell.logout")}
             </.link>
           </div>
         </details>
