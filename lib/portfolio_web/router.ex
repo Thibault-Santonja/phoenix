@@ -28,6 +28,7 @@ defmodule PortfolioWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug PortfolioWeb.Plugs.SetLocale
+    plug PortfolioWeb.Plugs.PhotoHostSeo
   end
 
   pipeline :tech do
@@ -127,6 +128,13 @@ defmodule PortfolioWeb.Router do
 
   scope "/", PortfolioWeb, host: "photo." do
     pipe_through :photography
+
+    # Les plans de site sont servis par les hotes indexes, pas par celui-ci :
+    # cet hote porte une directive noindex, l'inviter a l'exploration serait
+    # contradictoire. Ces deux routes passent avant "/:chapter", sans quoi la
+    # page d'accueil repondrait 200 a "/sitemap.xml".
+    get "/sitemap.xml", PageController, :not_found
+    get "/image-sitemap.xml", PageController, :not_found
 
     # Pages publiques avec utilisateur optionnel
     live_session :current_user,
