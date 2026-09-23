@@ -182,6 +182,19 @@ defmodule Portfolio.MixProject do
         "tailwind portfolio --minify",
         "esbuild portfolio --minify",
         "phx.digest"
+      ],
+      # `cli/0` declarait deja `precommit: :test` sans alias correspondant
+      # (mix precommit echouait avec "task could not be found"). Porte de
+      # qualite locale rapide : le sous-ensemble compile/format/credo/test
+      # deja lance par la CI (.github/workflows/ci.yml), moins sobelow,
+      # dialyzer, gettext.extract, hex.audit et deps.audit (lents ou reseau,
+      # reserves a la CI).
+      precommit: [
+        "compile --warnings-as-errors --all-warnings",
+        "deps.unlock --check-unused",
+        "format --check-formatted",
+        "credo --strict --all",
+        "test"
       ]
     ]
   end
