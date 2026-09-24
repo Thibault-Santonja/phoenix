@@ -249,6 +249,12 @@ defmodule Portfolio.Auth.Services.MagicLinkAuthService do
   # - Variance and system overhead: ~100-500µs
   # Total: ~1000-2500µs, using 3ms provides good coverage with buffer
   defp add_timing_safe_delay do
-    Process.sleep(@timing_safe_delay_ms)
+    # La durée est lue à l'execution plutôt que figee à la compilation : trois
+    # millisecondes sont trop courtes pour être distinguees du bruit
+    # d'ordonnancement, et le test a besoin d'une durée mesurable pour
+    # constater que ce chemin attend bien.
+    :portfolio
+    |> Application.get_env(:magic_link_timing_delay_ms, @timing_safe_delay_ms)
+    |> Process.sleep()
   end
 end

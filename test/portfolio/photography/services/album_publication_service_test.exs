@@ -50,7 +50,13 @@ defmodule Portfolio.Photography.Services.AlbumPublicationServiceTest do
         "test-album-publication",
         [:portfolio, :services, :album_publication, :executed],
         fn event, measurements, metadata, _config ->
-          send(test_pid, {:telemetry, event, measurements, metadata})
+          # Un abonnement telemetry est global au noeud : sans ce filtre, ce
+          # test recoit aussi les evenements emis par les tests qui tournent
+          # en parallele. Le gestionnaire s'execute dans le processus
+          # emetteur : les comparer suffit.
+          if self() == test_pid do
+            send(test_pid, {:telemetry, event, measurements, metadata})
+          end
         end,
         nil
       )

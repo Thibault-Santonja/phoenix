@@ -16,6 +16,19 @@ defmodule PortfolioWeb.PageController do
   end
 
   @doc """
+  Répond 404 pour une ressource qui n'a pas lieu d'exister sur cet hôte.
+
+  Sert aux plans de site sous `photo.thibaultsan.com`, qui porte une
+  directive de non-indexation.
+  """
+  def not_found(conn, _params) do
+    conn
+    |> put_status(:not_found)
+    |> put_view(PortfolioWeb.ErrorHTML)
+    |> render("404.html")
+  end
+
+  @doc """
   Redirects to the appropriate subdomain based on the first path segment.
 
   Uses a whitelist to prevent open redirect attacks via Host header injection.

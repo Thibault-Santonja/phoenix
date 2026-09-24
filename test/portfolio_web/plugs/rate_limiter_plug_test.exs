@@ -322,6 +322,20 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlugTest do
       assert body["retry_after"] > 0
     end
 
+    test "arrondit au-dessus une attente inférieure à la seconde" do
+      # Une attente de 472 millisecondes rendue en nombre entier de secondes
+      # vaut zero si on tronque, et un client obéissant reessaie aussitot : la
+      # limitation ne limite plus rien. On arrondit donc au-dessus.
+      assert RateLimiterPlug.retry_after_seconds(472) == 1
+      assert RateLimiterPlug.retry_after_seconds(1) == 1
+      assert RateLimiterPlug.retry_after_seconds(1_001) == 2
+      assert RateLimiterPlug.retry_after_seconds(2_000) == 2
+    end
+
+    test "n'annonce aucune attente quand il n'y en a pas" do
+      assert RateLimiterPlug.retry_after_seconds(0) == 0
+    end
+
     test "redirects to login when api_mode is false", %{conn: conn} do
       unique_ip = {10, 0, System.unique_integer([:positive]) |> rem(255), 7}
       conn = %{conn | remote_ip: unique_ip}

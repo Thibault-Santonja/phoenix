@@ -116,7 +116,9 @@ defmodule Portfolio.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.3"},
       {:phoenix_live_reload, "~> 1.6", only: :dev},
-      {:phoenix_live_view, "~> 1.1"},
+      # Reste sur la ligne 1.1 : la 1.2 est une montee a part entiere. La
+      # 1.1.33 porte le correctif de redirection ouverte.
+      {:phoenix_live_view, "~> 1.1.33"},
       {:floki, ">= 0.30.0", only: :test},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.7"},
@@ -132,7 +134,7 @@ defmodule Portfolio.MixProject do
       {:swoosh, "~> 1.19"},
       # SMTP adapter for Swoosh: an optional dependency, so it must be declared
       {:gen_smtp, "~> 1.2"},
-      {:req, "~> 0.5"},
+      {:req, "~> 0.7"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
@@ -151,7 +153,7 @@ defmodule Portfolio.MixProject do
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:doctor, "~> 0.22", only: [:dev, :test], runtime: false},
+      {:doctor, "~> 0.23", only: [:dev, :test], runtime: false},
       {:ex_check, "~> 0.16", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
       {:mox, "~> 1.2", only: :test},

@@ -37,6 +37,24 @@ defmodule PortfolioWeb.PhotographyLive.IndexTest do
     end
   end
 
+  describe "paramètre de langue" do
+    test "ne reflète pas dans l'adresse une langue que le portfolio ne parle pas", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/?hl=fr-FR")
+
+      render_click(view, "close_modal", %{})
+
+      assert_patched(view, ~p"/?hl=fr")
+    end
+
+    test "retient une langue effectivement servie", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/?hl=en")
+
+      render_click(view, "close_modal", %{})
+
+      assert_patched(view, ~p"/?hl=en")
+    end
+  end
+
   describe "Modal handling" do
     test "opens modal when chapter parameter is provided", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/?chapter=china")
@@ -245,9 +263,10 @@ defmodule PortfolioWeb.PhotographyLive.IndexTest do
     test "china chapter has gallery link", %{conn: conn} do
       {:ok, view, html} = live(conn, ~p"/?chapter=china")
 
-      # Should have link to gallery
-      assert html =~ "/gallery/china"
-      assert has_element?(view, "a[href='/gallery/china']")
+      # Un chapitre renvoie vers la chronologie filtree, pas vers une page
+      # d'album : "china" est un thème, pas un slug d'album.
+      assert html =~ "/timeline/china"
+      assert has_element?(view, "a[href='/timeline/china']")
     end
   end
 
@@ -267,11 +286,11 @@ defmodule PortfolioWeb.PhotographyLive.IndexTest do
     end
   end
 
-  describe "Theme button" do
-    test "renders theme button component", %{conn: conn} do
+  describe "Thème button" do
+    test "renders thème button component", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/")
 
-      # Theme button should be present
+      # Thème button should be present
       assert has_element?(view, "button[phx-click='change_locale']")
     end
   end

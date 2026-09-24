@@ -1,14 +1,4 @@
 <div class="h-screen flex flex-col gap-4 py-2">
-  <%!-- Schema.org JSON-LD for SEO --%>
-  <script :if={@schema_json} type="application/ld+json">
-    <%= Phoenix.HTML.raw(@schema_json) %>
-  </script>
-
-  <%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
-  <script :if={@breadcrumb_json} type="application/ld+json">
-    <%= Phoenix.HTML.raw(@breadcrumb_json) %>
-  </script>
-
   <%!-- Per-album meta description for SEO --%>
   <meta :if={@meta_description} name="description" content={@meta_description} />
   <meta :if={@meta_description} property="og:description" content={@meta_description} />
@@ -59,16 +49,40 @@
     </div>
   </nav>
 
-  <section class={[
-    "grow md:pl-4 max-h-full min-h-0",
-    "flex flex-col-reverse md:flex-row md:gap-16 overflow-hidden justify-end"
-  ]}>
+  <%!-- Palier 4 : le catalogue est injoignable. La page reste complète, en 200,
+  et dit ce qui se passe plutôt que de montrer un contenu inventé. --%>
+  <section :if={@unavailable} class="grow flex flex-col items-center justify-center gap-6 px-4">
+    <p class="max-w-prose text-center text-sm opacity-80">
+      {gettext("photography.catalog_unavailable")}
+    </p>
+    <a
+      href={~p"/timeline"}
+      class={[
+        "inline-flex items-center gap-2",
+        "py-2 px-4",
+        "text-sm border-gray-300 rounded-lg border-2",
+        "hover:scale-105 duration-300"
+      ]}
+    >
+      {gettext("photography.gallery")}
+    </a>
+  </section>
+
+  <section
+    :if={not @unavailable}
+    class={[
+      "grow md:pl-4 max-h-full min-h-0",
+      "flex flex-col-reverse md:flex-row md:gap-16 overflow-hidden justify-end"
+    ]}
+  >
     <header
       id={"project-title-#{@project_id}"}
       class="px-4 md:px-0 md:py-8 project-title z-10 opacity-0 duration-300 ease-in md:max-w-[33%]"
     >
-      <h2 class="uppercase text-xl mb-2 md:mb-4 font-black">{@project.title}</h2>
-      <p class="leading-relaxed text-sm opacity-80 font-light">{@project.description}</p>
+      <h2 class="uppercase text-xl mb-2 md:mb-4 font-black">{@album.title}</h2>
+      <p class="leading-relaxed text-sm opacity-80 font-light">
+        {(@photo && @photo.caption) || @album.description}
+      </p>
 
       <button
         phx-click={JS.navigate(~p"/timeline")}
@@ -94,34 +108,31 @@
     </header>
 
     <a
+      :if={@photo}
       class={[
         "group max-h-full min-h-0 min-w-1/2 px-4",
         "md:grow"
       ]}
-      href="#"
+      href={@album.canonical_url}
     >
-      <img
-        id={"project-image-#{@project_id}"}
-        phx-hook="AnimatePhotographyGallery"
-        class={[
-          "max-h-full max-w-full",
-          "-z-10 ml-auto object-contain",
-          "opacity-0 duration-1000 ease-in-out translate-y-8"
-        ]}
-        alt={Map.get(@project, :alt_text, @project.title)}
-        loading="lazy"
-        decoding="async"
-        data-nimg="1"
-        srcset={[
-          "#{@project.photo_url}?w=320&q=80 320w",
-          "#{@project.photo_url}?w=480&q=80 480w",
-          "#{@project.photo_url}?w=720&q=80 720w",
-          "#{@project.photo_url}?w=1080&q=80 1080w",
-          "#{@project.photo_url}?w=1620&q=80 1620w",
-          "#{@project.photo_url}?w=2430&q=80 2430w"
-        ]}
-        src={@project.photo_url}
-      />
+      <picture>
+        <source :if={srcset(@photo, "avif")} type="image/avif" srcset={srcset(@photo, "avif")} />
+        <source :if={srcset(@photo, "webp")} type="image/webp" srcset={srcset(@photo, "webp")} />
+        <img
+          id={"project-image-#{@project_id}"}
+          phx-hook="AnimatePhotographyGallery"
+          class={[
+            "max-h-full max-w-full",
+            "-z-10 ml-auto object-contain",
+            "opacity-0 duration-1000 ease-in-out translate-y-8"
+          ]}
+          alt={@photo.alt}
+          loading="lazy"
+          decoding="async"
+          style={Photo.aspect_ratio(@photo) && "aspect-ratio: #{Photo.aspect_ratio(@photo)}"}
+          src={fallback_url(@photo)}
+        />
+      </picture>
 
       <span class={[
         "block w-full pr-4 pt-1",
@@ -133,9 +144,12 @@
     </a>
   </section>
 
-  <section class={[
-    "flex-none w-screen px-4 h-24 sm:h-36 md:h-48 "
-  ]}>
+  <section
+    :if={not @unavailable}
+    class={[
+      "flex-none w-screen px-4 h-24 sm:h-36 md:h-48 "
+    ]}
+  >
     <ul
       id="project-list"
       phx-hook="HorizontalScrollFadeIn"
@@ -144,13 +158,13 @@
         "grid grid-flow-col grid-rows-1 gap-2"
       ]}
     >
-      <%= for {project, index} <- Enum.with_index(@data) do %>
+      <%= for {photo, index} <- Enum.with_index(@photos) do %>
         <li class="w-36 sm:w-48 md:w-64 mx-auto opacity-0 transition-opacity duration-300 ease-in">
           <button phx-click="show_project" phx-value-project={index} class="size-full">
             <img
               class="size-full object-cover"
-              alt={Map.get(project, :alt_text, project.title)}
-              src={project.photo_url}
+              alt={photo.alt}
+              src={thumbnail_url(photo)}
               loading="lazy"
               decoding="async"
             />

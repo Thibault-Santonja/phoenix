@@ -39,6 +39,38 @@ if System.get_env("PHX_SERVER") do
   config :portfolio, PortfolioWeb.Endpoint, server: true
 end
 
+# Catalogue d'albums lu chez la plateforme photo. Configure hors du bloc :prod
+# pour qu'une pre-production ou un développement branche sur une vraie
+# plateforme se decrive de la même facon.
+#
+# CATALOG_SNAPSHOT_DIR doit désigner un volume persistant : c'est ce qui
+# permet au portfolio d'afficher le catalogue au redémarrage de l'hôte, quand
+# les deux applications repartent ensemble et qu'il est prêt avant la
+# plateforme. Sans répertoire, ce palier de dégradation est simplement absent.
+catalog_base_url = System.get_env("CATALOG_BASE_URL")
+
+if config_env() == :prod and is_nil(catalog_base_url) do
+  raise """
+  environment variable CATALOG_BASE_URL is missing.
+  It is the address of the photography platform on the host's internal
+  network, and the album catalog reads it. Without it the default is
+  http://localhost:4000, which is the portfolio itself: it would query its
+  own router, get a 404, and serve a broken photography section.
+  For example: http://photography:4000
+  """
+end
+
+if catalog_base_url do
+  config :portfolio, :album_catalog,
+    base_url: catalog_base_url,
+    platform_url: System.get_env("CATALOG_PLATFORM_URL") || "https://photography.thibaultsan.com",
+    connect_timeout: String.to_integer(System.get_env("CATALOG_CONNECT_TIMEOUT_MS") || "2000"),
+    receive_timeout: String.to_integer(System.get_env("CATALOG_RECEIVE_TIMEOUT_MS") || "5000"),
+    fresh_for_ms: String.to_integer(System.get_env("CATALOG_FRESH_FOR_MS") || "600000"),
+    snapshot_dir: System.get_env("CATALOG_SNAPSHOT_DIR"),
+    inner_adapter: Portfolio.Photography.Adapters.HttpAlbumCatalogAdapter
+end
+
 if config_env() == :prod do
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you

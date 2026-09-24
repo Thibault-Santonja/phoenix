@@ -17,13 +17,10 @@
     <meta property="og:locale:alternate" content="fr_BE" />
     <meta property="og:locale:alternate" content="fr_CH" />
     <meta property="og:locale:alternate" content="en_US" />
-    <!-- Hreflang pour ciblage France, Suisse, Belgique -->
-    <link rel="alternate" hreflang="fr" href="https://photo.thibaultsan.com/" />
-    <link rel="alternate" hreflang="fr-FR" href="https://photo.thibaultsan.com/" />
-    <link rel="alternate" hreflang="fr-CH" href="https://photo.thibaultsan.com/" />
-    <link rel="alternate" hreflang="fr-BE" href="https://photo.thibaultsan.com/" />
-    <link rel="alternate" hreflang="en" href="https://photo.thibaultsan.com/" />
-    <link rel="alternate" hreflang="x-default" href="https://photo.thibaultsan.com/" />
+    <%!-- Aucune annonce hreflang ici : cet hote porte une directive noindex et
+    une canonique vers la plateforme photo. Annoncer des variantes de langue
+    d'une page exclue de l'index reviendrait a envoyer deux signaux
+    contradictoires, et le moteur ignore alors les deux. --%>
     <!-- Schema.org pour le ciblage local -->
     <meta name="geo.region" content="FR" />
     <meta name="geo.region" content="BE" />
@@ -43,7 +40,7 @@
     <meta name="og:description" content={gettext("layouts.photography.og_description")} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://thibaultsan.com/images/photography/landscape.webp" />
-    <meta property="og:url" content="https://photo.thibaultsan.com" />
+    <meta property="og:url" content={assigns[:canonical_url] || "https://photo.thibaultsan.com"} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Thibault San Photography" />
     <meta name="twitter:description" content={gettext("layouts.photography.twitter_description")} />
@@ -52,7 +49,11 @@
       content="https://thibaultsan.com/images/photography/landscape.webp"
     />
 
-    <link rel="canonical" href="https://photo.thibaultsan.com/" />
+    <meta :if={assigns[:robots]} name="robots" content={@robots} />
+    <link
+      rel="canonical"
+      href={assigns[:canonical_url] || "https://photo.thibaultsan.com/"}
+    />
     <link rel="icon" type="image/x-icon" href="/images/photography/logo.webp" />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
 

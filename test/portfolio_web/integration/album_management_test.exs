@@ -170,8 +170,11 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
       assert updated_album.published == true
     end
 
-    test "published albums appear on timeline", %{conn: _conn} do
-      # Create published album with photos
+    test "la publication locale ne touche pas la chronologie publique", %{conn: _conn} do
+      # La chronologie de photo.thibaultsan.com lit le catalogue de la
+      # plateforme photo, jamais la base locale du portfolio. Publier ici ne
+      # publie rien là-bas : ce test garde cette frontière, qui est la raison
+      # d'être de l'administration de la plateforme.
       _album =
         create_published_album(3,
           title: "Wedding 2024",
@@ -179,29 +182,10 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
           date_prise_vue: Date.utc_today()
         )
 
-      # Navigate to timeline (public page, no auth needed)
-      # New conn without auth on photo subdomain
       conn = %{build_conn() | host: "photo.example.com"}
       {:ok, _view, html} = live(conn, ~p"/timeline")
 
-      # Verify album appears on timeline
-      assert html =~ "Wedding 2024"
-    end
-
-    test "unpublished albums do not appear on timeline", %{conn: _conn} do
-      # Create unpublished album
-      _album =
-        create_album_with_photos(3,
-          title: "Private Album",
-          published: false
-        )
-
-      # Navigate to timeline on photo subdomain
-      conn = %{build_conn() | host: "photo.example.com"}
-      {:ok, _view, html} = live(conn, ~p"/timeline")
-
-      # Verify album does not appear
-      refute html =~ "Private Album"
+      refute html =~ "Wedding 2024"
     end
   end
 
@@ -263,49 +247,6 @@ defmodule PortfolioWeb.Integration.AlbumManagementTest do
       for photo_id <- photo_ids do
         assert {:error, :not_found} = Photography.get_photo(photo_id)
       end
-    end
-  end
-
-  describe "timeline grouping" do
-    test "albums are grouped by year on timeline", %{conn: _conn} do
-      # Create albums in different years
-      create_published_album(2,
-        title: "Album 2023",
-        date_prise_vue: ~D[2023-06-15]
-      )
-
-      create_published_album(2,
-        title: "Album 2024",
-        date_prise_vue: ~D[2024-06-15]
-      )
-
-      # Navigate to timeline on photo subdomain
-      conn = %{build_conn() | host: "photo.example.com"}
-      {:ok, _view, html} = live(conn, ~p"/timeline")
-
-      # Verify both years appear
-      assert html =~ "2023"
-      assert html =~ "2024"
-
-      # Verify albums appear under correct years
-      assert html =~ "Album 2023"
-      assert html =~ "Album 2024"
-    end
-
-    test "timeline shows albums with cover photos", %{conn: _conn} do
-      # Create published album with photos
-      album = create_published_album(3, title: "Test Album")
-
-      # Navigate to timeline on photo subdomain
-      conn = %{build_conn() | host: "photo.example.com"}
-      {:ok, _view, html} = live(conn, ~p"/timeline")
-
-      # Verify album appears
-      assert html =~ "Test Album"
-
-      # Cover photo should be the first photo
-      first_photo = hd(album.photos)
-      assert html =~ first_photo.file_path
     end
   end
 

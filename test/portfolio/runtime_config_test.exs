@@ -19,7 +19,8 @@ defmodule Portfolio.RuntimeConfigTest do
     "LIVE_VIEW_SIGNING_SALT" => "sel-de-test",
     "SMTP_RELAY" => "smtp.example.com",
     "SMTP_USERNAME" => "expediteur@example.com",
-    "SMTP_PASSWORD" => "mot-de-passe"
+    "SMTP_PASSWORD" => "mot-de-passe",
+    "CATALOG_BASE_URL" => "http://photography:4000"
   }
 
   setup do
@@ -68,9 +69,21 @@ defmodule Portfolio.RuntimeConfigTest do
     end
   end
 
+  describe "album catalog" do
+    test "takes its base url from the environment, never from the localhost default" do
+      catalog =
+        read_prod_config() |> Keyword.fetch!(:portfolio) |> Keyword.fetch!(:album_catalog)
+
+      # http://localhost:4000 is the portfolio itself: left in place, the
+      # portfolio would query its own router, get a 404 and serve a broken
+      # photography section.
+      assert catalog[:base_url] == "http://photography:4000"
+    end
+  end
+
   describe "missing variables" do
     for name <- ~w(SECRET_KEY_BASE DATABASE_URL PHX_HOST LIVE_VIEW_SIGNING_SALT SMTP_RELAY
-                   SMTP_USERNAME SMTP_PASSWORD) do
+                   SMTP_USERNAME SMTP_PASSWORD CATALOG_BASE_URL) do
       test "booting without #{name} raises instead of starting a half configured release" do
         System.delete_env(unquote(name))
 

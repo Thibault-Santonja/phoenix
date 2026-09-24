@@ -57,6 +57,13 @@ env:
     # than silently falling back to the local adapter, which sends nothing.
     SMTP_RELAY: "smtp.protonmail.ch"
     SMTP_PORT: "587"
+    # Address of the photography platform on the host's internal network. The
+    # app refuses to boot without it rather than falling back to
+    # http://localhost:4000, which is the portfolio itself.
+    CATALOG_BASE_URL: "http://photography:4000"
+    # Persistent volume for the catalog snapshots: it is what lets the
+    # portfolio still show albums when both apps restart together.
+    CATALOG_SNAPSHOT_DIR: "/app/catalog"
   secret:
     - SECRET_KEY_BASE
     - DATABASE_URL
@@ -81,6 +88,7 @@ ssh:
 volumes:
   - "/var/portfolio/uploads:/app/priv/static/uploads"
   - "/var/portfolio/backups:/app/backups"
+  - "/var/portfolio/catalog:/app/catalog"
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old
 # version inside the asset_path.

@@ -1,8 +1,3 @@
-<%!-- Breadcrumb Schema.org JSON-LD for navigation --%>
-<script :if={@breadcrumb_json} type="application/ld+json">
-  <%= Phoenix.HTML.raw(@breadcrumb_json) %>
-</script>
-
 <nav
   id="timeline-nav"
   class={[
@@ -90,8 +85,8 @@
     :for={{dom_id, album} <- @streams.albums}
     id={dom_id}
     phx-hook="YearTrigger"
-    data-year={album.date_prise_vue.year}
-    data-album-year-anchor={"year-#{album.date_prise_vue.year}"}
+    data-year={album_year(album)}
+    data-album-year-anchor={album_year(album) && "year-#{album_year(album)}"}
     class={[
       "bg-gray-300/20 dark:bg-black/20 backdrop-blur-sm text-white p-6 rounded-xl scroll-mt-20",
       "col-span-2 lg:col-span-3",
@@ -102,33 +97,44 @@
     <article>
       <header class="mb-4">
         <h2 class="text-xl font-semibold text-black dark:text-white">
-          <span class="text-xs opacity-80 mr-4">
-            {format_date_range(album.date_prise_vue, album.date_fin_prise_vue)}
+          <span :if={date_range(album)} class="text-xs opacity-80 mr-4">
+            {date_range(album)}
           </span>
           {album.title}
         </h2>
       </header>
 
       <section class="lg:grid lg:grid-cols-5">
-        <img
-          :if={cover_photo = List.first(album.photos)}
-          src={cover_photo.file_path}
-          alt={generate_album_cover_alt(album)}
-          srcset={[
-            "#{cover_photo.file_path}?w=320&q=75 320w",
-            "#{cover_photo.file_path}?w=640&q=75 640w",
-            "#{cover_photo.file_path}?w=960&q=75 960w",
-            "#{cover_photo.file_path}?w=1280&q=75 1280w"
-          ]}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 60vw"
-          class={[
-            "object-cover w-full rounded-lg mb-4",
-            "max-h-120",
-            "lg:col-span-3"
-          ]}
-          loading="lazy"
-          decoding="async"
-        />
+        <picture :if={album.cover} class="lg:col-span-3">
+          <source
+            :if={cover_srcset(album.cover, "avif")}
+            type="image/avif"
+            srcset={cover_srcset(album.cover, "avif")}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 60vw"
+          />
+          <source
+            :if={cover_srcset(album.cover, "webp")}
+            type="image/webp"
+            srcset={cover_srcset(album.cover, "webp")}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 60vw"
+          />
+          <img
+            src={cover_url(album.cover)}
+            alt={album.cover.alt}
+            width={album.cover.width}
+            height={album.cover.height}
+            class={[
+              "object-cover w-full rounded-lg mb-4",
+              "max-h-120"
+            ]}
+            style={
+              Photo.aspect_ratio(album.cover) &&
+                "aspect-ratio: #{Photo.aspect_ratio(album.cover)}"
+            }
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
         <div class={[
           "text-sm text-gray-600 dark:text-gray-300 leading-relaxed",
           "lg:px-8",
@@ -136,12 +142,12 @@
           "flex flex-col"
         ]}>
           <p :if={album.description}>
-            {Gettext.gettext(PortfolioWeb.Gettext, album.description)}
+            {album.description}
           </p>
           <nav class="flex justify-end mt-4">
             <a
-              :if={album.reference_link}
-              href={album.reference_link}
+              :if={album.reference_url}
+              href={album.reference_url}
               target="_blank"
               class={[
                 "grow-0",
@@ -231,8 +237,11 @@
         "lg:col-span-2",
         "flex flex-col"
       ]}>
-        <p>
+        <p :if={not @unavailable}>
           {gettext("photography.timeline.empty_message")}
+        </p>
+        <p :if={@unavailable}>
+          {gettext("photography.catalog_unavailable")}
         </p>
 
         <nav class="flex justify-end mt-4">

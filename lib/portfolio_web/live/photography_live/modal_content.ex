@@ -57,11 +57,12 @@ defmodule PortfolioWeb.PhotographyLive.ModalContent do
           />
         </button>
 
+        <%!-- Un chapitre n'est pas un album : il renvoie vers la chronologie
+        filtree, pas vers la page d'album, qui attend un slug d'album. --%>
         <.show_more_link
-          :if={@modal_chapter in ~w(reenactment amvcc music)}
+          :if={@modal_chapter in ~w(reenactment amvcc music china)}
           href={~p"/timeline/#{@modal_chapter}"}
         />
-        <.show_more_link :if={@modal_chapter in ~w(china)} href={~p"/gallery/#{@modal_chapter}"} />
       </nav>
     </div>
     """

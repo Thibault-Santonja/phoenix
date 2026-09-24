@@ -97,7 +97,7 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
         conn
 
       {:deny, retry_after_ms} ->
-        retry_after_seconds = div(retry_after_ms, 1000)
+        retry_after_seconds = retry_after_seconds(retry_after_ms)
 
         # Enriched logging with attack context
         ip = IPUtils.get_ip_address(conn)
@@ -128,7 +128,7 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
   # Send appropriate rate limit response based on mode
   defp send_rate_limit_response(conn, true = _api_mode, retry_after_ms) do
     # API mode: return JSON 429 response
-    retry_after_seconds = div(retry_after_ms, 1000)
+    retry_after_seconds = retry_after_seconds(retry_after_ms)
 
     conn
     |> put_resp_content_type("application/json")
@@ -151,6 +151,19 @@ defmodule PortfolioWeb.Plugs.RateLimiterPlug do
     )
     |> redirect(to: "/login")
   end
+
+  @doc """
+  Convertit une attente en millisecondes en nombre entier de secondes, arrondi
+  au-dessus.
+
+  Tronquer donnerait `Retry-After: 0` pour toute attente inférieure à la
+  seconde : un client obéissant reessaierait aussitot, et la limitation ne
+  limiterait plus rien. Arrondir au-dessus fait toujours attendre au moins une
+  seconde des lors qu'il reste quelque chose à attendre.
+  """
+  @spec retry_after_seconds(non_neg_integer()) :: non_neg_integer()
+  def retry_after_seconds(0), do: 0
+  def retry_after_seconds(retry_after_ms) when retry_after_ms > 0, do: ceil(retry_after_ms / 1000)
 
   # Get the identifier based on the configuration
   defp get_identifier(conn, :ip, _param_name) do
