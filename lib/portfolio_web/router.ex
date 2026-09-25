@@ -206,7 +206,11 @@ defmodule PortfolioWeb.Router do
     pipe_through :admin_live
 
     live_session :require_authenticated_admin,
-      on_mount: [{PortfolioWeb.UserAuth, :require_admin_role}] do
+      layout: {PortfolioWeb.Layouts, :admin},
+      on_mount: [
+        {PortfolioWeb.UserAuth, :require_admin_role},
+        {PortfolioWeb.AdminNav, :current_path}
+      ] do
       # Tableau de bord
       live "/", DashboardLive.Index, :index
 

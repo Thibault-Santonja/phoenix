@@ -169,7 +169,8 @@ defmodule PortfolioWeb.Admin.ProfileLive.EditTest do
     test "has back button to dashboard", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/admin/profile")
 
-      assert html =~ "Retour au tableau de bord"
+      # Le retour au tableau de bord passe desormais par la navigation
+      # persistante de la coquille d'administration, pas par un lien local.
       assert html =~ ~s(href="/admin")
     end
 

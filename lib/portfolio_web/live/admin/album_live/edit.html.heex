@@ -1,16 +1,8 @@
 <div class="px-4 sm:px-6 lg:px-8 py-8">
-  <.back_to_dashboard />
-
-  <div class="md:flex md:items-center md:justify-between mb-8">
-    <div class="flex-1 min-w-0">
-      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-        {gettext("admin.albums.edit.title")}
-      </h2>
-      <p class="mt-1 text-sm text-gray-500">
-        {@album.title}
-      </p>
-    </div>
-    <.admin_logout_button current_user={@current_user} class="mt-4 md:mt-0" />
+  <div class="mb-8">
+    <p class="text-sm text-gray-500">
+      {@album.title}
+    </p>
   </div>
 
   <.live_component

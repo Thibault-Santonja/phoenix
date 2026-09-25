@@ -810,12 +810,29 @@ Value Objects | ≥ 95% | Logique pure, edge cases exhaustifs
 Repositories | ≥ 70% | Intégration DB, queries simples
 Workers | ≥ 85% | Background jobs, error handling
 
-Coverage global actuel : ~82% (objectif ≥ 85%)
+Coverage global actuel : ~92% (objectif ≥ 85%)
+
+La liste faisant foi est `skip_files` dans `coveralls.json`.
 
 Fichiers exclus coverage :
-- Layouts, Components UI (testés manuellement)
+- Components UI (testés manuellement)
 - Migrations (code généré)
 - Seeds (données dev)
+- Adaptateurs de services externes et workers d'E/S (voir `skip_files`)
+
+Critère d'exclusion : un fichier n'est exclu que s'il ne porte aucune
+logique propre, c'est-à-dire s'il se réduit à du gabarit, à du code généré
+ou à un adaptateur d'entrée-sortie que seul un service externe peut
+exercer. Dès qu'un fichier acquiert une décision (une branche, un calcul,
+une règle de résolution), il sort de la liste et rejoint la cible de sa
+couche.
+
+Application : `lib/portfolio_web/components/layouts.ex` était exclu au
+titre des layouts, quand il ne contenait que `embed_templates`. Il porte
+désormais la résolution de la section de navigation courante et la
+construction du fil d'Ariane de l'administration, donc des décisions. Il
+est sorti de `skip_files` et couvert par
+`test/portfolio_web/components/layouts_test.exs`.
 
 ### Organisation Tests
 

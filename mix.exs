@@ -192,6 +192,25 @@ defmodule Portfolio.MixProject do
         "tailwind portfolio --minify",
         "esbuild portfolio --minify",
         "phx.digest"
+      ],
+      # `cli/0` declarait deja `precommit: :test` sans alias correspondant
+      # (mix precommit echouait avec "task could not be found"). Porte de
+      # qualite locale rapide : le sous-ensemble compile/format/credo/test
+      # deja lance par la CI (.github/workflows/ci.yml), moins sobelow,
+      # dialyzer, hex.audit et deps.audit (lents ou reseau, reserves a la CI).
+      #
+      # `gettext.extract` fait partie de la porte : tout deplacement de ligne
+      # dans un gabarit perime les references du catalogue, et l'etape CI
+      # correspondante tombait sans qu'aucune verification locale ne la voie.
+      # Elle est forcee en MIX_ENV=dev pour extraire exactement le meme
+      # perimetre que la CI (en :test, `elixirc_paths` ajoute `test/support`).
+      precommit: [
+        "compile --warnings-as-errors --all-warnings",
+        "deps.unlock --check-unused",
+        "format --check-formatted",
+        "credo --strict --all",
+        "cmd MIX_ENV=dev mix gettext.extract --check-up-to-date",
+        "test"
       ]
     ]
   end

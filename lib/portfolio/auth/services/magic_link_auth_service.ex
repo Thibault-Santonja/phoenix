@@ -248,13 +248,21 @@ defmodule Portfolio.Auth.Services.MagicLinkAuthService do
   # - Email send preparation (Bamboo): ~300-700µs
   # - Variance and system overhead: ~100-500µs
   # Total: ~1000-2500µs, using 3ms provides good coverage with buffer
+  #
+  # The delay is emitted as a telemetry event so that the control can be
+  # observed rather than timed from the outside: a stopwatch on the caller
+  # cannot tell a delay that was applied from a machine that is merely busy.
+  # The event carries no email, so it counts how often the anti-enumeration
+  # path is taken without naming the addresses that took it.
   defp add_timing_safe_delay do
-    # La durée est lue à l'execution plutôt que figee à la compilation : trois
-    # millisecondes sont trop courtes pour être distinguees du bruit
-    # d'ordonnancement, et le test a besoin d'une durée mesurable pour
-    # constater que ce chemin attend bien.
-    :portfolio
-    |> Application.get_env(:magic_link_timing_delay_ms, @timing_safe_delay_ms)
-    |> Process.sleep()
+    {elapsed_us, :ok} = :timer.tc(fn -> Process.sleep(@timing_safe_delay_ms) end)
+
+    :telemetry.execute(
+      [:portfolio, :auth, :magic_link, :timing_safe_delay],
+      %{elapsed_us: elapsed_us},
+      %{configured_ms: @timing_safe_delay_ms}
+    )
+
+    :ok
   end
 end

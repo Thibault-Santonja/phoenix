@@ -115,9 +115,10 @@ defmodule PortfolioWeb.Admin.UserLive.IndexTest do
     end
 
     test "has back button to dashboard", %{conn: conn} do
-      {:ok, view, html} = live(conn, ~p"/admin/users")
+      {:ok, view, _html} = live(conn, ~p"/admin/users")
 
-      assert html =~ "Retour au tableau de bord"
+      # Le retour au tableau de bord passe desormais par la navigation
+      # persistante de la coquille d'administration, pas par un lien local.
       assert has_element?(view, "a[href=\"/admin\"]")
     end
 

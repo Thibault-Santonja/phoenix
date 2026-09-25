@@ -38,7 +38,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
 
       {:ok, _view, html} = live(conn, ~p"/admin/ip-whitelist")
 
-      assert html =~ "IP Whitelist"
+      assert html =~ "Liste blanche IP"
       assert html =~ "192.168.1.100"
       assert html =~ "Office"
       assert html =~ "10.0.0.1"
@@ -48,15 +48,15 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
     test "displays a message if no whitelisted IPs", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/admin/ip-whitelist")
 
-      assert html =~ "IP Whitelist"
-      assert html =~ "No whitelisted IPs"
+      assert html =~ "Liste blanche IP"
+      assert html =~ "Aucune IP autorisée"
     end
 
     test "allows adding a new IP", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      # Click the "Add IP" link (live patch)
-      html = view |> element("a", "Add IP") |> render_click()
+      # Click the "Ajouter une IP" link (live patch)
+      html = view |> element("a", "Ajouter une IP") |> render_click()
 
       # Modal should be displayed with form
       assert html =~ "ip-form"
@@ -75,7 +75,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
       # Navigate to the form (live patch)
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       # Submit with an invalid IP
       assert view
@@ -89,7 +89,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
       # Navigate to the form (live patch)
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       # Attempt to add the same IP
       assert view
@@ -127,8 +127,8 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
 
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      # Click the "Edit" link (live patch)
-      html = view |> element("a", "Edit") |> render_click()
+      # Click the "Modifier" link (live patch)
+      html = view |> element("a", "Modifier") |> render_click()
 
       # Modal should be displayed with form
       assert html =~ "ip-form"
@@ -153,6 +153,30 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.IndexTest do
       {:ok, _view, html} = live(conn, ~p"/admin/ip-whitelist")
 
       assert html =~ admin.email
+    end
+
+    test "displays the table headings in the site locale", %{conn: conn, admin: admin} do
+      {:ok, _} = IPWhitelistService.add_to_whitelist(%{ip_address: "192.168.1.100"}, admin.id)
+
+      {:ok, _view, html} = live(conn, ~p"/admin/ip-whitelist")
+
+      for heading <- ["Adresse IP", "Description", "Ajoutée par", "Date", "Actions"] do
+        assert html =~ heading, "en-tete manquant : #{heading}"
+      end
+
+      refute html =~ "IP Address"
+      refute html =~ "Created By"
+    end
+
+    test "displays the form labels in the site locale", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
+
+      html = view |> element("a", "Ajouter une IP") |> render_click()
+
+      assert html =~ "Adresse IP"
+      assert html =~ "Description (facultative)"
+      assert html =~ "Enregistrer"
+      refute html =~ "Save"
     end
 
     test "displays the creation date", %{conn: conn, admin: admin} do

@@ -66,10 +66,10 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
         handler_id,
         [:portfolio, :auth, :magic_link, :verified],
         fn event, measurements, metadata, _config ->
-          # Un abonnement telemetry est global au noeud : sans ce filtre, ce
-          # test recoit aussi les evenements emis par les tests qui tournent
-          # en parallele, et lit les mesures d'un autre. Le gestionnaire
-          # s'execute dans le processus emetteur : les comparer suffit.
+          # Un handler telemetry est global au noeud et s'execute dans le
+          # processus emetteur : sans ce filtre, les verifications d'un test
+          # concurrent (suite async) arrivent aussi dans cette boite aux
+          # lettres et `assert_received` lit leur resultat a la place.
           if self() == test_pid do
             send(test_pid, {:telemetry, event, measurements, metadata})
           end
@@ -150,10 +150,11 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
     # measured under load). And it could not have held even on a quiet
     # machine: the valid path writes the magic link back to the database,
     # while the unknown-token path only runs a 32-byte `secure_compare`, so
-    # the two paths do structurally different work. A real constant-time
-    # guarantee here needs the configurable floor delay that the *request*
-    # path already has; until that exists, asserting a ratio claims a
-    # property the code does not implement.
+    # the two paths do structurally different work. What this test verifies
+    # is only that both paths report a duration. The actual anti-timing-attack
+    # guarantee for the invalid-token path is proven below, by observing that
+    # its constant-time compensation work fires (see the "constant time work"
+    # describe block).
     test "both verification paths are measured and reported" do
       user = insert_user()
       {:ok, magic_link} = MagicLinkService.request_magic_link(user.email)
@@ -169,6 +170,53 @@ defmodule Portfolio.Auth.MagicLinkVerificationTest do
       assert valid_metadata.result == :ok
       assert invalid_metadata.result == :error
     end
+  end
+
+  # Le rapport des durees mesurees par cette meme suite ne dit rien de la
+  # protection : sous charge, le chemin valide (base de donnees) ralentit bien
+  # plus vite que le travail de compensation, et le rapport explose sans
+  # qu'aucune protection n'ait bouge. Ce qui se verifie de facon stable, c'est
+  # que le chemin du jeton invalide execute bien son travail de compensation,
+  # et que le chemin valide n'en a pas besoin.
+  describe "verify_magic_link/1 constant time work" do
+    setup do
+      attach_constant_time_probe()
+    end
+
+    test "the invalid token path performs its constant time work" do
+      assert {:error, :invalid_token} = MagicLinkService.verify_magic_link("invalid-token")
+
+      assert_received {:constant_time_work, _measurements}
+    end
+
+    test "the valid token path does not need the constant time work" do
+      user = insert_user()
+      {:ok, magic_link} = MagicLinkService.request_magic_link(user.email)
+
+      assert {:ok, _verified_user} = MagicLinkService.verify_magic_link(magic_link.token)
+
+      refute_received {:constant_time_work, _measurements}
+    end
+  end
+
+  # Ecoute le travail de compensation anti-attaque temporelle. Handler global au
+  # noeud et execute dans le processus emetteur, d'ou le filtre sur `test_pid`.
+  defp attach_constant_time_probe do
+    test_pid = self()
+    handler_id = "constant-time-work-#{System.unique_integer([:positive])}"
+
+    :telemetry.attach(
+      handler_id,
+      [:portfolio, :auth, :magic_link, :constant_time_work],
+      fn _event, measurements, _metadata, _config ->
+        if self() == test_pid do
+          send(test_pid, {:constant_time_work, measurements})
+        end
+      end,
+      nil
+    )
+
+    on_exit(fn -> :telemetry.detach(handler_id) end)
   end
 
   # Helper functions

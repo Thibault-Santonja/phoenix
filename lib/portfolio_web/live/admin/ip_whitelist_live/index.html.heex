@@ -1,9 +1,8 @@
 <div class="max-w-6xl mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold">IP Whitelist</h1>
+  <div class="flex justify-end items-center mb-6">
     <.link patch={~p"/admin/ip-whitelist/new"}>
       <span class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 inline-block">
-        Add IP
+        {gettext("admin.ip_whitelist.index.add")}
       </span>
     </.link>
   </div>
@@ -11,26 +10,26 @@
   <div class="bg-white shadow-md rounded-lg overflow-hidden">
     <%= if @entries == [] do %>
       <div class="p-8 text-center text-gray-500">
-        No whitelisted IPs
+        {gettext("admin.ip_whitelist.index.empty")}
       </div>
     <% else %>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              IP Address
+              {gettext("admin.ip_whitelist.index.column_ip")}
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Description
+              {gettext("admin.ip_whitelist.index.column_description")}
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Created By
+              {gettext("admin.ip_whitelist.index.column_created_by")}
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Date
+              {gettext("admin.ip_whitelist.index.column_date")}
             </th>
             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
+              {gettext("admin.ip_whitelist.index.column_actions")}
             </th>
           </tr>
         </thead>
@@ -58,15 +57,15 @@
                   patch={~p"/admin/ip-whitelist/#{entry.id}/edit"}
                   class="text-blue-600 hover:text-blue-900 mr-4"
                 >
-                  Edit
+                  {gettext("admin.ip_whitelist.index.edit")}
                 </.link>
                 <button
                   phx-click="delete"
                   phx-value-id={entry.id}
-                  data-confirm="Are you sure you want to delete this IP?"
+                  data-confirm={gettext("admin.ip_whitelist.index.delete_confirm")}
                   class="text-red-600 hover:text-red-900"
                 >
-                  Delete
+                  {gettext("admin.ip_whitelist.index.delete")}
                 </button>
               </td>
             </tr>

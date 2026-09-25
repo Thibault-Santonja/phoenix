@@ -26,17 +26,17 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
     test "renders new IP form", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      html = view |> element("a", "Add IP") |> render_click()
+      html = view |> element("a", "Ajouter une IP") |> render_click()
 
       assert html =~ "ip-form"
-      assert html =~ "IP Address"
-      assert html =~ "Description"
+      assert html =~ "Adresse IP"
+      assert html =~ "Description (facultative)"
     end
 
     test "validates IPv4 format on change", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       html =
         view
@@ -49,7 +49,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
     test "accepts valid IPv4 address", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       html =
         view
@@ -62,7 +62,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
     test "accepts valid IPv6 address", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       html =
         view
@@ -75,7 +75,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
     test "creates IP entry with description", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       view
       |> form("#ip-form",
@@ -94,7 +94,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
     test "creates IP entry without description", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       view
       |> form("#ip-form", ip_whitelist: %{ip_address: "172.16.0.1"})
@@ -106,7 +106,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
     test "shows error for empty IP address", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       html =
         view
@@ -121,7 +121,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
 
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Add IP") |> render_click()
+      view |> element("a", "Ajouter une IP") |> render_click()
 
       html =
         view
@@ -143,7 +143,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
       ]
 
       for invalid_ip <- invalid_ips do
-        view |> element("a", "Add IP") |> render_click()
+        view |> element("a", "Ajouter une IP") |> render_click()
 
         html =
           view
@@ -166,7 +166,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
 
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      html = view |> element("a", "Edit") |> render_click()
+      html = view |> element("a", "Modifier") |> render_click()
 
       assert html =~ "ip-form"
       assert html =~ "192.168.1.100"
@@ -179,7 +179,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
 
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      html = view |> element("a", "Edit") |> render_click()
+      html = view |> element("a", "Modifier") |> render_click()
 
       # IP field should be disabled
       assert html =~ "disabled"
@@ -194,7 +194,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
 
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Edit") |> render_click()
+      view |> element("a", "Modifier") |> render_click()
 
       view
       |> form("#ip-form", ip_whitelist: %{description: "Updated description"})
@@ -215,7 +215,7 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
 
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      view |> element("a", "Edit") |> render_click()
+      view |> element("a", "Modifier") |> render_click()
 
       view
       |> form("#ip-form", ip_whitelist: %{description: ""})
@@ -231,16 +231,16 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
     test "form has proper labels", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      html = view |> element("a", "Add IP") |> render_click()
+      html = view |> element("a", "Ajouter une IP") |> render_click()
 
-      assert html =~ "IP Address"
-      assert html =~ "Description"
+      assert html =~ "Adresse IP"
+      assert html =~ "Description (facultative)"
     end
 
     test "form has proper placeholders", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      html = view |> element("a", "Add IP") |> render_click()
+      html = view |> element("a", "Ajouter une IP") |> render_click()
 
       assert html =~ "192.168.1.100" or html =~ "2001:db8::1"
     end
@@ -248,10 +248,10 @@ defmodule PortfolioWeb.Admin.IPWhitelistLive.FormComponentTest do
     test "save button shows loading state", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/ip-whitelist")
 
-      html = view |> element("a", "Add IP") |> render_click()
+      html = view |> element("a", "Ajouter une IP") |> render_click()
 
       assert html =~ "phx-disable-with"
-      assert html =~ "Saving"
+      assert html =~ "Enregistrement"
     end
   end
 end

@@ -8,7 +8,11 @@ defmodule Portfolio.Auth.SessionActivityTest do
   - Active sessions remain valid
   """
 
-  use Portfolio.DataCase, async: true
+  # `async: false` : le setup modifie `Application.put_env(:portfolio, :auth,
+  # ...)`, qui est global au noeud. En async, ce throttle a 0 fuyait vers les
+  # tests concurrents de SessionServiceTest, qui attendent le throttle par
+  # defaut de 5 minutes et tombaient de facon intermittente.
+  use Portfolio.DataCase, async: false
 
   alias Portfolio.Auth
   alias Portfolio.Repo
