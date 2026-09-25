@@ -56,7 +56,14 @@ defmodule PortfolioWeb.Endpoint do
     cookie_key: "request_logger"
 
   plug Plug.RequestId
-  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
+  # `log:` évite de journaliser le chemin des routes à jeton (liens magiques).
+  # Sans cette option, `Plug.Telemetry` écrit `GET /auth/verify/<jeton>` en
+  # clair dans la sortie standard, donc dans le journal système depuis que
+  # `config/deploy.yml` déclare le pilote `journald`, donc dans un moteur qui
+  # les conserve 30 jours. Voir `PortfolioWeb.RequestLogFilter`.
+  plug Plug.Telemetry,
+    event_prefix: [:phoenix, :endpoint],
+    log: {PortfolioWeb.RequestLogFilter, :log_level, []}
 
   # Content Security Policy
   plug :put_secure_headers

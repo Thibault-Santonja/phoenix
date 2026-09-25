@@ -14,7 +14,7 @@ Docker, puis cette image est lancée sur un serveur.
 Le déploiement enchaîne donc quatre opérations :
 
 1. **Build** : construire l'image Docker à partir du code source.
-2. **Push** : envoyer l'image sur un registre (Docker Hub), qui sert de dépôt
+2. **Push** : envoyer l'image sur un registre (ghcr.io), qui sert de dépôt
    d'images.
 3. **Pull** : le serveur télécharge l'image depuis le registre.
 4. **Boot** : le serveur démarre un conteneur avec la nouvelle image, attend
@@ -34,13 +34,14 @@ nouveau conteneur qu'une fois son contrôle de santé validé.
 
 | Élément | Valeur | Où c'est défini |
 | --- | --- | --- |
-| Serveur | `157.180.70.8` (Hetzner, Ubuntu 24.04, 2 vCPU, 3,7 Go) | `config/deploy.yml`, clé `servers` |
-| Utilisateur SSH | `amvcc` | `config/deploy.yml`, clé `ssh` |
+| Serveur | variable de shell `KAMAL_WEB_HOST` (Hetzner CX22, 2 vCPU, 4 Go) | `config/deploy.yml`, clés `servers`, `accessories.db.host`, `builder.remote` |
+| Utilisateur SSH | variable de shell `KAMAL_SSH_USER` | `config/deploy.yml`, clé `ssh`. **La même valeur que la plateforme photographique**, faute de quoi le garde-fou de `kamal remove` devient aveugle et un retrait mal ciblé supprime le proxy partagé |
 | Domaines servis | `thibaultsan.com`, `amvcc.`, `photo.`, `tech.` | `config/deploy.yml`, clé `proxy.hosts` |
-| Image | `thibaultsan/portfolio` sur Docker Hub | `config/deploy.yml`, clé `image` |
+| Image | `ghcr.io/thibaultsan/portfolio` | `config/deploy.yml`, clés `image` et `registry.server`. **Le même registre que la plateforme photographique** : le serveur retire l'image à chaque déploiement, et le quota de téléchargement d'un compte Docker Hub gratuit se compte donc en déploiements |
 | Port applicatif | 4000 dans le conteneur | `Dockerfile`, `proxy.app_port` |
 | Contrôle de santé | `GET /health` toutes les 30 s | `config/deploy.yml`, `Dockerfile` |
-| Base de données | conteneur `postgres:16-alpine` sur le même serveur | `config/deploy.yml`, clé `accessories.db` |
+| Base de données | conteneur `postgres:16-alpine` sur le même serveur, publié sur `127.0.0.1:5432` uniquement | `config/deploy.yml`, clé `accessories.db` |
+| Plafonds | 400 Mo et 0,5 vCPU pour l'application, 250 Mo pour la base | `config/deploy.yml`, clés `options`. Gardés par `test/portfolio/config/deploy_test.exs` |
 | Données persistantes | `/var/portfolio/uploads`, `/var/portfolio/backups`, `/var/portfolio/db` | clés `volumes` et `accessories.db.directories` |
 
 Les fichiers envoyés par les visiteurs et la base vivent **en dehors** du
@@ -53,7 +54,12 @@ détruire et recréer le conteneur sans rien perdre.
 
 - Docker, en fonctionnement (`docker info` doit répondre).
 - Kamal : `gem install kamal` ou via mise, comme le reste de l'outillage.
-- Un accès SSH au serveur avec l'utilisateur `amvcc` (tester : `ssh amvcc@157.180.70.8 true`).
+- Les variables `KAMAL_WEB_HOST` et `KAMAL_SSH_USER` exportées dans le shell
+  de déploiement, et un accès SSH au serveur avec ce compte (tester :
+  `ssh "$KAMAL_SSH_USER@$KAMAL_WEB_HOST" true`). Une variable oubliée arrête
+  Kamal immédiatement, en local, sur `should be a string` : lancer
+  `kamal config` avant tout déploiement provoque volontairement cette erreur
+  franche.
 
 ### 3.2 Les secrets
 
@@ -63,13 +69,14 @@ shell. Les variables attendues :
 
 | Variable | À quoi elle sert |
 | --- | --- |
-| `KAMAL_REGISTRY_USERNAME` | compte Docker Hub qui reçoit l'image |
-| `KAMAL_REGISTRY_PASSWORD` | jeton d'accès Docker Hub (pas le mot de passe du compte) |
+| `KAMAL_REGISTRY_USERNAME` | compte GitHub qui reçoit l'image sur ghcr.io |
+| `KAMAL_REGISTRY_PASSWORD` | jeton personnel GitHub portant `write:packages` (le serveur n'a besoin que de `read:packages`). Un ancien jeton Docker Hub échoue ici à l'authentification, pas au `pull` : l'erreur est franche |
 | `SECRET_KEY_BASE` | signature des sessions et des jetons Phoenix |
 | `DATABASE_URL` | adresse complète de la base pour l'application |
 | `POSTGRES_PASSWORD` | mot de passe du conteneur PostgreSQL |
-| `PROTON_USERNAME`, `PROTON_PASSWORD` | envoi des courriels (liens magiques) |
-| `DEFAULT_ADMIN_EMAIL` | compte administrateur créé au premier démarrage |
+| `LIVE_VIEW_SIGNING_SALT` | exigée par `config/runtime.exs` : sans elle l'application refuse de démarrer |
+| `SMTP_USERNAME`, `SMTP_PASSWORD` | envoi des courriels (liens magiques), relais `smtp.protonmail.ch` |
+| `ADMIN_EMAIL` | compte administrateur créé au premier démarrage |
 
 Si une variable manque, Kamal s'arrête avec un message explicite avant de
 toucher au serveur. Rien n'est déployé à moitié.
@@ -97,7 +104,7 @@ La configuration prévoit donc un **builder distant** :
 builder:
   context: .
   arch: amd64
-  remote: ssh://amvcc@157.180.70.8
+  remote: ssh://<%= ENV["KAMAL_SSH_USER"] %>@<%= ENV["KAMAL_WEB_HOST"] %>
 ```
 
 Kamal envoie le contexte de build au serveur en SSH et y lance `docker build`,
@@ -114,7 +121,22 @@ quelques minutes.
 mix test               # la suite complète
 mix check              # formatage, compilation, Credo, Sobelow, Dialyzer
 git status             # l'arbre doit être propre
+kamal config           # lecture seule, ne touche à aucun serveur
 ```
+
+`kamal config` est le pré-vol. Il prouve deux choses, et il est le seul à les
+prouver : que toutes les variables `KAMAL_*` sont exportées (une variable
+oubliée arrête Kamal sur `should be a string`, franchement et localement), et
+que le fichier passe la validation de schéma de Kamal. Relire dans sa sortie
+`ssh_options.user`, `builder.remote`, le bloc `accessories` en entier et
+`logging`.
+
+**Ce qu'il ne montre pas**, et qu'il ne faut pas croire y lire : sa sortie rend
+`Kamal::Configuration#to_h`, qui omet `servers.web.options` (donc le plafond
+mémoire et la part processeur de l'application), `minimum_version`, `proxy` et
+`service`. Vérifié contre Kamal 2.12.0. C'est
+`test/portfolio/config/deploy_test.exs`, dans la suite de tests, qui garde ces
+valeurs-là.
 
 Le crochet git `pre-commit` rejoue déjà une partie de ces contrôles (format,
 compilation sans avertissement, Sobelow) à chaque commit, mais il ne lance pas
@@ -142,7 +164,7 @@ Déroulé, avec ce qu'il faut vérifier à chaque étape :
 
 | Étape | Ce que Kamal fait | Si ça casse |
 | --- | --- | --- |
-| `Log into image registry` | connexion Docker Hub | jeton expiré ou absent de l'environnement |
+| `Log into image registry` | connexion à ghcr.io | jeton expiré, absent de l'environnement, ou dépourvu de `write:packages` |
 | `Build and push app image` | build sur le serveur, envoi au registre | erreurs de compilation, voir §6 |
 | `Ensure app can pass healthcheck` | démarre le conteneur, interroge `/health` | l'application démarre mais ne répond pas : variables d'environnement ou base |
 | `Detect stale containers` | repère les vieux conteneurs | sans conséquence |
@@ -174,6 +196,28 @@ plus le compte administrateur, utile seulement sur une base neuve.
 kamal app logs -f                       # ou l'alias : kamal logs
 curl -I https://thibaultsan.com/health
 ```
+
+Et, après le premier démarrage, la seule vérification de ce que le conteneur a
+réellement reçu :
+
+```bash
+docker inspect portfolio-web-<version> \
+  --format '{{.HostConfig.Memory}} {{.HostConfig.NanoCpus}} {{.HostConfig.LogConfig.Type}}'
+# attendu : 419430400 500000000 journald
+```
+
+Trois contrôles croisés avec la plateforme photographique, qui vit sur la même
+machine et qu'aucun outil ne compare :
+
+- `ssh.user` identique dans les deux `config/deploy.yml` (les deux lisent
+  `KAMAL_SSH_USER`, donc la même valeur par construction). Deux comptes
+  distincts rendent aveugle le garde-fou de `kamal remove`, qui supprime alors
+  le proxy partagé et les six noms d'hôtes ;
+- bloc `proxy.run` identique au caractère près (`version: v0.9.2`,
+  `log_max_size: 10m`). Kamal ne le vérifie pas entre applications : la
+  première qui crée le proxy impose sa configuration, définitivement ;
+- ports d'accessoires distincts : 5432 pour cette base, 5433 pour celle de la
+  plateforme, les deux sur `127.0.0.1` uniquement.
 
 ## 5. Les autres commandes utiles
 

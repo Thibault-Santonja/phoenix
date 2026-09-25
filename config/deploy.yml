@@ -1,20 +1,132 @@
-# Name of your application. Used to uniquely configure containers.
+# Kamal 2 -- application `portfolio`
+#
+# Quatre noms d'hôtes servis par une seule application Phoenix.
+#
+# CE FICHIER EST LE SEUL QUE KAMAL LISE. Le dépôt d'infrastructure
+# (~/Dev/thibaultsan-infra) porte la vue d'ensemble de la machine dans
+# `kamal/portfolio/deploy.yml`, mais ce fichier-là n'est jamais exécuté : il
+# ne peut rien imposer. Les valeurs ci-dessous qui viennent de
+# l'infrastructure portent chacune sa raison et sa référence, et elles sont
+# gardées par `test/portfolio/config/deploy_test.exs`, qui tourne dans la
+# porte de qualité et en CI. Modifier l'une d'elles rend ce test rouge :
+# c'est voulu, la nouvelle valeur doit être portée dans les deux dépôts.
+#
+# Cette machine héberge aussi la plateforme photographique. Trois choses
+# doivent rester identiques entre les deux `config/deploy.yml` : le compte
+# SSH, le bloc `proxy.run`, et l'absence de collision sur les ports
+# d'accessoires. Aucun outil ne le vérifie à notre place.
+
+# Refuse de tourner avec une version de Kamal antérieure à celle contre
+# laquelle ce fichier a été vérifié. Une montée de version de gem silencieuse
+# peut changer le comportement du proxy ou du constructeur : autant
+# l'apprendre en local, par un message clair, plutôt qu'en cours de
+# déploiement.
+minimum_version: 2.12.0
+
+# Nom de service. Sert aussi d'ÉTIQUETTE Docker (`label=service=portfolio`),
+# et c'est sur cette seule étiquette que `kamal prune` choisit ce qu'il
+# supprime. Il doit donc différer de celui de l'autre application de la
+# machine, sinon les deux se suppriment mutuellement les images dont dépend
+# `kamal rollback`.
 service: portfolio
 
-# Name of the container image.
+# Nom du dépôt d'images, sans le registre : celui-ci est déclaré plus bas.
+# Résolu en `ghcr.io/thibaultsan/portfolio`.
 image: thibaultsan/portfolio
+
+# Compte d'exploitation SSH. NON NÉGOCIABLE : la MÊME variable, donc la même
+# valeur, que `config/deploy.yml` de la plateforme photographique.
+#
+# L'état de Kamal vit dans `~/.kamal` de ce compte, et le garde-fou qui
+# empêche `kamal remove` de supprimer le PROXY PARTAGÉ compte les
+# applications installées dans `~/.kamal/apps` du compte COURANT. Deux
+# comptes distincts le rendent aveugle : un `kamal remove` lancé depuis
+# l'autre dépôt croit la machine vide et supprime le proxy. Les six noms
+# d'hôtes de la machine tombent d'un coup.
+#
+# Lire la même variable des deux côtés rend l'égalité vraie par construction,
+# plutôt que par vigilance.
+#
+# Infrastructure : `docs/runbooks/04-kamal-socle.md` section 3.
+ssh:
+  user: <%= ENV["KAMAL_SSH_USER"] %>
+
+# Journaux vers le journal système, et non vers des fichiers locaux.
+#
+# Sans ce bloc, Kamal impose `--log-opt max-size=10m`, c'est-à-dire le pilote
+# `json-file` : les journaux restent sur le disque de la machine et AUCUNE
+# ligne de ce site n'entre dans le collecteur de journaux de
+# l'infrastructure.
+#
+# Déclaré à la racine, il couvre le conteneur applicatif ET l'accessoire
+# PostgreSQL : `Kamal::Commands::Accessory#run` reprend `config.logging_args`
+# du fichier, les accessoires n'ayant pas de bloc `logging` à eux.
+#
+# Aucune option : le pilote `journald` refuse `max-size` et le conteneur ne
+# démarrerait pas (`unknown log opt 'max-size' for journald log driver`).
+#
+# Vie privée. Ces journaux contiennent des adresses IP de visiteurs, données
+# personnelles au sens du RGPD, conservées 30 jours par le collecteur : la
+# durée doit figurer au registre des traitements. Ils ne contiennent en
+# revanche AUCUN lien magique : `PortfolioWeb.RequestLogFilter`
+# (`endpoint.ex`) supprime la ligne de journal des deux routes qui en portent
+# un dans leur chemin. Sans ce filtre, activer `journald` reviendrait à
+# conserver 30 jours, dans un moteur interrogeable, des jetons
+# d'authentification encore valides. Toute nouvelle route à jeton doit être
+# ajoutée à ce module AVANT d'être servie ; un test du routeur le vérifie.
+#
+# Infrastructure : `docs/runbooks/08-observabilite.md` sections 6 et 13.
+logging:
+  driver: journald
 
 # Deploy to these servers.
 servers:
   web:
-    - 157.180.70.8
+    hosts:
+      # Adresse du serveur, lue dans l'environnement du shell de déploiement.
+      # Elle était écrite en dur à trois endroits de ce fichier : une seule
+      # source supprime la classe d'erreur « on en a changé deux sur trois ».
+      - <%= ENV["KAMAL_WEB_HOST"] %>
+    options:
+      # Budget du plan directeur : 400 Mo pour cette application.
+      #
+      # Un conteneur SANS limite peut prendre toute la machine ; le noyau
+      # choisit alors lui-même quel processus tuer, et il choisit le plus
+      # gros, c'est-à-dire un des deux sites. Avec une limite, le conteneur
+      # meurt seul et redémarre : on perd un service au lieu de tous.
+      #
+      # Infrastructure : `docs/00-plan-directeur.md` section 2,
+      # `docs/budget-memoire-observabilite.md` section 2.
+      memory: "400m"
+      # Un demi-vCPU sur les deux de la machine.
+      #
+      # Le goulot mesuré n'est pas la mémoire, c'est le processeur, et c'est
+      # la plateforme photographique qui le consomme : son traitement
+      # d'images produit neuf variantes par photo, dont quatre encodages AVIF
+      # mono-fil, et occupe les deux cœurs pendant une trentaine de minutes
+      # sur un import de 200 photos. Elle est plafonnée à 1,5 ; ce site
+      # vitrine prend les 0,5 restants.
+      #
+      # `cpus` est un plafond DUR (quota CFS), pas une pondération. Les deux
+      # plafonds applicatifs additionnés valent exactement les 2 vCPU de la
+      # machine : les deux accessoires PostgreSQL et kamal-proxy ne sont
+      # volontairement PAS plafonnés et se partagent ce que les applications
+      # laissent libre à chaque instant. Une base bridée ralentirait chaque
+      # requête des deux sites.
+      cpus: "0.5"
 
-# Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
-# Remove this section when using multiple web servers and ensure you terminate SSL at your load balancer.
+# Enable SSL auto certification via Let's Encrypt and allow for multiple apps
+# on a single web server.
 #
-# Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
+# Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full"
+# to enable CF-to-app encryption.
 proxy:
   ssl: true
+  # Les quatre noms servis par cette application, écrits en dur parce qu'ils
+  # ne changent jamais et qu'une valeur figée se relit mieux qu'une variable
+  # à aller chercher. kamal-proxy demande un certificat Let's Encrypt pour
+  # CHAQUE nom listé : un nom sans enregistrement DNS vers cette machine fait
+  # échouer la validation HTTP-01, et le déploiement n'aboutit jamais.
   hosts:
     - thibaultsan.com
     - amvcc.thibaultsan.com
@@ -27,27 +139,86 @@ proxy:
     path: /health
     timeout: 3
 
-# Credentials for your image host.
+  # BLOC PARTAGÉ : ces valeurs doivent être IDENTIQUES à celles du bloc
+  # `proxy.run` de `config/deploy.yml` de la plateforme photographique.
+  #
+  # Kamal ne vérifie la cohérence des blocs `proxy.run` qu'à l'intérieur d'un
+  # même fichier. Entre deux applications, aucune vérification : la première
+  # qui crée le conteneur impose sa configuration, définitivement, et
+  # `kamal proxy boot` ne recrée jamais un conteneur existant. Une divergence
+  # ne produit AUCUNE erreur, seulement un réglage qui ne s'applique pas.
+  #
+  # Modifier ce bloc exige un `kamal proxy reboot`, qui coupe les six noms
+  # d'hôtes de la machine : procédure planifiée, pas geste d'appoint.
+  #
+  # `version` fige l'image du proxy pour qu'elle ne dépende pas de la version
+  # de gem du poste qui crée le conteneur. Elle n'évite PAS le message
+  # « kamal-proxy version X is too old », qui vient de l'inspection du
+  # conteneur DÉJÀ EN PLACE : la relever exige de la relever DANS LES DEUX
+  # FICHIERS avant le reboot.
+  #
+  # `log_max_size` borne le journal du proxy, qui voit tout le trafic, sur un
+  # disque de 40 Go. 10m est déjà le défaut de Kamal : écrit pour que le bloc
+  # partagé se lise en entier sans aller lire le code de Kamal.
+  #
+  # Infrastructure : `docs/runbooks/04-kamal-socle.md` section 2.4.
+  run:
+    version: v0.9.2
+    log_max_size: 10m
+
+# Registre d'images : ghcr.io, le MÊME que la plateforme photographique.
+#
+# Cette application publiait sur Docker Hub, faute de `registry.server`, qui
+# vaut Docker Hub par défaut. Deux registres pour deux applications sur la
+# même machine étaient une complication gratuite ; la raison décisive de
+# trancher est ailleurs.
+#
+# Le serveur **retire l'image du registre à chaque déploiement** : c'est lui
+# qui fait le `docker pull`, pas le poste de travail. Le quota de
+# téléchargement d'un compte Docker Hub gratuit se compte donc en
+# déploiements, et il s'épuise sans prévenir. Un quota atteint fait échouer un
+# déploiement au moment précis où l'on en a le plus besoin, c'est-à-dire
+# pendant une remise en service. ghcr.io n'impose pas ce quota sur les images
+# d'un compte.
+#
+# `KAMAL_REGISTRY_USERNAME` est donc désormais le compte GitHub, et
+# `KAMAL_REGISTRY_PASSWORD` un jeton personnel portant `write:packages` (et
+# `read:packages` pour le serveur). L'ancien jeton Docker Hub ne convient plus,
+# et un jeton Docker Hub laissé dans le shell de déploiement échouera à
+# l'authentification, pas au `pull` : l'erreur est franche.
 registry:
+  server: ghcr.io
   username:
     - KAMAL_REGISTRY_USERNAME
   password:
     - KAMAL_REGISTRY_PASSWORD
 
 # Configure builder setup.
-#
-# Le build se fait sur le serveur, nativement en amd64. L'émulation amd64 sur
-# un Mac Apple Silicon corrompt la mémoire du BEAM pendant "mix deps.compile"
-# (erreurs "no next heap size found" puis abort), y compris avec Rosetta.
 builder:
   context: .
   arch: amd64
-  remote: ssh://amvcc@157.180.70.8
-  # Pass in additional build args needed for your Dockerfile.
-  # args:
-  #   RUBY_VERSION: <%= ENV["RBENV_VERSION"] || ENV["rvm_ruby_string"] || "#{RUBY_ENGINE}-#{RUBY_ENGINE_VERSION}" %>
+  # Construction SUR LE SERVEUR, nativement en amd64.
+  #
+  # L'émulation amd64 sur un Mac Apple Silicon corrompt la mémoire du BEAM
+  # pendant `mix deps.compile` (« no next heap size found » puis abandon), y
+  # compris avec Rosetta. Ce n'est pas une optimisation, c'est la seule voie
+  # fiable. Kamal crée un contexte Docker sur SSH puis un constructeur buildx
+  # attaché à ce contexte : BuildKit tourne sur le serveur, y compile et y
+  # met en cache.
+  #
+  # Ce que ce choix coûte, et qu'il faut surveiller : le cache BuildKit vit
+  # sur les 40 Go racine de la machine et croît à chaque construction. C'est
+  # le premier poste qui fait déborder ce disque. Le fichier d'échange de
+  # 2 Go est ce qui rend la pointe de compilation sûre.
+  remote: ssh://<%= ENV["KAMAL_SSH_USER"] %>@<%= ENV["KAMAL_WEB_HOST"] %>
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
+#
+# ATTENTION : une clé qui manque ici ne provoque AUCUNE erreur de
+# configuration. Kamal construit, publie, démarre le conteneur, puis
+# `config/runtime.exs` lève à l'amorçage, le conteneur ne devient jamais
+# sain, et `kamal deploy` échoue après plusieurs minutes d'attente, loin de
+# la cause.
 env:
   clear:
     PHX_SERVER: true
@@ -81,37 +252,139 @@ aliases:
   ssh: app exec --interactive --reuse "bash"
   logs: app logs -f
 
-# Use a different ssh user than root
-ssh:
-  user: amvcc
-# Use a persistent storage volume.
+# Chemins ABSOLUS, volontairement.
+#
+# Un chemin relatif serait résolu par Kamal en `$PWD/...`, donc dans le
+# répertoire personnel du compte SSH : les données changeraient de place le
+# jour où le compte de déploiement change, et la sauvegarde viserait un
+# chemin instable.
 volumes:
   - "/var/portfolio/uploads:/app/priv/static/uploads"
   - "/var/portfolio/backups:/app/backups"
   - "/var/portfolio/catalog:/app/catalog"
-# Bridge fingerprinted assets, like JS and CSS, between versions to avoid
-# hitting 404 on in-flight requests. Combines all files from new and old
-# version inside the asset_path.
-#
-# asset_path: /app/public/assets
-
-# Configure rolling deploys by setting a wait time between batches of restarts.
-#
-# boot:
-#   limit: 10 # Can also specify as a percentage of total hosts, such as "25%"
-#   wait: 2
 
 # Use accessory services (secrets come from .kamal/secrets).
 accessories:
   db:
     image: postgres:16-alpine
-    host: 157.180.70.8
-    port: 5432
+    host: <%= ENV["KAMAL_WEB_HOST"] %>
+
+    # BOUCLE LOCALE UNIQUEMENT.
+    #
+    # Ce fichier déclarait `port: 5432`, que Kamal traduit en
+    # `--publish 5432:5432`, lié par Docker sur TOUTES les interfaces. Or
+    # Docker écrit ses règles de publication dans la chaîne `DOCKER`
+    # d'iptables, EN AMONT de la chaîne où vit une règle `ufw` : un pare-feu
+    # qui « ferme » le 5432 ne fermait rien du tout. La base était joignable
+    # depuis Internet, et seul le mot de passe PostgreSQL protégeait les
+    # données.
+    #
+    # Cette publication n'est utile qu'à l'exploitant (psql, pg_dump depuis
+    # l'hôte) : l'application joint la base par le nom de conteneur
+    # `portfolio-db` sur le réseau Docker `kamal`. Un accès distant se fait
+    # par tunnel SSH, jamais en ouvrant le port.
+    #
+    # 5432 reste attribué à cette base ; la plateforme photographique prend
+    # 5433. Table d'attribution : runbook 04 section 5.3.
+    port: "127.0.0.1:5432:5432"
+
+    options:
+      # Plafond mémoire : 250 Mo, budget du plan directeur. Peu de données.
+      #
+      # Le plafond doit couvrir le PIRE CAS des réglages posés dans `cmd`
+      # ci-dessous. Un plafond qu'on n'a pas confronté à l'arithmétique des
+      # réglages qu'il encadre est un chiffre rassurant, pas une protection :
+      # il déclenche l'incident au lieu de le borner. Le compte, borne
+      # haute :
+      #
+      #   tampons partagés (shared_buffers)            48 Mo
+      #   20 connexions x 4 Mo de mémoire privée       80 Mo
+      #   2 ouvriers autovacuum x 16 Mo                32 Mo
+      #   processus de service et surcoût divers      ~25 Mo
+      #   ---------------------------------------------------
+      #   total                                      ~185 Mo, sous 250 Mo
+      #
+      # Les 65 Mo restants ne sont pas du gras : ils absorbent les 32 Mo d'un
+      # `maintenance_work_mem` lancé à la main (VACUUM, CREATE INDEX) et les
+      # pointes de `work_mem`, qui se compte PAR OPÉRATION DE TRI et non par
+      # connexion : une requête à plusieurs tris en prend plusieurs fois.
+      #
+      # Le résident ATTENDU au repos reste d'environ 120 à 130 Mo : un
+      # plafond ne réserve rien, il ne fait que borner la dérive.
+      #
+      # Ce compte est vérifié par `test/portfolio/config/deploy_test.exs`,
+      # qui le RECALCULE depuis `cmd` : relâcher un réglage sans relever le
+      # plafond rend la porte de qualité rouge.
+      #
+      # Pas de `shm-size` : les tampons partagés de PostgreSQL ne vivent pas
+      # dans /dev/shm (`shared_memory_type` vaut `mmap` depuis la 9.3), qui
+      # ne sert qu'aux segments des requêtes PARALLÈLES, désactivées plus
+      # bas. Un tmpfs est facturé au même cgroup mémoire que le conteneur :
+      # poser `shm-size` ferait entrer sa taille dans les 250 Mo, au-dessus
+      # du compte.
+      #
+      # Infrastructure : `docs/budget-memoire-observabilite.md` sections 1
+      # et 2, `services/postgres-outils/config/deploy.yml` (même
+      # raisonnement, écrit en premier).
+      memory: "250m"
+
     env:
       clear:
         POSTGRES_DB: portfolio_prod
       secret:
         - POSTGRES_PASSWORD
+
     directories:
       - /var/portfolio/db:/var/lib/postgresql/data
-    cmd: postgres -c shared_preload_libraries='pg_stat_statements' -c pg_stat_statements.track=all
+
+    # Réglages dimensionnés pour le plafond de 250 Mo posé plus haut. Chaque
+    # ligne est un poste de son arithmétique : les modifier sans refaire le
+    # compte ramène le problème. Sans ce bloc, l'image tournait sur ses
+    # défauts, soit 100 connexions (jusqu'à 400 Mo de mémoire privée à elles
+    # seules, sur une base plafonnée à 250), 128 Mo de tampons et trois
+    # ouvriers autovacuum à 64 Mo.
+    #
+    # shared_buffers 48MB : la règle habituelle (25 % de la mémoire) donne
+    # 62 Mo ici ; 48 Mo tiennent largement l'index d'une base de quelques
+    # centaines de mégaoctets. C'est de la mémoire partagée, comptée une fois
+    # et non une fois par connexion.
+    #
+    # max_connections 20 : le pool applicatif vaut 10 (POOL_SIZE), auxquels
+    # s'ajoutent la connexion de notification d'Oban, les 2 connexions du
+    # pool de migration (`Portfolio.Release`, qui tourne pendant que l'ancien
+    # conteneur sert encore), les 3 connexions réservées au superutilisateur,
+    # et de quoi ouvrir un psql d'exploitation. Chaque connexion coûte 2 à
+    # 4 Mo de mémoire privée.
+    #
+    # work_mem 4MB : c'est le DÉFAUT de PostgreSQL, écrit ici parce qu'il est
+    # un poste du compte du plafond et qu'un futur lecteur doit le voir sans
+    # aller le chercher.
+    #
+    # autovacuum_work_mem 16MB et autovacuum_max_workers 2 : PIÈGE CLASSIQUE.
+    # Par défaut, `autovacuum_work_mem` vaut -1, ce qui signifie « prendre
+    # maintenance_work_mem », et `autovacuum_max_workers` vaut 3. Avec les
+    # 32 Mo ci-dessous, ce sont 96 Mo qui peuvent se lever d'un coup, la
+    # nuit, sans qu'aucune requête utilisateur ne soit en cause.
+    #
+    # max_parallel_workers_per_gather 0 : le parallélisme est désactivé. La
+    # mémoire d'abord (chaque ouvrier est un processus de plus, avec son
+    # propre work_mem), le processeur ensuite : la machine a 2 vCPU partagés
+    # avec l'autre site et son traitement d'images, et une requête parallèle
+    # les sature tous les deux.
+    #
+    # pg_stat_statements : diagnostiquer une requête lente sans instrumenter
+    # l'application. Coût mémoire négligeable.
+    cmd: >-
+      postgres
+      -c shared_preload_libraries='pg_stat_statements'
+      -c pg_stat_statements.track=all
+      -c shared_buffers=48MB
+      -c max_connections=20
+      -c work_mem=4MB
+      -c maintenance_work_mem=32MB
+      -c autovacuum_work_mem=16MB
+      -c autovacuum_max_workers=2
+      -c max_parallel_workers_per_gather=0
+      -c effective_cache_size=256MB
+      -c wal_compression=on
+      -c log_min_duration_statement=2000
