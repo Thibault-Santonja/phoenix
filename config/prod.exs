@@ -7,6 +7,19 @@ import Config
 # before starting your production server.
 config :portfolio, PortfolioWeb.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
 
+# Redirection systematique vers HTTPS, avec HSTS.
+#
+# Cette option DOIT etre posee a la compilation et non dans `runtime.exs` :
+# `force_ssl` fait partie des cles que l'endpoint Phoenix marque comme
+# `compile_env`. Une valeur posee au demarrage qui differe de celle compilee
+# fait AVORTER le boot de la release, avec le message « has a different value
+# set for path [:force_ssl] ... during runtime compared to compile time ».
+# C'est ce qui a empeche le premier deploiement d'aboutir.
+#
+# Le mandataire termine TLS et transmet `x-forwarded-proto`, que l'endpoint
+# lit grace a `forward_headers` : il n'y a donc pas de boucle de redirection.
+config :portfolio, PortfolioWeb.Endpoint, force_ssl: [hsts: true]
+
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: Portfolio.Finch
 
