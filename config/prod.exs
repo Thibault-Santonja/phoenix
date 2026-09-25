@@ -18,7 +18,25 @@ config :portfolio, PortfolioWeb.Endpoint, cache_static_manifest: "priv/static/ca
 #
 # Le mandataire termine TLS et transmet `x-forwarded-proto`, que l'endpoint
 # lit grace a `forward_headers` : il n'y a donc pas de boucle de redirection.
-config :portfolio, PortfolioWeb.Endpoint, force_ssl: [hsts: true]
+# L'exclusion porte sur le CHEMIN `/health`, celui que le mandataire interroge
+# (cf. `config/deploy.yml`, `proxy.healthcheck.path`), et surtout PAS sur
+# l'en-tete Host. Un Host se falsifie trivialement depuis n'importe ou :
+# exclure `localhost` permettrait a quiconque de contourner la redirection
+# HTTPS en le declarant. Le chemin borne l'exclusion au strict necessaire.
+#
+# Sans cette exclusion, le mandataire interroge l'application en clair sur le
+# reseau des conteneurs, recoit une redirection vers https://thibaultsan.com,
+# la suit, et echoue faute de certificat, lequel ne sera emis que lorsque
+# l'application sera declaree saine. Le deploiement ne peut jamais aboutir.
+#
+# `rewrite_on` fait lire l'en-tete pose par le mandataire, sans quoi toute
+# requete legitime serait vue comme non chiffree et redirigee en boucle.
+config :portfolio, PortfolioWeb.Endpoint,
+  force_ssl: [
+    hsts: true,
+    rewrite_on: [:x_forwarded_proto],
+    exclude: [paths: ["/health"]]
+  ]
 
 # Configures Swoosh API Client
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: Portfolio.Finch
