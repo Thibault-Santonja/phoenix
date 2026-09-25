@@ -143,7 +143,12 @@ proxy:
   # Proxy connects to your container on port 80 by default.
   app_port: 4000
   healthcheck:
-    interval: 30
+    # 3 secondes, et non 30. Cet intervalle sert a constater la MISE EN
+    # SERVICE d'une nouvelle version, pas a surveiller une application deja
+    # en place. A 30 secondes, le mandataire n'avait le temps que de deux
+    # tentatives avant d'abandonner, dont la premiere pendant le demarrage :
+    # le deploiement echouait sur une application saine.
+    interval: 3
     path: /health
     timeout: 3
 
