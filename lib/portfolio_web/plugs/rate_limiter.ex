@@ -39,25 +39,43 @@ defmodule PortfolioWeb.Plugs.RateLimiter do
   @impl Plug
   def call(conn, opts) do
     # Désactiver le rate limiting en environnement de test sauf si explicitement activé
-    if Application.get_env(:portfolio, :env) == :test and
-         not Application.get_env(:portfolio, :enable_rate_limiting_in_tests, false) do
-      conn
-    else
-      ip = IPUtils.get_ip_address(conn)
-      limit = opts.limit
-      window = opts.window
+    cond do
+      # Desactive en environnement de test, sauf activation explicite.
+      Application.get_env(:portfolio, :env) == :test and
+          not Application.get_env(:portfolio, :enable_rate_limiting_in_tests, false) ->
+        conn
 
-      case check_rate_limit(ip, limit, window) do
-        :ok ->
-          conn
+      # La sonde de sante est exclue du plafond.
+      #
+      # Elle interroge ce chemin toutes les trois secondes depuis une seule et
+      # meme adresse, celle du mandataire ou de la boucle locale : elle epuise
+      # donc le quota a elle seule, et l'application se declare malade alors
+      # qu'elle sert parfaitement les visiteurs. Constate en production : le
+      # conteneur bascule en etat non sain avec un `429` en reponse a sa
+      # propre sonde, pendant que le site repond `200`.
+      #
+      # L'exclusion porte sur le CHEMIN et jamais sur l'adresse d'origine :
+      # une adresse se falsifie, un chemin non, et le point de sante ne rend
+      # aucune donnee exploitable.
+      conn.request_path == "/health" ->
+        conn
 
-        {:error, :rate_limit_exceeded} ->
-          conn
-          |> put_status(:too_many_requests)
-          |> put_view(html: PortfolioWeb.ErrorHTML)
-          |> render("429.html")
-          |> halt()
-      end
+      true ->
+        ip = IPUtils.get_ip_address(conn)
+        limit = opts.limit
+        window = opts.window
+
+        case check_rate_limit(ip, limit, window) do
+          :ok ->
+            conn
+
+          {:error, :rate_limit_exceeded} ->
+            conn
+            |> put_status(:too_many_requests)
+            |> put_view(html: PortfolioWeb.ErrorHTML)
+            |> render("429.html")
+            |> halt()
+        end
     end
   end
 
