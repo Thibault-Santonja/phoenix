@@ -32,7 +32,7 @@ service: portfolio
 
 # Nom du dépôt d'images, sans le registre : celui-ci est déclaré plus bas.
 # Résolu en `ghcr.io/thibaultsan/portfolio`.
-image: thibaultsan/portfolio
+image: thibault-santonja/portfolio
 
 # Compte d'exploitation SSH. NON NÉGOCIABLE : la MÊME variable, donc la même
 # valeur, que `config/deploy.yml` de la plateforme photographique.
