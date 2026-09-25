@@ -108,7 +108,11 @@ ENV MIX_ENV=prod \
 EXPOSE 4000
 
 # Health check (lightweight, fast endpoint)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+# Cadence resserree pour le deploiement : kamal-proxy abandonne au bout de
+# `deploy_timeout`. Avec un `start-period` de 40 s et un `interval` de 30 s,
+# le premier verdict de sante arrivait APRES l'abandon, et le deploiement
+# echouait sur une application pourtant demarree et repondant en 517 us.
+HEALTHCHECK --interval=5s --timeout=3s --start-period=10s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider --timeout=2 http://localhost:4000/health || exit 1
 
 # Start command

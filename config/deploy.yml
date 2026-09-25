@@ -120,6 +120,14 @@ servers:
 #
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full"
 # to enable CF-to-app encryption.
+# Delai laisse au conteneur pour se declarer sain avant d'abandonner.
+#
+# Le defaut de 30 s ne suffisait pas : l'application demarre en une dizaine de
+# secondes, mais le premier verdict de sante de l'image arrivait plus tard
+# encore. Les deux reglages vont de pair, celui-ci et le `HEALTHCHECK` du
+# `Dockerfile` : changer l'un sans l'autre reintroduit la panne.
+deploy_timeout: 60
+
 proxy:
   ssl: true
   # Les quatre noms servis par cette application, écrits en dur parce qu'ils
